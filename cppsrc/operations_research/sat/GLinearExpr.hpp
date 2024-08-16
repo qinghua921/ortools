@@ -80,7 +80,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GLinearExpr::DebugString 异常 );
+        ThrowJsError( GLinearExpr::DebugString 异常 );
         return info.Env().Undefined();
     }
 
@@ -98,7 +98,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GLinearExpr::Plus ERROR );
+        ThrowJsError( GLinearExpr::Plus ERROR );
         return info.Env().Undefined();
     }
 
@@ -116,7 +116,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GLinearExpr::Minus ERROR );
+        ThrowJsError( GLinearExpr::Minus ERROR );
         return info.Env().Undefined();
     }
 
@@ -129,7 +129,7 @@ namespace sat
             return GLinearExpr::constructor.New( { asExternalVar } );
         }
 
-        PaoJsError( GLinearExpr::Multi ERROR );
+        ThrowJsError( GLinearExpr::Multi ERROR );
         return info.Env().Undefined();
     }
 
@@ -176,7 +176,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GLinearExpr::WeightedSum 异常 );
+        ThrowJsError( GLinearExpr::WeightedSum 异常 );
         return info.Env().Undefined();
     }
 
@@ -195,7 +195,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GLinearExpr::NumberLinearExprMult ERROR );
+        ThrowJsError( GLinearExpr::NumberLinearExprMult ERROR );
         return info.Env().Undefined();
     }
 
@@ -220,7 +220,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GLinearExpr::Term ERROR );
+        ThrowJsError( GLinearExpr::Term ERROR );
         return info.Env().Undefined();
     }
 
@@ -243,7 +243,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GLinearExpr::LinearExprPlus ERROR );
+        ThrowJsError( GLinearExpr::LinearExprPlus ERROR );
         return info.Env().Undefined();
     }
 
@@ -326,12 +326,12 @@ namespace sat
             }
         }
 
-        PaoJsError( GLinearExpr::GLinearExpr 异常 );
+        ThrowJsError( GLinearExpr::GLinearExpr 异常 );
     }
 
     GLinearExpr::~GLinearExpr()
     {
-#ifdef KAIFA
+#ifdef DEBUG
         LOG( INFO ) << "GLinearExpr::~GLinearExpr";
 #endif
     }

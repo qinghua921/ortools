@@ -1,5 +1,5 @@
 ﻿#pragma once
 
 // ThrowAsJavaScriptException
-#define PaoJsError( xinxi ) \
+#define ThrowJsError( xinxi ) \
     Napi::Error::New( info.Env(), ( char* )u8#xinxi ).ThrowAsJavaScriptException()

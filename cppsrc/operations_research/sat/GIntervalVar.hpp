@@ -50,7 +50,7 @@ namespace sat
             return GIntervalVar::constructor.New( { external } );
         }
 
-        PaoJsError( GIntervalVar::WithName ERROR );
+        ThrowJsError( GIntervalVar::WithName ERROR );
         return info.Env().Undefined();
     }
 
@@ -72,12 +72,12 @@ namespace sat
             }
         }
 
-        PaoJsError( GIntervalVar::GIntervalVar 异常 );
+        ThrowJsError( GIntervalVar::GIntervalVar 异常 );
     }
 
     GIntervalVar::~GIntervalVar()
     {
-#ifdef KAIFA
+#ifdef DEBUG
         LOG( INFO ) << "GIntervalVar::~GIntervalVar";
 #endif
     }

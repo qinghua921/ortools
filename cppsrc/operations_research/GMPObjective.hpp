@@ -57,12 +57,12 @@ GMPObjective::GMPObjective( const Napi::CallbackInfo& info )
         }
     }
 
-    PaoJsError( GMPObjective::GMPObjective 异常 );
+    ThrowJsError( GMPObjective::GMPObjective 异常 );
 };
 
 GMPObjective::~GMPObjective()
 {
-#ifdef KAIFA
+#ifdef DEBUG
     LOG( INFO ) << "GMPObjective::~GMPObjective";
 #endif
 }
@@ -82,14 +82,14 @@ Napi::Value GMPObjective::SetCoefficient( const Napi::CallbackInfo& info )
 {
     if ( info.Length() < 2 || !info[ 0 ].IsObject() || !info[ 1 ].IsNumber() )
     {
-        PaoJsError( SetCoefficient 参数异常 );
+        ThrowJsError( SetCoefficient 参数异常 );
         return info.Env().Undefined();
     }
 
     GMPVariable* wrapper = GMPVariable::Unwrap( info[ 0 ].As< Napi::Object >() );
     if ( typeid( *wrapper ) != typeid( GMPVariable ) )
     {
-        PaoJsError( SetCoefficient 参数类型异常 );
+        ThrowJsError( SetCoefficient 参数类型异常 );
         return info.Env().Undefined();
     }
 

@@ -58,12 +58,12 @@ namespace sat
             }
         }
 
-        PaoJsError( GCpModelProto::GCpModelProto 异常 );
+        ThrowJsError( GCpModelProto::GCpModelProto 异常 );
     }
 
     GCpModelProto::~GCpModelProto()
     {
-#ifdef KAIFA
+#ifdef DEBUG
         LOG( INFO ) << "GCpModelProto::~GCpModelProto";
 #endif
     }

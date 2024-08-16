@@ -44,7 +44,7 @@ GClosedInterval::GClosedInterval( const Napi::CallbackInfo& info )
 
 GClosedInterval::~GClosedInterval()
 {
-#ifdef KAIFA
+#ifdef DEBUG
     LOG( INFO ) << "GClosedInterval::~GClosedInterval";
 #endif
 }

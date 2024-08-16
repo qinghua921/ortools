@@ -1,3 +1,4 @@
 *
 !jssrc/**
 !build/Release/ortools_binding.node
+!README.md

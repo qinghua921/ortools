@@ -63,12 +63,12 @@ GMPVariable::GMPVariable( const Napi::CallbackInfo& info )
         }
     }
 
-    PaoJsError( GMPVariable::GMPVariable �쳣 );
+    ThrowJsError( GMPVariable::GMPVariable �쳣 );
 };
 
 GMPVariable::~GMPVariable()
 {
-#ifdef KAIFA
+#ifdef DEBUG
     LOG( INFO ) << "GMPVariable::~GMPVariable";
 #endif
 };

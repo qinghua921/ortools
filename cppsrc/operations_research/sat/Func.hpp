@@ -29,7 +29,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GSolutionIntegerValue 异常 );
+        ThrowJsError( GSolutionIntegerValue 异常 );
         return info.Env().Undefined();
     }
 
@@ -48,7 +48,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GSolutionIntegerValue 异常 );
+        ThrowJsError( GSolutionIntegerValue 异常 );
         return info.Env().Undefined();
     }
 
@@ -65,7 +65,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GSolve ERROR );
+        ThrowJsError( GSolve ERROR );
         return info.Env().Undefined();
     }
 
@@ -160,7 +160,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GCpSolverResponseStats ERROR );
+        ThrowJsError( GCpSolverResponseStats ERROR );
         return info.Env().Undefined();
     }
 
@@ -176,7 +176,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GVarDebugString 异常 );
+        ThrowJsError( GVarDebugString 异常 );
         return info.Env().Undefined();
     }
 
@@ -192,7 +192,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GCpModelStats 异常 );
+        ThrowJsError( GCpModelStats 异常 );
         return info.Env().Undefined();
     }
 

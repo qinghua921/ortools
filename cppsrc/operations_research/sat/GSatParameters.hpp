@@ -42,7 +42,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GSatParameters::GSatParameters ERROR );
+        ThrowJsError( GSatParameters::GSatParameters ERROR );
     }
 
     GSatParameters::~GSatParameters()
@@ -71,7 +71,7 @@ namespace sat
             return info.Env().Undefined();
         }
 
-        PaoJsError( GSatParameters::set_enumerate_all_solutions ERROR );
+        ThrowJsError( GSatParameters::set_enumerate_all_solutions ERROR );
         return info.Env().Undefined();
     }
 

@@ -56,7 +56,7 @@ namespace sat
             return GIntVar::constructor.New( { external } );
         }
 
-        PaoJsError( GIntVar::WithName ERROR );
+        ThrowJsError( GIntVar::WithName ERROR );
         return info.Env().Undefined();
     }
 
@@ -79,7 +79,7 @@ namespace sat
 
     GIntVar::~GIntVar()
     {
-#ifdef KAIFA
+#ifdef DEBUG
         LOG( INFO ) << "GIntVar::~GIntVar";
 #endif
     }
@@ -97,7 +97,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GIntVar::GIntVar ERROR );
+        ThrowJsError( GIntVar::GIntVar ERROR );
     }
 }  // namespace sat
 }  // namespace operations_research

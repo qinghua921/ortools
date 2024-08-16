@@ -59,7 +59,7 @@ namespace sat
             return ret;
         }
 
-        PaoJsError( GModel::Add ERROR );
+        ThrowJsError( GModel::Add ERROR );
         return info.Env().Undefined();
     }
 
@@ -89,12 +89,12 @@ namespace sat
             return;
         }
 
-        PaoJsError( GModel::GModel ERROR );
+        ThrowJsError( GModel::GModel ERROR );
     }
 
     GModel::~GModel()
     {
-#ifdef KAIFA
+#ifdef DEBUG
         LOG( INFO ) << "GModel::~GModel";
 #endif  // DEBUG
         if ( this->pModel && this->deleteit )

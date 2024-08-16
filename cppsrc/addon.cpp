@@ -6,7 +6,6 @@
 
 Napi::Object Init( Napi::Env env, Napi::Object exports )
 {
-    // FIXME 确认使用
     google::InitGoogleLogging( "OrtoolsBinding" );
     absl::SetFlag( &FLAGS_stderrthreshold, 0 );
 

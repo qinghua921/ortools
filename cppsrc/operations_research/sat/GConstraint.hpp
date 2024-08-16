@@ -80,7 +80,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GConstraint::OnlyEnforceIf 异常 );
+        ThrowJsError( GConstraint::OnlyEnforceIf 异常 );
         return info.Env().Undefined();
     }
 
@@ -94,13 +94,13 @@ namespace sat
             return GConstraint::constructor.New( { asExternal } );
         }
 
-        PaoJsError( GConstraint::WithName 异常 );
+        ThrowJsError( GConstraint::WithName 异常 );
         return info.Env().Undefined();
     }
 
     GConstraint::~GConstraint()
     {
-#ifdef KAIFA
+#ifdef DEBUG
         LOG( INFO ) << "GConstraint::~GConstraint";
 #endif
         if ( this->pConstraint )
@@ -126,7 +126,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GConstraint::GConstraint 异常 );
+        ThrowJsError( GConstraint::GConstraint 异常 );
     }
 }  // namespace sat
 

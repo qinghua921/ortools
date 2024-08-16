@@ -57,7 +57,7 @@ namespace sat
             return GBoolVar::constructor.New( { external } );
         }
 
-        PaoJsError( GBoolVar::WithName ERROR );
+        ThrowJsError( GBoolVar::WithName ERROR );
         return info.Env().Undefined();
     }
 
@@ -75,7 +75,7 @@ namespace sat
             return GBoolVar::constructor.New( { external } );
         }
 
-        PaoJsError( GBoolVar::Not ERROR );
+        ThrowJsError( GBoolVar::Not ERROR );
         return info.Env().Undefined();
     }
 
@@ -92,12 +92,12 @@ namespace sat
             }
         }
 
-        PaoJsError( GBoolVar::GBoolVar ERROR );
+        ThrowJsError( GBoolVar::GBoolVar ERROR );
     }
 
     GBoolVar::~GBoolVar()
     {
-#ifdef KAIFA
+#ifdef DEBUG
         LOG( INFO ) << "GBoolVar::~GBoolVar";
 #endif
     }

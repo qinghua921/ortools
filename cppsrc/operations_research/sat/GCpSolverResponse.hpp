@@ -67,12 +67,12 @@ namespace sat
             }
         }
 
-        PaoJsError( GCpSolverResponse::GCpSolverResponse ERROR );
+        ThrowJsError( GCpSolverResponse::GCpSolverResponse ERROR );
     }
 
     GCpSolverResponse::~GCpSolverResponse()
     {
-#ifdef KAIFA
+#ifdef DEBUG
         LOG( INFO ) << "GCpSolverResponse::~GCpSolverResponse";
 #endif
         if ( this->pCpSolverResponse && this->deleteit )

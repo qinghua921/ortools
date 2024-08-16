@@ -60,7 +60,7 @@ Napi::Value GDomain::FromValues( const Napi::CallbackInfo& info )
         }
     }
 
-    PaoJsError( GDomain::FromValues 祑都 );
+    ThrowJsError( GDomain::FromValues 嚙趣都 );
     return info.Env().Undefined();
 }
 
@@ -73,7 +73,7 @@ Napi::Value GDomain::Contains( const Napi::CallbackInfo& info )
         return Napi::Boolean::New( info.Env(), ret );
     }
 
-    PaoJsError( GDomain::Contains 祑都 );
+    ThrowJsError( GDomain::Contains 嚙趣都 );
     return info.Env().Undefined();
 }
 
@@ -92,7 +92,7 @@ Napi::Value GDomain::FlattenedIntervals( const Napi::CallbackInfo& info )
 
 GDomain::~GDomain()
 {
-#ifdef KAIFA
+#ifdef DEBUG
     LOG( INFO ) << "GDomain::~GDomain";
 #endif
 }
@@ -125,7 +125,7 @@ GDomain::GDomain( const Napi::CallbackInfo& info )
         return;
     }
 
-    PaoJsError( GDomain::GDomain 祑都 );
+    ThrowJsError( GDomain::GDomain 嚙趣都 );
 }
 
 }  // namespace operations_research

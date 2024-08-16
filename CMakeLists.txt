@@ -7,12 +7,11 @@ set(ORTOOLS_ROOT ${CMAKE_SOURCE_DIR}/cmake/or-tools_x64/)
 
 project(ortools_binding LANGUAGES CXX)
 
-# FIXME 生产, 开发
 add_definitions(
   -DNAPI_VERSION=18
   -DNAPI_DISABLE_CPP_EXCEPTIONS
   -DNODE_ADDON_API_DISABLE_DEPRECATED
-  -DKAIFA1
+  -DDEBUG
 )
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
@@ -23,8 +22,6 @@ include_directories(${ORTOOLS_INCLUDE_DIRS})
 
 aux_source_directory(cppsrc cppsrc)
 aux_source_directory(cppsrc/operations_research cppsrc_operations_research)
-
-message("#### CMAKE_JS_SRC  " ${CMAKE_JS_SRC})
 
 add_library(${PROJECT_NAME} SHARED
   ${cppsrc}
@@ -38,8 +35,6 @@ target_include_directories(${PROJECT_NAME}
   ${PROJECT_SOURCE_DIR}/node_modules/node-api-headers/include
 )
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
-
-message("#### ORTOOLS_LIBRARIES  " ${ORTOOLS_LIBRARIES})
 
 target_link_libraries(${PROJECT_NAME} ${ORTOOLS_LIBRARIES} ${CMAKE_JS_LIB})
 

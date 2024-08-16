@@ -50,12 +50,12 @@ GMPConstraint::GMPConstraint( const Napi::CallbackInfo& info )
         }
     }
 
-    PaoJsError( GMPConstraint::GMPConstraint 异常 );
+    ThrowJsError( GMPConstraint::GMPConstraint 异常 );
 }
 
 GMPConstraint::~GMPConstraint()
 {
-#ifdef KAIFA
+#ifdef DEBUG
     LOG( INFO ) << "GMPConstraint::~GMPConstraint";
 #endif
 }
@@ -74,7 +74,7 @@ Napi::Value GMPConstraint::SetCoefficient( const Napi::CallbackInfo& info )
         }
     }
 
-    PaoJsError( GMPConstraint::SetCoefficient 异常 );
+    ThrowJsError( GMPConstraint::SetCoefficient 异常 );
     return info.Env().Undefined();
 }
 

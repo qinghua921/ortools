@@ -33,7 +33,7 @@ GMPSolverWorker::GMPSolverWorker( Napi::Env env, MPSolver* pMPSolver )
 
 GMPSolverWorker::~GMPSolverWorker()
 {
-#ifdef KAIFA
+#ifdef DEBUG
     LOG( INFO ) << "GMPSolverWorker::~GMPSolverWorker";
 #endif
 };

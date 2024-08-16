@@ -42,12 +42,12 @@ namespace sat
             }
         }
 
-        PaoJsError( GTableConstraint::GTableConstraint ERROR );
+        ThrowJsError( GTableConstraint::GTableConstraint ERROR );
     }
 
     GTableConstraint::~GTableConstraint()
     {
-#ifdef KAIFA
+#ifdef DEBUG
         LOG( INFO ) << "GTableConstraint::~GTableConstraint";
 #endif
         if ( this->pTableConstraint )
@@ -89,7 +89,7 @@ namespace sat
             }
         }
 
-        PaoJsError( GTableConstraint::AddTuple ERROR );
+        ThrowJsError( GTableConstraint::AddTuple ERROR );
         return info.Env().Undefined();
     }
 

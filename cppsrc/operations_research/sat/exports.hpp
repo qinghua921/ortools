@@ -20,18 +20,18 @@ namespace sat
     {
         auto satExports = Napi::Object::New( env );
 
-        GCpModelBuilder::Init( env, satExports );
-        GConstraint::Init( env, satExports );
-        GIntVar::Init( env, satExports );
-        GLinearExpr::Init( env, satExports );
-        GCpModelProto::Init( env, satExports );
-        GCpSolverResponse::Init( env, satExports );
-        GIntervalVar::Init( env, satExports );
-        GBoolVar::Init( env, satExports );
-        GModel::Init( env, satExports );
-        GSatParameters::Init( env, satExports );
+        // GCpModelBuilder::Init( env, satExports );
+        // GConstraint::Init( env, satExports );
+        // GIntVar::Init( env, satExports );
+        // GLinearExpr::Init( env, satExports );
+        // GCpModelProto::Init( env, satExports );
+        // GCpSolverResponse::Init( env, satExports );
+        // GIntervalVar::Init( env, satExports );
+        // GBoolVar::Init( env, satExports );
+        // GModel::Init( env, satExports );
+        // GSatParameters::Init( env, satExports );
 
-        FuncInit( env, satExports );
+        // FuncInit( env, satExports );
 
         exports.Set( "sat", satExports );
     }

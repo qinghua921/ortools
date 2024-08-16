@@ -36,7 +36,7 @@ namespace sat
 
     FuncSolveCpModelWorker::~FuncSolveCpModelWorker()
     {
-#ifdef KAIFA
+#ifdef DEBUG
         LOG( INFO ) << "FuncSolveCpModelWorker::~FuncSolveCpModelWorker";
 #endif
     };
