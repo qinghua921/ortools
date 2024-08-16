@@ -1,9 +1,25 @@
 import { OrToolsVersion } from "../tssrc/operations_research/OrToolsVersion"
 
-test('001', async () =>
+test('001', () =>
 {
-    let ver = OrToolsVersion.VersionString()
+    let VersionString = OrToolsVersion.VersionString()
+    expect(VersionString).toBe('9.6.2534')
+})
 
-    expect(ver).toBe('9.0.90411118')
+test('002', () =>
+{
+    let MajorNumber = OrToolsVersion.MajorNumber()
+    expect(MajorNumber).toBe(9)
+})
 
+test('003', () =>
+{
+    let MinorNumber = OrToolsVersion.MinorNumber()
+    expect(MinorNumber).toBe(6)
+})
+
+test('004', () =>
+{
+    let PatchNumber = OrToolsVersion.PatchNumber()
+    expect(PatchNumber).toBe(2534)
 })
