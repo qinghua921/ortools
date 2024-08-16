@@ -1,9 +1,7 @@
 import { ortools } from "../nodeaddon"
 
 
-/**
- * 变量, 针对  Mathematical Programming (MP) model
- */
+/// The class for variables of a Mathematical Programming (MP) model.
 export interface MPVariable
 {
     /**
