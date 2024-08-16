@@ -1,4 +1,5 @@
 import { OrToolsVersion } from "../tssrc/operations_research/OrToolsVersion"
+import { MPSolver } from "../tssrc/operations_research/MPSolver"
 
 test('001', () =>
 {
@@ -22,4 +23,10 @@ test('004', () =>
 {
     let PatchNumber = OrToolsVersion.PatchNumber()
     expect(PatchNumber).toBe(2534)
+})
+
+test('005', () =>
+{
+    let solver = MPSolver.CreateSolver("BOP_INTEGER_PROGRAMMING")
+    expect(solver).not.toBeUndefined()
 })

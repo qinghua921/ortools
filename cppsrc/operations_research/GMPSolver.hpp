@@ -76,7 +76,7 @@ GMPSolver::GMPSolver( const Napi::CallbackInfo& info )
         if ( this->pMPSolver ) return;
     }
 
-    ThrowJsError( GMPSolver::GMPSolver 异常 );
+    ThrowJsError( GMPSolver::GMPSolver Error );
 };
 
 GMPSolver::~GMPSolver()
@@ -98,7 +98,7 @@ Napi::Value GMPSolver::CreateSolver( const Napi::CallbackInfo& info )
         return constructor.New( { info[ 0 ].As< Napi::String >() } );
     }
 
-    ThrowJsError( GMPSolver::CreateSolver 异常 );
+    ThrowJsError( GMPSolver::CreateSolver Error );
     return info.Env().Undefined();
 };
 
@@ -120,7 +120,7 @@ Napi::Value GMPSolver::MakeRowConstraint( const Napi::CallbackInfo& info )
         return GMPConstraint::constructor.New( { asExternalVar } );
     }
 
-    ThrowJsError( GMPSolver::MakeRowConstraint 异常 );
+    ThrowJsError( GMPSolver::MakeRowConstraint Error );
     return info.Env().Undefined();
 }
 
@@ -178,7 +178,7 @@ Napi::Value GMPSolver::MakeNumVar( const Napi::CallbackInfo& info )
         return GMPVariable::constructor.New( { asExternalVar } );
     }
 
-    ThrowJsError( GMPSolver::MakeNumVar 异常 );
+    ThrowJsError( GMPSolver::MakeNumVar Error );
     return info.Env().Undefined();
 }
 

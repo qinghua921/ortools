@@ -2,7 +2,7 @@
 
 // #include "GDomain.hpp"
 // #include "sat/exports.hpp"
-// #include "GMPSolver.hpp"
+#include "GMPSolver.hpp"
 // #include "GMPVariable.hpp"
 // #include "GMPConstraint.hpp"
 // #include "GMPObjective.hpp"
@@ -20,7 +20,7 @@ void Init( Napi::Env env, Napi::Object exports_ )
     // GDomain::Init( env, exports );
     // GMPConstraint::Init( env, exports );
     // GMPObjective::Init( env, exports );
-    // GMPSolver::Init( env, exports );
+    GMPSolver::Init( env, exports );
     // GMPVariable::Init( env, exports );
     // GClosedInterval::Init( env, exports );
 
