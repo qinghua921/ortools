@@ -58,7 +58,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GCpModelProto::GCpModelProto 异常 );
+        ThrowJsError( GCpModelProto::GCpModelProto Error );
     }
 
     GCpModelProto::~GCpModelProto()

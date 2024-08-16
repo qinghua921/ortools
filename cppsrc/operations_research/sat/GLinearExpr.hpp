@@ -80,7 +80,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GLinearExpr::DebugString 异常 );
+        ThrowJsError( GLinearExpr::DebugString Error );
         return info.Env().Undefined();
     }
 
@@ -176,7 +176,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GLinearExpr::WeightedSum 异常 );
+        ThrowJsError( GLinearExpr::WeightedSum Error );
         return info.Env().Undefined();
     }
 
@@ -326,7 +326,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GLinearExpr::GLinearExpr 异常 );
+        ThrowJsError( GLinearExpr::GLinearExpr Error );
     }
 
     GLinearExpr::~GLinearExpr()

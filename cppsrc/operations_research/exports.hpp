@@ -1,12 +1,12 @@
 ﻿#include <napi.h>
 
-// #include "GDomain.hpp"
-// #include "sat/exports.hpp"
+#include "GDomain.hpp"
+#include "sat/exports.hpp"
 #include "GMPSolver.hpp"
-// #include "GMPVariable.hpp"
-// #include "GMPConstraint.hpp"
-// #include "GMPObjective.hpp"
-// #include "GClosedInterval.hpp"
+#include "GMPVariable.hpp"
+#include "GMPConstraint.hpp"
+#include "GMPObjective.hpp"
+#include "GClosedInterval.hpp"
 #include "GOrToolsVersion.hpp"
 
 namespace operations_research
@@ -14,15 +14,15 @@ namespace operations_research
 void Init( Napi::Env env, Napi::Object exports_ )
 {
     auto exports = Napi::Object::New( env );
-    // sat::Init( env, exports );
+    sat::Init( env, exports );
 
     GOrToolsVersion::Init( env, exports );
-    // GDomain::Init( env, exports );
-    // GMPConstraint::Init( env, exports );
-    // GMPObjective::Init( env, exports );
+    GDomain::Init( env, exports );
+    GMPConstraint::Init( env, exports );
+    GMPObjective::Init( env, exports );
     GMPSolver::Init( env, exports );
-    // GMPVariable::Init( env, exports );
-    // GClosedInterval::Init( env, exports );
+    GMPVariable::Init( env, exports );
+    GClosedInterval::Init( env, exports );
 
     exports_.Set( "operations_research", exports );
 }

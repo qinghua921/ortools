@@ -80,7 +80,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GConstraint::OnlyEnforceIf 异常 );
+        ThrowJsError( GConstraint::OnlyEnforceIf Error );
         return info.Env().Undefined();
     }
 
@@ -94,7 +94,7 @@ namespace sat
             return GConstraint::constructor.New( { asExternal } );
         }
 
-        ThrowJsError( GConstraint::WithName 异常 );
+        ThrowJsError( GConstraint::WithName Error );
         return info.Env().Undefined();
     }
 
@@ -126,7 +126,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GConstraint::GConstraint 异常 );
+        ThrowJsError( GConstraint::GConstraint Error );
     }
 }  // namespace sat
 

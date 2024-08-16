@@ -105,7 +105,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GCpModelBuilder::Maximize 异常 );
+        ThrowJsError( GCpModelBuilder::Maximize Error );
         return info.Env().Undefined();
     }
     // FIXME 考虑 内存泄漏
@@ -135,7 +135,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GCpModelBuilder::AddMaxEquality 参数异常 );
+        ThrowJsError( GCpModelBuilder::AddMaxEquality Error );
         return info.Env().Undefined();
     }
 
@@ -164,7 +164,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GCpModelBuilder::AddMinEquality 参数异常 );
+        ThrowJsError( GCpModelBuilder::AddMinEquality E );
         return info.Env().Undefined();
     }
 
@@ -188,7 +188,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GCpModelBuilder::AddNoOverlap 异常 );
+        ThrowJsError( GCpModelBuilder::AddNoOverlap Error );
         return info.Env().Undefined();
     }
 
@@ -209,7 +209,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GCpModelBuilder::AddLinearConstraint 异常 );
+        ThrowJsError( GCpModelBuilder::AddLinearConstraint Error );
         return info.Env().Undefined();
     }
 
@@ -228,7 +228,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GCpModelBuilder::AddImplication 异常 );
+        ThrowJsError( GCpModelBuilder::AddImplication Error );
         return info.Env().Undefined();
     }
 
@@ -327,7 +327,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GCpModelBuilder::NewIntervalVar 异常 );
+        ThrowJsError( GCpModelBuilder::NewIntervalVar Error );
         return info.Env().Undefined();
     }
 
@@ -413,7 +413,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GCpModelBuilder::AddEquality 异常 );
+        ThrowJsError( GCpModelBuilder::AddEquality Error );
         return info.Env().Undefined();
     }
 
@@ -437,7 +437,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GCpModelBuilder::Maximize 异常 );
+        ThrowJsError( GCpModelBuilder::Maximize Error );
         return info.Env().Undefined();
     }
 
@@ -473,7 +473,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GCpModelBuilder::NewIntVar 异常 );
+        ThrowJsError( GCpModelBuilder::NewIntVar Error );
         return info.Env().Undefined();
     }
 
@@ -486,7 +486,7 @@ namespace sat
             return GBoolVar::constructor.New( { asExternalVar } );
         }
 
-        ThrowJsError( GCpModelBuilder::NewBoolVar 异常 );
+        ThrowJsError( GCpModelBuilder::NewBoolVar Error );
         return info.Env().Undefined();
     }
 
@@ -507,7 +507,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GCpModelBuilder::AddLessOrEqual 异常 );
+        ThrowJsError( GCpModelBuilder::AddLessOrEqual Error );
         return info.Env().Undefined();
     }
 
@@ -528,7 +528,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GCpModelBuilder::AddLessThan 异常 );
+        ThrowJsError( GCpModelBuilder::AddLessThan Error );
         return info.Env().Undefined();
     };
 

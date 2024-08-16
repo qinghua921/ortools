@@ -57,7 +57,7 @@ GMPObjective::GMPObjective( const Napi::CallbackInfo& info )
         }
     }
 
-    ThrowJsError( GMPObjective::GMPObjective 异常 );
+    ThrowJsError( GMPObjective::GMPObjective Error );
 };
 
 GMPObjective::~GMPObjective()
@@ -82,14 +82,14 @@ Napi::Value GMPObjective::SetCoefficient( const Napi::CallbackInfo& info )
 {
     if ( info.Length() < 2 || !info[ 0 ].IsObject() || !info[ 1 ].IsNumber() )
     {
-        ThrowJsError( SetCoefficient 参数异常 );
+        ThrowJsError( GMPObjective::SetCoefficient Error );
         return info.Env().Undefined();
     }
 
     GMPVariable* wrapper = GMPVariable::Unwrap( info[ 0 ].As< Napi::Object >() );
     if ( typeid( *wrapper ) != typeid( GMPVariable ) )
     {
-        ThrowJsError( SetCoefficient 参数类型异常 );
+        ThrowJsError( GMPObjective::SetCoefficient Error );
         return info.Env().Undefined();
     }
 

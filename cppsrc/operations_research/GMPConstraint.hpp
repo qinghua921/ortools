@@ -50,7 +50,7 @@ GMPConstraint::GMPConstraint( const Napi::CallbackInfo& info )
         }
     }
 
-    ThrowJsError( GMPConstraint::GMPConstraint 异常 );
+    ThrowJsError( GMPConstraint::GMPConstraint Error );
 }
 
 GMPConstraint::~GMPConstraint()
@@ -74,7 +74,7 @@ Napi::Value GMPConstraint::SetCoefficient( const Napi::CallbackInfo& info )
         }
     }
 
-    ThrowJsError( GMPConstraint::SetCoefficient 异常 );
+    ThrowJsError( GMPConstraint::SetCoefficient Error );
     return info.Env().Undefined();
 }
 

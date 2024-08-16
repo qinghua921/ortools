@@ -72,7 +72,7 @@ namespace sat
             }
         }
 
-        ThrowJsError( GIntervalVar::GIntervalVar 异常 );
+        ThrowJsError( GIntervalVar::GIntervalVar Error );
     }
 
     GIntervalVar::~GIntervalVar()
