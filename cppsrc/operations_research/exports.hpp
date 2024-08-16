@@ -1,12 +1,12 @@
 ﻿#include <napi.h>
 
-#include "GDomain.hpp"
+// #include "GDomain.hpp"
 #include "sat/exports.hpp"
-#include "GMPSolver.hpp"
-#include "GMPVariable.hpp"
-#include "GMPConstraint.hpp"
-#include "GMPObjective.hpp"
-#include "GClosedInterval.hpp"
+// #include "GMPSolver.hpp"
+// #include "GMPVariable.hpp"
+// #include "GMPConstraint.hpp"
+// #include "GMPObjective.hpp"
+// #include "GClosedInterval.hpp"
 
 namespace operations_research
 {

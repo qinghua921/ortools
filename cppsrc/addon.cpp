@@ -7,8 +7,6 @@
 Napi::Object Init( Napi::Env env, Napi::Object exports )
 {
     google::InitGoogleLogging( "OrtoolsBinding" );
-    absl::SetFlag( &FLAGS_stderrthreshold, 0 );
-
     operations_research::Init( env, exports );
 
     return exports;

@@ -1,16 +1,16 @@
 ﻿#include <napi.h>
 
-#include "GCpModelBuilder.hpp"
-#include "GConstraint.hpp"
-#include "GIntVar.hpp"
-#include "GLinearExpr.hpp"
-#include "GCpModelProto.hpp"
-#include "GCpSolverResponse.hpp"
-#include "Func.hpp"
-#include "GIntervalVar.hpp"
-#include "GBoolVar.hpp"
-#include "GModel.hpp"
-#include "GSatParameters.hpp"
+// #include "GCpModelBuilder.hpp"
+// #include "GConstraint.hpp"
+// #include "GIntVar.hpp"
+// #include "GLinearExpr.hpp"
+// #include "GCpModelProto.hpp"
+// #include "GCpSolverResponse.hpp"
+// #include "Func.hpp"
+// #include "GIntervalVar.hpp"
+// #include "GBoolVar.hpp"
+// #include "GModel.hpp"
+// #include "GSatParameters.hpp"
 
 namespace operations_research
 {
