@@ -1,4 +1,4 @@
-import { ortools } from "../fuzhu"
+﻿import { ortools } from "../nodeaddon"
 
 /**
 * Int64 的子集 [kint64min, kint64max].

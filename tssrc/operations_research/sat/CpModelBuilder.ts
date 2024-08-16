@@ -1,4 +1,4 @@
-import { CanAsLinearExpr, ortools } from "../../fuzhu"
+import { CanAsLinearExpr, ortools } from "../../nodeaddon"
 import { Domain } from "../Domain"
 import { BoolVar } from "./BoolVar"
 import { Constraint } from "./Constraint"

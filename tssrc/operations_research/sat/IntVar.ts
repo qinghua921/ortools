@@ -1,4 +1,4 @@
-import { ortools } from "../../fuzhu"
+import { ortools } from "../../nodeaddon"
 import { Domain } from "../Domain"
 
 

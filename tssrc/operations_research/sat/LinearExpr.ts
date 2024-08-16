@@ -1,4 +1,4 @@
-import { CanAsLinearExpr, ortools } from "../../fuzhu"
+import { CanAsLinearExpr, ortools } from "../../nodeaddon"
 import { BoolVar } from "./BoolVar"
 import { CpModelProto } from "./CpModelProto"
 import { IntVar } from "./IntVar"

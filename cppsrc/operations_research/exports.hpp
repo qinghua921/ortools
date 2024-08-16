@@ -7,6 +7,7 @@
 // #include "GMPConstraint.hpp"
 // #include "GMPObjective.hpp"
 // #include "GClosedInterval.hpp"
+#include "GOrToolsVersion.hpp"
 
 namespace operations_research
 {
@@ -15,6 +16,7 @@ void Init( Napi::Env env, Napi::Object exports_ )
     auto exports = Napi::Object::New( env );
     sat::Init( env, exports );
 
+    GOrToolsVersion::Init( env, exports );
     // GDomain::Init( env, exports );
     // GMPConstraint::Init( env, exports );
     // GMPObjective::Init( env, exports );

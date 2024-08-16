@@ -1,4 +1,4 @@
-import { ortools } from "../fuzhu"
+import { ortools } from "../nodeaddon"
 import { MPConstraint } from "./MPConstraint"
 import { MPObjective } from "./MPObjective"
 import { MPVariable } from "./MPVariable"

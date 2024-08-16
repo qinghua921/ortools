@@ -1,4 +1,4 @@
-import { CanAsLinearExpr, ortools } from "../../fuzhu"
+import { CanAsLinearExpr, ortools } from "../../nodeaddon"
 import { CpModelProto } from "./CpModelProto"
 import { CpSolverResponse } from "./CpSolverResponse"
 import { Model } from "./Model"

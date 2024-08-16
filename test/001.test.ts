@@ -1,12 +1,9 @@
-import { Domain } from "../tssrc/operations_research/Domain"
-import { CpModelBuilder } from "../tssrc/operations_research/sat/CpModelBuilder"
-import { NewFeasibleSolutionObserver, SolutionIntegerValue, NewSatParameters, SolveCpModel } from "../tssrc/operations_research/sat/Func"
-import { Model } from "../tssrc/operations_research/sat/Model"
-import { SatParameters } from "../tssrc/operations_research/sat/SatParameters"
+import { OrToolsVersion } from "../tssrc/operations_research/OrToolsVersion"
 
 test('001', async () =>
 {
-    let domain = Domain.FromValues([1, 3])
+    let ver = OrToolsVersion.VersionString()
 
-    expect(domain.FlattenedIntervals()).toStrictEqual([1, 1, 3, 3])
+    expect(ver).toBe('9.0.90411118')
+
 })
