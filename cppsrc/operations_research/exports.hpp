@@ -1,7 +1,7 @@
 ﻿#include <napi.h>
 
 // #include "GDomain.hpp"
-#include "sat/exports.hpp"
+// #include "sat/exports.hpp"
 // #include "GMPSolver.hpp"
 // #include "GMPVariable.hpp"
 // #include "GMPConstraint.hpp"
@@ -14,7 +14,7 @@ namespace operations_research
 void Init( Napi::Env env, Napi::Object exports_ )
 {
     auto exports = Napi::Object::New( env );
-    sat::Init( env, exports );
+    // sat::Init( env, exports );
 
     GOrToolsVersion::Init( env, exports );
     // GDomain::Init( env, exports );

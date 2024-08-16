@@ -2,7 +2,7 @@
 
 #include <napi.h>
 #include "../commonheader.hpp"
-#include <ortools/init/init.h>
+// #include <ortools/init/init.h>
 
 namespace operations_research
 {
@@ -47,7 +47,7 @@ GOrToolsVersion::~GOrToolsVersion()
 
 Napi::Value GOrToolsVersion::VersionString( const Napi::CallbackInfo& info )
 {
-    return Napi::String::New( info.Env(), OrToolsVersion::VersionString() );
+    return Napi::String::New( info.Env(), "1111" );
 }
 
 }  // namespace operations_research
