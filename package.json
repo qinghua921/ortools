@@ -1,6 +1,6 @@
 {
-  "name": "tsortools",
-  "version": "0.0.1",
+  "name": "ts-ortools",
+  "version": "0.0.3",
   "repository": "https://github.com/qinghua921/ortools.git",
   "scripts": {
     "tsbuild": "tsc -b",
