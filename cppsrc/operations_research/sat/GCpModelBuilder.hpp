@@ -108,8 +108,8 @@ namespace sat
         ThrowJsError( GCpModelBuilder::Maximize Error );
         return info.Env().Undefined();
     }
-    // FIXME 考虑 内存泄漏
-    // TODO  jest 不结束
+    // FIXME may be memory leak
+    // TODO  jest not over
     Napi::Value GCpModelBuilder::AddMaxEquality( const Napi::CallbackInfo& info )
     {
         if ( info.Length() == 2 && info[ 0 ].IsObject() && info[ 1 ].IsArray() )

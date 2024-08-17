@@ -105,7 +105,7 @@ namespace sat
 #endif
         if ( this->pConstraint )
         {
-            delete[]( ( byte* )this->pConstraint );
+            delete[] ( ( byte* )this->pConstraint );
             this->pConstraint = nullptr;
         }
     }
@@ -118,10 +118,10 @@ namespace sat
             auto pConstraint = info[ 0 ].As< Napi::External< Constraint > >().Data();
             if ( typeid( *pConstraint ) == typeid( Constraint ) )
             {
-                // 注意: 黑科技
-                auto neicun = new byte[ sizeof( Constraint ) ];
-                memcpy( neicun, pConstraint, sizeof( Constraint ) );
-                this->pConstraint = ( Constraint* )neicun;
+                // Note: Black technology
+                auto mem = new byte[ sizeof( Constraint ) ];
+                memcpy( mem, pConstraint, sizeof( Constraint ) );
+                this->pConstraint = ( Constraint* )mem;
                 return;
             }
         }

@@ -1,6 +1,7 @@
 {
   "name": "tsortools",
   "version": "0.0.1",
+  "repository": "https://github.com/qinghua921/ortools.git",
   "scripts": {
     "tsbuild": "tsc -b",
     "cppbuild": "cmake-js compile",

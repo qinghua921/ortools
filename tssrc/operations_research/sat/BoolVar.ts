@@ -2,15 +2,19 @@ import { ortools } from "../../nodeaddon"
 
 
 /**
- * Boolean 变量.
+ * A Boolean variable.
  *
- * 是 domain [0, 1] 的 IntVar, 只能使用 CpModelBuilder.NewBoolVar() 构造.
+ * This class refer to an IntegerVariableProto with domain [0, 1] or to its
+ * logical negation (Not). This is called a Boolean Literal in other context.
+ *
+ * This can only be constructed via \c CpModelBuilder.NewBoolVar().
  */
 export interface BoolVar
 {
     /**
-    * 设置名称
-    */
+     * Sets the name of the variable.
+     * Note that this will always set the "positive" version of this Boolean.
+     */ 
     WithName(name: string): BoolVar
 
     DebugString(): string
@@ -26,4 +30,6 @@ export interface BoolVar
     /** Returns the logical negation of the current Boolean variable. */
     Not(): BoolVar
 }
+
+
 export const BoolVar: {} = ortools.operations_research.sat.BoolVar

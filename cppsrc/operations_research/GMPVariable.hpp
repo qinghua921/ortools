@@ -63,7 +63,7 @@ GMPVariable::GMPVariable( const Napi::CallbackInfo& info )
         }
     }
 
-    ThrowJsError( GMPVariable::GMPVariable �쳣 );
+    ThrowJsError( GMPVariable::GMPVariable Error );
 };
 
 GMPVariable::~GMPVariable()

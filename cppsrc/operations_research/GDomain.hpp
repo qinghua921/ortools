@@ -60,7 +60,7 @@ Napi::Value GDomain::FromValues( const Napi::CallbackInfo& info )
         }
     }
 
-    ThrowJsError( GDomain::FromValues �쳣 );
+    ThrowJsError( GDomain::FromValues Error );
     return info.Env().Undefined();
 }
 
@@ -73,7 +73,7 @@ Napi::Value GDomain::Contains( const Napi::CallbackInfo& info )
         return Napi::Boolean::New( info.Env(), ret );
     }
 
-    ThrowJsError( GDomain::Contains �쳣 );
+    ThrowJsError( GDomain::Contains Error );
     return info.Env().Undefined();
 }
 
@@ -125,7 +125,7 @@ GDomain::GDomain( const Napi::CallbackInfo& info )
         return;
     }
 
-    ThrowJsError( GDomain::GDomain �쳣 );
+    ThrowJsError( GDomain::GDomain Error );
 }
 
 }  // namespace operations_research

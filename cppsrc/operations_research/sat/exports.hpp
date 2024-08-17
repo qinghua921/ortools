@@ -35,6 +35,5 @@ namespace sat
 
         exports.Set( "sat", satExports );
     }
-
 }  // namespace sat
 }  // namespace operations_research

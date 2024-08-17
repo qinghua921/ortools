@@ -248,7 +248,7 @@ namespace sat
     }
 
     /**
-     * 接受 Napi::Number, GLinearExpr, GIntVar, GBoolVar
+     * it can be: Napi::Number, GLinearExpr, GIntVar, GBoolVar
      */
     bool GLinearExpr::UnwrapValue( const Napi::Value& value, LinearExpr& linearExpr )
     {

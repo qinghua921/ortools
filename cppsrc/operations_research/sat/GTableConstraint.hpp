@@ -34,10 +34,10 @@ namespace sat
             auto pTableConstraint = info[ 0 ].As< Napi::External< TableConstraint > >().Data();
             if ( typeid( *pTableConstraint ) == typeid( TableConstraint ) )
             {
-                // 注意: 黑科技
-                auto neicun = new byte[ sizeof( TableConstraint ) ];
-                memcpy( neicun, pTableConstraint, sizeof( TableConstraint ) );
-                this->pTableConstraint = ( TableConstraint* )neicun;
+                // note: the black magic
+                auto mem = new byte[ sizeof( TableConstraint ) ];
+                memcpy( mem, pTableConstraint, sizeof( TableConstraint ) );
+                this->pTableConstraint = ( TableConstraint* )mem;
                 return;
             }
         }
