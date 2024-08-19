@@ -10,21 +10,21 @@ import { TableConstraint } from "./TableConstraint"
 
 
 /**
- * cp_model proto 包装类.
+ * Wrapper class around the cp_model proto.
  *
- * 两种类型的方法:
- *  - NewXXX to 创建变量.
- *  - AddXXX to 创建越苏.
+ * This class provides two types of methods:
+ *  - NewXXX to create integer, boolean, or interval variables.
+ *  - AddXXX to create new constraints and add them to the model.
  */
 export interface CpModelBuilder
 {
     /** 
-     * 从三个仿射表达式中创建一个区间变量 
+     * Creates an interval variable from 3 affine expressions.
      */
     NewIntervalVar(start: CanAsLinearExpr, size: CanAsLinearExpr, end: CanAsLinearExpr): IntervalVar
 
     /**  
-     * Creates an optional interval variable from 3 affine expressions and a Boolean variable. 
+     * Creates an optional interval variable from 3 affine expressions and a Boolean variable.
      */
     NewOptionalIntervalVar(start: CanAsLinearExpr, size: CanAsLinearExpr, end: CanAsLinearExpr, presence: BoolVar): IntervalVar
 

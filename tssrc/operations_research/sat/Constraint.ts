@@ -4,17 +4,23 @@ import { BoolVar } from "./BoolVar"
 
 
 /**
- * 约束, 必须使用 CpModelBuilder::AddXXX 构建
+ * A constraint.
+ *
+ * This class enables you to modify the constraint that was previously added to
+ * the model.
+ *
+ * The constraint must be built using the different \c CpModelBuilder::AddXXX
+ * methods.
  */
 export interface Constraint
 {
     /**
-     * 设置名称
+     * Sets the name of the constraint.
      */
     WithName(name: string): Constraint
 
     /**
-     * 获取名称
+     * Returns the name of the constraint (or the empty string if not set).
      */
     Name(): string
 
