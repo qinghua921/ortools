@@ -2,6 +2,7 @@ import
 {
   MPSolver,
   OptimizationProblemType,
+  ResultStatus,
 } from "../tssrc/operations_research/MPSolver";
 import { MPVariable } from "../tssrc/operations_research/MPVariable";
 import { LinearExpr } from "../tssrc/operations_research/LinearExpr";
@@ -11,6 +12,7 @@ import
   operator_GEQ,
   operator_LEQ,
 } from "../tssrc/operations_research/Func";
+import { MPConstraint } from "../tssrc/operations_research/MPConstraint";
 
 test("AssignmentTeamsMip", () =>
 {
@@ -274,13 +276,11 @@ test("AssignmentTeamsMip", () =>
   }
 
 
-  // // Group1
+  // Group1
   // {
   //   MPConstraint * g1 = solver -> MakeRowConstraint(1, 1);
   //   for (int i = 0; i < group1.size(); ++i )
   //   {
-  //     // a*b can be transformed into 0 <= a + b - 2*p <= 1 with p in [0,1]
-  //     // p is true if a AND b, false otherwise
   //     MPConstraint * tmp = solver -> MakeRowConstraint(0, 1);
   //     tmp -> SetCoefficient(work[group1[i].first], 1);
   //     tmp -> SetCoefficient(work[group1[i].second], 1);
@@ -290,7 +290,19 @@ test("AssignmentTeamsMip", () =>
   //     g1 -> SetCoefficient(p, 1);
   //   }
   // }
-  // // Group2
+  let g1 = solver.MakeRowConstraint(1, 1);
+  for (let i = 0; i < group1.length; ++i)
+  {
+    let tmp = solver.MakeRowConstraint(0, 1);
+    tmp.SetCoefficient(work[group1[i][0]], 1);
+    tmp.SetCoefficient(work[group1[i][1]], 1);
+    let p = solver.MakeBoolVar(`g1_p${i}`);
+    tmp.SetCoefficient(p, -2);
+
+    g1.SetCoefficient(p, 1);
+  }
+
+  // Group2
   // {
   //   MPConstraint * g2 = solver -> MakeRowConstraint(1, 1);
   //   for (int i = 0; i < group2.size(); ++i )
@@ -306,6 +318,18 @@ test("AssignmentTeamsMip", () =>
   //     g2 -> SetCoefficient(p, 1);
   //   }
   // }
+  let g2 = solver.MakeRowConstraint(1, 1);
+  for (let i = 0; i < group2.length; ++i)
+  {
+    let tmp = solver.MakeRowConstraint(0, 1);
+    tmp.SetCoefficient(work[group2[i][0]], 1);
+    tmp.SetCoefficient(work[group2[i][1]], 1);
+    let p = solver.MakeBoolVar(`g2_p${i}`);
+    tmp.SetCoefficient(p, -2);
+
+    g2.SetCoefficient(p, 1);
+  }
+
   // // Group3
   // {
   //   MPConstraint * g3 = solver -> MakeRowConstraint(1, 1);
@@ -322,6 +346,19 @@ test("AssignmentTeamsMip", () =>
   //     g3 -> SetCoefficient(p, 1);
   //   }
   // }
+  let g3 = solver.MakeRowConstraint(1, 1);
+  for (let i = 0; i < group3.length; ++i)
+  {
+    let tmp = solver.MakeRowConstraint(0, 1);
+
+
+    tmp.SetCoefficient(work[group3[i][0]], 1);
+    tmp.SetCoefficient(work[group3[i][1]], 1);
+    let p = solver.MakeBoolVar(`g3_p${i}`);
+    tmp.SetCoefficient(p, -2);
+
+    g3.SetCoefficient(p, 1);
+  }
   // // [END assignments]
 
   // // Objective.
@@ -335,11 +372,22 @@ test("AssignmentTeamsMip", () =>
   //   }
   // }
   // objective -> SetMinimization();
+  let objective = solver.MutableObjective();
+  for (let worker of all_workers)
+  {
+    for (let task of all_tasks)
+    {
+      objective.SetCoefficient(x[worker][task], costs[worker][task]);
+    }
+  }
+  objective.SetMinimization();
+
   // // [END objective]
 
   // // Solve
   // // [START solve]
   // const MPSolver:: ResultStatus result_status = solver -> Solve();
+  const result_status = solver.Solve();
   // // [END solve]
 
   // // Print solution.
@@ -349,7 +397,14 @@ test("AssignmentTeamsMip", () =>
   // {
   //   LOG(FATAL) << "No solution found.";
   // }
+  if (result_status != ResultStatus.OPTIMAL && result_status != ResultStatus.FEASIBLE)
+  {
+    console.log("No solution found.");
+  }
+
   // LOG(INFO) << "Total cost = " << objective -> Value() << "\n\n";
+  console.log(`Total cost = ${objective.Value()}`);
+
   // for (int worker : all_workers )
   // {
   //   for (int task : all_tasks )
@@ -363,6 +418,20 @@ test("AssignmentTeamsMip", () =>
   //     }
   //   }
   // }
+  for (let worker of all_workers)
+  {
+    for (let task of all_tasks)
+    {
+      // Test if x[i][j] is 0 or 1 (with tolerance for floating point
+      // arithmetic).
+      if (x[worker][task].solution_value() > 0.5)
+      {
+        console.log(`Worker ${worker} assigned to task ${task}.  Cost: ${costs[worker][task]}`);
+      }
+    }
+  }
+
+  // // [END print_solution]
   // [END print_solution]
 });
 

@@ -1,6 +1,7 @@
 import { ortools } from "../nodeaddon";
 import { LinearRange } from "./LinearRange";
 import { MPConstraint } from "./MPConstraint";
+import { MPObjective } from "./MPObjective";
 import { MPVariable } from "./MPVariable";
 
 /**
@@ -54,6 +55,30 @@ export enum OptimizationProblemType
 }
 
 /**
+ * The status of solving the problem. The straightforward translation to
+ * homonymous enum values of MPSolverResponseStatus (see
+ * ./linear_solver.proto) is guaranteed by ./enum_consistency_test.cc, you may
+ * rely on it.
+ */
+export enum ResultStatus
+{
+     /// optimal.
+     OPTIMAL,
+     /// feasible, or stopped by limit.
+     FEASIBLE,
+     /// proven infeasible.
+     INFEASIBLE,
+     /// proven unbounded.
+     UNBOUNDED,
+     /// abnormal, i.e., error of some kind.
+     ABNORMAL,
+     /// the model is trivially invalid (NaN coefficients, etc).
+     MODEL_INVALID,
+     /// not been solved yet.
+     NOT_SOLVED = 6
+};
+
+/**
  * This mathematical programming (MP) solver class is the main class
  * though which users build and solve problems.
  */
@@ -91,6 +116,17 @@ export interface MPSolver
 
      // As above, but also names the constraint.
      MakeRowConstraint(range: LinearRange, name: string): MPConstraint;
+
+     // Returns the mutable objective object.
+     //      MPObjective* MutableObjective() { return objective_.get(); }
+     MutableObjective(): MPObjective;
+
+     // Solves the problem using the default parameter values.
+     //      ResultStatus Solve();
+     Solve(): ResultStatus;
+
+     //      /// Solves the problem using the specified parameter values.
+     //      ResultStatus Solve(const MPSolverParameters& param);
 }
 
 export const MPSolver:
@@ -99,6 +135,7 @@ export const MPSolver:
            * Create a solver with the given name and underlying solver backend.
            */
           new(name: string, problem_type: OptimizationProblemType): MPSolver;
+
      } = ortools.operations_research.MPSolver;
 
 // class MPSolver {
@@ -272,37 +309,7 @@ export const MPSolver:
 //       */
 //      const MPObjective& Objective() const { return *objective_; }
 
-//      /// Returns the mutable objective object.
-//      MPObjective* MutableObjective() { return objective_.get(); }
 
-//      /**
-//       * The status of solving the problem. The straightforward translation to
-//       * homonymous enum values of MPSolverResponseStatus (see
-//       * ./linear_solver.proto) is guaranteed by ./enum_consistency_test.cc, you may
-//       * rely on it.
-//       */
-//      enum ResultStatus {
-//        /// optimal.
-//        OPTIMAL,
-//        /// feasible, or stopped by limit.
-//        FEASIBLE,
-//        /// proven infeasible.
-//        INFEASIBLE,
-//        /// proven unbounded.
-//        UNBOUNDED,
-//        /// abnormal, i.e., error of some kind.
-//        ABNORMAL,
-//        /// the model is trivially invalid (NaN coefficients, etc).
-//        MODEL_INVALID,
-//        /// not been solved yet.
-//        NOT_SOLVED = 6
-//      };
-
-//      /// Solves the problem using the default parameter values.
-//      ResultStatus Solve();
-
-//      /// Solves the problem using the specified parameter values.
-//      ResultStatus Solve(const MPSolverParameters& param);
 
 //      /**
 //       * Writes the model using the solver internal write function.  Currently only

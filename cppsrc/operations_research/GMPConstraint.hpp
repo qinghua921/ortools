@@ -16,7 +16,9 @@ public:
         Napi::Function func = DefineClass(
             env,
             "MPConstraint",
-            {} );
+            {
+                InstanceMethod( "SetCoefficient", &GMPConstraint::SetCoefficient ),
+            } );
 
         constructor = Napi::Persistent( func );
         exports.Set( "MPConstraint", func );
@@ -54,13 +56,22 @@ public:
     //   /// Clears all variables and coefficients. Does not clear the bounds.
     //   void Clear();
 
-    //   /**
-    //    * Sets the coefficient of the variable on the constraint.
-    //    *
-    //    * If the variable does not belong to the solver, the function just returns,
-    //    * or crashes in non-opt mode.
-    //    */
     //   void SetCoefficient(const MPVariable* const var, double coeff);
+    void SetCoefficient( const Napi::CallbackInfo& info )
+    {
+        if ( info.Length() == 2 && info[ 0 ].IsObject() && info[ 1 ].IsNumber() )
+        {
+            auto pGMPVariable = GMPVariable::Unwrap( info[ 0 ].As< Napi::Object >() );
+            if ( typeid( *pGMPVariable ) == typeid( GMPVariable ) )
+            {
+                double coeff = info[ 1 ].As< Napi::Number >().DoubleValue();
+                pMPConstraint->SetCoefficient( pGMPVariable->pMPVariable, coeff );
+                return;
+            }
+        }
+
+        ThrowJsError( GMPConstraint::SetCoefficient Error );
+    }
 
     //   /**
     //    * Gets the coefficient of a given variable on the constraint (which is 0 if

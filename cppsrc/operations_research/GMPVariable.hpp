@@ -18,7 +18,9 @@ public:
         Napi::Function func = DefineClass(
             env,
             "MPVariable",
-            {} );
+            {
+                InstanceMethod( "solution_value", &GMPVariable::solution_value ),
+            } );
 
         constructor = Napi::Persistent( func );
         exports.Set( "MPVariable", func );
@@ -65,14 +67,11 @@ public:
     //     return integer_;
     // }
 
-    // /**
-    //  * Returns the value of the variable in the current solution.
-    //  *
-    //  * If the variable is integer, then the value will always be an integer (the
-    //  * underlying solver handles floating-point values only, but this function
-    //  * automatically rounds it to the nearest integer; see: man 3 round).
-    //  */
     // double solution_value() const;
+    Napi::Value solution_value( const Napi::CallbackInfo& info )
+    {
+        return Napi::Number::New( info.Env(), pMPVariable->solution_value() );
+    }
 
     // /// Returns the index of the variable in the MPSolver::variables_.
     // int index() const

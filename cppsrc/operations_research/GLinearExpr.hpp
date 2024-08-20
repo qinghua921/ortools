@@ -53,6 +53,13 @@ public:
                 this->pLinearExpr = new LinearExpr( pMPVariable->pMPVariable );
                 return;
             }
+
+            GLinearExpr* pGLinearExpr = GLinearExpr::Unwrap( info[ 0 ].As< Napi::Object >() );
+            if ( typeid( *pGLinearExpr ) == typeid( GLinearExpr ) )
+            {
+                this->pLinearExpr = new LinearExpr( *pGLinearExpr->pLinearExpr );
+                return;
+            }
         }
 
         ThrowJsError( GLinearExpr::GLinearExpr Error );

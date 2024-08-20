@@ -6,6 +6,14 @@ import { ortools } from "../nodeaddon"
  */
 export interface MPVariable
 {
+    /**
+      * Returns the value of the variable in the current solution.
+      *
+      * If the variable is integer, then the value will always be an integer (the
+      * underlying solver handles floating-point values only, but this function
+      * automatically rounds it to the nearest integer; see: man 3 round).
+      */
+    solution_value(): number;
 }
 
 export const MPVariable: {} = ortools.operations_research.MPVariable
@@ -22,15 +30,7 @@ export const MPVariable: {} = ortools.operations_research.MPVariable
 //      /// Returns the integrality requirement of the variable.
 //      bool integer() const { return integer_; }
    
-//      /**
-//       * Returns the value of the variable in the current solution.
-//       *
-//       * If the variable is integer, then the value will always be an integer (the
-//       * underlying solver handles floating-point values only, but this function
-//       * automatically rounds it to the nearest integer; see: man 3 round).
-//       */
-//      double solution_value() const;
-   
+ 
 //      /// Returns the index of the variable in the MPSolver::variables_.
 //      int index() const { return index_; }
    

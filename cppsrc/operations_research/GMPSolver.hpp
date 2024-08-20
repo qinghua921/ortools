@@ -25,6 +25,8 @@ public:
             {
                 InstanceMethod( "MakeBoolVar", &GMPSolver::MakeBoolVar ),
                 InstanceMethod( "MakeRowConstraint", &GMPSolver::MakeRowConstraint ),
+                InstanceMethod( "MutableObjective", &GMPSolver::MutableObjective ),
+                InstanceMethod( "Solve", &GMPSolver::Solve ),
             } );
 
         constructor = Napi::Persistent( func );
@@ -344,38 +346,32 @@ public:
     //     return *objective_;
     // }
 
-    // /// Returns the mutable objective object.
     // MPObjective* MutableObjective()
+    Napi::Value MutableObjective( const Napi::CallbackInfo& info )
+    {
+        // FIXME: maybe early delete the objective?
+        auto obj        = pMPSolver->MutableObjective();
+        auto asExternal = Napi::External< MPObjective >::New( info.Env(), obj );
+        return GMPObjective::constructor.New( { asExternal } );
+    }
+
     // {
     //     return objective_.get();
     // }
 
-    // /**
-    //  * The status of solving the problem. The straightforward translation to
-    //  * homonymous enum values of MPSolverResponseStatus (see
-    //  * ./linear_solver.proto) is guaranteed by ./enum_consistency_test.cc, you may
-    //  * rely on it.
-    //  */
-    // enum ResultStatus
-    // {
-    //     /// optimal.
-    //     OPTIMAL,
-    //     /// feasible, or stopped by limit.
-    //     FEASIBLE,
-    //     /// proven infeasible.
-    //     INFEASIBLE,
-    //     /// proven unbounded.
-    //     UNBOUNDED,
-    //     /// abnormal, i.e., error of some kind.
-    //     ABNORMAL,
-    //     /// the model is trivially invalid (NaN coefficients, etc).
-    //     MODEL_INVALID,
-    //     /// not been solved yet.
-    //     NOT_SOLVED = 6
-    // };
 
-    // /// Solves the problem using the default parameter values.
     // ResultStatus Solve();
+    Napi::Value Solve( const Napi::CallbackInfo& info )
+    {
+        if ( info.Length() == 0 )
+        {
+            MPSolver::ResultStatus status = pMPSolver->Solve();
+            return Napi::Number::New( info.Env(), static_cast< int >( status ) );
+        }
+
+        ThrowJsError( GMPSolver::Solve Error );
+        return info.Env().Undefined();
+    }
 
     // /// Solves the problem using the specified parameter values.
     // ResultStatus Solve( const MPSolverParameters& param );
