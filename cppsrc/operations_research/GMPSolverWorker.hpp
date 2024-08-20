@@ -33,7 +33,7 @@ GMPSolverWorker::GMPSolverWorker( Napi::Env env, MPSolver* pMPSolver )
 
 GMPSolverWorker::~GMPSolverWorker()
 {
-#ifdef DEBUG
+#ifdef GDEBUG
     LOG( INFO ) << "GMPSolverWorker::~GMPSolverWorker";
 #endif
 };
