@@ -29,7 +29,7 @@ public:
         if ( info.Length() == 1 && info[ 0 ].IsExternal() )
         {
             auto pMPConstraint = info[ 0 ].As< Napi::External< MPConstraint > >().Data();
-            if ( typeid( *pMPConstraint ) != typeid( MPConstraint ) )
+            if ( typeid( *pMPConstraint ) == typeid( MPConstraint ) )
             {
                 this->pMPConstraint = pMPConstraint;
                 return;

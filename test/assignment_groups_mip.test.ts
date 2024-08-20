@@ -193,9 +193,8 @@ test("AssignmentTeamsMip", () =>
       let t = x[worker][task];
       worker_sum.operator_plus(t);
     }
-    let c = operator_LEQ(worker_sum, 1);
-    // solver.MakeRowConstraint();
-    // TODO continue here
+    let c = operator_LEQ(worker_sum, 1.0);
+    solver.MakeRowConstraint(c);
   }
   expect(1).toBe(1);
   // Each task is assigned to exactly one worker.
@@ -208,6 +207,18 @@ test("AssignmentTeamsMip", () =>
   //   }
   //   solver -> MakeRowConstraint(task_sum == 1.0);
   // }
+  for (let task of all_tasks)
+  {
+    const task_sum: LinearExpr = new LinearExpr();
+    for (let worker of all_workers)
+    {
+      let t = x[worker][task];
+      task_sum.operator_plus(t);
+    }
+    let c = operator_EQ(task_sum, 1.0);
+    solver.MakeRowConstraint(c);
+  }
+
   // for (let task of all_tasks)
   // {
   //   const task_sum: LinearExpr = new LinearExpr();
@@ -217,6 +228,16 @@ test("AssignmentTeamsMip", () =>
   //     task_sum.operator_plus(t);
   //   }
   // }
+  for (let task of all_tasks)
+  {
+    const task_sum: LinearExpr = new LinearExpr();
+    for (let worker of all_workers)
+    {
+      let t = x[worker][task];
+      task_sum.operator_plus(t);
+    }
+  }
+
   // // [END constraints]
 
   // // [START assignments]
@@ -227,6 +248,9 @@ test("AssignmentTeamsMip", () =>
   // {
   //   work[worker] = solver -> MakeBoolVar(absl:: StrFormat("work[%d]", worker));
   // }
+  const work: MPVariable[] = all_workers.map(worker =>
+    solver.MakeBoolVar(`work[${worker}]`)
+  );
 
   // for (int worker : all_workers )
   // {
@@ -237,6 +261,18 @@ test("AssignmentTeamsMip", () =>
   //   }
   //   solver -> MakeRowConstraint(work[worker] == task_sum);
   // }
+  for (let worker of all_workers)
+  {
+    const task_sum: LinearExpr = new LinearExpr();
+    for (let task of all_tasks)
+    {
+      let t = x[worker][task];
+      task_sum.operator_plus(t);
+    }
+    let c = operator_EQ(work[worker], task_sum);
+    solver.MakeRowConstraint(c);
+  }
+
 
   // // Group1
   // {

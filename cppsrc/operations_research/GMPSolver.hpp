@@ -24,6 +24,7 @@ public:
             "MPSolver",
             {
                 InstanceMethod( "MakeBoolVar", &GMPSolver::MakeBoolVar ),
+                InstanceMethod( "MakeRowConstraint", &GMPSolver::MakeRowConstraint ),
             } );
 
         constructor = Napi::Persistent( func );

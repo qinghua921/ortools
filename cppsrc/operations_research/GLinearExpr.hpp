@@ -58,6 +58,15 @@ public:
         ThrowJsError( GLinearExpr::GLinearExpr Error );
     }
 
+    ~GLinearExpr()
+    {
+        if ( this->pLinearExpr )
+        {
+            delete this->pLinearExpr;
+            this->pLinearExpr = nullptr;
+        }
+    }
+
     // LinearExpr& operator+=( const LinearExpr& rhs );
     Napi::Value operator_plus( const Napi::CallbackInfo& info )
     {
