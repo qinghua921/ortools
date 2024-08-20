@@ -10,24 +10,27 @@
 #include "GOrToolsVersion.hpp"
 #include "GLinearExpr.hpp"
 #include "Func.hpp"
+#include "GLinearRange.hpp"
 
 namespace operations_research
 {
 void Init( Napi::Env env, Napi::Object exports_ )
 {
     auto exports = Napi::Object::New( env );
-    sat::Init( env, exports );
 
     GOrToolsVersion::Init( env, exports );
     GDomain::Init( env, exports );
     GLinearExpr::Init( env, exports );
     GMPConstraint::Init( env, exports );
     GMPObjective::Init( env, exports );
+    GLinearRange::Init( env, exports );
     GMPSolver::Init( env, exports );
     GMPVariable::Init( env, exports );
     GClosedInterval::Init( env, exports );
 
     FuncInit( env, exports );
+
+    sat::Init( env, exports );
 
     exports_.Set( "operations_research", exports );
 }
