@@ -1,4 +1,6 @@
 import { MPSolver, OptimizationProblemType } from "../tssrc/operations_research/MPSolver"
+import { MPVariable } from "../tssrc/operations_research/MPVariable"
+import { LinearExpr } from "../tssrc/operations_research/LinearExpr";
 
 test('AssignmentTeamsMip', () =>
 {
@@ -142,7 +144,6 @@ test('AssignmentTeamsMip', () =>
   // if worker i is assigned to task j.
   // std:: vector < std:: vector < const MPVariable* > > x(
   //   num_workers, std:: vector < const MPVariable* > (num_tasks) );
-  const x: MPSolver.MPVariable[][] = Array(num_workers).fill(0).map(() => Array(num_tasks).fill(0).map(() => solver.makeBoolVar("x")));
   // for (int worker : all_workers )
   // {
   //   for (int task : all_tasks )
@@ -151,7 +152,10 @@ test('AssignmentTeamsMip', () =>
   //       solver -> MakeBoolVar(absl:: StrFormat("x[%d,%d]", worker, task));
   //   }
   // }
-  // // [END variables]
+  const x: MPVariable[][] = Array(num_workers).fill(0)
+    .map((_, worker) => Array(num_tasks).fill(0).map((_, task) => solver.MakeBoolVar(`x[${worker},${task}]`)));
+
+  // [END variables]
 
   // // Constraints
   // // [START constraints]
@@ -165,6 +169,15 @@ test('AssignmentTeamsMip', () =>
   //   }
   //   solver -> MakeRowConstraint(worker_sum <= 1.0);
   // }
+  for (let worker of all_workers)
+  {
+    const worker_sum: LinearExpr = new LinearExpr();
+    for (let task of all_tasks)
+    {
+      worker_sum.operator_plus(x[worker][task]);
+
+    }
+  }
   // // Each task is assigned to exactly one worker.
   // for (int task : all_tasks )
   // {

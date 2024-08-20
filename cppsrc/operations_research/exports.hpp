@@ -8,6 +8,7 @@
 #include "GMPObjective.hpp"
 #include "GClosedInterval.hpp"
 #include "GOrToolsVersion.hpp"
+#include "GLinearExpr.hpp"
 
 namespace operations_research
 {
@@ -18,6 +19,7 @@ void Init( Napi::Env env, Napi::Object exports_ )
 
     GOrToolsVersion::Init( env, exports );
     GDomain::Init( env, exports );
+    GLinearExpr::Init( env, exports );
     GMPConstraint::Init( env, exports );
     GMPObjective::Init( env, exports );
     GMPSolver::Init( env, exports );
