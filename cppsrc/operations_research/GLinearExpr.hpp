@@ -18,7 +18,9 @@ public:
         Napi::Function func = DefineClass(
             env,
             "LinearExpr",
-            {} );
+            {
+                InstanceMethod( "operator_plus", &GLinearExpr::operator_plus ),
+            } );
 
         constructor = Napi::Persistent( func );
         exports.Set( "LinearExpr", func );
@@ -64,14 +66,20 @@ public:
             GLinearExpr* pGLinearExpr = GLinearExpr::Unwrap( info[ 0 ].As< Napi::Object >() );
             if ( typeid( *pGLinearExpr ) == typeid( GLinearExpr ) )
             {
-                this->pLinearExpr->operator+=( *pGLinearExpr->pLinearExpr );
+                *( this->pLinearExpr ) += ( *pGLinearExpr->pLinearExpr );
+                return this->Value();
+            }
 
-                // todo 继续
-                return Napi::Value::New( this );
+            GMPVariable* pGMPVariable = GMPVariable ::Unwrap( info[ 0 ].As< Napi::Object >() );
+            if ( typeid( *pGMPVariable ) == typeid( GMPVariable ) )
+            {
+                *( this->pLinearExpr ) += ( pGMPVariable->pMPVariable );
+                return this->Value();
             }
         }
 
         ThrowJsError( GLinearExpr::operator_plus Error );
+        return info.Env().Undefined();
     }
 
     // /**

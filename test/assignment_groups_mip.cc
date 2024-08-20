@@ -126,6 +126,7 @@ void AssignmentTeamsMip()
         }
         solver->MakeRowConstraint( worker_sum <= 1.0 );
     }
+    
     // Each task is assigned to exactly one worker.
     for ( int task : all_tasks )
     {

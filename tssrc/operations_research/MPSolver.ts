@@ -1,4 +1,6 @@
-import { ortools } from "../nodeaddon"
+import { ortools } from "../nodeaddon";
+import { LinearRange } from "./LinearRange";
+import { MPConstraint } from "./MPConstraint";
 import { MPVariable } from "./MPVariable";
 
 /**
@@ -7,49 +9,49 @@ import { MPVariable } from "./MPVariable";
  * remain consistent with MPModelRequest::OptimizationProblemType
  *  (take particular care of the open-source version).
  */
-export enum OptimizationProblemType 
+export enum OptimizationProblemType
 {
-       // Linear programming problems.
-       // ----------------------------
-       CLP_LINEAR_PROGRAMMING = 0,
-       GLPK_LINEAR_PROGRAMMING = 1,
-       GLOP_LINEAR_PROGRAMMING = 2,  // Recommended default value. Made in Google.
-       // In-house linear programming solver based on the primal-dual hybrid
-       // gradient method. Sometimes faster than Glop for medium-size problems and
-       // scales to much larger problems than Glop.
-       PDLP_LINEAR_PROGRAMMING = 8,
-       HIGHS_LINEAR_PROGRAMMING = 15,
-   
-       // Integer programming problems.
-       // -----------------------------
-       // Recommended default value for MIP problems.
-       SCIP_MIXED_INTEGER_PROGRAMMING = 3,
-       GLPK_MIXED_INTEGER_PROGRAMMING = 4,
-       CBC_MIXED_INTEGER_PROGRAMMING = 5,
-   
-       // Commercial software (need license).
-       GUROBI_LINEAR_PROGRAMMING = 6,
-       GUROBI_MIXED_INTEGER_PROGRAMMING = 7,
-       CPLEX_LINEAR_PROGRAMMING = 10,
-       CPLEX_MIXED_INTEGER_PROGRAMMING = 11,
-       XPRESS_LINEAR_PROGRAMMING = 101,
-       XPRESS_MIXED_INTEGER_PROGRAMMING = 102,
-       HIGHS_MIXED_INTEGER_PROGRAMMING = 16,
-   
-       // Boolean optimization problem (requires only integer variables and works
-       // best with only Boolean variables).
-       BOP_INTEGER_PROGRAMMING = 12,
-   
-       // SAT based solver (requires only integer and Boolean variables).
-       // If you pass it mixed integer problems, it will scale coefficients to
-       // integer values, and solver continuous variables as integral variables.
-       //
-       // Recommended default value for pure integral problems problems.
-       SAT_INTEGER_PROGRAMMING = 14,
-   
-       // Dedicated knapsack solvers.
-       KNAPSACK_MIXED_INTEGER_PROGRAMMING = 13,
-     };
+     // Linear programming problems.
+     // ----------------------------
+     CLP_LINEAR_PROGRAMMING = 0,
+     GLPK_LINEAR_PROGRAMMING = 1,
+     GLOP_LINEAR_PROGRAMMING = 2, // Recommended default value. Made in Google.
+     // In-house linear programming solver based on the primal-dual hybrid
+     // gradient method. Sometimes faster than Glop for medium-size problems and
+     // scales to much larger problems than Glop.
+     PDLP_LINEAR_PROGRAMMING = 8,
+     HIGHS_LINEAR_PROGRAMMING = 15,
+
+     // Integer programming problems.
+     // -----------------------------
+     // Recommended default value for MIP problems.
+     SCIP_MIXED_INTEGER_PROGRAMMING = 3,
+     GLPK_MIXED_INTEGER_PROGRAMMING = 4,
+     CBC_MIXED_INTEGER_PROGRAMMING = 5,
+
+     // Commercial software (need license).
+     GUROBI_LINEAR_PROGRAMMING = 6,
+     GUROBI_MIXED_INTEGER_PROGRAMMING = 7,
+     CPLEX_LINEAR_PROGRAMMING = 10,
+     CPLEX_MIXED_INTEGER_PROGRAMMING = 11,
+     XPRESS_LINEAR_PROGRAMMING = 101,
+     XPRESS_MIXED_INTEGER_PROGRAMMING = 102,
+     HIGHS_MIXED_INTEGER_PROGRAMMING = 16,
+
+     // Boolean optimization problem (requires only integer variables and works
+     // best with only Boolean variables).
+     BOP_INTEGER_PROGRAMMING = 12,
+
+     // SAT based solver (requires only integer and Boolean variables).
+     // If you pass it mixed integer problems, it will scale coefficients to
+     // integer values, and solver continuous variables as integral variables.
+     //
+     // Recommended default value for pure integral problems problems.
+     SAT_INTEGER_PROGRAMMING = 14,
+
+     // Dedicated knapsack solvers.
+     KNAPSACK_MIXED_INTEGER_PROGRAMMING = 13,
+}
 
 /**
  * This mathematical programming (MP) solver class is the main class
@@ -60,22 +62,48 @@ export interface MPSolver
      /**
       * Creates a boolean variable.
       */
-      MakeBoolVar( name:string):MPVariable;
+     MakeBoolVar(name: string): MPVariable;
+
+     /**
+      * Creates a linear constraint with given bounds.
+      *
+      * Bounds can be finite or +/- MPSolver::infinity(). The MPSolver class
+      * assumes ownership of the constraint.
+      *
+      * @return a pointer to the newly created constraint.
+      */
+     MakeRowConstraint(lb: number, ub: number): MPConstraint;
+
+     // Creates a constraint with -infinity and +infinity bounds.
+     MakeRowConstraint(): MPConstraint;
+
+     // Creates a named constraint with given bounds.
+     MakeRowConstraint(lb: number, ub: number, name: string): MPConstraint;
+
+     // Creates a named constraint with -infinity and +infinity bounds.
+     MakeRowConstraint(name: string): MPConstraint;
+
+     /**
+      * Creates a constraint owned by MPSolver enforcing:
+      *     range.lower_bound() <= range.linear_expr() <= range.upper_bound()
+      */
+     MakeRowConstraint(range: LinearRange): MPConstraint;
+
+     // As above, but also names the constraint.
+     MakeRowConstraint(range: LinearRange, name: string): MPConstraint;
 }
 
-export const MPSolver: 
-{
-    /**
-     * Create a solver with the given name and underlying solver backend.
-     */
-     new(  name : string,  problem_type: OptimizationProblemType): MPSolver;
-} = ortools.operations_research.MPSolver
+export const MPSolver:
+     {
+          /**
+           * Create a solver with the given name and underlying solver backend.
+           */
+          new(name: string, problem_type: OptimizationProblemType): MPSolver;
+     } = ortools.operations_research.MPSolver;
 
 // class MPSolver {
 //     public:
-   
 
-   
 //      /**
 //       * Recommended factory method to create a MPSolver instance, especially in
 //       * non C++ languages.
@@ -105,13 +133,13 @@ export const MPSolver:
 //       *   - GLPK_MIXED_INTEGER_PROGRAMMING or GLPK or GLPK_MIP
 //       */
 //      static MPSolver* CreateSolver(const std::string& solver_id);
-   
+
 //      /**
 //       * Whether the given problem type is supported (this will depend on the
 //       * targets that you linked).
 //       */
 //      static bool SupportsProblemType(OptimizationProblemType problem_type);
-   
+
 //      /**
 //       * Parses the name of the solver. Returns true if the solver type is
 //       * successfully parsed as one of the OptimizationProblemType.
@@ -119,54 +147,54 @@ export const MPSolver:
 //       */
 //      static bool ParseSolverType(absl::string_view solver_id,
 //                                  OptimizationProblemType* type);
-   
+
 //      /**
 //       * Parses the name of the solver and returns the correct optimization type or
 //       * dies. Invariant: ParseSolverTypeOrDie(ToString(type)) = type.
 //       */
 //      static OptimizationProblemType ParseSolverTypeOrDie(
 //          const std::string& solver_id);
-   
+
 //      bool IsMIP() const;
-   
+
 //      /// Returns the name of the model set at construction.
 //      const std::string& Name() const {
 //        return name_;  // Set at construction.
 //      }
-   
+
 //      /// Returns the optimization problem type set at construction.
 //      virtual OptimizationProblemType ProblemType() const {
 //        return problem_type_;  // Set at construction.
 //      }
-   
+
 //      /**
 //       * Clears the objective (including the optimization direction), all variables
 //       * and constraints. All the other properties of the MPSolver (like the time
 //       * limit) are kept untouched.
 //       */
 //      void Clear();
-   
+
 //      /// Returns the number of variables.
 //      int NumVariables() const { return variables_.size(); }
-   
+
 //      /**
 //       * Returns the array of variables handled by the MPSolver. (They are listed in
 //       * the order in which they were created.)
 //       */
 //      const std::vector<MPVariable*>& variables() const { return variables_; }
-   
+
 //      /**
 //       * Returns the variable at position index.
 //       */
 //      MPVariable* variable(int index) const { return variables_[index]; }
-   
+
 //      /**
 //       * Looks up a variable by name, and returns nullptr if it does not exist. The
 //       * first call has a O(n) complexity, as the variable name index is lazily
 //       * created upon first use. Will crash if variable names are not unique.
 //       */
 //      MPVariable* LookupVariableOrNull(const std::string& var_name) const;
-   
+
 //      /**
 //       * Creates a variable with the given bounds, integrality requirement and
 //       * name. Bounds can be finite or +/- MPSolver::infinity(). The MPSolver owns
@@ -176,15 +204,13 @@ export const MPSolver:
 //       */
 //      MPVariable* MakeVar(double lb, double ub, bool integer,
 //                          const std::string& name);
-   
+
 //      /// Creates a continuous variable.
 //      MPVariable* MakeNumVar(double lb, double ub, const std::string& name);
-   
+
 //      /// Creates an integer variable.
 //      MPVariable* MakeIntVar(double lb, double ub, const std::string& name);
-   
 
-   
 //      /**
 //       * Creates an array of variables. All variables created have the same bounds
 //       * and integrality requirement. If nb <= 0, no variables are created, the
@@ -202,32 +228,32 @@ export const MPSolver:
 //      void MakeVarArray(int nb, double lb, double ub, bool integer,
 //                        const std::string& name_prefix,
 //                        std::vector<MPVariable*>* vars);
-   
+
 //      /// Creates an array of continuous variables.
 //      void MakeNumVarArray(int nb, double lb, double ub, const std::string& name,
 //                           std::vector<MPVariable*>* vars);
-   
+
 //      ///  Creates an array of integer variables.
 //      void MakeIntVarArray(int nb, double lb, double ub, const std::string& name,
 //                           std::vector<MPVariable*>* vars);
-   
+
 //      /// Creates an array of boolean variables.
 //      void MakeBoolVarArray(int nb, const std::string& name,
 //                            std::vector<MPVariable*>* vars);
-   
+
 //      /// Returns the number of constraints.
 //      int NumConstraints() const { return constraints_.size(); }
-   
+
 //      /**
 //       * Returns the array of constraints handled by the MPSolver.
 //       *
 //       * They are listed in the order in which they were created.
 //       */
 //      const std::vector<MPConstraint*>& constraints() const { return constraints_; }
-   
+
 //      /** Returns the constraint at the given index. */
 //      MPConstraint* constraint(int index) const { return constraints_[index]; }
-   
+
 //      /**
 //       *  Looks up a constraint by name, and returns nullptr if it does not exist.
 //       *
@@ -237,37 +263,7 @@ export const MPSolver:
 //       */
 //      MPConstraint* LookupConstraintOrNull(
 //          const std::string& constraint_name) const;
-   
-//      /**
-//       * Creates a linear constraint with given bounds.
-//       *
-//       * Bounds can be finite or +/- MPSolver::infinity(). The MPSolver class
-//       * assumes ownership of the constraint.
-//       *
-//       * @return a pointer to the newly created constraint.
-//       */
-//      MPConstraint* MakeRowConstraint(double lb, double ub);
-   
-//      /// Creates a constraint with -infinity and +infinity bounds.
-//      MPConstraint* MakeRowConstraint();
-   
-//      /// Creates a named constraint with given bounds.
-//      MPConstraint* MakeRowConstraint(double lb, double ub,
-//                                      const std::string& name);
-   
-//      /// Creates a named constraint with -infinity and +infinity bounds.
-//      MPConstraint* MakeRowConstraint(const std::string& name);
-   
-//      /**
-//       * Creates a constraint owned by MPSolver enforcing:
-//       *     range.lower_bound() <= range.linear_expr() <= range.upper_bound()
-//       */
-//      MPConstraint* MakeRowConstraint(const LinearRange& range);
-   
-//      /// As above, but also names the constraint.
-//      MPConstraint* MakeRowConstraint(const LinearRange& range,
-//                                      const std::string& name);
-   
+
 //      /**
 //       * Returns the objective object.
 //       *
@@ -275,10 +271,10 @@ export const MPSolver:
 //       * default value (see the MPObjective class below) at construction.
 //       */
 //      const MPObjective& Objective() const { return *objective_; }
-   
+
 //      /// Returns the mutable objective object.
 //      MPObjective* MutableObjective() { return objective_.get(); }
-   
+
 //      /**
 //       * The status of solving the problem. The straightforward translation to
 //       * homonymous enum values of MPSolverResponseStatus (see
@@ -301,19 +297,19 @@ export const MPSolver:
 //        /// not been solved yet.
 //        NOT_SOLVED = 6
 //      };
-   
+
 //      /// Solves the problem using the default parameter values.
 //      ResultStatus Solve();
-   
+
 //      /// Solves the problem using the specified parameter values.
 //      ResultStatus Solve(const MPSolverParameters& param);
-   
+
 //      /**
 //       * Writes the model using the solver internal write function.  Currently only
 //       * available for Gurobi.
 //       */
 //      void Write(const std::string& file_name);
-   
+
 //      /**
 //       * Advanced usage: compute the "activities" of all constraints, which are the
 //       * sums of their linear terms. The activities are returned in the same order
@@ -321,7 +317,7 @@ export const MPSolver:
 //       * you can also use MPConstraint::index() to get a constraint's index.
 //       */
 //      std::vector<double> ComputeConstraintActivities() const;
-   
+
 //      /**
 //       * Advanced usage: Verifies the *correctness* of the solution.
 //       *
@@ -341,7 +337,7 @@ export const MPSolver:
 //       * this method directly.
 //       */
 //      bool VerifySolution(double tolerance, bool log_errors) const;
-   
+
 //      /**
 //       * Advanced usage: resets extracted model to solve from scratch.
 //       *
@@ -351,7 +347,7 @@ export const MPSolver:
 //       * everything was reconstructed from scratch.
 //       */
 //      void Reset();
-   
+
 //      /** Interrupts the Solve() execution to terminate processing if possible.
 //       *
 //       * If the underlying interface supports interruption; it does that and returns
@@ -362,7 +358,7 @@ export const MPSolver:
 //       * interruption is supported for a given solver type.
 //       */
 //      bool InterruptSolve();
-   
+
 //      /**
 //       * Loads model from protocol buffer.
 //       *
@@ -381,10 +377,10 @@ export const MPSolver:
 //       */
 //      MPSolverResponseStatus LoadModelFromProtoWithUniqueNamesOrDie(
 //          const MPModelProto& input_model, std::string* error_message);
-   
+
 //      /// Encodes the current solution in a solution response protocol buffer.
 //      void FillSolutionResponseProto(MPSolutionResponse* response) const;
-   
+
 //      /**
 //       * Solves the model encoded by a MPModelRequest protocol buffer and fills the
 //       * solution encoded as a MPSolutionResponse. The solve is stopped prematurely
@@ -405,7 +401,7 @@ export const MPSolver:
 //                                 // `interrupt` is non-const because the internal
 //                                 // solver may set it to true itself, in some cases.
 //                                 std::atomic<bool>* interrupt = nullptr);
-   
+
 //      static bool SolverTypeSupportsInterruption(
 //          const MPModelRequest::SolverType solver) {
 //        // Interruption requires that MPSolver::InterruptSolve is supported for the
@@ -418,10 +414,10 @@ export const MPSolver:
 //               solver == MPModelRequest::SAT_INTEGER_PROGRAMMING ||
 //               solver == MPModelRequest::PDLP_LINEAR_PROGRAMMING;
 //      }
-   
+
 //      /// Exports model to protocol buffer.
 //      void ExportModelToProto(MPModelProto* output_model) const;
-   
+
 //      /**
 //       * Load a solution encoded in a protocol buffer onto this solver for easy
 //      access via the MPSolver interface.
@@ -458,13 +454,13 @@ export const MPSolver:
 //      absl::Status LoadSolutionFromProto(
 //          const MPSolutionResponse& response,
 //          double tolerance = std::numeric_limits<double>::infinity());
-   
+
 //      /**
 //       * Resets values of out of bound variables to the corresponding bound and
 //       * returns an error if any of the variables have NaN value.
 //       */
 //      absl::Status ClampSolutionWithinBounds();
-   
+
 //      /**
 //       * Shortcuts to the homonymous MPModelProtoExporter methods, via exporting to
 //       * a MPModelProto with ExportModelToProto() (see above).
@@ -474,7 +470,7 @@ export const MPSolver:
 //      bool ExportModelAsLpFormat(bool obfuscate, std::string* model_str) const;
 //      bool ExportModelAsMpsFormat(bool fixed_format, bool obfuscate,
 //                                  std::string* model_str) const;
-   
+
 //      /**
 //       *  Sets the number of threads to use by the underlying solver.
 //       *
@@ -486,10 +482,10 @@ export const MPSolver:
 //       * enable multi-threading via SetSolverSpecificParametersAsString().
 //       */
 //      absl::Status SetNumThreads(int num_threads);
-   
+
 //      /// Returns the number of threads to be used during solve.
 //      int GetNumThreads() const { return num_threads_; }
-   
+
 //      /**
 //       * Advanced usage: pass solver specific parameters in text format.
 //       *
@@ -500,7 +496,7 @@ export const MPSolver:
 //      std::string GetSolverSpecificParametersAsString() const {
 //        return solver_specific_parameter_string_;
 //      }
-   
+
 //      /**
 //       * Sets a hint for solution.
 //       *
@@ -517,7 +513,7 @@ export const MPSolver:
 //       * Calling SetHint clears all previous hints.
 //       */
 //      void SetHint(std::vector<std::pair<const MPVariable*, double> > hint);
-   
+
 //      /**
 //       * Advanced usage: possible basis status values for a variable and the slack
 //       * variable of a linear constraint.
@@ -529,7 +525,7 @@ export const MPSolver:
 //        FIXED_VALUE,
 //        BASIC
 //      };
-   
+
 //      /**
 //       * Advanced usage: Incrementality.
 //       *
@@ -544,14 +540,14 @@ export const MPSolver:
 //      void SetStartingLpBasis(
 //          const std::vector<MPSolver::BasisStatus>& variable_statuses,
 //          const std::vector<MPSolver::BasisStatus>& constraint_statuses);
-   
+
 //      /**
 //       * Infinity.
 //       *
 //       * You can use -MPSolver::infinity() for negative infinity.
 //       */
 //      static double infinity() { return std::numeric_limits<double>::infinity(); }
-   
+
 //      /**
 //       * Controls (or queries) the amount of output produced by the underlying
 //       * solver. The output can surface to LOGs, or to stdout or stderr, depending
@@ -561,36 +557,36 @@ export const MPSolver:
 //       * Output is suppressed by default.
 //       */
 //      bool OutputIsEnabled() const;
-   
+
 //      /// Enables solver logging.
 //      void EnableOutput();
-   
+
 //      /// Suppresses solver logging.
 //      void SuppressOutput();
-   
+
 //      absl::Duration TimeLimit() const { return time_limit_; }
 //      void SetTimeLimit(absl::Duration time_limit) {
 //        DCHECK_GE(time_limit, absl::ZeroDuration());
 //        time_limit_ = time_limit;
 //      }
-   
+
 //      absl::Duration DurationSinceConstruction() const {
 //        return absl::Now() - construction_time_;
 //      }
-   
+
 //      /// Returns the number of simplex iterations.
 //      int64_t iterations() const;
-   
+
 //      /**
 //       * Returns the number of branch-and-bound nodes evaluated during the solve.
 //       *
 //       * Only available for discrete problems.
 //       */
 //      int64_t nodes() const;
-   
+
 //      /// Returns a string describing the underlying solver and its version.
 //      std::string SolverVersion() const;
-   
+
 //      /**
 //       * Advanced usage: returns the underlying solver.
 //       *
@@ -605,7 +601,7 @@ export const MPSolver:
 //       * ClpSimplex*, GLPK: glp_prob*, SCIP: SCIP*).
 //       */
 //      void* underlying_solver();
-   
+
 //      /** Advanced usage: computes the exact condition number of the current scaled
 //       * basis: L1norm(B) * L1norm(inverse(B)), where B is the scaled basis.
 //       *
@@ -630,7 +626,7 @@ export const MPSolver:
 //       * conditioned.
 //       */
 //      double ComputeExactConditionNumber() const;
-   
+
 //      /**
 //       * Some solvers (MIP only, not LP) can produce multiple solutions to the
 //       * problem. Returns true when another solution is available, and updates the
@@ -646,7 +642,7 @@ export const MPSolver:
 //       * solvers for multiple solutions. Other solvers return false unconditionally.
 //       */
 //      ABSL_MUST_USE_RESULT bool NextSolution();
-   
+
 //      // Does not take ownership of "mp_callback".
 //      //
 //      // As of 2019-10-22, only SCIP and Gurobi support Callbacks.
@@ -655,13 +651,13 @@ export const MPSolver:
 //      // See go/mpsolver-callbacks for additional documentation.
 //      void SetCallback(MPCallback* mp_callback);
 //      bool SupportsCallbacks() const;
-   
+
 //      // Global counters of variables and constraints ever created across all
 //      // MPSolver instances. Those are only updated after the destruction
 //      // (or Clear()) of each MPSolver instance.
 //      static int64_t global_num_variables();
 //      static int64_t global_num_constraints();
-   
+
 //      // DEPRECATED: Use TimeLimit() and SetTimeLimit(absl::Duration) instead.
 //      // NOTE: These deprecated functions used the convention time_limit = 0 to mean
 //      // "no limit", which now corresponds to time_limit_ = InfiniteDuration().
@@ -678,12 +674,12 @@ export const MPSolver:
 //      double time_limit_in_secs() const {
 //        return static_cast<double>(time_limit()) / 1000.0;
 //      }
-   
+
 //      // DEPRECATED: Use DurationSinceConstruction() instead.
 //      int64_t wall_time() const {
 //        return absl::ToInt64Milliseconds(DurationSinceConstruction());
 //      }
-   
+
 //      friend class GLPKInterface;
 //      friend class CLPInterface;
 //      friend class CBCInterface;
@@ -699,86 +695,8 @@ export const MPSolver:
 //      friend class PdlpInterface;
 //      friend class HighsInterface;
 //      friend class KnapsackInterface;
-   
+
 //      // Debugging: verify that the given MPVariable* belongs to this solver.
 //      bool OwnsVariable(const MPVariable* var) const;
-   
-//     private:
-//      // Computes the size of the constraint with the largest number of
-//      // coefficients with index in [min_constraint_index,
-//      // max_constraint_index)
-//      int ComputeMaxConstraintSize(int min_constraint_index,
-//                                   int max_constraint_index) const;
-   
-//      // Returns true if the model has constraints with lower bound > upper bound.
-//      bool HasInfeasibleConstraints() const;
-   
-//      // Returns true if the model has at least 1 integer variable.
-//      bool HasIntegerVariables() const;
-   
-//      // Generates the map from variable names to their indices.
-//      void GenerateVariableNameIndex() const;
-   
-//      // Generates the map from constraint names to their indices.
-//      void GenerateConstraintNameIndex() const;
-   
-//      // The name of the linear programming problem.
-//      const std::string name_;
-   
-//      // The type of the linear programming problem.
-//      const OptimizationProblemType problem_type_;
-   
-//      // The solver interface.
-//      std::unique_ptr<MPSolverInterface> interface_;
-   
-//      // The vector of variables in the problem.
-//      std::vector<MPVariable*> variables_;
-//      // A map from a variable's name to its index in variables_.
-//      mutable std::optional<absl::flat_hash_map<std::string, int> >
-//          variable_name_to_index_;
-//      // Whether variables have been extracted to the underlying interface.
-//      std::vector<bool> variable_is_extracted_;
-   
-//      // The vector of constraints in the problem.
-//      std::vector<MPConstraint*> constraints_;
-//      // A map from a constraint's name to its index in constraints_.
-//      mutable std::optional<absl::flat_hash_map<std::string, int> >
-//          constraint_name_to_index_;
-//      // Whether constraints have been extracted to the underlying interface.
-//      std::vector<bool> constraint_is_extracted_;
-   
-//      // The linear objective function.
-//      std::unique_ptr<MPObjective> objective_;
-   
-//      // Initial values for all or some of the problem variables that can be
-//      // exploited as a starting hint by a solver.
-//      //
-//      // Note(user): as of 05/05/2015, we can't use >> because of some SWIG errors.
-//      //
-//      // TODO(user): replace by two vectors, a std::vector<bool> to indicate if a
-//      // hint is provided and a std::vector<double> for the hint value.
-//      std::vector<std::pair<const MPVariable*, double> > solution_hint_;
-   
-//      absl::Duration time_limit_ = absl::InfiniteDuration();  // Default = No limit.
-   
-//      const absl::Time construction_time_;
-   
-//      // Permanent storage for the number of threads.
-//      int num_threads_ = 1;
-   
-//      // Permanent storage for SetSolverSpecificParametersAsString().
-//      std::string solver_specific_parameter_string_;
-   
-//      static absl::Mutex global_count_mutex_;
-//    #ifndef SWIG
-//      static int64_t global_num_variables_ ABSL_GUARDED_BY(global_count_mutex_);
-//      static int64_t global_num_constraints_ ABSL_GUARDED_BY(global_count_mutex_);
-//    #endif
-   
-//      MPSolverResponseStatus LoadModelFromProtoInternal(
-//          const MPModelProto& input_model, bool clear_names,
-//          bool check_model_validity, std::string* error_message);
-   
-//      DISALLOW_COPY_AND_ASSIGN(MPSolver);
+
 //    };
-   

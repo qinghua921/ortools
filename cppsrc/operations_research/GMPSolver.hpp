@@ -7,13 +7,14 @@
 #include "GMPSolverWorker.hpp"
 #include "../commonheader.hpp"
 #include "ortools/linear_solver/linear_solver.h"
+#include "GLinearRange.hpp"
 
 namespace operations_research
 {
 class GMPSolver : public Napi::ObjectWrap< GMPSolver >
 {
 public:
-    MPSolver* pMPSolver;
+    MPSolver* pMPSolver = nullptr;
 
     static Napi::FunctionReference constructor;
     static Napi::Object            Init( Napi::Env env, Napi::Object exports )
@@ -255,35 +256,81 @@ public:
     // MPConstraint* LookupConstraintOrNull(
     //     const std::string& constraint_name ) const;
 
-    // /**
-    //  * Creates a linear constraint with given bounds.
-    //  *
-    //  * Bounds can be finite or +/- MPSolver::infinity(). The MPSolver class
-    //  * assumes ownership of the constraint.
-    //  *
-    //  * @return a pointer to the newly created constraint.
-    //  */
-    // MPConstraint* MakeRowConstraint( double lb, double ub );
+    /**
+     * MPConstraint* MakeRowConstraint( double lb, double ub );
+     *
+     * MPConstraint* MakeRowConstraint();
+     *
+     * MPConstraint* MakeRowConstraint( double lb, double ub, const std::string& name );
+     *
+     * MPConstraint* MakeRowConstraint( const std::string& name );
+     *
+     * MPConstraint* MakeRowConstraint( const LinearRange& range );
+     *
+     *  MPConstraint* MakeRowConstraint( const LinearRange& range, const std::string& name );
+     */
+    Napi::Value MakeRowConstraint( const Napi::CallbackInfo& info )
+    {
+        if ( info.Length() == 2 && info[ 0 ].IsNumber() && info[ 1 ].IsNumber() )
+        {
+            double        lb         = info[ 0 ].As< Napi::Number >().DoubleValue();
+            double        ub         = info[ 1 ].As< Napi::Number >().DoubleValue();
+            MPConstraint* constraint = pMPSolver->MakeRowConstraint( lb, ub );
+            auto          asExternal = Napi::External< MPConstraint >::New( info.Env(), constraint );
+            return GMPConstraint::constructor.New( { asExternal } );
+        }
 
-    // /// Creates a constraint with -infinity and +infinity bounds.
-    // MPConstraint* MakeRowConstraint();
+        if ( info.Length() == 0 )
+        {
+            MPConstraint* constraint = pMPSolver->MakeRowConstraint();
+            auto          asExternal = Napi::External< MPConstraint >::New( info.Env(), constraint );
+            return GMPConstraint::constructor.New( { asExternal } );
+        }
 
-    // /// Creates a named constraint with given bounds.
-    // MPConstraint* MakeRowConstraint( double lb, double ub,
-    //                                  const std::string& name );
+        if ( info.Length() == 3 && info[ 0 ].IsNumber() && info[ 1 ].IsNumber() && info[ 2 ].IsString() )
+        {
+            double        lb         = info[ 0 ].As< Napi::Number >().DoubleValue();
+            double        ub         = info[ 1 ].As< Napi::Number >().DoubleValue();
+            std::string   name       = info[ 2 ].As< Napi::String >().Utf8Value();
+            MPConstraint* constraint = pMPSolver->MakeRowConstraint( lb, ub, name );
+            auto          asExternal = Napi::External< MPConstraint >::New( info.Env(), constraint );
+            return GMPConstraint::constructor.New( { asExternal } );
+        }
 
-    // /// Creates a named constraint with -infinity and +infinity bounds.
-    // MPConstraint* MakeRowConstraint( const std::string& name );
+        if ( info.Length() == 1 && info[ 0 ].IsString() )
+        {
+            std::string   name       = info[ 0 ].As< Napi::String >().Utf8Value();
+            MPConstraint* constraint = pMPSolver->MakeRowConstraint( name );
+            auto          asExternal = Napi::External< MPConstraint >::New( info.Env(), constraint );
+            return GMPConstraint::constructor.New( { asExternal } );
+        }
 
-    // /**
-    //  * Creates a constraint owned by MPSolver enforcing:
-    //  *     range.lower_bound() <= range.linear_expr() <= range.upper_bound()
-    //  */
-    // MPConstraint* MakeRowConstraint( const LinearRange& range );
+        if ( info.Length() == 1 && info[ 0 ].IsObject() )
+        {
+            GLinearRange* range = GLinearRange ::Unwrap( info[ 0 ].As< Napi::Object >() );
+            if ( typeid( *range ) == typeid( GLinearRange ) )
+            {
+                MPConstraint* constraint = pMPSolver->MakeRowConstraint( *range->pLinearRange );
+                auto          asExternal = Napi::External< MPConstraint >::New( info.Env(), constraint );
+                return GMPConstraint::constructor.New( { asExternal } );
+            }
+        }
 
-    // /// As above, but also names the constraint.
-    // MPConstraint* MakeRowConstraint( const LinearRange& range,
-    //                                  const std::string& name );
+        if ( info.Length() == 2 && info[ 0 ].IsObject() && info[ 1 ].IsString() )
+        {
+            GLinearRange* range = GLinearRange ::Unwrap( info[ 0 ].As< Napi::Object >() );
+            if ( typeid( *range ) == typeid( GLinearRange ) )
+            {
+                std::string   name       = info[ 1 ].As< Napi::String >().Utf8Value();
+                MPConstraint* constraint = pMPSolver->MakeRowConstraint( *range->pLinearRange, name );
+                auto          asExternal = Napi::External< MPConstraint >::New( info.Env(), constraint );
+                return GMPConstraint::constructor.New( { asExternal } );
+            }
+        }
+
+        ThrowJsError( GMPSolver::MakeRowConstraint Error );
+        return info.Env().Undefined();
+    }
 
     // /**
     //  * Returns the objective object.

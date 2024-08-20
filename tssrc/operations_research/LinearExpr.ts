@@ -28,8 +28,8 @@ import { MPVariable } from "./MPVariable";
 export interface LinearExpr 
 {
     // LinearExpr& operator+=(const LinearExpr& rhs);
-    operator_plus(linear_expr: LinearExpr): LinearExpr;
- }
+    operator_plus(linear_expr: LinearExpr|MPVariable): LinearExpr;
+}
 
 export const LinearExpr: 
 {

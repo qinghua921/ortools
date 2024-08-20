@@ -9,6 +9,7 @@
 #include "GClosedInterval.hpp"
 #include "GOrToolsVersion.hpp"
 #include "GLinearExpr.hpp"
+#include "Func.hpp"
 
 namespace operations_research
 {
@@ -25,6 +26,8 @@ void Init( Napi::Env env, Napi::Object exports_ )
     GMPSolver::Init( env, exports );
     GMPVariable::Init( env, exports );
     GClosedInterval::Init( env, exports );
+
+    FuncInit( env, exports );
 
     exports_.Set( "operations_research", exports );
 }

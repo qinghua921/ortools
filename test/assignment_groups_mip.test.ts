@@ -1,6 +1,7 @@
 import { MPSolver, OptimizationProblemType } from "../tssrc/operations_research/MPSolver"
 import { MPVariable } from "../tssrc/operations_research/MPVariable"
 import { LinearExpr } from "../tssrc/operations_research/LinearExpr";
+import { operator_EQ, operator_GEQ, operator_LEQ } from '../tssrc/operations_research/Func'
 
 test('AssignmentTeamsMip', () =>
 {
@@ -174,11 +175,12 @@ test('AssignmentTeamsMip', () =>
     const worker_sum: LinearExpr = new LinearExpr();
     for (let task of all_tasks)
     {
-      worker_sum.operator_plus(x[worker][task]);
-
+      let t = x[worker][task];
+      worker_sum.operator_plus(t);
     }
+    solver.MakeRowConstraint(operator_LEQ(worker_sum, 1.0));
   }
-  // // Each task is assigned to exactly one worker.
+  // Each task is assigned to exactly one worker.
   // for (int task : all_tasks )
   // {
   //       LinearExpr task_sum;
@@ -188,6 +190,15 @@ test('AssignmentTeamsMip', () =>
   //   }
   //   solver -> MakeRowConstraint(task_sum == 1.0);
   // }
+  for (let task of all_tasks)
+  {
+    const task_sum: LinearExpr = new LinearExpr();
+    for (let worker of all_workers)
+    {
+      let t = x[worker][task];
+      task_sum.operator_plus(t);
+    }
+  }
   // // [END constraints]
 
   // // [START assignments]
