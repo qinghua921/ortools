@@ -1,109 +1,177 @@
 ﻿#pragma once
 
-#include "napi.h"
-#include ""
+#include <napi.h>
+#include "ortools/linear_solver/linear_solver.h"
+#include "../commonheader.hpp"
+#include "GMPVariable.hpp"
+#include "GMPConstraint.hpp"
+#include "GLinearRange.hpp"
+
 namespace operations_research
 {
+
 class GMPSolver : public Napi::ObjectWrap< GMPSolver >
 {
 public:
- static Napi::FunctionReference constructor;
+    static Napi::FunctionReference constructor;
+    MPSolver*                      pMPSolver = nullptr;
+
+    GMPSolver( const Napi::CallbackInfo& info )
+        : Napi::ObjectWrap< GMPSolver >( info )
+    {
+        // MPSolver( const std::string& name, OptimizationProblemType problem_type );
+        if ( info.Length() == 2 && info[ 0 ].IsString() && info[ 1 ].IsNumber() )
+        {
+            std::string name                     = info[ 0 ].As< Napi::String >().Utf8Value();
+            using OptimizationProblemType        = MPSolver::OptimizationProblemType;
+            OptimizationProblemType problem_type = static_cast< OptimizationProblemType >( info[ 1 ].As< Napi::Number >().Int32Value() );
+            pMPSolver                            = new MPSolver( name, problem_type );
+            return;
+        }
+
+        if ( info.Length() == 1 && info[ 0 ].IsExternal() )
+        {
+            auto external = info[ 0 ].As< Napi::External< MPSolver > >();
+            pMPSolver     = dynamic_cast< MPSolver* >( external.Data() );
+            if ( pMPSolver ) return;
+        }
+
+        ThrowJsError( GMPSolver::GMPSolver : Invalid arguments );
+    };
+
+    ~GMPSolver()
+    {
+        if ( pMPSolver )
+        {
+            delete pMPSolver;
+            pMPSolver = nullptr;
+        }
+    };
+
+    static Napi::Object Init( Napi::Env env, Napi::Object exports )
+    {
+        Napi::HandleScope scope( env );
+        Napi::Function    func = DefineClass(
+            env, "MPSolver",
+            {
+                StaticMethod( "CreateSolver", &GMPSolver::CreateSolver ),
+                InstanceMethod( "MakeBoolVar", &GMPSolver::MakeBoolVar ),
+                InstanceMethod( "MakeRowConstraint", &GMPSolver::MakeRowConstraint ),
+            } );
+        constructor = Napi::Persistent( func );
+        constructor.SuppressDestruct();
+        exports.Set( "MPSolver", func );
+        return exports;
+    }
+
+    //     MPVariable* MakeBoolVar( const std::string& name );
+    Napi::Value MakeBoolVar( const Napi::CallbackInfo& info )
+    {
+        if ( info.Length() == 1 && info[ 0 ].IsString() )
+        {
+            std::string name     = info[ 0 ].As< Napi::String >().Utf8Value();
+            MPVariable* pVar     = pMPSolver->MakeBoolVar( name );
+            auto        external = Napi::External< MPVariable >::New( info.Env(), pVar );
+            return GMPVariable::constructor.New( { external } );
+        }
+
+        ThrowJsError( GMPSolver::MakeBoolVar : Invalid arguments );
+        return info.Env().Undefined();
+    }
+
+    // static MPSolver* CreateSolver( const std::string& solver_id );
+    static Napi::Value CreateSolver( const Napi::CallbackInfo& info )
+    {
+        if ( info.Length() == 1 && info[ 0 ].IsString() )
+        {
+            std::string solver_id = info[ 0 ].As< Napi::String >().Utf8Value();
+            MPSolver*   pSolver   = MPSolver::CreateSolver( solver_id );
+            auto        external  = Napi::External< MPSolver >::New( info.Env(), pSolver );
+            return GMPSolver::constructor.New( { external } );
+        }
+
+        ThrowJsError( GMPSolver::CreateSolver : Invalid arguments );
+        return info.Env().Undefined();
+    }
+
+    Napi::Value MakeRowConstraint( const Napi::CallbackInfo& info )
+    {
+        //     MPConstraint* MakeRowConstraint( double lb, double ub );
+        if ( info.Length() == 2 && info[ 0 ].IsNumber() && info[ 1 ].IsNumber() )
+        {
+            double        lb          = info[ 0 ].As< Napi::Number >().DoubleValue();
+            double        ub          = info[ 1 ].As< Napi::Number >().DoubleValue();
+            MPConstraint* pConstraint = pMPSolver->MakeRowConstraint( lb, ub );
+            auto          external    = Napi::External< MPConstraint >::New( info.Env(), pConstraint );
+            return GMPConstraint::constructor.New( { external } );
+        }
+
+        //     MPConstraint* MakeRowConstraint();
+        if ( info.Length() == 0 )
+        {
+            MPConstraint* pConstraint = pMPSolver->MakeRowConstraint();
+            auto          external    = Napi::External< MPConstraint >::New( info.Env(), pConstraint );
+            return GMPConstraint::constructor.New( { external } );
+        }
+
+        //     MPConstraint* MakeRowConstraint( double lb, double ub, const std::string& name );
+        if ( info.Length() == 3 && info[ 0 ].IsNumber() && info[ 1 ].IsNumber() && info[ 2 ].IsString() )
+        {
+            double        lb          = info[ 0 ].As< Napi::Number >().DoubleValue();
+            double        ub          = info[ 1 ].As< Napi::Number >().DoubleValue();
+            std::string   name        = info[ 2 ].As< Napi::String >().Utf8Value();
+            MPConstraint* pConstraint = pMPSolver->MakeRowConstraint( lb, ub, name );
+            auto          external    = Napi::External< MPConstraint >::New( info.Env(), pConstraint );
+            return GMPConstraint::constructor.New( { external } );
+        }
+
+        //     MPConstraint* MakeRowConstraint( const std::string& name );
+        if ( info.Length() == 1 && info[ 0 ].IsString() )
+        {
+            std::string   name        = info[ 0 ].As< Napi::String >().Utf8Value();
+            MPConstraint* pConstraint = pMPSolver->MakeRowConstraint( name );
+            auto          external    = Napi::External< MPConstraint >::New( info.Env(), pConstraint );
+            return GMPConstraint::constructor.New( { external } );
+        }
+
+        //     MPConstraint* MakeRowConstraint( const LinearRange& range );
+        if ( info.Length() == 1 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearRange::constructor.Value() ) )
+        {
+
+            auto          range        = Napi::ObjectWrap< GLinearRange >::Unwrap( info[ 0 ].As< Napi::Object >() );
+            LinearRange*  pLinearRange = range->pLinearRange;
+            MPConstraint* pConstraint  = pMPSolver->MakeRowConstraint( *pLinearRange );
+            auto          external     = Napi::External< MPConstraint >::New( info.Env(), pConstraint );
+            return GMPConstraint::constructor.New( { external } );
+        }
+
+        //     MPConstraint* MakeRowConstraint( const LinearRange& range,  const std::string& name );
+        if ( info.Length() == 2 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearRange::constructor.Value() )
+             && info[ 1 ].IsString() )
+        {
+
+            auto          range        = Napi::ObjectWrap< GLinearRange >::Unwrap( info[ 0 ].As< Napi::Object >() );
+            LinearRange*  pLinearRange = range->pLinearRange;
+            std::string   name         = info[ 1 ].As< Napi::String >().Utf8Value();
+            MPConstraint* pConstraint  = pMPSolver->MakeRowConstraint( *pLinearRange, name );
+            auto          external     = Napi::External< MPConstraint >::New( info.Env(), pConstraint );
+            return GMPConstraint::constructor.New( { external } );
+        }
+
+        ThrowJsError( GMPSolver::MakeRowConstraint : Invalid arguments );
+        return info.Env().Undefined();
+    }
 };
 
 Napi::FunctionReference GMPSolver::constructor;
 
 };  // namespace operations_research
 
-// /**
-//  * This mathematical programming (MP) solver class is the main class
-//  * though which users build and solve problems.
-//  */
 // class MPSolver
 // {
 // public:
-//     /**
-//      * The type of problems (LP or MIP) that will be solved and the underlying
-//      *  solver (GLOP, GLPK, CLP, CBC or SCIP) that will solve them. This must
-//      * remain consistent with MPModelRequest::OptimizationProblemType
-//      *  (take particular care of the open-source version).
-//      */
-//     enum OptimizationProblemType
-//     {
-//         // Linear programming problems.
-//         // ----------------------------
-//         CLP_LINEAR_PROGRAMMING  = 0,
-//         GLPK_LINEAR_PROGRAMMING = 1,
-//         GLOP_LINEAR_PROGRAMMING = 2,  // Recommended default value. Made in Google.
-//                                       // In-house linear programming solver based on the primal-dual hybrid
-//                                       // gradient method. Sometimes faster than Glop for medium-size problems and
-//                                       // scales to much larger problems than Glop.
-//         PDLP_LINEAR_PROGRAMMING  = 8,
-//         HIGHS_LINEAR_PROGRAMMING = 15,
-
-//         // Integer programming problems.
-//         // -----------------------------
-//         // Recommended default value for MIP problems.
-//         SCIP_MIXED_INTEGER_PROGRAMMING = 3,
-//         GLPK_MIXED_INTEGER_PROGRAMMING = 4,
-//         CBC_MIXED_INTEGER_PROGRAMMING  = 5,
-
-//         // Commercial software (need license).
-//         GUROBI_LINEAR_PROGRAMMING        = 6,
-//         GUROBI_MIXED_INTEGER_PROGRAMMING = 7,
-//         CPLEX_LINEAR_PROGRAMMING         = 10,
-//         CPLEX_MIXED_INTEGER_PROGRAMMING  = 11,
-//         XPRESS_LINEAR_PROGRAMMING        = 101,
-//         XPRESS_MIXED_INTEGER_PROGRAMMING = 102,
-//         HIGHS_MIXED_INTEGER_PROGRAMMING  = 16,
-
-//         // Boolean optimization problem (requires only integer variables and works
-//         // best with only Boolean variables).
-//         BOP_INTEGER_PROGRAMMING = 12,
-
-//         // SAT based solver (requires only integer and Boolean variables).
-//         // If you pass it mixed integer problems, it will scale coefficients to
-//         // integer values, and solver continuous variables as integral variables.
-//         //
-//         // Recommended default value for pure integral problems problems.
-//         SAT_INTEGER_PROGRAMMING = 14,
-
-//         // Dedicated knapsack solvers.
-//         KNAPSACK_MIXED_INTEGER_PROGRAMMING = 13,
-//     };
-
-//     /// Create a solver with the given name and underlying solver backend.
-//     MPSolver( const std::string& name, OptimizationProblemType problem_type );
-//     virtual ~MPSolver();
-
-//     /**
-//      * Recommended factory method to create a MPSolver instance, especially in
-//      * non C++ languages.
-//      *
-//      * It returns a newly created solver instance if successful, or a nullptr
-//      * otherwise. This can occur if the relevant interface is not linked in, or if
-//      * a needed license is not accessible for commercial solvers.
-//      *
-//      * Ownership of the solver is passed on to the caller of this method.
-//      * It will accept both string names of the OptimizationProblemType enum, as
-//      * well as a short version (i.e. "SCIP_MIXED_INTEGER_PROGRAMMING" or "SCIP").
-//      *
-//      * solver_id is case insensitive, and the following names are supported:
-//      *   - CLP_LINEAR_PROGRAMMING or CLP
-//      *   - CBC_MIXED_INTEGER_PROGRAMMING or CBC
-//      *   - GLOP_LINEAR_PROGRAMMING or GLOP
-//      *   - BOP_INTEGER_PROGRAMMING or BOP
-//      *   - SAT_INTEGER_PROGRAMMING or SAT or CP_SAT
-//      *   - SCIP_MIXED_INTEGER_PROGRAMMING or SCIP
-//      *   - GUROBI_LINEAR_PROGRAMMING or GUROBI_LP
-//      *   - GUROBI_MIXED_INTEGER_PROGRAMMING or GUROBI or GUROBI_MIP
-//      *   - CPLEX_LINEAR_PROGRAMMING or CPLEX_LP
-//      *   - CPLEX_MIXED_INTEGER_PROGRAMMING or CPLEX or CPLEX_MIP
-//      *   - XPRESS_LINEAR_PROGRAMMING or XPRESS_LP
-//      *   - XPRESS_MIXED_INTEGER_PROGRAMMING or XPRESS or XPRESS_MIP
-//      *   - GLPK_LINEAR_PROGRAMMING or GLPK_LP
-//      *   - GLPK_MIXED_INTEGER_PROGRAMMING or GLPK or GLPK_MIP
-//      */
-//     static MPSolver* CreateSolver( const std::string& solver_id );
 
 //     /**
 //      * Whether the given problem type is supported (this will depend on the
@@ -193,9 +261,6 @@ Napi::FunctionReference GMPSolver::constructor;
 //     /// Creates an integer variable.
 //     MPVariable* MakeIntVar( double lb, double ub, const std::string& name );
 
-//     /// Creates a boolean variable.
-//     MPVariable* MakeBoolVar( const std::string& name );
-
 //     /**
 //      * Creates an array of variables. All variables created have the same bounds
 //      * and integrality requirement. If nb <= 0, no variables are created, the
@@ -257,36 +322,6 @@ Napi::FunctionReference GMPSolver::constructor;
 //      */
 //     MPConstraint* LookupConstraintOrNull(
 //         const std::string& constraint_name ) const;
-
-//     /**
-//      * Creates a linear constraint with given bounds.
-//      *
-//      * Bounds can be finite or +/- MPSolver::infinity(). The MPSolver class
-//      * assumes ownership of the constraint.
-//      *
-//      * @return a pointer to the newly created constraint.
-//      */
-//     MPConstraint* MakeRowConstraint( double lb, double ub );
-
-//     /// Creates a constraint with -infinity and +infinity bounds.
-//     MPConstraint* MakeRowConstraint();
-
-//     /// Creates a named constraint with given bounds.
-//     MPConstraint* MakeRowConstraint( double lb, double ub,
-//                                      const std::string& name );
-
-//     /// Creates a named constraint with -infinity and +infinity bounds.
-//     MPConstraint* MakeRowConstraint( const std::string& name );
-
-//     /**
-//      * Creates a constraint owned by MPSolver enforcing:
-//      *     range.lower_bound() <= range.linear_expr() <= range.upper_bound()
-//      */
-//     MPConstraint* MakeRowConstraint( const LinearRange& range );
-
-//     /// As above, but also names the constraint.
-//     MPConstraint* MakeRowConstraint( const LinearRange& range,
-//                                      const std::string& name );
 
 //     /**
 //      * Returns the objective object.
@@ -725,100 +760,6 @@ Napi::FunctionReference GMPSolver::constructor;
 //         return absl::ToInt64Milliseconds( DurationSinceConstruction() );
 //     }
 
-//     friend class GLPKInterface;
-//     friend class CLPInterface;
-//     friend class CBCInterface;
-//     friend class SCIPInterface;
-//     friend class GurobiInterface;
-//     friend class CplexInterface;
-//     friend class XpressInterface;
-//     friend class SLMInterface;
-//     friend class MPSolverInterface;
-//     friend class GLOPInterface;
-//     friend class BopInterface;
-//     friend class SatInterface;
-//     friend class PdlpInterface;
-//     friend class HighsInterface;
-//     friend class KnapsackInterface;
-
 //     // Debugging: verify that the given MPVariable* belongs to this solver.
 //     bool OwnsVariable( const MPVariable* var ) const;
-
-// private:
-//     // Computes the size of the constraint with the largest number of
-//     // coefficients with index in [min_constraint_index,
-//     // max_constraint_index)
-//     int ComputeMaxConstraintSize( int min_constraint_index,
-//                                   int max_constraint_index ) const;
-
-//     // Returns true if the model has constraints with lower bound > upper bound.
-//     bool HasInfeasibleConstraints() const;
-
-//     // Returns true if the model has at least 1 integer variable.
-//     bool HasIntegerVariables() const;
-
-//     // Generates the map from variable names to their indices.
-//     void GenerateVariableNameIndex() const;
-
-//     // Generates the map from constraint names to their indices.
-//     void GenerateConstraintNameIndex() const;
-
-//     // The name of the linear programming problem.
-//     const std::string name_;
-
-//     // The type of the linear programming problem.
-//     const OptimizationProblemType problem_type_;
-
-//     // The solver interface.
-//     std::unique_ptr< MPSolverInterface > interface_;
-
-//     // The vector of variables in the problem.
-//     std::vector< MPVariable* > variables_;
-//     // A map from a variable's name to its index in variables_.
-//     mutable std::optional< absl::flat_hash_map< std::string, int > >
-//         variable_name_to_index_;
-//     // Whether variables have been extracted to the underlying interface.
-//     std::vector< bool > variable_is_extracted_;
-
-//     // The vector of constraints in the problem.
-//     std::vector< MPConstraint* > constraints_;
-//     // A map from a constraint's name to its index in constraints_.
-//     mutable std::optional< absl::flat_hash_map< std::string, int > >
-//         constraint_name_to_index_;
-//     // Whether constraints have been extracted to the underlying interface.
-//     std::vector< bool > constraint_is_extracted_;
-
-//     // The linear objective function.
-//     std::unique_ptr< MPObjective > objective_;
-
-//     // Initial values for all or some of the problem variables that can be
-//     // exploited as a starting hint by a solver.
-//     //
-//     // Note(user): as of 05/05/2015, we can't use >> because of some SWIG errors.
-//     //
-//     // TODO(user): replace by two vectors, a std::vector<bool> to indicate if a
-//     // hint is provided and a std::vector<double> for the hint value.
-//     std::vector< std::pair< const MPVariable*, double > > solution_hint_;
-
-//     absl::Duration time_limit_ = absl::InfiniteDuration();  // Default = No limit.
-
-//     const absl::Time construction_time_;
-
-//     // Permanent storage for the number of threads.
-//     int num_threads_ = 1;
-
-//     // Permanent storage for SetSolverSpecificParametersAsString().
-//     std::string solver_specific_parameter_string_;
-
-//     static absl::Mutex global_count_mutex_;
-// #ifndef SWIG
-//     static int64_t global_num_variables_   ABSL_GUARDED_BY( global_count_mutex_ );
-//     static int64_t global_num_constraints_ ABSL_GUARDED_BY( global_count_mutex_ );
-// #endif
-
-//     MPSolverResponseStatus LoadModelFromProtoInternal(
-//         const MPModelProto& input_model, bool clear_names,
-//         bool check_model_validity, std::string* error_message );
-
-//     DISALLOW_COPY_AND_ASSIGN( MPSolver );
 // };
