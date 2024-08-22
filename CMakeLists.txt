@@ -20,11 +20,11 @@ find_package(ortools REQUIRED)
 
 include_directories(${ORTOOLS_INCLUDE_DIRS})
 
-aux_source_directory(cppsrc cppsrc)
-aux_source_directory(cppsrc/operations_research cppsrc_operations_research)
+aux_source_directory(src src)
+aux_source_directory(src/operations_research cppsrc_operations_research)
 
 add_library(${PROJECT_NAME} SHARED
-  ${cppsrc}
+  ${src}
   ${cppsrc_operations_research}
   ${CMAKE_JS_SRC}
 )
