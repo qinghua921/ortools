@@ -57,12 +57,29 @@ public:
                 StaticMethod( "CreateSolver", &GMPSolver::CreateSolver ),
                 InstanceMethod( "MakeBoolVar", &GMPSolver::MakeBoolVar ),
                 InstanceMethod( "MakeRowConstraint", &GMPSolver::MakeRowConstraint ),
+                InstanceMethod( "OwnsVariable", &GMPSolver::OwnsVariable ),
             } );
         constructor = Napi::Persistent( func );
         constructor.SuppressDestruct();
         exports.Set( "MPSolver", func );
         return exports;
-    }
+    };
+
+    //     bool OwnsVariable( const MPVariable* var ) const;
+    Napi::Value OwnsVariable( const Napi::CallbackInfo& info )
+    {
+        if ( info.Length() == 1 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
+        {
+            auto        var      = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() );
+            MPVariable* pMPVar   = var->pMPVariable;
+            bool        owns_var = pMPSolver->OwnsVariable( pMPVar );
+            return Napi::Boolean::New( info.Env(), owns_var );
+        }
+
+        ThrowJsError( GMPSolver::OwnsVariable : Invalid arguments );
+        return info.Env().Undefined();
+    };
 
     //     MPVariable* MakeBoolVar( const std::string& name );
     Napi::Value MakeBoolVar( const Napi::CallbackInfo& info )
@@ -138,7 +155,6 @@ public:
         if ( info.Length() == 1 && info[ 0 ].IsObject()
              && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearRange::constructor.Value() ) )
         {
-
             auto          range        = Napi::ObjectWrap< GLinearRange >::Unwrap( info[ 0 ].As< Napi::Object >() );
             LinearRange*  pLinearRange = range->pLinearRange;
             MPConstraint* pConstraint  = pMPSolver->MakeRowConstraint( *pLinearRange );
@@ -760,6 +776,4 @@ Napi::FunctionReference GMPSolver::constructor;
 //         return absl::ToInt64Milliseconds( DurationSinceConstruction() );
 //     }
 
-//     // Debugging: verify that the given MPVariable* belongs to this solver.
-//     bool OwnsVariable( const MPVariable* var ) const;
 // };

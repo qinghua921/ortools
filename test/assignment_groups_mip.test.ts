@@ -81,10 +81,11 @@ test("assignment_groups_mip", () =>
     for (const worker of all_workers)
     {
       task_sum.operator_plus(x[worker][task]);
+      expect(solver.OwnsVariable(x[worker][task])).toBe(true);
     }
     let tmp = operator_EQ(task_sum, 1.0)
     expect(tmp).not.toBeUndefined();
-    solver.MakeRowConstraint(tmp, 'd');
+    solver.MakeRowConstraint(tmp);
   }
 
   // // [START assignments]

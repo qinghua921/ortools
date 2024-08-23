@@ -50,6 +50,9 @@ export interface MPSolver
      *  As above, but also names the constraint.
      */
     MakeRowConstraint(range: LinearRange, name: string): MPConstraint
+
+    // Debugging: verify that the given MPVariable* belongs to this solver.
+    OwnsVariable(var_: MPVariable): boolean
 }
 
 export const MPSolver:
