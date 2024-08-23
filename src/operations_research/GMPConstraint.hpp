@@ -38,14 +38,34 @@ public:
     static Napi::Object Init( Napi::Env env, Napi::Object exports )
     {
         // Napi::HandleScope scope( env );
-        Napi::Function    func = DefineClass(
+        Napi::Function func = DefineClass(
             env, "MPConstraint",
-            {} );
+            {
+                InstanceMethod( "SetCoefficient", &GMPConstraint::SetCoefficient ),
+            } );
         constructor = Napi::Persistent( func );
         // constructor.SuppressDestruct();
         exports.Set( "MPConstraint", func );
         return exports;
     }
+
+    //     void SetCoefficient( const MPVariable* const var, double coeff );
+    Napi::Value SetCoefficient( const Napi::CallbackInfo& info )
+    {
+        if ( info.Length() == 2
+             && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() )
+             && info[ 1 ].IsNumber() )
+        {
+            auto   var   = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() );
+            double coeff = info[ 1 ].As< Napi::Number >().DoubleValue();
+            pGMPConstraint->SetCoefficient( var->pMPVariable, coeff );
+            return info.Env().Undefined();
+        }
+
+        ThrowJsError( GMPConstraint::SetCoefficient : Invalid argument );
+        return info.Env().Undefined();
+    };
 };
 
 Napi::FunctionReference GMPConstraint::constructor;
@@ -63,14 +83,6 @@ Napi::FunctionReference GMPConstraint::constructor;
 
 //     /// Clears all variables and coefficients. Does not clear the bounds.
 //     void Clear();
-
-//     /**
-//      * Sets the coefficient of the variable on the constraint.
-//      *
-//      * If the variable does not belong to the solver, the function just returns,
-//      * or crashes in non-opt mode.
-//      */
-//     void SetCoefficient( const MPVariable* const var, double coeff );
 
 //     /**
 //      * Gets the coefficient of a given variable on the constraint (which is 0 if

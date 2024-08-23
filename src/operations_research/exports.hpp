@@ -8,6 +8,7 @@
 #include "GMPConstraint.hpp"
 #include "GMPSolver.hpp"
 #include "GMPVariable.hpp"
+#include "GMPObjective.hpp"
 
 namespace operations_research
 {
@@ -21,6 +22,7 @@ void Init( Napi::Env env, Napi::Object exports_ )
     GMPConstraint::Init( env, exports );
     GMPSolver::Init( env, exports );
     GMPVariable::Init( env, exports );
+    GMPObjective::Init( env, exports );
 
     sat::Init( env, exports );
 

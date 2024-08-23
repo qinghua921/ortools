@@ -6,6 +6,8 @@
 #include "GMPVariable.hpp"
 #include "GMPConstraint.hpp"
 #include "GLinearRange.hpp"
+#include "GMPObjective.hpp"
+#include "GMPSolverParameters.hpp"
 
 namespace operations_research
 {
@@ -58,11 +60,50 @@ public:
                 InstanceMethod( "MakeBoolVar", &GMPSolver::MakeBoolVar ),
                 InstanceMethod( "MakeRowConstraint", &GMPSolver::MakeRowConstraint ),
                 InstanceMethod( "OwnsVariable", &GMPSolver::OwnsVariable ),
+                InstanceMethod( "MutableObjective", &GMPSolver::MutableObjective ),
+                InstanceMethod( "Solve", &GMPSolver::Solve ),
             } );
         constructor = Napi::Persistent( func );
         constructor.SuppressDestruct();
         exports.Set( "MPSolver", func );
         return exports;
+    };
+
+    Napi::Value Solve( const Napi::CallbackInfo& info )
+    {
+        //     ResultStatus Solve();
+        if ( info.Length() == 0 )
+        {
+            MPSolver::ResultStatus status = pMPSolver->Solve();
+            return Napi::Number::New( info.Env(), static_cast< int >( status ) );
+        }
+
+        //     ResultStatus Solve( const MPSolverParameters& param );
+        if ( info.Length() == 1
+             && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GMPSolverParameters::constructor.Value() ) )
+        {
+            auto                   param  = Napi::ObjectWrap< GMPSolverParameters >::Unwrap( info[ 0 ].As< Napi::Object >() );
+            MPSolver::ResultStatus status = pMPSolver->Solve( *param->pMPSolverParameters );
+            return Napi::Number::New( info.Env(), static_cast< int >( status ) );
+        }
+
+        ThrowJsError( GMPSolver::Solve : Invalid arguments );
+        return info.Env().Undefined();
+    };
+
+    //     MPObjective* MutableObjective()
+    Napi::Value MutableObjective( const Napi::CallbackInfo& info )
+    {
+        if ( info.Length() == 0 )
+        {
+            MPObjective* pObjective = pMPSolver->MutableObjective();
+            auto         external   = Napi::External< MPObjective >::New( info.Env(), pObjective );
+            return GMPObjective::constructor.New( { external } );
+        }
+
+        ThrowJsError( GMPSolver::MutableObjective : Invalid arguments );
+        return info.Env().Undefined();
     };
 
     //     bool OwnsVariable( const MPVariable* var ) const;
@@ -349,42 +390,6 @@ Napi::FunctionReference GMPSolver::constructor;
 //     {
 //         return *objective_;
 //     }
-
-//     /// Returns the mutable objective object.
-//     MPObjective* MutableObjective()
-//     {
-//         return objective_.get();
-//     }
-
-//     /**
-//      * The status of solving the problem. The straightforward translation to
-//      * homonymous enum values of MPSolverResponseStatus (see
-//      * ./linear_solver.proto) is guaranteed by ./enum_consistency_test.cc, you may
-//      * rely on it.
-//      */
-//     enum ResultStatus
-//     {
-//         /// optimal.
-//         OPTIMAL,
-//         /// feasible, or stopped by limit.
-//         FEASIBLE,
-//         /// proven infeasible.
-//         INFEASIBLE,
-//         /// proven unbounded.
-//         UNBOUNDED,
-//         /// abnormal, i.e., error of some kind.
-//         ABNORMAL,
-//         /// the model is trivially invalid (NaN coefficients, etc).
-//         MODEL_INVALID,
-//         /// not been solved yet.
-//         NOT_SOLVED = 6
-//     };
-
-//     /// Solves the problem using the default parameter values.
-//     ResultStatus Solve();
-
-//     /// Solves the problem using the specified parameter values.
-//     ResultStatus Solve( const MPSolverParameters& param );
 
 //     /**
 //      * Writes the model using the solver internal write function.  Currently only

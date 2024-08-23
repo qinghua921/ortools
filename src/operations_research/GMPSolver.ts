@@ -1,6 +1,8 @@
 ﻿import { ortools } from '../addon'
 import { LinearRange } from './GLinearRange'
 import { MPConstraint } from './GMPConstraint'
+import { MPObjective } from './GMPObjective'
+import { MPSolverParameters } from './GMPSolverParameters'
 import { MPVariable } from './GMPVariable'
 
 
@@ -23,7 +25,7 @@ export interface MPSolver
      *
      * @return a pointer to the newly created constraint.
      */
-    MakeRowConstrain(lb: number, ub: number): MPConstraint
+    MakeRowConstraint(lb: number, ub: number): MPConstraint
 
     /**
      * Creates a constraint with -infinity and +infinity bounds.
@@ -53,6 +55,16 @@ export interface MPSolver
 
     // Debugging: verify that the given MPVariable* belongs to this solver.
     OwnsVariable(var_: MPVariable): boolean
+
+    /// Returns the mutable objective object.
+    MutableObjective(): MPObjective;
+
+
+    // Solves the problem using the default parameter values.
+    Solve(): ResultStatus
+
+    // Solves the problem using the specified parameter values.
+    Solve(param: MPSolverParameters): ResultStatus
 }
 
 export const MPSolver:
@@ -107,6 +119,31 @@ export const MPSolver:
         ) => MPSolver
 
     } = ortools.operations_research.MPSolver
+
+
+/**
+ * The status of solving the problem. The straightforward translation to
+ * homonymous enum values of MPSolverResponseStatus (see
+ * ./linear_solver.proto) is guaranteed by ./enum_consistency_test.cc, you may
+ * rely on it.
+ */
+export enum ResultStatus
+{
+    /// optimal.
+    OPTIMAL,
+    /// feasible, or stopped by limit.
+    FEASIBLE,
+    /// proven infeasible.
+    INFEASIBLE,
+    /// proven unbounded.
+    UNBOUNDED,
+    /// abnormal, i.e., error of some kind.
+    ABNORMAL,
+    /// the model is trivially invalid (NaN coefficients, etc).
+    MODEL_INVALID,
+    /// not been solved yet.
+    NOT_SOLVED = 6
+};
 
 /**
  * The type of problems (LP or MIP) that will be solved and the underlying
