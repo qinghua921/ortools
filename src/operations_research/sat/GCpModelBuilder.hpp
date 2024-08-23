@@ -6,6 +6,9 @@
 #include "../../commonheader.hpp"
 #include "GBoolVar.hpp"
 #include "GConstraint.hpp"
+#include "GLinearExpr.hpp"
+#include "GIntVar.hpp"
+#include "GTableConstraint.hpp"
 
 namespace operations_research
 {
@@ -47,6 +50,7 @@ namespace sat
                     InstanceMethod( "SetName", &GCpModelBuilder::SetName ),
                     InstanceMethod( "NewBoolVar", &GCpModelBuilder::NewBoolVar ),
                     InstanceMethod( "AddAtMostOne", &GCpModelBuilder::AddAtMostOne ),
+                    InstanceMethod( "AddEquality", &GCpModelBuilder::AddEquality ),
                 } );
             constructor = Napi::Persistent( func );
             constructor.SuppressDestruct();
@@ -199,8 +203,78 @@ namespace sat
         //         return AddBoolAnd( rhs ).OnlyEnforceIf( lhs );
         //     }
 
-        //     /// Adds left == right.
         //     Constraint AddEquality( const LinearExpr& left, const LinearExpr& right );
+        Napi::Value AddEquality( const Napi::CallbackInfo& info )
+        {
+            if ( info.Length() != 2 )
+            {
+                ThrowJsError( GCpModelBuilder::AddEquality : Invalid arguments );
+                return info.Env().Undefined();
+            }
+
+            LinearExpr left;
+            if ( info[ 0 ].IsObject() && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+            {
+                auto gLinearExpr = info[ 0 ].As< Napi::Object >();
+                auto linearExpr  = Napi::ObjectWrap< GLinearExpr >::Unwrap( gLinearExpr );
+                left             = *linearExpr->pLinearExpr;
+            }
+            else if ( info[ 0 ].IsNumber() )
+            {
+                left = info[ 0 ].As< Napi::Number >().DoubleValue();
+            }
+            else if ( info[ 0 ].IsObject() && info[ 0 ].As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
+            {
+                auto gIntVar = info[ 0 ].As< Napi::Object >();
+                auto intVar  = Napi::ObjectWrap< GIntVar >::Unwrap( gIntVar );
+                left         = LinearExpr( *intVar->pIntVar );
+            }
+            else if ( info[ 0 ].IsObject() && info[ 0 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+            {
+                auto gBoolVar = info[ 0 ].As< Napi::Object >();
+                auto boolVar  = Napi::ObjectWrap< GBoolVar >::Unwrap( gBoolVar );
+                left          = LinearExpr( *boolVar->pBoolVar );
+            }
+            else
+            {
+                ThrowJsError( GCpModelBuilder::AddEquality : Invalid arguments );
+                return info.Env().Undefined();
+            }
+
+            LinearExpr right;
+            if ( info[ 1 ].IsObject() && info[ 1 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+            {
+                auto gLinearExpr = info[ 1 ].As< Napi::Object >();
+                auto linearExpr  = Napi::ObjectWrap< GLinearExpr >::Unwrap( gLinearExpr );
+                right            = *linearExpr->pLinearExpr;
+            }
+            else if ( info[ 1 ].IsNumber() )
+            {
+                right = info[ 1 ].As< Napi::Number >().DoubleValue();
+            }
+            else if ( info[ 1 ].IsObject() && info[ 1 ].As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
+            {
+                auto gIntVar = info[ 1 ].As< Napi::Object >();
+                auto intVar  = Napi::ObjectWrap< GIntVar >::Unwrap( gIntVar );
+                right        = LinearExpr( *intVar->pIntVar );
+            }
+            else if ( info[ 1 ].IsObject() && info[ 1 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+            {
+                auto gBoolVar = info[ 1 ].As< Napi::Object >();
+                auto boolVar  = Napi::ObjectWrap< GBoolVar >::Unwrap( gBoolVar );
+                right         = LinearExpr( *boolVar->pBoolVar );
+            }
+            else
+            {
+                ThrowJsError( GCpModelBuilder::AddEquality : Invalid arguments );
+                return info.Env().Undefined();
+            }
+
+            auto constraint  = pCpModelBuilder->AddEquality( left, right );
+            auto pConstraint = new Constraint( constraint );
+            auto externalVar = Napi::External< Constraint >::New( info.Env(), pConstraint );
+            return GConstraint::constructor.New( { externalVar } );
+        }
 
         //     /// Adds left >= right.
         //     Constraint AddGreaterOrEqual( const LinearExpr& left, const LinearExpr& right );
@@ -271,18 +345,42 @@ namespace sat
         //      */
         //     MultipleCircuitConstraint AddMultipleCircuitConstraint();
 
-        //     /**
-        //      * Adds an allowed assignments constraint.
-        //      *
-        //      * An AllowedAssignments constraint is a constraint on an array of variables
-        //      * that forces, when all variables are fixed to a single value, that the
-        //      * corresponding list of values is equal to one of the tuples added to the
-        //      * constraint.
-        //      *
-        //      * It returns a table constraint that allows adding tuples incrementally after
-        //      * construction.
-        //      */
         //     TableConstraint AddAllowedAssignments( absl::Span< const IntVar > vars );
+        Napi::Value AddAllowedAssignments( const Napi::CallbackInfo& info )
+        {
+            if ( info.Length() == 1 && info[ 0 ].IsArray() )
+            {
+                std::vector< IntVar > vars;
+                auto                  array = info[ 0 ].As< Napi::Array >();
+
+                for ( int i = 0; i < array.Length(); i++ )
+                {
+                    auto obj = array.Get( i );
+                    if ( obj.IsObject() && obj.As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
+                    {
+                        auto gIntVar = obj.As< Napi::Object >();
+                        auto intVar  = Napi::ObjectWrap< GIntVar >::Unwrap( gIntVar );
+                        vars.push_back( *intVar->pIntVar );
+                    }
+                    else
+                    {
+                        ThrowJsError( GCpModelBuilder::AddAllowedAssignments : Invalid arguments );
+                        return info.Env().Undefined();
+                    }
+                }
+
+                if ( vars.size() > 0 )
+                {
+                    auto constraint  = pCpModelBuilder->AddAllowedAssignments( vars );
+                    auto pConstraint = new Constraint( constraint );
+                    auto externalVar = Napi::External< Constraint >::New( info.Env(), pConstraint );
+                    return GTableConstraint::constructor.New( { externalVar } );
+                }
+            }
+
+            ThrowJsError( GCpModelBuilder::AddAllowedAssignments : Invalid arguments );
+            return info.Env().Undefined();
+        }
 
         //     /**
         //      * Adds an forbidden assignments constraint.

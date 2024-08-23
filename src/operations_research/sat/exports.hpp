@@ -4,6 +4,9 @@
 #include "GBoolVar.hpp"
 #include "GIntVar.hpp"
 #include "GConstraint.hpp"
+#include "GLinearExpr.hpp"
+#include "GTableConstraint.hpp"
+#include "GFunc.hpp"
 
 namespace operations_research
 {
@@ -17,6 +20,10 @@ namespace sat
         GBoolVar::Init( env, satExports );
         GIntVar::Init( env, satExports );
         GConstraint::Init( env, satExports );
+        GLinearExpr::Init( env, satExports );
+        GTableConstraint::Init( env, satExports );
+
+        FuncInit( env, satExports );
 
         exports.Set( "sat", satExports );
     }

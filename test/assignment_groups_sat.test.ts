@@ -1,6 +1,8 @@
 import { BoolVar } from "../src/operations_research/sat/GBoolVar";
 import { IntVar } from "../src/operations_research/sat/GIntVar";
 import { CpModelBuilder } from "../src/operations_research/sat/GCpModelBuilder";
+import { LinearExpr } from "../src/operations_research/sat/GLinearExpr";
+import { operator_times } from "../src/operations_research/sat/GFunc";
 
 test("assignment_groups_sat", () =>
 {
@@ -78,80 +80,42 @@ test("assignment_groups_sat", () =>
     cp_model.AddAtMostOne(tasks);
   }
 
-  // // [START assignments]
-  // // Create variables for each worker, indicating whether they work on some
-  // // task.
-  // std:: vector < IntVar > work(num_workers);
-  // for (int worker : all_workers )
-  // {
-  //   work[worker] = IntVar(
-  //     cp_model.NewBoolVar().WithName(absl:: StrFormat("work[%d]", worker)));
-  // }
   const work = Array.from({ length: num_workers }, (_, i) =>
     new IntVar(cp_model.NewBoolVar().WithName(`work[${i}]`))
   );
-
-
-
-  // for (int worker : all_workers )
-  // {
-  //         LinearExpr task_sum;
-  //   for (int task : all_tasks )
-  //   {
-  //     task_sum += x[worker][task];
-  //   }
-  //   cp_model.AddEquality(work[worker], task_sum);
-  // }
 
   for (const worker of all_workers)
   {
     let task_sum = new LinearExpr();
     for (const task of all_tasks)
     {
-      task_sum.AddTerm(1, x[worker][task]);
+      task_sum.operator_plus(x[worker][task]);
     }
     cp_model.AddEquality(work[worker], task_sum);
   }
 
-  // // Define the allowed groups of worders
-  // auto table1 =
-  //   cp_model.AddAllowedAssignments({ work[0], work[1], work[2], work[3] });
-  // for (const auto& t : group1 )
-  // {
-  //   table1.AddTuple(t);
-  // }
-  // auto table2 =
-  //   cp_model.AddAllowedAssignments({ work[4], work[5], work[6], work[7] });
-  // for (const auto& t : group2 )
-  // {
-  //   table2.AddTuple(t);
-  // }
-  // auto table3 =
 
-  //     // Define the allowed groups of worders
-  //     auto table1 =
-  //   cp_model.AddAllowedAssignments({ work[0], work[1], work[2], work[3] });
-  // for (const auto& t : group1 )
-  // {
-  //   table1.AddTuple(t);
-  // }
-  //     auto table2 =
-  //   cp_model.AddAllowedAssignments({ work[4], work[5], work[6], work[7] });
-  // for (const auto& t : group2 )
-  // {
-  //   table2.AddTuple(t);
-  // }
-  //     auto table3 =
-  //   cp_model.AddAllowedAssignments({ work[8], work[9], work[10], work[11] });
-  // for (const auto& t : group3 )
-  // {
-  //   table3.AddTuple(t);
-  // }
-  //     // [END assignments]
+  let table1 = cp_model.AddAllowedAssignments([work[0], work[1], work[2], work[3]]);
+  for (const t of group1)
+  {
+    table1.AddTuple(t);
+  }
 
-  //     // Objective
-  //     // [START objective]
-  //     LinearExpr total_cost;
+
+  let table3 = cp_model.AddAllowedAssignments([work[4], work[5], work[6], work[7]]);
+  for (const t of group2)
+  {
+    table3.AddTuple(t);
+  }
+
+  let table2 = cp_model.AddAllowedAssignments([work[8], work[9], work[10], work[11]]);
+  for (const t of group3)
+  {
+    table2.AddTuple(t);
+  }
+
+  let total_cost = new LinearExpr();
+
   // for (int worker : all_workers )
   // {
   //   for (int task : all_tasks )
@@ -159,6 +123,15 @@ test("assignment_groups_sat", () =>
   //     total_cost += x[worker][task] * costs[worker][task];
   //   }
   // }
+  for (const worker of all_workers)
+  {
+    for (const task of all_tasks)
+    {
+      let letf = x[worker][task]
+      let right = costs[worker][task]
+      total_cost.operator_plus(operator_times(letf, right));
+    }
+  }
   // cp_model.Minimize(total_cost);
   // // [END objective]
 
