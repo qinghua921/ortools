@@ -240,7 +240,9 @@ namespace sat
         return info.Env().Undefined();
     }
 
-    Napi::Object FuncInit( Napi::Env env, Napi::Object exports )
+    /// Solves the given CpModelProto and returns an instance of CpSolverResponse.
+    // CpSolverResponse Solve( const CpModelProto& model_proto );
+    Napi::Object     FuncInit( Napi::Env env, Napi::Object exports )
     {
         exports.Set( "operator_neg", Napi::Function::New( env, operator_neg ) );
         exports.Set( "operator_plus", Napi::Function::New( env, operator_plus ) );

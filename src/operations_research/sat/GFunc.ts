@@ -46,3 +46,6 @@ export const operator_times:
     & ((factor: number, expr: DoubleLinearExpr) => DoubleLinearExpr)
     = ortools.operations_research.sat.operator_times
 
+// Solves the given CpModelProto and returns an instance of CpSolverResponse.
+export const Solve: (model_proto: CpModelProto) => CpSolverResponse
+    = ortools.operations_research.sat.Solve
