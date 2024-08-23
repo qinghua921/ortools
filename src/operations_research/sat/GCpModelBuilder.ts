@@ -1,6 +1,7 @@
 ﻿import { ortools } from "../../addon";
 import { BoolVar } from "./GBoolVar";
 import { Constraint } from "./GConstraint";
+import { DoubleLinearExpr } from "./GDoubleLinearExpr";
 import { IntVar } from "./GIntVar";
 import { LinearExpr } from "./GLinearExpr";
 import { TableConstraint } from "./GTableConstraint";
@@ -42,6 +43,12 @@ export interface CpModelBuilder
      */
     AddAllowedAssignments(vars: IntVar[]): TableConstraint;
 
+    // Adds a linear maximization objective.
+    Maximize(expr: LinearExpr): void;
+
+    // Adds a linear floating point maximization objective.
+    // Note that the coefficients will be internally scaled to integer.
+    Maximize(expr: DoubleLinearExpr): void;
 }
 
 export const CpModelBuilder:

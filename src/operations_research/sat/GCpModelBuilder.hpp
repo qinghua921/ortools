@@ -533,12 +533,33 @@ namespace sat
         //     /// Note that the coefficients will be internally scaled to integer.
         //     void Minimize( const DoubleLinearExpr& expr );
 
-        //     /// Adds a linear maximization objective.
-        //     void Maximize( const LinearExpr& expr );
+        Napi::Value Maximize( const Napi::CallbackInfo& info )
+        {
+            //     void Maximize( const LinearExpr& expr );
+            if ( info.Length() == 1
+                 && info[ 0 ].IsObject()
+                 && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+            {
+                auto gLinearExpr = info[ 0 ].As< Napi::Object >();
+                auto linearExpr  = Napi::ObjectWrap< GLinearExpr >::Unwrap( gLinearExpr );
+                pCpModelBuilder->Maximize( *linearExpr->pLinearExpr );
+                return info.Env().Undefined();
+            }
 
-        //     /// Adds a linear floating point maximization objective.
-        //     /// Note that the coefficients will be internally scaled to integer.
-        //     void Maximize( const DoubleLinearExpr& expr );
+            //     void Maximize( const DoubleLinearExpr& expr );
+            if ( info.Length() == 1
+                 && info[ 0 ].IsObject()
+                 && info[ 0 ].As< Napi::Object >().InstanceOf( GDoubleLinearExpr::constructor.Value() ) )
+            {
+                auto gDoubleLinearExpr = info[ 0 ].As< Napi::Object >();
+                auto doubleLinearExpr  = Napi::ObjectWrap< GDoubleLinearExpr >::Unwrap( gDoubleLinearExpr );
+                pCpModelBuilder->Maximize( *doubleLinearExpr->pDoubleLinearExpr );
+                return info.Env().Undefined();
+            }
+
+            ThrowJsError( GCpModelBuilder::Maximize : Invalid arguments );
+            return info.Env().Undefined();
+        }
 
         //     /// Removes the objective from the model.
         //     void ClearObjective();

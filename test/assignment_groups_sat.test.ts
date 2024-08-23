@@ -132,12 +132,10 @@ test("assignment_groups_sat", () =>
       total_cost.operator_plus(operator_times(letf, right));
     }
   }
-  // cp_model.Minimize(total_cost);
-  // // [END objective]
+  cp_model.Maximize(total_cost);
 
-  // // Solve
-  // // [START solve]
   // const CpSolverResponse response = Solve(cp_model.Build());
+  let response = cp_model.Solve();
   // // [END solve]
 
   // // Print solution.
