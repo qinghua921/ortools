@@ -48,6 +48,7 @@ public:
                 InstanceMethod( "offset", &GMPObjective::offset ),
                 InstanceMethod( "SetMinimization", &GMPObjective::SetMinimization ),
                 InstanceMethod( "SetOffset", &GMPObjective::SetOffset ),
+                InstanceMethod( "Value", &GMPObjective::Value ),
             } );
         constructor = Napi::Persistent( func );
         constructor.SuppressDestruct();

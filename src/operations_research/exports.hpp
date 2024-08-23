@@ -7,6 +7,7 @@
 #include "GLinearRange.hpp"
 #include "GMPConstraint.hpp"
 #include "GMPSolver.hpp"
+#include "GMPSolverParameters.hpp"
 #include "GMPVariable.hpp"
 #include "GMPObjective.hpp"
 
@@ -23,6 +24,7 @@ void Init( Napi::Env env, Napi::Object exports_ )
     GMPSolver::Init( env, exports );
     GMPVariable::Init( env, exports );
     GMPObjective::Init( env, exports );
+    GMPSolverParameters::Init( env, exports );
 
     sat::Init( env, exports );
 

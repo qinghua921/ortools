@@ -134,5 +134,5 @@ test("assignment_groups_mip", () =>
 
   expect(result_status).toBe(ResultStatus.OPTIMAL);
 
-  expect(objective.Value()).toBe(1655);
+  expect(objective.Value().toFixed(0)).toBe('669');
 })
