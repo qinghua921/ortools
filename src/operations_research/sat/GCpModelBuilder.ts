@@ -1,4 +1,6 @@
 ﻿import { ortools } from "../../addon";
+import { BoolVar } from "./GBoolVar";
+import { Constraint } from "./GConstraint";
 
 /**
  * Wrapper class around the cp_model proto.
@@ -15,8 +17,15 @@ export interface CpModelBuilder
     //     /// Creates an integer variable with the given domain.
     //     IntVar NewIntVar( const Domain& domain );
 
-    //     /// Creates a Boolean variable.
-    //     BoolVar NewBoolVar();
+    // Creates a Boolean variable.
+    NewBoolVar(): BoolVar;
+
+
+    /// At most one literal is true. Sum literals <= 1.
+    AddAtMostOne(literals: BoolVar[]): Constraint;
 }
 
-export const CpModelBuilder: {} = ortools.operations_research.sat.CpModelBuilder;
+export const CpModelBuilder:
+    {
+        new(): CpModelBuilder
+    } = ortools.operations_research.sat.CpModelBuilder;

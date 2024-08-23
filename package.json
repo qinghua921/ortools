@@ -5,7 +5,7 @@
   "scripts": {
     "tsbuild": "tsc -b",
     "cppbuild": "cmake-js compile",
-    "jest": "jest --detectOpenHandles"
+    "jest": "jest"
   },
   "devDependencies": {
     "@types/jest": "^29.5.2",

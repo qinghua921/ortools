@@ -25,6 +25,16 @@ namespace sat
                 return;
             }
 
+            //     explicit IntVar( const BoolVar& var );
+            if ( info.Length() == 1
+                 && info[ 0 ].IsObject()
+                 && info[ 0 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+            {
+                auto gBoolVar = Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 0 ].As< Napi::Object >() );
+                pIntVar       = new IntVar( *gBoolVar->pBoolVar );
+                return;
+            }
+
             ThrowJsError( GIntVar::GIntVar : Invalid number of arguments );
         };
 
@@ -48,14 +58,6 @@ namespace sat
             exports.Set( "IntVar", func );
             return exports;
         };
-
-        //     /// Cast BoolVar -> IntVar.
-        //     /// The IntVar will take the value 1 (when the bool is true) and 0 otherwise.
-        //     ///
-        //     /// Warning: If you construct an IntVar from a negated BoolVar, this might
-        //     /// create a new variable in the model. Otherwise this just point to the same
-        //     /// underlying variable.
-        //     explicit IntVar( const BoolVar& var );
 
         //     /// Cast IntVar -> BoolVar.
         //     ///

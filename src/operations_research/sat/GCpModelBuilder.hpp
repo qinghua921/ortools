@@ -4,6 +4,8 @@
 
 #include "ortools/sat/cp_model.h"
 #include "../../commonheader.hpp"
+#include "GBoolVar.hpp"
+#include "GConstraint.hpp"
 
 namespace operations_research
 {
@@ -16,9 +18,16 @@ namespace sat
         CpModelBuilder*                pCpModelBuilder = nullptr;
 
         GCpModelBuilder( const Napi::CallbackInfo& info )
-            : Napi::ObjectWrap< GCpModelBuilder >( info ) {
+            : Napi::ObjectWrap< GCpModelBuilder >( info )
+        {
+            if ( info.Length() == 0 )
+            {
+                pCpModelBuilder = new CpModelBuilder();
+                return;
+            }
 
-              };
+            ThrowJsError( GCpModelBuilder::Constructor : Invalid arguments );
+        };
 
         ~GCpModelBuilder()
         {
@@ -36,6 +45,8 @@ namespace sat
                 env, "CpModelBuilder",
                 {
                     InstanceMethod( "SetName", &GCpModelBuilder::SetName ),
+                    InstanceMethod( "NewBoolVar", &GCpModelBuilder::NewBoolVar ),
+                    InstanceMethod( "AddAtMostOne", &GCpModelBuilder::AddAtMostOne ),
                 } );
             constructor = Napi::Persistent( func );
             constructor.SuppressDestruct();
@@ -60,8 +71,19 @@ namespace sat
         //     /// Creates an integer variable with the given domain.
         //     IntVar NewIntVar( const Domain& domain );
 
-        //     /// Creates a Boolean variable.
         //     BoolVar NewBoolVar();
+        Napi::Value NewBoolVar( const Napi::CallbackInfo& info )
+        {
+            if ( info.Length() == 0 )
+            {
+                auto boolVar     = new BoolVar( pCpModelBuilder->NewBoolVar() );
+                auto externalVar = Napi::External< BoolVar >::New( info.Env(), boolVar );
+                return GBoolVar::constructor.New( { externalVar } );
+            }
+
+            ThrowJsError( GCpModelBuilder::NewBoolVar : Invalid arguments );
+            return info.Env().Undefined();
+        };
 
         //     /// Creates a constant variable. This is a shortcut for
         //     /// NewVariable(Domain(value)).but it will return the same variable if used
@@ -113,8 +135,47 @@ namespace sat
         //     /// Same as AddBoolOr(). Sum literals >= 1.
         //     Constraint AddAtLeastOne( absl::Span< const BoolVar > literals );
 
-        //     /// At most one literal is true. Sum literals <= 1.
         //     Constraint AddAtMostOne( absl::Span< const BoolVar > literals );
+        Napi::Value AddAtMostOne( const Napi::CallbackInfo& info )
+        {
+            if ( info.Length() == 1 && info[ 0 ].IsArray() )
+            {
+                std::vector< BoolVar > literals;
+                auto                   array = info[ 0 ].As< Napi::Array >();
+
+                for ( int i = 0; i < array.Length(); i++ )
+                {
+                    auto obj = array.Get( i );
+                    if ( obj.IsObject() && obj.As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+                    {
+                        auto gBoolVar = obj.As< Napi::Object >();
+                        auto boolVar  = Napi::ObjectWrap< GBoolVar >::Unwrap( gBoolVar );
+                        literals.push_back( BoolVar( *boolVar->pBoolVar ) );
+                    }
+                    else
+                    {
+                        ThrowJsError( GCpModelBuilder::AddAtMostOne : Invalid arguments );
+                        return info.Env().Undefined();
+                    }
+                }
+
+                if ( literals.size() > 0 )
+                {
+                    auto constraint  = pCpModelBuilder->AddAtMostOne( literals );
+                    auto pConstraint = new Constraint( constraint );
+                    auto externalVar = Napi::External< Constraint >::New( info.Env(), pConstraint );
+                    return GConstraint::constructor.New( { externalVar } );
+                }
+                else
+                {
+                    ThrowJsError( GCpModelBuilder::AddAtMostOne : Invalid arguments );
+                    return info.Env().Undefined();
+                }
+            }
+
+            ThrowJsError( GCpModelBuilder::AddAtMostOne : Invalid arguments );
+            return info.Env().Undefined();
+        };
 
         //     /// Exactly one literal is true. Sum literals == 1.
         //     Constraint AddExactlyOne( absl::Span< const BoolVar > literals );

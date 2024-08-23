@@ -24,6 +24,13 @@ namespace sat
                 return;
             }
 
+            if ( info.Length() == 1 && info[ 0 ].IsExternal() )
+            {
+                auto external = info[ 0 ].As< Napi::External< BoolVar > >();
+                pBoolVar      = dynamic_cast< BoolVar* >( external.Data() );
+                if ( pBoolVar ) return;
+            }
+
             ThrowJsError( GBoolVar::GBoolVar : Invalid number of arguments.);
         };
 

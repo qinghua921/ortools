@@ -1,6 +1,8 @@
 import { BoolVar } from "../src/operations_research/sat/GBoolVar";
+import { IntVar } from "../src/operations_research/sat/GIntVar";
+import { CpModelBuilder } from "../src/operations_research/sat/GCpModelBuilder";
 
-test("assignment_groups_mip", () =>
+test("assignment_groups_sat", () =>
 {
   const costs =
     [
@@ -53,42 +55,28 @@ test("assignment_groups_mip", () =>
       [1, 0, 0, 1],
     ]
 
-  //   std:: vector < std:: vector < BoolVar > > x(num_workers,
-  //     std:: vector<BoolVar>(num_tasks));
-  //   for (int worker : all_workers )
-  // {
-  //   for (int task : all_tasks )
-  //   {
-  //     x[worker][task] = cp_model.NewBoolVar().WithName(
-  //       absl:: StrFormat("x[%d,%d]", worker, task));
-  //   }
-  // }
+  let cp_model = new CpModelBuilder();
+
   let x = Array.from({ length: num_workers }, (_, i) =>
     Array.from({ length: num_tasks }, (_, j) =>
-      new BoolVar("x[" + i + "," + j + "]")));
-  
+      cp_model.NewBoolVar().WithName(`x[${i},${j}]`)
+    )
+  );
 
+  for (const worker of all_workers)
+  {
+    cp_model.AddAtMostOne(x[worker]);
+  }
 
-  // // [END variables]
-
-  // // Constraints
-  // // [START constraints]
-  // // Each worker is assigned to at most one task.
-  // for (int worker : all_workers )
-  // {
-  //   cp_model.AddAtMostOne(x[worker]);
-  // }
-  // // Each task is assigned to exactly one worker.
-  // for (int task : all_tasks )
-  // {
-  //   std:: vector < BoolVar > tasks;
-  //   for (int worker : all_workers )
-  //   {
-  //     tasks.push_back(x[worker][task]);
-  //   }
-  //   cp_model.AddExactlyOne(tasks);
-  // }
-  // // [END constraints]
+  for (const task of all_tasks)
+  {
+    let tasks: BoolVar[] = [];
+    for (const worker of all_workers)
+    {
+      tasks.push(x[worker][task]);
+    }
+    cp_model.AddAtMostOne(tasks);
+  }
 
   // // [START assignments]
   // // Create variables for each worker, indicating whether they work on some
@@ -99,6 +87,11 @@ test("assignment_groups_mip", () =>
   //   work[worker] = IntVar(
   //     cp_model.NewBoolVar().WithName(absl:: StrFormat("work[%d]", worker)));
   // }
+  const work = Array.from({ length: num_workers }, (_, i) =>
+    new IntVar(cp_model.NewBoolVar().WithName(`work[${i}]`))
+  );
+
+
 
   // for (int worker : all_workers )
   // {
@@ -109,6 +102,31 @@ test("assignment_groups_mip", () =>
   //   }
   //   cp_model.AddEquality(work[worker], task_sum);
   // }
+
+  for (const worker of all_workers)
+  {
+    let task_sum = new LinearExpr();
+    for (const task of all_tasks)
+    {
+      task_sum.AddTerm(1, x[worker][task]);
+    }
+    cp_model.AddEquality(work[worker], task_sum);
+  }
+
+  // // Define the allowed groups of worders
+  // auto table1 =
+  //   cp_model.AddAllowedAssignments({ work[0], work[1], work[2], work[3] });
+  // for (const auto& t : group1 )
+  // {
+  //   table1.AddTuple(t);
+  // }
+  // auto table2 =
+  //   cp_model.AddAllowedAssignments({ work[4], work[5], work[6], work[7] });
+  // for (const auto& t : group2 )
+  // {
+  //   table2.AddTuple(t);
+  // }
+  // auto table3 =
 
   //     // Define the allowed groups of worders
   //     auto table1 =
