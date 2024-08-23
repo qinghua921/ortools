@@ -1,3 +1,5 @@
+import { BoolVar } from "../src/operations_research/sat/GBoolVar";
+
 test("assignment_groups_mip", () =>
 {
   const costs =
@@ -51,13 +53,6 @@ test("assignment_groups_mip", () =>
       [1, 0, 0, 1],
     ]
 
-  //     CpModelBuilder cp_model;
-  //   // [END model]
-
-  //   // Variables
-  //   // [START variables]
-  //   // x[i][j] is an array of Boolean variables. x[i][j] is true
-  //   // if worker i is assigned to task j.
   //   std:: vector < std:: vector < BoolVar > > x(num_workers,
   //     std:: vector<BoolVar>(num_tasks));
   //   for (int worker : all_workers )
@@ -68,6 +63,12 @@ test("assignment_groups_mip", () =>
   //       absl:: StrFormat("x[%d,%d]", worker, task));
   //   }
   // }
+  let x = Array.from({ length: num_workers }, (_, i) =>
+    Array.from({ length: num_tasks }, (_, j) =>
+      new BoolVar("x[" + i + "," + j + "]")));
+  
+
+
   // // [END variables]
 
   // // Constraints

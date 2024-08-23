@@ -1,5 +1,9 @@
 ﻿#include <napi.h>
 
+#include "GCpModelBuilder.hpp"
+#include "GBoolVar.hpp"
+#include "GIntVar.hpp"
+
 namespace operations_research
 {
 namespace sat
@@ -8,7 +12,9 @@ namespace sat
     {
         auto satExports = Napi::Object::New( env );
 
-        // GCpModelBuilder::Init( env, satExports );
+        GCpModelBuilder::Init( env, satExports );
+        GBoolVar::Init( env, satExports );
+        GIntVar::Init( env, satExports );
 
         exports.Set( "sat", satExports );
     }
