@@ -27,14 +27,7 @@ public:
         ThrowJsError( GMPObjective::GMPObjective : Invalid argument );
     };
 
-    ~GMPObjective()
-    {
-        if ( pMPObjective )
-        {
-            delete pMPObjective;
-            pMPObjective = nullptr;
-        }
-    }
+    ~GMPObjective();
 
     static Napi::Object Init( Napi::Env env, Napi::Object exports )
     {
@@ -56,70 +49,13 @@ public:
         return exports;
     };
 
-    //     double Value() const;
-    Napi::Value Value( const Napi::CallbackInfo& info )
-    {
-        return Napi::Number::New( info.Env(), pMPObjective->Value() );
-    };
-
-    //     void SetOffset( double value );
-    Napi::Value SetOffset( const Napi::CallbackInfo& info )
-    {
-        if ( info.Length() == 1 && info[ 0 ].IsNumber() )
-        {
-            double value = info[ 0 ].As< Napi::Number >().DoubleValue();
-            pMPObjective->SetOffset( value );
-            return info.Env().Undefined();
-        }
-
-        ThrowJsError( GMPObjective::SetOffset : Invalid argument );
-        return info.Env().Undefined();
-    };
-
-    //     void SetMinimization()
-    Napi::Value SetMinimization( const Napi::CallbackInfo& info )
-    {
-        pMPObjective->SetMinimization();
-        return info.Env().Undefined();
-    };
-
-    //     double offset() const
-    Napi::Value offset( const Napi::CallbackInfo& info )
-    {
-        return Napi::Number::New( info.Env(), pMPObjective->offset() );
-    };
-
-    //     void Clear();
-    Napi::Value Clear( const Napi::CallbackInfo& info )
-    {
-        pMPObjective->Clear();
-        return info.Env().Undefined();
-    };
-
-    //     void SetCoefficient( const MPVariable* const var, double coeff );
-    Napi::Value SetCoefficient( const Napi::CallbackInfo& info )
-    {
-        if ( info.Length() == 2
-             && info[ 0 ].IsObject()
-             && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() )
-             && info[ 1 ].IsNumber() )
-        {
-            auto   var   = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() );
-            double coeff = info[ 1 ].As< Napi::Number >().DoubleValue();
-            pMPObjective->SetCoefficient( var->pMPVariable, coeff );
-            return info.Env().Undefined();
-        }
-
-        ThrowJsError( GMPObjective::SetCoefficient : Invalid argument );
-        return info.Env().Undefined();
-    };
-
-    //     void SetMaximization()
-    Napi::Value SetMaximization( const Napi::CallbackInfo& info )
-    {
-        pMPObjective->SetMaximization();
-        return info.Env().Undefined();
-    };
+    Napi::Value Value( const Napi::CallbackInfo& info );            //     double Value() const;
+    Napi::Value SetOffset( const Napi::CallbackInfo& info );        //     void SetOffset( double value );
+    Napi::Value SetMinimization( const Napi::CallbackInfo& info );  //     void SetMinimization()
+    Napi::Value offset( const Napi::CallbackInfo& info );           //     double offset() const
+    Napi::Value Clear( const Napi::CallbackInfo& info );            //     void Clear();
+    Napi::Value SetCoefficient( const Napi::CallbackInfo& info );   //     void SetCoefficient( const MPVariable* const var, double coeff );
+    Napi::Value SetMaximization( const Napi::CallbackInfo& info );  //     void SetMaximization()
 
     // class MPObjective
     // {
@@ -180,6 +116,69 @@ public:
     //     double BestBound() const;
 
     // };
+};
+
+GMPObjective::~GMPObjective()
+{
+    if ( pMPObjective )
+    {
+        delete pMPObjective;
+        pMPObjective = nullptr;
+    }
+}
+
+Napi::Value GMPObjective::Value( const Napi::CallbackInfo& info )
+{
+    return Napi::Number::New( info.Env(), pMPObjective->Value() );
+}
+
+Napi::Value GMPObjective::SetOffset( const Napi::CallbackInfo& info )
+{
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        double value = info[ 0 ].As< Napi::Number >().DoubleValue();
+        pMPObjective->SetOffset( value );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( GMPObjective::SetOffset : Invalid argument );
+    return info.Env().Undefined();
+};
+
+Napi::Value GMPObjective::SetMinimization( const Napi::CallbackInfo& info )
+{
+    pMPObjective->SetMinimization();
+    return info.Env().Undefined();
+}
+Napi::Value GMPObjective::offset( const Napi::CallbackInfo& info )
+{
+    return Napi::Number::New( info.Env(), pMPObjective->offset() );
+}
+Napi::Value GMPObjective::Clear( const Napi::CallbackInfo& info )
+{
+    pMPObjective->Clear();
+    return info.Env().Undefined();
+}
+Napi::Value GMPObjective::SetCoefficient( const Napi::CallbackInfo& info )
+{
+    if ( info.Length() == 2
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() )
+         && info[ 1 ].IsNumber() )
+    {
+        auto   var   = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        double coeff = info[ 1 ].As< Napi::Number >().DoubleValue();
+        pMPObjective->SetCoefficient( var->pMPVariable, coeff );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( GMPObjective::SetCoefficient : Invalid argument );
+    return info.Env().Undefined();
+};
+Napi::Value GMPObjective::SetMaximization( const Napi::CallbackInfo& info )
+{
+    pMPObjective->SetMaximization();
+    return info.Env().Undefined();
 };
 
 Napi::FunctionReference GMPObjective::constructor;
