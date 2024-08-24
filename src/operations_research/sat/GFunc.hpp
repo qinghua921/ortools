@@ -3,12 +3,14 @@
 #include <napi.h>
 #include "../../commonheader.hpp"
 #include "GDoubleLinearExpr.hpp"
+#include "GCpModelProto.hpp"
+#include "ortools/sat/cp_model.h"
 
 namespace operations_research
 {
 namespace sat
 {
-    Napi::Value operator_neg( const Napi::CallbackInfo& info )
+    Napi::Value Goperator_neg( const Napi::CallbackInfo& info )
     {
         // inline LinearExpr operator-( LinearExpr expr )
         if ( info.Length() == 1
@@ -32,12 +34,12 @@ namespace sat
             return GDoubleLinearExpr::constructor.New( { ext } );
         }
 
-        ThrowJsError( sat::operator_neg : Invalid argument );
+        ThrowJsError( sat::Goperator_neg : Invalid argument );
         return info.Env().Undefined();
     }
 
     // TODO: check if this is correct
-    Napi::Value operator_plus( const Napi::CallbackInfo& info )
+    Napi::Value Goperator_plus( const Napi::CallbackInfo& info )
     {
         // inline LinearExpr operator+( LinearExpr&& lhs, LinearExpr&& rhs )
         // inline LinearExpr operator+( LinearExpr&& lhs, const LinearExpr& rhs )
@@ -99,11 +101,11 @@ namespace sat
             return GDoubleLinearExpr::constructor.New( { ext } );
         }
 
-        ThrowJsError( sat::operator_plus : Invalid argument );
+        ThrowJsError( sat::Goperator_plus : Invalid argument );
         return info.Env().Undefined();
     }
 
-    Napi::Value operator_minus( const Napi::CallbackInfo& info )
+    Napi::Value Goperator_minus( const Napi::CallbackInfo& info )
     {
         // inline LinearExpr operator-( LinearExpr&& lhs, LinearExpr&& rhs )
         // inline LinearExpr operator-( const LinearExpr& lhs, LinearExpr&& rhs )
@@ -165,11 +167,11 @@ namespace sat
             return GDoubleLinearExpr::constructor.New( { ext } );
         }
 
-        ThrowJsError( sat::operator_minus : Invalid argument );
+        ThrowJsError( sat::Goperator_minus : Invalid argument );
         return info.Env().Undefined();
     };
 
-    Napi::Value operator_times( const Napi::CallbackInfo& info )
+    Napi::Value Goperator_times( const Napi::CallbackInfo& info )
     {
         // inline LinearExpr operator*( LinearExpr expr, int64_t factor )
         if ( info.Length() == 2
@@ -236,18 +238,34 @@ namespace sat
             return GDoubleLinearExpr::constructor.New( { ext } );
         }
 
-        ThrowJsError( sat::operator_times : Invalid argument );
+        ThrowJsError( sat::Goperator_times : Invalid argument );
         return info.Env().Undefined();
     }
 
-    /// Solves the given CpModelProto and returns an instance of CpSolverResponse.
     // CpSolverResponse Solve( const CpModelProto& model_proto );
-    Napi::Object     FuncInit( Napi::Env env, Napi::Object exports )
+    Napi::Value GSolve( const Napi::CallbackInfo& info )
     {
-        exports.Set( "operator_neg", Napi::Function::New( env, operator_neg ) );
-        exports.Set( "operator_plus", Napi::Function::New( env, operator_plus ) );
-        exports.Set( "operator_minus", Napi::Function::New( env, operator_minus ) );
-        exports.Set( "operator_times", Napi::Function::New( env, operator_times ) );
+        if ( info.Length() == 1
+             && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GCpModelProto::constructor.Value() ) )
+        {
+            auto model_proto      = Napi::ObjectWrap< GCpModelProto >::Unwrap( info[ 0 ].As< Napi::Object >() );
+            auto cpSolverResponse = Solve( *model_proto->pCpModelProto );
+            auto ext              = Napi::External< CpSolverResponse >::New( info.Env(), new CpSolverResponse( cpSolverResponse ) );
+            return GCpSolverResponse::constructor.New( { ext } );
+        }
+
+        ThrowJsError( sat::Solve : Not implemented );
+        return info.Env().Undefined();
+    }
+
+    Napi::Object GFuncInit( Napi::Env env, Napi::Object exports )
+    {
+        exports.Set( "operator_neg", Napi::Function::New( env, Goperator_neg ) );
+        exports.Set( "operator_plus", Napi::Function::New( env, Goperator_plus ) );
+        exports.Set( "operator_minus", Napi::Function::New( env, Goperator_minus ) );
+        exports.Set( "operator_times", Napi::Function::New( env, Goperator_times ) );
+        exports.Set( "Solve", Napi::Function::New( env, GSolve ) );
         return exports;
     }
 

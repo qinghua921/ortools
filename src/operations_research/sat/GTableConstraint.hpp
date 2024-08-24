@@ -41,7 +41,9 @@ namespace sat
             Napi::HandleScope scope( env );
             Napi::Function    func = DefineClass(
                 env, "TableConstraint",
-                {} );
+                {
+                    InstanceMethod( "AddTuple", &GTableConstraint::AddTuple ),
+                } );
             constructor = Napi::Persistent( func );
             constructor.SuppressDestruct();
             exports.Set( "TableConstraint", func );

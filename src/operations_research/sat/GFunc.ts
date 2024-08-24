@@ -1,5 +1,7 @@
 ﻿import { ortools } from "../../addon";
 import { BoolVar } from "./GBoolVar";
+import { CpModelProto } from "./GCpModelProto";
+import { CpSolverResponse } from "./GCpSolverResponse";
 import { DoubleLinearExpr } from "./GDoubleLinearExpr";
 import { LinearExpr } from "./GLinearExpr";
 

@@ -9,6 +9,8 @@
 #include "GLinearExpr.hpp"
 #include "GIntVar.hpp"
 #include "GTableConstraint.hpp"
+#include "GCpModelProto.hpp"
+#include "GDoubleLinearExpr.hpp"
 
 namespace operations_research
 {
@@ -51,6 +53,9 @@ namespace sat
                     InstanceMethod( "NewBoolVar", &GCpModelBuilder::NewBoolVar ),
                     InstanceMethod( "AddAtMostOne", &GCpModelBuilder::AddAtMostOne ),
                     InstanceMethod( "AddEquality", &GCpModelBuilder::AddEquality ),
+                    InstanceMethod( "AddAllowedAssignments", &GCpModelBuilder::AddAllowedAssignments ),
+                    InstanceMethod( "Maximize", &GCpModelBuilder::Maximize ),
+                    InstanceMethod( "Build", &GCpModelBuilder::Build ),
                 } );
             constructor = Napi::Persistent( func );
             constructor.SuppressDestruct();
@@ -598,9 +603,20 @@ namespace sat
         //     void ClearAssumptions();
 
         //     const CpModelProto& Build() const
-        //     {
-        //         return cp_model_;
-        //     }
+        Napi::Value Build( const Napi::CallbackInfo& info )
+        {
+            if ( info.Length() == 0 )
+            {
+                auto proto    = pCpModelBuilder->Build();
+                auto cppProto = new CpModelProto( proto );
+                auto obj      = Napi::External< CpModelProto >::New( info.Env(), cppProto );
+                return GCpModelProto::constructor.New( { obj } );
+            }
+
+            ThrowJsError( GCpModelBuilder::Build : Invalid arguments );
+            return info.Env().Undefined();
+        }
+
         //     const CpModelProto& Proto() const
         //     {
         //         return cp_model_;

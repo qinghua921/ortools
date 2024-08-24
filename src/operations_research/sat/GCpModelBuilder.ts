@@ -1,6 +1,7 @@
 ﻿import { ortools } from "../../addon";
 import { BoolVar } from "./GBoolVar";
 import { Constraint } from "./GConstraint";
+import { CpModelProto } from "./GCpModelProto";
 import { DoubleLinearExpr } from "./GDoubleLinearExpr";
 import { IntVar } from "./GIntVar";
 import { LinearExpr } from "./GLinearExpr";
@@ -49,6 +50,9 @@ export interface CpModelBuilder
     // Adds a linear floating point maximization objective.
     // Note that the coefficients will be internally scaled to integer.
     Maximize(expr: DoubleLinearExpr): void;
+
+    //     const CpModelProto& Build() const
+    Build(): CpModelProto;
 }
 
 export const CpModelBuilder:

@@ -1,12 +1,15 @@
 ﻿#include <napi.h>
 
-#include "GCpModelBuilder.hpp"
 #include "GBoolVar.hpp"
-#include "GIntVar.hpp"
 #include "GConstraint.hpp"
+#include "GCpModelBuilder.hpp"
+#include "GCpModelProto.hpp"
+#include "GCpSolverResponse.hpp"
+#include "GDoubleLinearExpr.hpp"
+#include "GFunc.hpp"
+#include "GIntVar.hpp"
 #include "GLinearExpr.hpp"
 #include "GTableConstraint.hpp"
-#include "GFunc.hpp"
 
 namespace operations_research
 {
@@ -16,14 +19,16 @@ namespace sat
     {
         auto satExports = Napi::Object::New( env );
 
-        GCpModelBuilder::Init( env, satExports );
         GBoolVar::Init( env, satExports );
-        GIntVar::Init( env, satExports );
         GConstraint::Init( env, satExports );
+        GCpModelBuilder::Init( env, satExports );
+        GCpModelProto::Init( env, satExports );
+        GCpSolverResponse::Init( env, satExports );
+        GDoubleLinearExpr::Init( env, satExports );
+        GFuncInit( env, satExports );
+        GIntVar::Init( env, satExports );
         GLinearExpr::Init( env, satExports );
         GTableConstraint::Init( env, satExports );
-
-        FuncInit( env, satExports );
 
         exports.Set( "sat", satExports );
     }

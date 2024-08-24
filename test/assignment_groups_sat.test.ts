@@ -2,7 +2,8 @@ import { BoolVar } from "../src/operations_research/sat/GBoolVar";
 import { IntVar } from "../src/operations_research/sat/GIntVar";
 import { CpModelBuilder } from "../src/operations_research/sat/GCpModelBuilder";
 import { LinearExpr } from "../src/operations_research/sat/GLinearExpr";
-import { operator_times } from "../src/operations_research/sat/GFunc";
+import { operator_times, Solve } from "../src/operations_research/sat/GFunc";
+import { CpSolverStatus } from "../src/operations_research/sat/GEnum";
 
 test("assignment_groups_sat", () =>
 {
@@ -116,13 +117,6 @@ test("assignment_groups_sat", () =>
 
   let total_cost = new LinearExpr();
 
-  // for (int worker : all_workers )
-  // {
-  //   for (int task : all_tasks )
-  //   {
-  //     total_cost += x[worker][task] * costs[worker][task];
-  //   }
-  // }
   for (const worker of all_workers)
   {
     for (const task of all_tasks)
@@ -134,12 +128,9 @@ test("assignment_groups_sat", () =>
   }
   cp_model.Maximize(total_cost);
 
-  // const CpSolverResponse response = Solve(cp_model.Build());
-  let response = cp_model.Solve();
-  // // [END solve]
+  let response = Solve(cp_model.Build());
+  expect(response.status()).toBe(CpSolverStatus.OPTIMAL);
 
-  // // Print solution.
-  // // [START print_solution]
   // if (response.status() == CpSolverStatus::INFEASIBLE )
   // {
   //   LOG(FATAL) << "No solution found.";
