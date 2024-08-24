@@ -2,12 +2,12 @@
 
 > Google Or-Tools for TS
 
-This is a TypeScript wrapper for the Google OR-Tools library. The corresponding version is or-tools_x64_VisualStudio2019_cpp_v9.6.2534.zip.
+这是 Google OR-Tools 的 TypeScript 封装. 对应的版本为 or-tools_x64_VisualStudio2019_cpp_v9.6.2534.zip.
 
-The code is still being organized.
-Please submit an issue if you have any questions.
+代码还在整理中.
+如果有问题，欢迎提 issue.
 
-The code is quite large, and the priority is to implement the code in the examples directory.
+代码量很大, 优先实现 exmaples 中的代码.
 
 - assignment_groups_mip - 🆗
 - assignment_groups_sat - 🆗
