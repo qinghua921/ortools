@@ -130,24 +130,5 @@ test("assignment_groups_sat", () =>
 
   let response = Solve(cp_model.Build());
   expect(response.status()).toBe(CpSolverStatus.OPTIMAL);
-
-  // if (response.status() == CpSolverStatus::INFEASIBLE )
-  // {
-  //   LOG(FATAL) << "No solution found.";
-  // }
-  // LOG(INFO) << "Total cost: " << response.objective_value();
-  // LOG(INFO);
-  // for (int worker : all_workers )
-  // {
-  //   for (int task : all_tasks )
-  //   {
-  //     if (SolutionBooleanValue(response, x[worker][task]))
-  //     {
-  //       LOG(INFO) << "Worker " << worker << " assigned to task " << task
-  //         << ".  Cost: " << costs[worker][task];
-  //     }
-  //   }
-  // }
-  // [END print_solution]
 }
 );
