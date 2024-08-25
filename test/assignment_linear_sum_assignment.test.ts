@@ -1,6 +1,6 @@
 import { SimpleLinearSumAssignment, Status } from "../src/operations_research/GSimpleLinearSumAssignment";
 
-test("assignment_groups_sat", () =>
+test("assignment_linear_sum_assignment.test", () =>
 {
     let assignment = new SimpleLinearSumAssignment();
     let num_workers = 4;
