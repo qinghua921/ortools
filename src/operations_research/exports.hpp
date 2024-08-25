@@ -2,14 +2,16 @@
 
 #include "./sat/exports.hpp"
 #include <napi.h>
+
 #include "GFunc.hpp"
 #include "GLinearExpr.hpp"
 #include "GLinearRange.hpp"
 #include "GMPConstraint.hpp"
+#include "GMPObjective.hpp"
 #include "GMPSolver.hpp"
 #include "GMPSolverParameters.hpp"
 #include "GMPVariable.hpp"
-#include "GMPObjective.hpp"
+#include "GSimpleLinearSumAssignment.hpp"
 
 namespace operations_research
 {
@@ -21,10 +23,11 @@ void Init( Napi::Env env, Napi::Object exports_ )
     GLinearExpr::Init( env, exports );
     GLinearRange::Init( env, exports );
     GMPConstraint::Init( env, exports );
-    GMPSolver::Init( env, exports );
-    GMPVariable::Init( env, exports );
     GMPObjective::Init( env, exports );
+    GMPSolver::Init( env, exports );
     GMPSolverParameters::Init( env, exports );
+    GMPVariable::Init( env, exports );
+    GSimpleLinearSumAssignment::Init( env, exports );
 
     sat::Init( env, exports );
 
