@@ -3,7 +3,8 @@
   "version": "0.0.7",
   "repository": "https://github.com/qinghua921/ortools.git",
   "description": "Google OR-Tools for Node.js",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "scripts": {
     "tsbuild": "tsc -b",
     "cppbuild": "cmake-js compile",
