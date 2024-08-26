@@ -18,8 +18,8 @@
   "keywords": [
     "ortools",
     "optimization",
-    "linear programming",
-    "integer programming"
+    "linear optimization",
+    "integer optimization"
   ],
   "license": "Apache-2.0"
 }
