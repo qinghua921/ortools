@@ -1,6 +1,6 @@
 {
   "name": "ts-ortools",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "repository": "https://github.com/qinghua921/ortools.git",
   "scripts": {
     "tsbuild": "tsc -b",
@@ -14,5 +14,12 @@
     "node-addon-api": "^6.1.0",
     "ts-jest": "^29.1.0",
     "typescript": "^5.1.3"
-  }
+  },
+  "keywords": [
+    "ortools",
+    "optimization",
+    "linear programming",
+    "integer programming"
+  ],
+  "license": "Apache-2.0"
 }
