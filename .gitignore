@@ -8,5 +8,3 @@ node_modules
 out
 tsconfig.tsbuildinfo
 
-*.js
-*.d.ts
