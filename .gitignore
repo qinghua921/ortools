@@ -1,10 +1,8 @@
-﻿.vs
-.vscode
+﻿.vscode
 build
 cmake/or-tools_x64
 cmake/or-tools_x64_VisualStudio2019_cpp_v9.6.2534.zip
 jssrc
 node_modules
-out
 tsconfig.tsbuildinfo
 
