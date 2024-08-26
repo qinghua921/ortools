@@ -4,8 +4,17 @@
 
 This is a TypeScript wrapper for the Google OR-Tools library. The corresponding version is or-tools_x64_VisualStudio2019_cpp_v9.6.2534.zip.
 
-The code is still being organized.
-Please submit an issue if you have any questions.
+The code is still being written, and if you have any questions, you can submit an issue.
+
+## How to use
+
+Please refer to the C++ usage method and examples in cmake\or-tools_x64\examples
+
+## How to build
+
+Unzip or-tools_x64_VisualStudio2019_cpp_v9.6.2534.zip to cmake/or-tools_x64
+
+## Progress
 
 The code is quite large, and the priority is to implement the code in the examples directory.
 
