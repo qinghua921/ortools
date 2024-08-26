@@ -1,6 +1,6 @@
-import { MPSolver, ResultStatus } from "../src/operations_research/GMPSolver";
-import { LinearExpr } from "../src/operations_research/GLinearExpr";
-import { operator_EQ } from "../src/operations_research/GFunc";
+import { MPSolver, ResultStatus } from "../operations_research/GMPSolver";
+import { LinearExpr } from "../operations_research/GLinearExpr";
+import { operator_EQ } from "../operations_research/GFunc";
 
 test("assignment_groups_mip", () =>
 {

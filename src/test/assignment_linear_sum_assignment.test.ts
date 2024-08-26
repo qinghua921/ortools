@@ -1,4 +1,4 @@
-import { SimpleLinearSumAssignment, Status } from "../src/operations_research/GSimpleLinearSumAssignment";
+import { SimpleLinearSumAssignment, Status } from "../operations_research/GSimpleLinearSumAssignment";
 
 test("assignment_linear_sum_assignment.test", () =>
 {

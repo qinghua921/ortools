@@ -1,6 +1,6 @@
-import { operator_EQ, operator_LEQ } from "../src/operations_research/GFunc";
-import { LinearExpr } from "../src/operations_research/GLinearExpr";
-import { MPSolver, ResultStatus } from "../src/operations_research/GMPSolver";
+import { operator_EQ, operator_LEQ } from "../operations_research/GFunc";
+import { LinearExpr } from "../operations_research/GLinearExpr";
+import { MPSolver, ResultStatus } from "../operations_research/GMPSolver";
 
 test("assignment_min_flow", () =>
 {

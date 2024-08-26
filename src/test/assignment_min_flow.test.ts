@@ -1,4 +1,4 @@
-import { SimpleMinCostFlow, Status } from "../src/operations_research/GSimpleMinCostFlow";
+import { SimpleMinCostFlow, Status } from "../operations_research/GSimpleMinCostFlow";
 
 test("assignment_min_flow", () =>
 {

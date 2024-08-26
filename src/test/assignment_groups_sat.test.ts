@@ -1,9 +1,9 @@
-import { BoolVar } from "../src/operations_research/sat/GBoolVar";
-import { IntVar } from "../src/operations_research/sat/GIntVar";
-import { CpModelBuilder } from "../src/operations_research/sat/GCpModelBuilder";
-import { LinearExpr } from "../src/operations_research/sat/GLinearExpr";
-import { operator_times, Solve } from "../src/operations_research/sat/GFunc";
-import { CpSolverStatus } from "../src/operations_research/sat/GEnum";
+import { BoolVar } from "../operations_research/sat/GBoolVar";
+import { IntVar } from "../operations_research/sat/GIntVar";
+import { CpModelBuilder } from "../operations_research/sat/GCpModelBuilder";
+import { LinearExpr } from "../operations_research/sat/GLinearExpr";
+import { operator_times, Solve } from "../operations_research/sat/GFunc";
+import { CpSolverStatus } from "../operations_research/sat/GEnum";
 
 test("assignment_groups_sat", () =>
 {
