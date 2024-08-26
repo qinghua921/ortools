@@ -65,6 +65,10 @@ export interface MPSolver
 
     // Solves the problem using the specified parameter values.
     Solve(param: MPSolverParameters): ResultStatus
+
+    // MPVariable * MakeIntVar(double lb, double ub, const std:: string& name );
+    MakeIntVar(lb: number, ub: number, name: string): MPVariable
+
 }
 
 export const MPSolver:
@@ -117,6 +121,9 @@ export const MPSolver:
             "GLPK_LINEAR_PROGRAMMING" | "GLPK_LP" |
             "GLPK_MIXED_INTEGER_PROGRAMMING" | "GLPK" | "GLPK_MIP"
         ) => MPSolver
+
+        // Creates an integer variable.
+        MakeIntVar(lb: number, ub: number, name: string): MPVariable
 
     } = ortools.operations_research.MPSolver
 

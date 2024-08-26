@@ -13,27 +13,8 @@ public:
     static Napi::FunctionReference constructor;
     MPVariable*                    pMPVariable = nullptr;
 
-    GMPVariable( const Napi::CallbackInfo& info )
-        : Napi::ObjectWrap< GMPVariable >( info )
-    {
-        if ( info.Length() == 1 && info[ 0 ].IsExternal() )
-        {
-            auto external = info[ 0 ].As< Napi::External< MPVariable > >();
-            pMPVariable   = dynamic_cast< MPVariable* >( external.Data() );
-            if ( pMPVariable ) return;
-        }
-
-        ThrowJsError( GMPVariable::GMPVariable : Invalid argument );
-    };
-
-    ~GMPVariable()
-    {
-        if ( pMPVariable )
-        {
-            delete pMPVariable;
-            pMPVariable = nullptr;
-        }
-    }
+    GMPVariable( const Napi::CallbackInfo& info );
+    ~GMPVariable();
 
     static Napi::Object Init( Napi::Env env, Napi::Object exports )
     {
@@ -48,12 +29,35 @@ public:
         exports.Set( "MPVariable", func );
         return exports;
     };
+    
+    Napi::Value Name( const Napi::CallbackInfo& info );// const std::string& name() const
+};
 
-    // const std::string& name() const
-    Napi::Value Name( const Napi::CallbackInfo& info )
+Napi::Value GMPVariable::Name( const Napi::CallbackInfo& info )
+{
+    return Napi::String::New( info.Env(), pMPVariable->name() );
+}
+
+GMPVariable::~GMPVariable()
+{
+    if ( pMPVariable )
     {
-        return Napi::String::New( info.Env(), pMPVariable->name() );
+        delete pMPVariable;
+        pMPVariable = nullptr;
     }
+}
+
+GMPVariable::GMPVariable( const Napi::CallbackInfo& info )
+    : Napi::ObjectWrap< GMPVariable >( info )
+{
+    if ( info.Length() == 1 && info[ 0 ].IsExternal() )
+    {
+        auto external = info[ 0 ].As< Napi::External< MPVariable > >();
+        pMPVariable   = dynamic_cast< MPVariable* >( external.Data() );
+        if ( pMPVariable ) return;
+    }
+
+    ThrowJsError( GMPVariable::GMPVariable : Invalid argument );
 };
 
 Napi::FunctionReference GMPVariable::constructor;

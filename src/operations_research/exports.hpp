@@ -12,6 +12,7 @@
 #include "GMPSolverParameters.hpp"
 #include "GMPVariable.hpp"
 #include "GSimpleLinearSumAssignment.hpp"
+#include "GSimpleMinCostFlow.hpp"
 
 namespace operations_research
 {
@@ -28,6 +29,7 @@ void Init( Napi::Env env, Napi::Object exports_ )
     GMPSolverParameters::Init( env, exports );
     GMPVariable::Init( env, exports );
     GSimpleLinearSumAssignment::Init( env, exports );
+    GSimpleMinCostFlow::Init( env, exports );
 
     sat::Init( env, exports );
 
