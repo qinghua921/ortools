@@ -1708,7 +1708,7 @@
             //     /// Returns the interval variable from its index in the proto.
             //     IntervalVar GetIntervalVarFromProtoIndex( int index );
 
-        };
+        }
 
         /**
          * A Boolean variable.
