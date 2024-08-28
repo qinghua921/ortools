@@ -7,4 +7,5 @@ export interface CpSolverResponse
     status(): CpSolverStatus;
 
 }
+
 export const CpSolverResponseStatus: {} = ortools.operations_research.sat.CpSolverResponseStatus;

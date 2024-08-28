@@ -57,6 +57,7 @@ export namespace operations_research
     MPVariable;
     SimpleLinearSumAssignment;
     SimpleMinCostFlow;
+    MPSolver
 
     export namespace sat
     {
@@ -64,7 +65,6 @@ export namespace operations_research
         Constraint;
         CpModelBuilder;
         CpModelProto;
-        CpSolverResponse;
         DoubleLinearExpr;
         CpSolverStatus;
         Solve;
