@@ -63,7 +63,7 @@
          * 
          * C++: MPSolver( const std::string& name, OptimizationProblemType problem_type );
          */
-        new(name: string, problem_type: OptimizationProblemType): MPSolver;
+        constructor(name: string, problem_type: OptimizationProblemType): MPSolver;
 
         /**
          * Recommended factory method to create a MPSolver instance, especially in
@@ -200,8 +200,12 @@
         //     /// Creates an integer variable.
         //     MPVariable* MakeIntVar( double lb, double ub, const std::string& name );
 
-        //     /// Creates a boolean variable.
-        //     MPVariable* MakeBoolVar( const std::string& name );
+        /**
+         * Creates a boolean variable.
+         * 
+         * C++: MPVariable* MakeBoolVar( const std::string& name );
+         */
+        MakeBoolVar(name: string): MPVariable;
 
         //     /**
         //      * Creates an array of variables. All variables created have the same bounds
@@ -265,35 +269,53 @@
         //     MPConstraint* LookupConstraintOrNull(
         //         const std::string& constraint_name ) const;
 
-        //     /**
-        //      * Creates a linear constraint with given bounds.
-        //      *
-        //      * Bounds can be finite or +/- MPSolver::infinity(). The MPSolver class
-        //      * assumes ownership of the constraint.
-        //      *
-        //      * @return a pointer to the newly created constraint.
-        //      */
-        //     MPConstraint* MakeRowConstraint( double lb, double ub );
+        /**
+         * Creates a linear constraint with given bounds.
+         *
+         * Bounds can be finite or +/- MPSolver::infinity(). The MPSolver class
+         * assumes ownership of the constraint.
+         * 
+         * C++: MPConstraint* MakeRowConstraint( double lb, double ub );
+         * 
+         * @return a pointer to the newly created constraint.
+         */
+        MakeRowConstraint(lb: number, ub: number): MPConstraint;
 
-        //     /// Creates a constraint with -infinity and +infinity bounds.
-        //     MPConstraint* MakeRowConstraint();
+        /**
+         * Creates a constraint with -infinity and +infinity bounds.
+         * 
+         * C++: MPConstraint* MakeRowConstraint();
+         */
+        MakeRowConstraint(): MPConstraint;
 
-        //     /// Creates a named constraint with given bounds.
-        //     MPConstraint* MakeRowConstraint( double lb, double ub,
-        //                                      const std::string& name );
+        /**
+         * Creates a named constraint with given bounds.
+         * 
+         * C++: MPConstraint* MakeRowConstraint( double lb, double ub, const std::string& name );
+         */
+        MakeRowConstraint(lb: number, ub: number, name: string): MPConstraint;
 
-        //     /// Creates a named constraint with -infinity and +infinity bounds.
-        //     MPConstraint* MakeRowConstraint( const std::string& name );
+        /**
+         * Creates a named constraint with -infinity and +infinity bounds.
+         * 
+         * C++: MPConstraint* MakeRowConstraint( const std::string& name );
+         */
+        MakeRowConstraint(name: string): MPConstraint;
 
-        //     /**
-        //      * Creates a constraint owned by MPSolver enforcing:
-        //      *     range.lower_bound() <= range.linear_expr() <= range.upper_bound()
-        //      */
-        //     MPConstraint* MakeRowConstraint( const LinearRange& range );
+        /**
+         * Creates a constraint owned by MPSolver enforcing:
+         *     range.lower_bound() <= range.linear_expr() <= range.upper_bound()
+         * 
+         * C++: MPConstraint* MakeRowConstraint( const LinearRange& range );
+         */
+        MakeRowConstraint(range: LinearRange): MPConstraint;
 
-        //     /// As above, but also names the constraint.
-        //     MPConstraint* MakeRowConstraint( const LinearRange& range,
-        //                                      const std::string& name );
+        /**
+         * As above, but also names the constraint.
+         * 
+         * C++: MPConstraint* MakeRowConstraint( const LinearRange& range, const std::string& name );
+         */
+        MakeRowConstraint(range: LinearRange, name: string): MPConstraint;
 
         //     /**
         //      * Returns the objective object.
@@ -750,6 +772,152 @@
 
         //     // Debugging: verify that the given MPVariable* belongs to this solver.
         //     bool OwnsVariable( const MPVariable* var ) const;
+
+    };
+
+
+    /**
+     * LinearExpr models a quantity that is linear in the decision variables
+     * (MPVariable) of an optimization problem, i.e.
+     *
+     * offset + sum_{i in S} a_i*x_i,
+     *
+     * where the a_i and offset are constants and the x_i are MPVariables. You can
+     * use a LinearExpr "linear_expr" with an MPSolver "solver" to:
+     *   * Set as the objective of your optimization problem, e.g.
+     *
+     *     solver.MutableObjective()->MaximizeLinearExpr(linear_expr);
+     *
+     *   * Create a constraint in your optimization, e.g.
+     *
+     *     solver.MakeRowConstraint(linear_expr1 <= linear_expr2);
+     *
+     *   * Get the value of the quantity after solving, e.g.
+     *
+     *     solver.Solve();
+     *     linear_expr.SolutionValue();
+     *
+     * LinearExpr is allowed to delete variables with coefficient zero from the map,
+     * but is not obligated to do so.
+     */
+    export class LinearExpr
+    {
+        /**
+         * C++: LinearExpr();
+         */
+        constructor(): LinearExpr;
+
+        //     /// Possible implicit conversions are intentional.
+        //     LinearExpr( double constant );  // NOLINT
+
+        //     /***
+        //      * Possible implicit conversions are intentional.
+        //      *
+        //      * Warning: var is not owned.
+        //      */
+        //     LinearExpr( const MPVariable* var );  // NOLINT
+
+        //     /**
+        //      * Returns 1-var.
+        //      *
+        //      * NOTE(user): if var is binary variable, this corresponds to the logical
+        //      * negation of var.
+        //      * Passing by value is intentional, see the discussion on binary ops.
+        //      */
+        //     static LinearExpr NotVar( LinearExpr var );
+
+        //     LinearExpr& operator+=( const LinearExpr& rhs );
+        operator_plus_equals(rhs: LinearExpr): LinearExpr;
+
+        //     LinearExpr& operator-=( const LinearExpr& rhs );
+        //     LinearExpr& operator*=( double rhs );
+        //     LinearExpr& operator/=( double rhs );
+        //     LinearExpr  operator-() const;
+
+        //     double offset() const
+        //     {
+        //         return offset_;
+        //     }
+        //     const absl::flat_hash_map< const MPVariable*, double >& terms() const
+        //     {
+        //         return terms_;
+        //     }
+
+        //     /**
+        //      * Evaluates the value of this expression at the solution found.
+        //      *
+        //      * It must be called only after calling MPSolver::Solve.
+        //      */
+        //     double SolutionValue() const;
+
+        //     /**
+        //      * A human readable representation of this. Variables will be printed in order
+        //      * of lowest index first.
+        //      */
+        //     std::string ToString() const;
+
+    };
+
+    /**
+     * C++: LinearRange operator<=( const LinearExpr& lhs, const LinearExpr& rhs );
+     */
+    export function operator_less_equals(
+        lhs: LinearExpr | number, rhs: LinearExpr | number): LinearRange;
+
+    /**
+     * C++: LinearRange operator==( const LinearExpr& lhs, const LinearExpr& rhs );
+     */
+    export function operator_equals(
+        lhs: LinearExpr | number, rhs: LinearExpr | number): LinearRange;
+
+    /**
+     * C++: LinearRange operator>=( const LinearExpr& lhs, const LinearExpr& rhs );
+     */
+    export function operator_greater_equals(
+        lhs: LinearExpr | number, rhs: LinearExpr | number): LinearRange;
+
+
+    /**
+     * An expression of the form:
+     *
+     * \code lower_bound <= sum_{i in S} a_i*x_i <= upper_bound. \endcode
+     * The sum is represented as a LinearExpr with offset 0.
+     *
+     * Must be added to model with
+     * \code
+       MPSolver::AddRowConstraint(const LinearRange& range,
+                                  const std::string& name);
+       \endcode
+     */
+    export class LinearRange
+    {
+        /**
+         * C++: LinearRange() : lower_bound_( 0 ), upper_bound_( 0 ) {}
+         */
+        constructor(): LinearRange;
+
+        //        /**
+        //         * The bounds of the linear range are updated so that they include the offset
+        //         * from "linear_expr", i.e., we form the range:
+        //         * \code
+        //           lower_bound - offset <= linear_expr - offset <= upper_bound - offset.
+        //           \endcode
+        //         */
+        //        LinearRange( double lower_bound, const LinearExpr& linear_expr,
+        //                     double upper_bound );
+
+        //        double lower_bound() const
+        //        {
+        //            return lower_bound_;
+        //        }
+        //        const LinearExpr& linear_expr() const
+        //        {
+        //            return linear_expr_;
+        //        }
+        //        double upper_bound() const
+        //        {
+        //            return upper_bound_;
+        //        }
 
     };
 
