@@ -1,8 +1,8 @@
 ﻿import { ortools } from '../addon'
-import { MPVariable } from './GMPVariable';
+import { GMPVariable } from './GMPVariable';
 
 // A class to express a linear objective.
-export interface MPObjective
+export interface GMPObjective
 {
     /**
      * Sets the coefficient of the variable in the objective.
@@ -10,7 +10,7 @@ export interface MPObjective
      * If the variable does not belong to the solver, the function just returns,
      * or crashes in non-opt mode.
      */
-    SetCoefficient(var_: MPVariable, coeff: number): void;
+    SetCoefficient(var_: GMPVariable, coeff: number): void;
 
     // Sets the optimization direction to maximize.
     SetMaximization(): void;
@@ -44,4 +44,4 @@ export interface MPObjective
     Value(): number;
 }
 
-export const MPObjective: {} = ortools.operations_research.MPObjective
+export const GMPObjective: {} = ortools.operations_research.MPObjective

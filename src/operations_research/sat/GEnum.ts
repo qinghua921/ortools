@@ -1,4 +1,4 @@
-﻿export enum CpSolverStatus 
+﻿export enum GCpSolverStatus 
 {
     UNKNOWN = 0,
     MODEL_INVALID = 1,

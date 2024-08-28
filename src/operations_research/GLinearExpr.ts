@@ -1,5 +1,5 @@
 ﻿import { ortools } from "../addon";
-import { MPVariable } from "./GMPVariable";
+import { GMPVariable } from "./GMPVariable";
 
 
 /**
@@ -26,36 +26,36 @@ import { MPVariable } from "./GMPVariable";
  * LinearExpr is allowed to delete variables with coefficient zero from the map,
  * but is not obligated to do so.
  */
-export interface LinearExpr
+export interface GLinearExpr
 {
     //     LinearExpr& operator+=( const LinearExpr& rhs );
-    operator_plus(rhs: LinearExpr | MPVariable): LinearExpr;
+    operator_plus(rhs: GLinearExpr | GMPVariable): GLinearExpr;
 
     //     LinearExpr& operator-=( const LinearExpr& rhs );
-    operator_minus(rhs: LinearExpr | MPVariable): LinearExpr;
+    operator_minus(rhs: GLinearExpr | GMPVariable): GLinearExpr;
 
     //     LinearExpr& operator*=( double rhs );
-    operator_times(rhs: number): LinearExpr;
+    operator_times(rhs: number): GLinearExpr;
 
     //     LinearExpr& operator/=( double rhs );
-    operator_divide(rhs: number): LinearExpr;
+    operator_divide(rhs: number): GLinearExpr;
 
     //     LinearExpr  operator-() const;
-    operator_negate(): LinearExpr;
+    operator_negate(): GLinearExpr;
 }
 
-export const LinearExpr:
+export const GLinearExpr:
     {
-        new(): LinearExpr;
+        new(): GLinearExpr;
 
         // Possible implicit conversions are intentional.
-        new(constant: number): LinearExpr;
+        new(constant: number): GLinearExpr;
 
         /***
          * Possible implicit conversions are intentional.
          *
          * Warning: var is not owned.
          */
-        new(var_: MPVariable): LinearExpr;
+        new(var_: GMPVariable): GLinearExpr;
 
     } = ortools.operations_research.LinearExpr;

@@ -1,13 +1,13 @@
 ﻿import { ortools } from "../addon";
 
-export enum Status
+export enum GStatus
 {
     OPTIMAL,            // The algorithm found a minimum-cost perfect matching.
     INFEASIBLE,         // The given problem admits no perfect matching.
     POSSIBLE_OVERFLOW,  // Some cost magnitude is too large.
 };
 
-export interface SimpleLinearSumAssignment
+export interface GSimpleLinearSumAssignment
 {
     // Adds an arc from a left node to a right node with a given cost.
     // * Node indices must be non-negative (>= 0). For a perfect
@@ -19,12 +19,12 @@ export interface SimpleLinearSumAssignment
 
     // Solves the problem (finds the perfect matching that minimizes the
     // cost) and returns the solver status.
-    Solve(): Status;
+    Solve(): GStatus;
 }
 
-export const SimpleLinearSumAssignment:
+export const GSimpleLinearSumAssignment:
     {
         // The constructor takes no size.
         // New node indices will be created lazily by AddArcWithCost().
-        new(): SimpleLinearSumAssignment;
+        new(): GSimpleLinearSumAssignment;
     } = ortools.operations_research.SimpleLinearSumAssignment;

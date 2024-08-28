@@ -8,7 +8,7 @@
 // TODO(user): If the need arises, extend this interface to support warm start
 // and incrementality between solves. Note that this is already supported by the
 // GenericMinCostFlow<> interface.
-export interface SimpleMinCostFlow
+export interface GSimpleMinCostFlow
 {
 
     // Adds a directed arc from tail to head to the underlying graph with
@@ -28,16 +28,16 @@ export interface SimpleMinCostFlow
     // requires that the sum of all node supply minus node demand is zero and
     // that the graph has enough capacity to send all supplies and serve all
     // demands. Otherwise, it will return INFEASIBLE.
-    Solve(): Status;
+    Solve(): GStatus;
 
 }
 
-export const SimpleMinCostFlow:
+export const GSimpleMinCostFlow:
     {
-        new(): SimpleMinCostFlow;
+        new(): GSimpleMinCostFlow;
     } = ortools.operations_research.SimpleMinCostFlow;
 
-export enum Status
+export enum GStatus
 {
     NOT_SOLVED,
     OPTIMAL,

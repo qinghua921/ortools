@@ -1,12 +1,12 @@
 ﻿import { ortools } from '../addon'
-import { MPVariable } from './GMPVariable';
+import { GMPVariable } from './GMPVariable';
 
 /**
  * The class for constraints of a Mathematical Programming (MP) model.
  *
  * A constraint is represented as a linear equation or inequality.
  */
-export interface MPConstraint
+export interface GMPConstraint
 {
     /**
      * Sets the coefficient of the variable on the constraint.
@@ -14,10 +14,10 @@ export interface MPConstraint
      * If the variable does not belong to the solver, the function just returns,
      * or crashes in non-opt mode.
      */
-    SetCoefficient(var_: MPVariable, coeff: number): void;
+    SetCoefficient(var_: GMPVariable, coeff: number): void;
 }
 
-export const MPConstraint:
+export const GMPConstraint:
     {
 
     } = ortools.operations_research.MPConstraint;

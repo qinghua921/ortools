@@ -8,16 +8,16 @@
  *
  * This can only be constructed via \c CpModelBuilder.NewBoolVar().
  */
-export interface BoolVar 
+export interface GBoolVar 
 {
     /**
      * Sets the name of the variable.
      * Note that this will always set the "positive" version of this Boolean.
      */
-    WithName(name: string): BoolVar;
+    WithName(name: string): GBoolVar;
 }
 
-export const BoolVar:
+export const GBoolVar:
     {
         /**
          * A default constructed BoolVar can be used to mean not defined yet.
@@ -25,6 +25,7 @@ export const BoolVar:
          * Doing so will crash in debug mode and will result in an invalid model in
          * opt mode.
          */
-        new(): BoolVar;
+        new(): GBoolVar;
 
     } = ortools.operations_research.sat.BoolVar;
+

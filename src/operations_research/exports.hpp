@@ -20,7 +20,7 @@ void Init( Napi::Env env, Napi::Object exports_ )
 {
     auto exports = Napi::Object::New( env );
 
-    FuncInit( env, exports );
+    GFuncInit( env, exports );
     GLinearExpr::Init( env, exports );
     GLinearRange::Init( env, exports );
     GMPConstraint::Init( env, exports );

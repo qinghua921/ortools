@@ -1,53 +1,53 @@
 ﻿import { ortools } from "../../addon";
-import { BoolVar } from "./GBoolVar";
-import { CpModelProto } from "./GCpModelProto";
-import { CpSolverResponse } from "./GCpSolverResponse";
-import { DoubleLinearExpr } from "./GDoubleLinearExpr";
-import { LinearExpr } from "./GLinearExpr";
+import { GBoolVar } from "./GBoolVar";
+import { GCpModelProto } from "./GCpModelProto";
+import { GCpSolverResponse } from "./GCpSolverResponse";
+import { GDoubleLinearExpr } from "./GDoubleLinearExpr";
+import { GLinearExpr } from "./GLinearExpr";
 
 
-export const operator_neg:
+export const Goperator_neg:
     // inline LinearExpr operator-( LinearExpr expr )
-    ((expr: LinearExpr) => LinearExpr)
+    ((expr: GLinearExpr) => GLinearExpr)
     // inline DoubleLinearExpr operator-( DoubleLinearExpr expr )
-    & ((expr: DoubleLinearExpr) => DoubleLinearExpr)
+    & ((expr: GDoubleLinearExpr) => GDoubleLinearExpr)
     = ortools.operations_research.sat.operator_neg
 
-export const operator_plus:
+export const Goperator_plus:
     // inline LinearExpr operator+( const LinearExpr& lhs, const LinearExpr& rhs )
-    ((lhs: LinearExpr, rhs: LinearExpr) => LinearExpr)
+    ((lhs: GLinearExpr, rhs: GLinearExpr) => GLinearExpr)
     // inline DoubleLinearExpr operator+( const DoubleLinearExpr& lhs, const DoubleLinearExpr& rhs )
-    & ((lhs: DoubleLinearExpr, rhs: DoubleLinearExpr) => DoubleLinearExpr)
+    & ((lhs: GDoubleLinearExpr, rhs: GDoubleLinearExpr) => GDoubleLinearExpr)
     // inline DoubleLinearExpr operator+( DoubleLinearExpr expr, double rhs )
-    & ((expr: DoubleLinearExpr, rhs: number) => DoubleLinearExpr)
+    & ((expr: GDoubleLinearExpr, rhs: number) => GDoubleLinearExpr)
     // inline DoubleLinearExpr operator+( double lhs, DoubleLinearExpr expr )
-    & ((lhs: number, expr: DoubleLinearExpr) => DoubleLinearExpr)
+    & ((lhs: number, expr: GDoubleLinearExpr) => GDoubleLinearExpr)
     = ortools.operations_research.sat.operator_plus
 
-export const operator_minus:
+export const Goperator_minus:
     // inline LinearExpr operator-( const LinearExpr& lhs, const LinearExpr& rhs )
-    ((lhs: LinearExpr, rhs: LinearExpr) => LinearExpr)
+    ((lhs: GLinearExpr, rhs: GLinearExpr) => GLinearExpr)
     // inline DoubleLinearExpr operator-( const DoubleLinearExpr& lhs, const DoubleLinearExpr& rhs )
-    & ((lhs: DoubleLinearExpr, rhs: DoubleLinearExpr) => DoubleLinearExpr)
+    & ((lhs: GDoubleLinearExpr, rhs: GDoubleLinearExpr) => GDoubleLinearExpr)
     // inline DoubleLinearExpr operator-( DoubleLinearExpr epxr, double rhs )
-    & ((expr: DoubleLinearExpr, rhs: number) => DoubleLinearExpr)
+    & ((expr: GDoubleLinearExpr, rhs: number) => GDoubleLinearExpr)
     // inline DoubleLinearExpr operator-( double lhs, DoubleLinearExpr expr )
-    & ((lhs: number, expr: DoubleLinearExpr) => DoubleLinearExpr)
+    & ((lhs: number, expr: GDoubleLinearExpr) => GDoubleLinearExpr)
     = ortools.operations_research.sat.operator_minus
 
 
 
-export const operator_times:
+export const Goperator_times:
     // inline LinearExpr operator*( LinearExpr expr, int64_t factor )
-    ((expr: LinearExpr | BoolVar, factor: number) => LinearExpr)
+    ((expr: GLinearExpr | GBoolVar, factor: number) => GLinearExpr)
     // inline LinearExpr operator*( int64_t factor, LinearExpr expr )
-    & ((factor: number, expr: LinearExpr) => LinearExpr)
+    & ((factor: number, expr: GLinearExpr) => GLinearExpr)
     // inline DoubleLinearExpr operator*( DoubleLinearExpr expr, double factor )
-    & ((expr: DoubleLinearExpr, factor: number) => DoubleLinearExpr)
+    & ((expr: GDoubleLinearExpr, factor: number) => GDoubleLinearExpr)
     // inline DoubleLinearExpr operator*( double factor, DoubleLinearExpr expr )
-    & ((factor: number, expr: DoubleLinearExpr) => DoubleLinearExpr)
+    & ((factor: number, expr: GDoubleLinearExpr) => GDoubleLinearExpr)
     = ortools.operations_research.sat.operator_times
 
 // Solves the given CpModelProto and returns an instance of CpSolverResponse.
-export const Solve: (model_proto: CpModelProto) => CpSolverResponse
+export const Solve: (model_proto: GCpModelProto) => GCpSolverResponse
     = ortools.operations_research.sat.Solve

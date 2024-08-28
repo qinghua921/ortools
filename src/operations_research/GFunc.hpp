@@ -192,7 +192,7 @@ Napi::Value Goperator_GEQ( const Napi::CallbackInfo& info )
     return info.Env().Undefined();
 }
 
-Napi::Object FuncInit( Napi::Env env, Napi::Object exports )
+Napi::Object GFuncInit( Napi::Env env, Napi::Object exports )
 {
     exports.Set( "operator_LEQ", Napi::Function::New( env, Goperator_LEQ ) );
     exports.Set( "operator_EQ", Napi::Function::New( env, Goperator_EQ ) );

@@ -1,19 +1,19 @@
 ﻿import { ortools } from "../addon"
-import { LinearExpr } from "./GLinearExpr"
-import { LinearRange } from "./GLinearRange"
-import { MPVariable } from "./GMPVariable"
+import { GLinearExpr } from "./GLinearExpr"
+import { GLinearRange } from "./GLinearRange"
+import { GMPVariable } from "./GMPVariable"
 
 
 // LinearRange operator<=( const LinearExpr& lhs, const LinearExpr& rhs );
-export const operator_LEQ: (lhs: LinearExpr | number | MPVariable, rhs: LinearExpr | number | MPVariable) => LinearRange
+export const Goperator_LEQ: (lhs: GLinearExpr | number | GMPVariable, rhs: GLinearExpr | number | GMPVariable) => GLinearRange
     = ortools.operations_research.operator_LEQ
 
 
 // LinearRange operator==( const LinearExpr& lhs, const LinearExpr& rhs ); 
-export const operator_EQ: (lhs: LinearExpr | number | MPVariable, rhs: LinearExpr | number | MPVariable) => LinearRange
+export const Goperator_EQ: (lhs: GLinearExpr | number | GMPVariable, rhs: GLinearExpr | number | GMPVariable) => GLinearRange
     = ortools.operations_research.operator_EQ
 
 
 // LinearRange operator>=( const LinearExpr& lhs, const LinearExpr& rhs );
-export const operator_GEQ: (lhs: LinearExpr | number | MPVariable, rhs: LinearExpr | number | MPVariable) => LinearRange
+export const Goperator_GEQ: (lhs: GLinearExpr | number | GMPVariable, rhs: GLinearExpr | number | GMPVariable) => GLinearRange
     = ortools.operations_research.operator_GEQ

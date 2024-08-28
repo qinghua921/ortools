@@ -27,13 +27,13 @@
  * instead. We need to figure out how to deal with the subtleties of
  * the default values.
  */
-export interface MPSolverParameters { }
+export interface GMPSolverParameters { }
 
-export const MPSolverParameters:
+export const GMPSolverParameters:
     {
 
         // The constructor sets all parameters to their default value.
-        new(): MPSolverParameters;
+        new(): GMPSolverParameters;
 
     } = ortools.operations_research.MPSolverParameters;
 

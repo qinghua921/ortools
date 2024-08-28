@@ -31,6 +31,6 @@
   cp_model.Minimize(DoubleLinearExpr::Term(y, 3.4).AddConstant(5.2));
   \endcode
   */
-export interface DoubleLinearExpr { }
+export interface GDoubleLinearExpr { }
 
-export const DoubleLinearExpr: {} = ortools.operations_research.sat.DoubleLinearExpr;
+export const GDoubleLinearExpr: {} = ortools.operations_research.sat.DoubleLinearExpr;

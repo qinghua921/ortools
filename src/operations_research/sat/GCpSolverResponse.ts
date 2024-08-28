@@ -1,11 +1,11 @@
 ﻿import { ortools } from "../../addon";
-import { CpSolverStatus } from "./GEnum";
+import { GCpSolverStatus } from "./GEnum";
 
-export interface CpSolverResponse 
+export interface GCpSolverResponse 
 {
     //         ::operations_research::sat::CpSolverStatus status() const;
-    status(): CpSolverStatus;
+    status(): GCpSolverStatus;
 
 }
 
-export const CpSolverResponseStatus: {} = ortools.operations_research.sat.CpSolverResponseStatus;
+export const GCpSolverResponseStatus: {} = ortools.operations_research.sat.CpSolverResponseStatus;

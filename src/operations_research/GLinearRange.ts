@@ -1,5 +1,5 @@
 ﻿import { ortools } from "../addon";
-import { LinearExpr } from "./GLinearExpr";
+import { GLinearExpr } from "./GLinearExpr";
 
 /**
  * An expression of the form:
@@ -13,22 +13,22 @@ import { LinearExpr } from "./GLinearExpr";
                               const std::string& name);
    \endcode
  */
-export interface LinearRange 
+export interface GLinearRange 
 {
   //     double lower_bound() const
   lower_bound(): number;
 
   //     const LinearExpr& linear_expr() const
-  linear_expr(): LinearExpr;
+  linear_expr(): GLinearExpr;
 
   //     double upper_bound() const
   upper_bound(): number;
 }
 
-export const LinearRange:
+export const GLinearRange:
   {
     //     LinearRange()
-    new(): LinearRange;
+    new(): GLinearRange;
 
     /**
      * The bounds of the linear range are updated so that they include the offset
@@ -37,6 +37,6 @@ export const LinearRange:
        lower_bound - offset <= linear_expr - offset <= upper_bound - offset.
        \endcode
      */
-    new(lower_bound: number, linear_expr: LinearExpr, upper_bound: number): LinearRange;
+    new(lower_bound: number, linear_expr: GLinearExpr, upper_bound: number): GLinearRange;
 
   } = ortools.operations_research.LinearRange;

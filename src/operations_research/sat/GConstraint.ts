@@ -9,6 +9,6 @@
  * The constraint must be built using the different \c CpModelBuilder::AddXXX
  * methods.
  */
-export interface Constraint { }
+export interface GConstraint { }
 
-export const Constraint: {} = ortools.operations_research.sat.Constraint;
+export const GConstraint: {} = ortools.operations_research.sat.Constraint;

@@ -1,9 +1,9 @@
 ﻿import { ortools } from '../addon'
-import { LinearRange } from './GLinearRange'
-import { MPConstraint } from './GMPConstraint'
-import { MPObjective } from './GMPObjective'
-import { MPSolverParameters } from './GMPSolverParameters'
-import { MPVariable } from './GMPVariable'
+import { GLinearRange } from './GLinearRange'
+import { GMPConstraint } from './GMPConstraint'
+import { GMPObjective } from './GMPObjective'
+import { GMPSolverParameters } from './GMPSolverParameters'
+import { GMPVariable } from './GMPVariable'
 
 
 /**
@@ -15,7 +15,7 @@ export interface MPSolver
     /**
      * Creates a boolean variable.
      */
-    MakeBoolVar(name: string): MPVariable
+    MakeBoolVar(name: string): GMPVariable
 
     /**
      * Creates a linear constraint with given bounds.
@@ -25,49 +25,49 @@ export interface MPSolver
      *
      * @return a pointer to the newly created constraint.
      */
-    MakeRowConstraint(lb: number, ub: number): MPConstraint
+    MakeRowConstraint(lb: number, ub: number): GMPConstraint
 
     /**
      * Creates a constraint with -infinity and +infinity bounds.
      */
-    MakeRowConstraint(): MPConstraint
+    MakeRowConstraint(): GMPConstraint
 
     /**
      * Creates a named constraint with given bounds.
      */
-    MakRowConstraint(lb: number, ub: number, name: string): MPConstraint
+    MakRowConstraint(lb: number, ub: number, name: string): GMPConstraint
 
     /**
      * Creates a named constraint with -infinity and +infinity bounds. 
      */
-    MakeRowConstraint(name: string): MPConstraint
+    MakeRowConstraint(name: string): GMPConstraint
 
     /**
      * Creates a constraint owned by MPSolver enforcing:
      *     range.lower_bound() <= range.linear_expr() <= range.upper_bound()
      */
-    MakeRowConstraint(range: LinearRange): MPConstraint
+    MakeRowConstraint(range: GLinearRange): GMPConstraint
 
     /**
      *  As above, but also names the constraint.
      */
-    MakeRowConstraint(range: LinearRange, name: string): MPConstraint
+    MakeRowConstraint(range: GLinearRange, name: string): GMPConstraint
 
     // Debugging: verify that the given MPVariable* belongs to this solver.
-    OwnsVariable(var_: MPVariable): boolean
+    OwnsVariable(var_: GMPVariable): boolean
 
     /// Returns the mutable objective object.
-    MutableObjective(): MPObjective;
+    MutableObjective(): GMPObjective;
 
 
     // Solves the problem using the default parameter values.
-    Solve(): ResultStatus
+    Solve(): GResultStatus
 
     // Solves the problem using the specified parameter values.
-    Solve(param: MPSolverParameters): ResultStatus
+    Solve(param: GMPSolverParameters): GResultStatus
 
     // MPVariable * MakeIntVar(double lb, double ub, const std:: string& name );
-    MakeIntVar(lb: number, ub: number, name: string): MPVariable
+    MakeIntVar(lb: number, ub: number, name: string): GMPVariable
 
 }
 
@@ -75,7 +75,7 @@ export const MPSolver:
     {
 
         // Create a solver with the given name and underlying solver backend.
-        new(name: string, problem_type: OptimizationProblemType): MPSolver
+        new(name: string, problem_type: GOptimizationProblemType): MPSolver
 
         /**
          * Recommended factory method to create a MPSolver instance, especially in
@@ -123,7 +123,7 @@ export const MPSolver:
         ) => MPSolver
 
         // Creates an integer variable.
-        MakeIntVar(lb: number, ub: number, name: string): MPVariable
+        MakeIntVar(lb: number, ub: number, name: string): GMPVariable
 
     } = ortools.operations_research.MPSolver
 
@@ -134,7 +134,7 @@ export const MPSolver:
  * ./linear_solver.proto) is guaranteed by ./enum_consistency_test.cc, you may
  * rely on it.
  */
-export enum ResultStatus
+export enum GResultStatus
 {
     /// optimal.
     OPTIMAL,
@@ -158,7 +158,7 @@ export enum ResultStatus
  * remain consistent with MPModelRequest::OptimizationProblemType
  *  (take particular care of the open-source version).
  */
-export enum OptimizationProblemType
+export enum GOptimizationProblemType
 {
     // Linear programming problems.
     // ----------------------------

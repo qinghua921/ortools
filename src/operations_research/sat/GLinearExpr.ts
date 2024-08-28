@@ -1,6 +1,6 @@
 ﻿import { ortools } from "../../addon";
-import { BoolVar } from "./GBoolVar";
-import { IntVar } from "./GIntVar";
+import { GBoolVar } from "./GBoolVar";
+import { GIntVar } from "./GIntVar";
 
 /**
  * A dedicated container for linear expressions.
@@ -35,31 +35,31 @@ import { IntVar } from "./GIntVar";
   cp_model.AddEquality(x, y + 5);
   \endcode
   */
-export interface LinearExpr 
+export interface GLinearExpr 
 {
   //     LinearExpr& operator+=( const LinearExpr& other );
-  operator_plus(other: LinearExpr | BoolVar): LinearExpr;
+  operator_plus(other: GLinearExpr | GBoolVar): GLinearExpr;
 
   //     LinearExpr& operator-=( const LinearExpr& other );
-  operator_minus(other: LinearExpr | BoolVar): LinearExpr;
+  operator_minus(other: GLinearExpr | GBoolVar): GLinearExpr;
 
   //     LinearExpr& operator*=( int64_t factor );
-  operator_times(factor: number): LinearExpr;
+  operator_times(factor: number): GLinearExpr;
 }
 
-export const LinearExpr:
+export const GLinearExpr:
   {
     // Creates an empty linear expression with value zero.
-    new(): LinearExpr;
+    new(): GLinearExpr;
 
     // Constructs a linear expression from a Boolean variable.
     // It deals with logical negation correctly.
-    new(var_: BoolVar): LinearExpr;
+    new(var_: GBoolVar): GLinearExpr;
 
     // Constructs a linear expression from an integer variable.
-    new(var_: IntVar): LinearExpr;
+    new(var_: GIntVar): GLinearExpr;
 
     // Constructs a constant linear expression.
-    new(constant: number): LinearExpr;
+    new(constant: number): GLinearExpr;
 
   } = ortools.operations_research.sat.LinearExpr;
