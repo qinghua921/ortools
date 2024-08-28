@@ -93,7 +93,6 @@ void AssignmentTeamsMip()
     std::unique_ptr< MPSolver > solver( MPSolver::CreateSolver( "SCIP" ) );
     if ( !solver )
     {
-        LOG( WARNING ) << "SCIP solver unavailable.";
         return;
     }
     // [END solver]
@@ -109,7 +108,7 @@ void AssignmentTeamsMip()
         for ( int task : all_tasks )
         {
             x[ worker ][ task ] =
-                solver->MakeBoolVar( absl::StrFormat( "x[%d,%d]", worker, task ) );
+                solver->MakeBoolVar( "解决" );
         }
     }
     // [END variables]

@@ -1,54 +1,81 @@
 ﻿export namespace operations_research
 {
-    /**
-     * The type of problems (LP or MIP) that will be solved and the underlying
-     *  solver (GLOP, GLPK, CLP, CBC or SCIP) that will solve them. This must
-     * remain consistent with MPModelRequest::OptimizationProblemType
-     *  (take particular care of the open-source version).
-     */
-    enum OptimizationProblemType
+    export namespace MPSolver
     {
-        // Linear programming problems.
-        // ----------------------------
-        CLP_LINEAR_PROGRAMMING = 0,
-        GLPK_LINEAR_PROGRAMMING = 1,
-        GLOP_LINEAR_PROGRAMMING = 2,  // Recommended default value. Made in Google.
-        // In-house linear programming solver based on the primal-dual hybrid
-        // gradient method. Sometimes faster than Glop for medium-size problems and
-        // scales to much larger problems than Glop.
-        PDLP_LINEAR_PROGRAMMING = 8,
-        HIGHS_LINEAR_PROGRAMMING = 15,
+        /**
+        * The type of problems (LP or MIP) that will be solved and the underlying
+        *  solver (GLOP, GLPK, CLP, CBC or SCIP) that will solve them. This must
+        * remain consistent with MPModelRequest::OptimizationProblemType
+        *  (take particular care of the open-source version).
+        */
+        export enum OptimizationProblemType
+        {
+            // Linear programming problems.
+            // ----------------------------
+            CLP_LINEAR_PROGRAMMING = 0,
+            GLPK_LINEAR_PROGRAMMING = 1,
+            GLOP_LINEAR_PROGRAMMING = 2,  // Recommended default value. Made in Google.
+            // In-house linear programming solver based on the primal-dual hybrid
+            // gradient method. Sometimes faster than Glop for medium-size problems and
+            // scales to much larger problems than Glop.
+            PDLP_LINEAR_PROGRAMMING = 8,
+            HIGHS_LINEAR_PROGRAMMING = 15,
 
-        // Integer programming problems.
-        // -----------------------------
-        // Recommended default value for MIP problems.
-        SCIP_MIXED_INTEGER_PROGRAMMING = 3,
-        GLPK_MIXED_INTEGER_PROGRAMMING = 4,
-        CBC_MIXED_INTEGER_PROGRAMMING = 5,
+            // Integer programming problems.
+            // -----------------------------
+            // Recommended default value for MIP problems.
+            SCIP_MIXED_INTEGER_PROGRAMMING = 3,
+            GLPK_MIXED_INTEGER_PROGRAMMING = 4,
+            CBC_MIXED_INTEGER_PROGRAMMING = 5,
 
-        // Commercial software (need license).
-        GUROBI_LINEAR_PROGRAMMING = 6,
-        GUROBI_MIXED_INTEGER_PROGRAMMING = 7,
-        CPLEX_LINEAR_PROGRAMMING = 10,
-        CPLEX_MIXED_INTEGER_PROGRAMMING = 11,
-        XPRESS_LINEAR_PROGRAMMING = 101,
-        XPRESS_MIXED_INTEGER_PROGRAMMING = 102,
-        HIGHS_MIXED_INTEGER_PROGRAMMING = 16,
+            // Commercial software (need license).
+            GUROBI_LINEAR_PROGRAMMING = 6,
+            GUROBI_MIXED_INTEGER_PROGRAMMING = 7,
+            CPLEX_LINEAR_PROGRAMMING = 10,
+            CPLEX_MIXED_INTEGER_PROGRAMMING = 11,
+            XPRESS_LINEAR_PROGRAMMING = 101,
+            XPRESS_MIXED_INTEGER_PROGRAMMING = 102,
+            HIGHS_MIXED_INTEGER_PROGRAMMING = 16,
 
-        // Boolean optimization problem (requires only integer variables and works
-        // best with only Boolean variables).
-        BOP_INTEGER_PROGRAMMING = 12,
+            // Boolean optimization problem (requires only integer variables and works
+            // best with only Boolean variables).
+            BOP_INTEGER_PROGRAMMING = 12,
 
-        // SAT based solver (requires only integer and Boolean variables).
-        // If you pass it mixed integer problems, it will scale coefficients to
-        // integer values, and solver continuous variables as integral variables.
-        //
-        // Recommended default value for pure integral problems problems.
-        SAT_INTEGER_PROGRAMMING = 14,
+            // SAT based solver (requires only integer and Boolean variables).
+            // If you pass it mixed integer problems, it will scale coefficients to
+            // integer values, and solver continuous variables as integral variables.
+            //
+            // Recommended default value for pure integral problems problems.
+            SAT_INTEGER_PROGRAMMING = 14,
 
-        // Dedicated knapsack solvers.
-        KNAPSACK_MIXED_INTEGER_PROGRAMMING = 13,
-    };
+            // Dedicated knapsack solvers.
+            KNAPSACK_MIXED_INTEGER_PROGRAMMING = 13,
+        }
+
+        /**
+         * The status of solving the problem. The straightforward translation to
+         * homonymous enum values of MPSolverResponseStatus (see
+         * ./linear_solver.proto) is guaranteed by ./enum_consistency_test.cc, you may
+         * rely on it.
+         */
+        export enum ResultStatus
+        {
+            /// optimal.
+            OPTIMAL,
+            /// feasible, or stopped by limit.
+            FEASIBLE,
+            /// proven infeasible.
+            INFEASIBLE,
+            /// proven unbounded.
+            UNBOUNDED,
+            /// abnormal, i.e., error of some kind.
+            ABNORMAL,
+            /// the model is trivially invalid (NaN coefficients, etc).
+            MODEL_INVALID,
+            /// not been solved yet.
+            NOT_SOLVED = 6
+        }
+    }
 
     /**
      * This mathematical programming (MP) solver class is the main class
@@ -56,14 +83,9 @@
      */
     export class MPSolver
     {
-        static OptimizationProblemType = OptimizationProblemType;
-
-        /**
-         * Create a solver with the given name and underlying solver backend.
-         * 
-         * C++: MPSolver( const std::string& name, OptimizationProblemType problem_type );
-         */
-        constructor(name: string, problem_type: OptimizationProblemType): MPSolver;
+        //     /// Create a solver with the given name and underlying solver backend.
+        //     MPSolver( const std::string& name, OptimizationProblemType problem_type );
+        //     virtual ~MPSolver();
 
         /**
          * Recommended factory method to create a MPSolver instance, especially in
@@ -202,7 +224,7 @@
 
         /**
          * Creates a boolean variable.
-         * 
+         *  
          * C++: MPVariable* MakeBoolVar( const std::string& name );
          */
         MakeBoolVar(name: string): MPVariable;
@@ -306,7 +328,7 @@
          * Creates a constraint owned by MPSolver enforcing:
          *     range.lower_bound() <= range.linear_expr() <= range.upper_bound()
          * 
-         * C++: MPConstraint* MakeRowConstraint( const LinearRange& range );
+         * C++: MPConstraint* MakeRangeConstraint( const LinearRange& range );
          */
         MakeRowConstraint(range: LinearRange): MPConstraint;
 
@@ -328,41 +350,33 @@
         //         return *objective_;
         //     }
 
-        //     /// Returns the mutable objective object.
-        //     MPObjective* MutableObjective()
-        //     {
-        //         return objective_.get();
-        //     }
+        /**
+         * Returns the mutable objective object.
+         * 
+         * C++: MPObjective* MutableObjective();
+         */
+        MutableObjective(): MPObjective;
 
-        //     /**
-        //      * The status of solving the problem. The straightforward translation to
-        //      * homonymous enum values of MPSolverResponseStatus (see
-        //      * ./linear_solver.proto) is guaranteed by ./enum_consistency_test.cc, you may
-        //      * rely on it.
-        //      */
-        //     enum ResultStatus
-        //     {
-        //         /// optimal.
-        //         OPTIMAL,
-        //         /// feasible, or stopped by limit.
-        //         FEASIBLE,
-        //         /// proven infeasible.
-        //         INFEASIBLE,
-        //         /// proven unbounded.
-        //         UNBOUNDED,
-        //         /// abnormal, i.e., error of some kind.
-        //         ABNORMAL,
-        //         /// the model is trivially invalid (NaN coefficients, etc).
-        //         MODEL_INVALID,
-        //         /// not been solved yet.
-        //         NOT_SOLVED = 6
-        //     };
+
 
         //     /// Solves the problem using the default parameter values.
         //     ResultStatus Solve();
+        /**
+         * Solves the problem using the default parameter values.
+         * 
+         * C++: ResultStatus Solve();
+         */
+        Solve(): MPSolver.ResultStatus;
+
 
         //     /// Solves the problem using the specified parameter values.
         //     ResultStatus Solve( const MPSolverParameters& param );
+        /**
+         * Solves the problem using the specified parameter values.
+         * 
+         * C++: ResultStatus Solve( const MPSolverParameters& param );
+         */
+        // Solve(param: MPSolverParameters): MPSolver.ResultStatus;
 
         //     /**
         //      * Writes the model using the solver internal write function.  Currently only
@@ -754,27 +768,114 @@
         //         return absl::ToInt64Milliseconds( DurationSinceConstruction() );
         //     }
 
-        //     friend class GLPKInterface;
-        //     friend class CLPInterface;
-        //     friend class CBCInterface;
-        //     friend class SCIPInterface;
-        //     friend class GurobiInterface;
-        //     friend class CplexInterface;
-        //     friend class XpressInterface;
-        //     friend class SLMInterface;
-        //     friend class MPSolverInterface;
-        //     friend class GLOPInterface;
-        //     friend class BopInterface;
-        //     friend class SatInterface;
-        //     friend class PdlpInterface;
-        //     friend class HighsInterface;
-        //     friend class KnapsackInterface;
 
         //     // Debugging: verify that the given MPVariable* belongs to this solver.
         //     bool OwnsVariable( const MPVariable* var ) const;
 
-    };
+    }
 
+    /**
+     * The class for variables of a Mathematical Programming (MP) model.
+     */
+    export class MPVariable
+    {
+        //     /// Returns the name of the variable.
+        //     const std::string& name() const
+        //     {
+        //         return name_;
+        //     }
+
+        //     /// Sets the integrality requirement of the variable.
+        //     void SetInteger( bool integer );
+
+        //     /// Returns the integrality requirement of the variable.
+        //     bool integer() const
+        //     {
+        //         return integer_;
+        //     }
+
+        //     /**
+        //      * Returns the value of the variable in the current solution.
+        //      *
+        //      * If the variable is integer, then the value will always be an integer (the
+        //      * underlying solver handles floating-point values only, but this function
+        //      * automatically rounds it to the nearest integer; see: man 3 round).
+        //      */
+        //     double solution_value() const;
+
+        //     /// Returns the index of the variable in the MPSolver::variables_.
+        //     int index() const
+        //     {
+        //         return index_;
+        //     }
+
+        //     /// Returns the lower bound.
+        //     double lb() const
+        //     {
+        //         return lb_;
+        //     }
+
+        //     /// Returns the upper bound.
+        //     double ub() const
+        //     {
+        //         return ub_;
+        //     }
+
+        //     /// Sets the lower bound.
+        //     void SetLB( double lb )
+        //     {
+        //         SetBounds( lb, ub_ );
+        //     }
+
+        //     /// Sets the upper bound.
+        //     void SetUB( double ub )
+        //     {
+        //         SetBounds( lb_, ub );
+        //     }
+
+        //     /// Sets both the lower and upper bounds.
+        //     void SetBounds( double lb, double ub );
+
+        //     /**
+        //      * Advanced usage: unrounded solution value.
+        //      *
+        //      * The returned value won't be rounded to the nearest integer even if the
+        //      * variable is integer.
+        //      */
+        //     double unrounded_solution_value() const;
+
+        //     /**
+        //      * Advanced usage: returns the reduced cost of the variable in the current
+        //      * solution (only available for continuous problems).
+        //      */
+        //     double reduced_cost() const;
+
+        //     /**
+        //      * Advanced usage: returns the basis status of the variable in the current
+        //      * solution (only available for continuous problems).
+        //      *
+        //      * @see MPSolver::BasisStatus.
+        //      */
+        //     MPSolver::BasisStatus basis_status() const;
+
+        //     /**
+        //      * Advanced usage: Certain MIP solvers (e.g. Gurobi or SCIP) allow you to set
+        //      * a per-variable priority for determining which variable to branch on.
+        //      *
+        //      * A value of 0 is treated as default, and is equivalent to not setting the
+        //      * branching priority. The solver looks first to branch on fractional
+        //      * variables in higher priority levels. As of 2019-05, only Gurobi and SCIP
+        //      * support setting branching priority; all other solvers will simply ignore
+        //      * this annotation.
+        //      */
+        //     int branching_priority() const
+        //     {
+        //         return branching_priority_;
+        //     }
+        //     void SetBranchingPriority( int priority );
+
+
+    }
 
     /**
      * LinearExpr models a quantity that is linear in the decision variables
@@ -805,17 +906,23 @@
         /**
          * C++: LinearExpr();
          */
-        constructor(): LinearExpr;
+        constructor();
 
-        //     /// Possible implicit conversions are intentional.
-        //     LinearExpr( double constant );  // NOLINT
+        /**
+         * Possible implicit conversions are intentional.
+         * 
+         * C++: LinearExpr( double constant );  // NOLINT
+         */
+        constructor(constant: number);
 
-        //     /***
-        //      * Possible implicit conversions are intentional.
-        //      *
-        //      * Warning: var is not owned.
-        //      */
-        //     LinearExpr( const MPVariable* var );  // NOLINT
+        /***
+         * Possible implicit conversions are intentional.
+         *
+         * Warning: var is not owned.
+         * 
+         * C++: LinearExpr( const MPVariable* var );  // NOLINT
+         */
+        constructor(var_: MPVariable);
 
         //     /**
         //      * Returns 1-var.
@@ -826,13 +933,30 @@
         //      */
         //     static LinearExpr NotVar( LinearExpr var );
 
-        //     LinearExpr& operator+=( const LinearExpr& rhs );
-        operator_plus_equals(rhs: LinearExpr): LinearExpr;
+        /**
+         * C++: LinearExpr& operator+=( const LinearExpr& rhs );
+         */
+        operator_plus_equals(rhs: LinearExpr | number | MPVariable): LinearExpr;
 
-        //     LinearExpr& operator-=( const LinearExpr& rhs );
-        //     LinearExpr& operator*=( double rhs );
-        //     LinearExpr& operator/=( double rhs );
-        //     LinearExpr  operator-() const;
+        /**
+         * C++: LinearExpr& operator-=( const LinearExpr& rhs );
+         */
+        operator_minus_equals(rhs: LinearExpr | number | MPVariable): LinearExpr;
+
+        /**
+         * C++: LinearExpr& operator*=( double rhs );
+         */
+        operator_times_equals(rhs: number): LinearExpr;
+
+        /**
+         * C++: LinearExpr& operator/=( double rhs );
+         */
+        operator_divide_equals(rhs: number): LinearExpr;
+
+        /**
+         * C++: LinearExpr  operator-() const;
+         */
+        operator_negate(): LinearExpr;
 
         //     double offset() const
         //     {
@@ -856,25 +980,15 @@
         //      */
         //     std::string ToString() const;
 
-    };
+    }
 
-    /**
-     * C++: LinearRange operator<=( const LinearExpr& lhs, const LinearExpr& rhs );
-     */
-    export function operator_less_equals(
-        lhs: LinearExpr | number, rhs: LinearExpr | number): LinearRange;
+    // LinearRange operator<=( const LinearExpr& lhs, const LinearExpr& rhs );
+    export function operator_less_equals(lhs: LinearExpr | number | MPVariable, rhs: LinearExpr | number | MPVariable): LinearRange;
+    // LinearRange operator==( const LinearExpr& lhs, const LinearExpr& rhs );
+    export function operator_equals(lhs: LinearExpr | number | MPVariable, rhs: LinearExpr | number | MPVariable): LinearRange;
+    // LinearRange operator>=( const LinearExpr& lhs, const LinearExpr& rhs );
+    export function operator_greater_equals(lhs: LinearExpr | number | MPVariable, rhs: LinearExpr | number | MPVariable): LinearRange;
 
-    /**
-     * C++: LinearRange operator==( const LinearExpr& lhs, const LinearExpr& rhs );
-     */
-    export function operator_equals(
-        lhs: LinearExpr | number, rhs: LinearExpr | number): LinearRange;
-
-    /**
-     * C++: LinearRange operator>=( const LinearExpr& lhs, const LinearExpr& rhs );
-     */
-    export function operator_greater_equals(
-        lhs: LinearExpr | number, rhs: LinearExpr | number): LinearRange;
 
 
     /**
@@ -894,31 +1008,279 @@
         /**
          * C++: LinearRange() : lower_bound_( 0 ), upper_bound_( 0 ) {}
          */
-        constructor(): LinearRange;
+        constructor();
+        /**
+         * The bounds of the linear range are updated so that they include the offset
+         * from "linear_expr", i.e., we form the range:
+         * \code
+           lower_bound - offset <= linear_expr - offset <= upper_bound - offset.
+           \endcode
 
-        //        /**
-        //         * The bounds of the linear range are updated so that they include the offset
-        //         * from "linear_expr", i.e., we form the range:
-        //         * \code
-        //           lower_bound - offset <= linear_expr - offset <= upper_bound - offset.
-        //           \endcode
-        //         */
-        //        LinearRange( double lower_bound, const LinearExpr& linear_expr,
-        //                     double upper_bound );
+           C++: LinearRange( double lower_bound, const LinearExpr& linear_expr, double upper_bound );
+         */
+        constructor(lower_bound: number, linear_expr: LinearExpr, upper_bound: number);
 
-        //        double lower_bound() const
-        //        {
-        //            return lower_bound_;
-        //        }
-        //        const LinearExpr& linear_expr() const
-        //        {
-        //            return linear_expr_;
-        //        }
-        //        double upper_bound() const
-        //        {
-        //            return upper_bound_;
-        //        }
+        //     double lower_bound() const
+        //     {
+        //         return lower_bound_;
+        //     }
+        //     const LinearExpr& linear_expr() const
+        //     {
+        //         return linear_expr_;
+        //     }
+        //     double upper_bound() const
+        //     {
+        //         return upper_bound_;
+        //     }
 
-    };
+    }
+
+
+    /**
+     * The class for constraints of a Mathematical Programming (MP) model.
+     *
+     * A constraint is represented as a linear equation or inequality.
+     */
+    export class MPConstraint
+    {
+        // public:
+        //     /// Returns the name of the constraint.
+        //     const std::string& name() const
+        //     {
+        //         return name_;
+        //     }
+
+        //     /// Clears all variables and coefficients. Does not clear the bounds.
+        //     void Clear();
+
+        /**
+         * Sets the coefficient of the variable on the constraint.
+         *
+         * If the variable does not belong to the solver, the function just returns,
+         * or crashes in non-opt mode.
+         * 
+         * C++: void SetCoefficient( const MPVariable* const var, double coeff );
+         */
+        SetCoefficient(var_: MPVariable, coeff: number): void;
+
+        //     /**
+        //      * Gets the coefficient of a given variable on the constraint (which is 0 if
+        //      * the variable does not appear in the constraint).
+        //      */
+        //     double GetCoefficient( const MPVariable* const var ) const;
+
+        //     /**
+        //      * Returns a map from variables to their coefficients in the constraint.
+        //      *
+        //      * If a variable is not present in the map, then its coefficient is zero.
+        //      */
+        //     const absl::flat_hash_map< const MPVariable*, double >& terms() const
+        //     {
+        //         return coefficients_;
+        //     }
+
+        //     /// Returns the lower bound.
+        //     double lb() const
+        //     {
+        //         return lb_;
+        //     }
+
+        //     /// Returns the upper bound.
+        //     double ub() const
+        //     {
+        //         return ub_;
+        //     }
+
+        //     /// Sets the lower bound.
+        //     void SetLB( double lb )
+        //     {
+        //         SetBounds( lb, ub_ );
+        //     }
+
+        //     /// Sets the upper bound.
+        //     void SetUB( double ub )
+        //     {
+        //         SetBounds( lb_, ub );
+        //     }
+
+        //     /// Sets both the lower and upper bounds.
+        //     void SetBounds( double lb, double ub );
+
+        //     /// Advanced usage: returns true if the constraint is "lazy" (see below).
+        //     bool is_lazy() const
+        //     {
+        //         return is_lazy_;
+        //     }
+
+        //     /**
+        //      * Advanced usage: sets the constraint "laziness".
+        //      *
+        //      * <em>This is only supported for SCIP and has no effect on other
+        //      * solvers.</em>
+        //      *
+        //      * When \b laziness is true, the constraint is only considered by the Linear
+        //      * Programming solver if its current solution violates the constraint. In this
+        //      * case, the constraint is definitively added to the problem. This may be
+        //      * useful in some MIP problems, and may have a dramatic impact on performance.
+        //      *
+        //      * For more info see: http://tinyurl.com/lazy-constraints.
+        //      */
+        //     void set_is_lazy( bool laziness )
+        //     {
+        //         is_lazy_ = laziness;
+        //     }
+
+        //     const MPVariable* indicator_variable() const
+        //     {
+        //         return indicator_variable_;
+        //     }
+        //     bool indicator_value() const
+        //     {
+        //         return indicator_value_;
+        //     }
+
+        //     /// Returns the index of the constraint in the MPSolver::constraints_.
+        //     int index() const
+        //     {
+        //         return index_;
+        //     }
+
+        //     /**
+        //      * Advanced usage: returns the dual value of the constraint in the current
+        //      * solution (only available for continuous problems).
+        //      */
+        //     double dual_value() const;
+
+        //     /**
+        //      * Advanced usage: returns the basis status of the constraint.
+        //      *
+        //      * It is only available for continuous problems).
+        //      *
+        //      * Note that if a constraint "linear_expression in [lb, ub]" is transformed
+        //      * into "linear_expression + slack = 0" with slack in [-ub, -lb], then this
+        //      * status is the same as the status of the slack variable with AT_UPPER_BOUND
+        //      * and AT_LOWER_BOUND swapped.
+        //      *
+        //      * @see MPSolver::BasisStatus.
+        //      */
+        //     MPSolver::BasisStatus basis_status() const;
+
+
+    }
+
+    /**
+     * A class to express a linear objective.
+     */
+    export class MPObjective
+    {
+        // public:
+        //     /**
+        //      *  Clears the offset, all variables and coefficients, and the optimization
+        //      * direction.
+        //      */
+        //     void Clear();
+
+        /**
+         * Sets the coefficient of the variable in the objective.
+         *
+         * If the variable does not belong to the solver, the function just returns,
+         * or crashes in non-opt mode.
+         * 
+         * C++: void SetCoefficient( const MPVariable* const var, double coeff );
+         */
+        SetCoefficient(var_: MPVariable, coeff: number): void;
+
+        //     /**
+        //      *  Gets the coefficient of a given variable in the objective
+        //      *
+        //      * It returns 0 if the variable does not appear in the objective).
+        //      */
+        //     double GetCoefficient( const MPVariable* const var ) const;
+
+        //     /**
+        //      * Returns a map from variables to their coefficients in the objective.
+        //      *
+        //      * If a variable is not present in the map, then its coefficient is zero.
+        //      */
+        //     const absl::flat_hash_map< const MPVariable*, double >& terms() const
+        //     {
+        //         return coefficients_;
+        //     }
+
+        //     /// Sets the constant term in the objective.
+        //     void SetOffset( double value );
+
+        //     /// Gets the constant term in the objective.
+        //     double offset() const
+        //     {
+        //         return offset_;
+        //     }
+
+        //     /**
+        //      * Resets the current objective to take the value of linear_expr, and sets the
+        //      * objective direction to maximize if "is_maximize", otherwise minimizes.
+        //      */
+        //     void OptimizeLinearExpr( const LinearExpr& linear_expr, bool is_maximization );
+
+        //     /// Resets the current objective to maximize linear_expr.
+        //     void MaximizeLinearExpr( const LinearExpr& linear_expr )
+        //     {
+        //         OptimizeLinearExpr( linear_expr, true );
+        //     }
+        //     /// Resets the current objective to minimize linear_expr.
+        //     void MinimizeLinearExpr( const LinearExpr& linear_expr )
+        //     {
+        //         OptimizeLinearExpr( linear_expr, false );
+        //     }
+
+        //     /// Adds linear_expr to the current objective, does not change the direction.
+        //     void AddLinearExpr( const LinearExpr& linear_expr );
+
+        //     /// Sets the optimization direction (maximize: true or minimize: false).
+        //     void SetOptimizationDirection( bool maximize );
+
+        /**
+         * Sets the optimization direction to minimize.
+         * 
+         * C++: void SetMinimization();
+         */
+        SetMinimization(): void;
+
+        //     /// Sets the optimization direction to maximize.
+        //     void SetMaximization()
+        //     {
+        //         SetOptimizationDirection( true );
+        //     }
+
+        //     /// Is the optimization direction set to maximize?
+        //     bool maximization() const;
+
+        //     /// Is the optimization direction set to minimize?
+        //     bool minimization() const;
+
+        //     /**
+        //      * Returns the objective value of the best solution found so far.
+        //      *
+        //      * It is the optimal objective value if the problem has been solved to
+        //      * optimality.
+        //      *
+        //      * Note: the objective value may be slightly different than what you could
+        //      * compute yourself using \c MPVariable::solution_value(); please use the
+        //      * --verify_solution flag to gain confidence about the numerical stability of
+        //      * your solution.
+        //      */
+        //     double Value() const;
+
+        //     /**
+        //      * Returns the best objective bound.
+        //      *
+        //      * In case of minimization, it is a lower bound on the objective value of the
+        //      * optimal integer solution. Only available for discrete problems.
+        //      */
+        //     double BestBound() const;
+
+    }
+
+
 
 }

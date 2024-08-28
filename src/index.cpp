@@ -3,16 +3,6 @@
 operations_research::GMPSolver::GMPSolver( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< operations_research::GMPSolver >( info )
 {
-    //     MPSolver( const std::string& name, OptimizationProblemType problem_type );
-    if ( info.Length() == 2 && info[ 0 ].IsString() && info[ 1 ].IsNumber() )
-    {
-        std::string name                     = info[ 0 ].As< Napi::String >();
-        using OptimizationProblemType        = MPSolver::OptimizationProblemType;
-        OptimizationProblemType problem_type = static_cast< OptimizationProblemType >( info[ 1 ].As< Napi::Number >().Int32Value() );
-        pMPSolver                            = new MPSolver( name, problem_type );
-        return;
-    }
-
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
         auto external = info[ 0 ].As< Napi::External< MPSolver > >();
@@ -20,7 +10,7 @@ operations_research::GMPSolver::GMPSolver( const Napi::CallbackInfo& info )
         if ( pMPSolver != nullptr ) return;
     }
 
-    ThrowJsError( GMPSolver::GMPSolver : Invalid arguments );
+    ThrowJsError( operations_research::GMPSolver::GMPSolver : Invalid argument );
 }
 
 operations_research::GMPSolver::~GMPSolver()
@@ -30,54 +20,127 @@ operations_research::GMPSolver::~GMPSolver()
 
 Napi::Value operations_research::GMPSolver::CreateSolver( const Napi::CallbackInfo& info )
 {
-    // static MPSolver* CreateSolver( const std::string& solver_id );
+    //     static MPSolver* CreateSolver( const std::string& solver_id );
     if ( info.Length() == 1 && info[ 0 ].IsString() )
     {
-        std::string solver_id = info[ 0 ].As< Napi::String >();
-        MPSolver*   pSolver   = MPSolver::CreateSolver( solver_id );
-        auto        external  = Napi::External< MPSolver >::New( info.Env(), pSolver );
-        return GMPSolver::constructor.New( { external } );
+        std::string solver_id  = info[ 0 ].As< Napi::String >();
+        MPSolver*   pMPSolver  = MPSolver::CreateSolver( solver_id );
+        auto        gmp_solver = Napi::External< MPSolver >::New( info.Env(), pMPSolver );
+        return GMPSolver::constructor.New( { gmp_solver } );
     }
 
-    ThrowJsError( GMPSolver::CreateSolver : Invalid arguments );
+    ThrowJsError( operations_research::GMPSolver::CreateSolver : Invalid argument );
     return info.Env().Undefined();
 }
 
 Napi::Value operations_research::GMPSolver::MakeBoolVar( const Napi::CallbackInfo& info )
 {
-    //  MPVariable* MakeBoolVar( const std::string& name );
+    // MPVariable* MakeBoolVar( const std::string& name );
     if ( info.Length() == 1 && info[ 0 ].IsString() )
     {
-        std::string name     = info[ 0 ].As< Napi::String >();
-        MPVariable* pVar     = pMPSolver->MakeBoolVar( name );
-        auto        external = Napi::External< MPVariable >::New( info.Env(), pVar );
-        return GMPVariable::constructor.New( { external } );
+        std::string name         = info[ 0 ].As< Napi::String >();
+        MPVariable* pMPVariable  = pMPSolver->MakeBoolVar( name );
+        auto        gmp_variable = Napi::External< MPVariable >::New( info.Env(), pMPVariable );
+        return GMPVariable::constructor.New( { gmp_variable } );
     }
 
-    ThrowJsError( GMPSolver::MakeBoolVar : Invalid arguments );
+    ThrowJsError( operations_research::GMPSolver::MakeBoolVar : Invalid argument );
     return info.Env().Undefined();
 }
 
 Napi::Value operations_research::GMPSolver::MakeRowConstraint( const Napi::CallbackInfo& info )
 {
-
-    // MakeRowConstraint(lb: number, ub: number): MPConstraint;
+    // MPConstraint* MakeRowConstraint( double lb, double ub );
     if ( info.Length() == 2 && info[ 0 ].IsNumber() && info[ 1 ].IsNumber() )
     {
-        double lb = info[ 0 ].As< Napi::Number >().DoubleValue();
-        double ub = info[ 1 ].As< Napi::Number >().DoubleValue();
-        // TODO
+        double        lb             = info[ 0 ].As< Napi::Number >();
+        double        ub             = info[ 1 ].As< Napi::Number >();
+        MPConstraint* pMPConstraint  = pMPSolver->MakeRowConstraint( lb, ub );
+        auto          gmp_constraint = Napi::External< MPConstraint >::New( info.Env(), pMPConstraint );
+        return GMPConstraint::constructor.New( { gmp_constraint } );
     }
 
-    // MakeRowConstraint(): MPConstraint;
+    //  MPConstraint* MakeRowConstraint();
+    if ( info.Length() == 0 )
+    {
+        MPConstraint* pMPConstraint  = pMPSolver->MakeRowConstraint();
+        auto          gmp_constraint = Napi::External< MPConstraint >::New( info.Env(), pMPConstraint );
+        return GMPConstraint::constructor.New( { gmp_constraint } );
+    }
 
-    // MakeRowConstraint(lb: number, ub: number, name: string): MPConstraint;
+    // MPConstraint* MakeRowConstraint( double lb, double ub, const std::string& name );
+    if ( info.Length() == 3 && info[ 0 ].IsNumber() && info[ 1 ].IsNumber() && info[ 2 ].IsString() )
+    {
+        double        lb             = info[ 0 ].As< Napi::Number >();
+        double        ub             = info[ 1 ].As< Napi::Number >();
+        std::string   name           = info[ 2 ].As< Napi::String >();
+        MPConstraint* pMPConstraint  = pMPSolver->MakeRowConstraint( lb, ub, name );
+        auto          gmp_constraint = Napi::External< MPConstraint >::New( info.Env(), pMPConstraint );
+        return GMPConstraint::constructor.New( { gmp_constraint } );
+    }
 
-    // MakeRowConstraint(name: string): MPConstraint;
+    // MPConstraint* MakeRowConstraint( const std::string& name );
+    if ( info.Length() == 1 && info[ 0 ].IsString() )
+    {
+        std::string   name           = info[ 0 ].As< Napi::String >();
+        MPConstraint* pMPConstraint  = pMPSolver->MakeRowConstraint( name );
+        auto          gmp_constraint = Napi::External< MPConstraint >::New( info.Env(), pMPConstraint );
+        return GMPConstraint::constructor.New( { gmp_constraint } );
+    }
 
-    // MakeRowConstraint(range: LinearRange): MPConstraint;
+    // MPConstraint* MakeRangeConstraint( const LinearRange& range );
+    if ( info.Length() == 1
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearRange::constructor.Value() ) )
+    {
+        auto          linear_range   = Napi::ObjectWrap< GLinearRange >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        MPConstraint* pMPConstraint  = pMPSolver->MakeRowConstraint( *linear_range->pLinearRange );
+        auto          gmp_constraint = Napi::External< MPConstraint >::New( info.Env(), pMPConstraint );
+        return GMPConstraint::constructor.New( { gmp_constraint } );
+    }
 
-    // MakeRowConstraint(range: LinearRange, name: string): MPConstraint;
+    // MPConstraint* MakeRowConstraint( const LinearRange& range, const std::string& name );
+    if ( info.Length() == 2
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearRange::constructor.Value() )
+         && info[ 1 ].IsString() )
+    {
+        auto          linear_range   = Napi::ObjectWrap< GLinearRange >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        std::string   name           = info[ 1 ].As< Napi::String >();
+        MPConstraint* pMPConstraint  = pMPSolver->MakeRowConstraint( *linear_range->pLinearRange, name );
+        auto          gmp_constraint = Napi::External< MPConstraint >::New( info.Env(), pMPConstraint );
+        return GMPConstraint::constructor.New( { gmp_constraint } );
+    }
+
+    ThrowJsError( operations_research::GMPSolver::MakeRowConstraint : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPSolver::MutableObjective( const Napi::CallbackInfo& info )
+{
+    // MPObjective* MutableObjective();
+
+    if ( info.Length() == 0 )
+    {
+        MPObjective* pMPObjective  = pMPSolver->MutableObjective();
+        auto         gmp_objective = Napi::External< MPObjective >::New( info.Env(), pMPObjective );
+        return GMPObjective::constructor.New( { gmp_objective } );
+    }
+
+    ThrowJsError( operations_research::GMPSolver::MutableObjective : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPSolver::Solve( const Napi::CallbackInfo& info )
+{
+    // ResultStatus Solve();
+    if ( info.Length() == 0 )
+    {
+        return Napi::Number::New( info.Env(), pMPSolver->Solve() );
+    }
+
+    ThrowJsError( operations_research::GMPSolver::Solve : Invalid argument );
+    return info.Env().Undefined();
 }
 
 operations_research::GMPVariable::GMPVariable( const Napi::CallbackInfo& info )
@@ -90,7 +153,7 @@ operations_research::GMPVariable::GMPVariable( const Napi::CallbackInfo& info )
         if ( pMPVariable != nullptr ) return;
     }
 
-    ThrowJsError( GMPVariable::GMPVariable : Invalid arguments );
+    ThrowJsError( operations_research::GMPVariable::GMPVariable : Invalid argument );
 }
 
 operations_research::GMPVariable::~GMPVariable()
@@ -101,14 +164,39 @@ operations_research::GMPVariable::~GMPVariable()
 operations_research::GLinearExpr::GLinearExpr( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< operations_research::GLinearExpr >( info )
 {
-    // LinearExpr();
+    //     LinearExpr();
     if ( info.Length() == 0 )
     {
         pLinearExpr = new LinearExpr();
         return;
     }
 
-    ThrowJsError( GLinearExpr::GLinearExpr : Invalid arguments );
+    //     LinearExpr( double constant );  // NOLINT
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        double constant = info[ 0 ].As< Napi::Number >();
+        pLinearExpr     = new LinearExpr( constant );
+        return;
+    }
+
+    //     LinearExpr( const MPVariable* var );  // NOLINT
+    if ( info.Length() == 1
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
+    {
+        auto mp_variable = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        pLinearExpr      = new LinearExpr( mp_variable->pMPVariable );
+        return;
+    }
+
+    if ( info.Length() == 1 && info[ 0 ].IsExternal() )
+    {
+        auto external = info[ 0 ].As< Napi::External< LinearExpr > >();
+        pLinearExpr   = dynamic_cast< LinearExpr* >( external.Data() );
+        if ( pLinearExpr != nullptr ) return;
+    }
+
+    ThrowJsError( operations_research::GLinearExpr::GLinearExpr : Invalid argument );
 }
 
 operations_research::GLinearExpr::~GLinearExpr()
@@ -123,16 +211,15 @@ Napi::Value operations_research::GLinearExpr::operator_plus_equals( const Napi::
          && info[ 0 ].IsObject()
          && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
-        auto        rhs      = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() );
-        LinearExpr* pRhsExpr = rhs->pLinearExpr;
-        *pLinearExpr += *pRhsExpr;
+        auto linear_expr = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        *pLinearExpr += *linear_expr->pLinearExpr;
         return info.This();
     }
 
     if ( info.Length() == 1 && info[ 0 ].IsNumber() )
     {
-        double value = info[ 0 ].As< Napi::Number >().DoubleValue();
-        *pLinearExpr += value;
+        double constant = info[ 0 ].As< Napi::Number >();
+        *pLinearExpr += constant;
         return info.This();
     }
 
@@ -140,13 +227,86 @@ Napi::Value operations_research::GLinearExpr::operator_plus_equals( const Napi::
          && info[ 0 ].IsObject()
          && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
     {
-        auto        var  = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() );
-        MPVariable* pVar = var->pMPVariable;
-        *pLinearExpr += pVar;
+        auto mp_variable = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        *pLinearExpr += mp_variable->pMPVariable;
         return info.This();
     }
 
-    ThrowJsError( GLinearExpr::operator_plus_equals : Invalid arguments );
+    ThrowJsError( operations_research::GLinearExpr::operator_plus_equals : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GLinearExpr::operator_minus_equals( const Napi::CallbackInfo& info )
+{
+    //     LinearExpr& operator-=( const LinearExpr& rhs );
+    if ( info.Length() == 1
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    {
+        auto linear_expr = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        *pLinearExpr -= *linear_expr->pLinearExpr;
+        return info.This();
+    }
+
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        double constant = info[ 0 ].As< Napi::Number >();
+        *pLinearExpr -= constant;
+        return info.This();
+    }
+
+    if ( info.Length() == 1
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
+    {
+        auto mp_variable = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        *pLinearExpr -= mp_variable->pMPVariable;
+        return info.This();
+    }
+
+    ThrowJsError( operations_research::GLinearExpr::operator_minus_equals : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GLinearExpr::operator_times_equals( const Napi::CallbackInfo& info )
+{
+    //     LinearExpr& operator*=( double rhs );
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        double rhs = info[ 0 ].As< Napi::Number >();
+        *pLinearExpr *= rhs;
+        return info.This();
+    }
+
+    ThrowJsError( operations_research::GLinearExpr::operator_times_equals : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GLinearExpr::operator_divide_equals( const Napi::CallbackInfo& info )
+{
+    //     LinearExpr& operator/=( double rhs );
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        double rhs = info[ 0 ].As< Napi::Number >();
+        *pLinearExpr /= rhs;
+        return info.This();
+    }
+
+    ThrowJsError( operations_research::GLinearExpr::operator_divide_equals : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GLinearExpr::operator_negate( const Napi::CallbackInfo& info )
+{
+    //     LinearExpr  operator-() const;
+    if ( info.Length() == 0 )
+    {
+        LinearExpr* pLinearExpr_copy = new LinearExpr( -*pLinearExpr );
+        auto        gmp_linear_expr  = Napi::External< LinearExpr >::New( info.Env(), pLinearExpr_copy );
+        return GLinearExpr::constructor.New( { gmp_linear_expr } );
+    }
+
+    ThrowJsError( operations_research::GLinearExpr::operator_negate : Invalid argument );
     return info.Env().Undefined();
 }
 
@@ -160,6 +320,20 @@ operations_research::GLinearRange::GLinearRange( const Napi::CallbackInfo& info 
         return;
     }
 
+    //     LinearRange( double lower_bound, const LinearExpr& linear_expr, double upper_bound );
+    if ( info.Length() == 3
+         && info[ 0 ].IsNumber()
+         && info[ 1 ].IsObject()
+         && info[ 1 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() )
+         && info[ 2 ].IsNumber() )
+    {
+        double lower_bound = info[ 0 ].As< Napi::Number >();
+        auto   linear_expr = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() );
+        double upper_bound = info[ 2 ].As< Napi::Number >();
+        pLinearRange       = new LinearRange( lower_bound, *linear_expr->pLinearExpr, upper_bound );
+        return;
+    }
+
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
         auto external = info[ 0 ].As< Napi::External< LinearRange > >();
@@ -167,7 +341,7 @@ operations_research::GLinearRange::GLinearRange( const Napi::CallbackInfo& info 
         if ( pLinearRange != nullptr ) return;
     }
 
-    ThrowJsError( GLinearRange::GLinearRange : Invalid arguments );
+    ThrowJsError( operations_research::GLinearRange::GLinearRange : Invalid argument );
 }
 
 operations_research::GLinearRange::~GLinearRange()
@@ -178,143 +352,270 @@ operations_research::GLinearRange::~GLinearRange()
 Napi::Value operations_research::operator_less_equals( const Napi::CallbackInfo& info )
 {
     // LinearRange operator<=( const LinearExpr& lhs, const LinearExpr& rhs );
-    if ( info.Length() == 2
-         && info[ 0 ].IsObject()
-         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() )
-         && info[ 1 ].IsObject()
+    if ( info.Length() != 2 )
+    {
+        ThrowJsError( operations_research::operator_less_equals : Invalid argument );
+        return info.Env().Undefined();
+    }
+
+    LinearExpr LinearExpr_lhs;
+    bool       is_lhs_ok = false;
+
+    if ( info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    {
+        LinearExpr_lhs = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() )->pLinearExpr;
+        is_lhs_ok      = true;
+    }
+    else if ( info[ 0 ].IsNumber() )
+    {
+        LinearExpr_lhs = LinearExpr( info[ 0 ].As< Napi::Number >().DoubleValue() );
+        is_lhs_ok      = true;
+    }
+    else if ( info[ 0 ].IsObject()
+              && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
+    {
+        LinearExpr_lhs = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() )->pMPVariable;
+        is_lhs_ok      = true;
+    }
+
+    LinearExpr LinearExpr_rhs;
+    bool       is_rhs_ok = false;
+
+    if ( info[ 1 ].IsObject()
          && info[ 1 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
-        auto        lhs      = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() );
-        LinearExpr* pLhsExpr = lhs->pLinearExpr;
-        auto        rhs      = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() );
-        LinearExpr* pRhsExpr = rhs->pLinearExpr;
-        auto        range    = *pLhsExpr <= *pRhsExpr;
-        auto        external = Napi::External< LinearRange >::New( info.Env(), new LinearRange( range ) );
-        return GLinearRange::constructor.New( { external } );
+        LinearExpr_rhs = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() )->pLinearExpr;
+        is_rhs_ok      = true;
     }
-
-    if ( info.Length() == 2
-         && info[ 0 ].IsObject()
-         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() )
-         && info[ 1 ].IsNumber() )
+    else if ( info[ 1 ].IsNumber() )
     {
-        auto        lhs      = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() );
-        LinearExpr* pLhsExpr = lhs->pLinearExpr;
-        double      value    = info[ 1 ].As< Napi::Number >().DoubleValue();
-        auto        range    = *pLhsExpr <= value;
-        auto        external = Napi::External< LinearRange >::New( info.Env(), new LinearRange( range ) );
-        return GLinearRange::constructor.New( { external } );
+        LinearExpr_rhs = LinearExpr( info[ 1 ].As< Napi::Number >().DoubleValue() );
+        is_rhs_ok      = true;
     }
-
-    if ( info.Length() == 2
-         && info[ 0 ].IsNumber()
-         && info[ 1 ].IsObject()
-         && info[ 1 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    else if ( info[ 1 ].IsObject()
+              && info[ 1 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
     {
-        double      value    = info[ 0 ].As< Napi::Number >().DoubleValue();
-        auto        rhs      = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() );
-        LinearExpr* pRhsExpr = rhs->pLinearExpr;
-        auto        range    = value <= *pRhsExpr;
-        auto        external = Napi::External< LinearRange >::New( info.Env(), new LinearRange( range ) );
+        LinearExpr_rhs = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 1 ].As< Napi::Object >() )->pMPVariable;
+        is_rhs_ok      = true;
+    }
+
+    if ( is_lhs_ok && is_rhs_ok )
+    {
+        auto pLinearRange = new LinearRange( LinearExpr_lhs <= LinearExpr_rhs );
+        auto external     = Napi::External< LinearRange >::New( info.Env(), pLinearRange );
         return GLinearRange::constructor.New( { external } );
     }
 
-    ThrowJsError( operator_less_equals : Invalid arguments );
+    ThrowJsError( operations_research::operator_less_equals : Invalid argument );
     return info.Env().Undefined();
 }
 
 Napi::Value operations_research::operator_equals( const Napi::CallbackInfo& info )
 {
     // LinearRange operator==( const LinearExpr& lhs, const LinearExpr& rhs );
-    if ( info.Length() == 2
-         && info[ 0 ].IsObject()
-         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() )
-         && info[ 1 ].IsObject()
+    if ( info.Length() != 2 )
+    {
+        ThrowJsError( operations_research::operator_equals : Invalid argument );
+        return info.Env().Undefined();
+    }
+
+    LinearExpr LinearExpr_lhs;
+    bool       is_lhs_ok = false;
+
+    if ( info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    {
+        LinearExpr_lhs = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() )->pLinearExpr;
+        is_lhs_ok      = true;
+    }
+    else if ( info[ 0 ].IsNumber() )
+    {
+        LinearExpr_lhs = LinearExpr( info[ 0 ].As< Napi::Number >().DoubleValue() );
+        is_lhs_ok      = true;
+    }
+    else if ( info[ 0 ].IsObject()
+              && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
+    {
+        LinearExpr_lhs = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() )->pMPVariable;
+        is_lhs_ok      = true;
+    }
+
+    LinearExpr LinearExpr_rhs;
+    bool       is_rhs_ok = false;
+
+    if ( info[ 1 ].IsObject()
          && info[ 1 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
-        auto        lhs      = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() );
-        LinearExpr* pLhsExpr = lhs->pLinearExpr;
-        auto        rhs      = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() );
-        LinearExpr* pRhsExpr = rhs->pLinearExpr;
-        auto        range    = *pLhsExpr == *pRhsExpr;
-        auto        external = Napi::External< LinearRange >::New( info.Env(), new LinearRange( range ) );
-        return GLinearRange::constructor.New( { external } );
+        LinearExpr_rhs = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() )->pLinearExpr;
+        is_rhs_ok      = true;
     }
-
-    if ( info.Length() == 2
-         && info[ 0 ].IsObject()
-         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() )
-         && info[ 1 ].IsNumber() )
+    else if ( info[ 1 ].IsNumber() )
     {
-        auto        lhs      = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() );
-        LinearExpr* pLhsExpr = lhs->pLinearExpr;
-        double      value    = info[ 1 ].As< Napi::Number >().DoubleValue();
-        auto        range    = *pLhsExpr == value;
-        auto        external = Napi::External< LinearRange >::New( info.Env(), new LinearRange( range ) );
-        return GLinearRange::constructor.New( { external } );
+        LinearExpr_rhs = LinearExpr( info[ 1 ].As< Napi::Number >().DoubleValue() );
+        is_rhs_ok      = true;
     }
-
-    if ( info.Length() == 2
-         && info[ 0 ].IsNumber()
-         && info[ 1 ].IsObject()
-         && info[ 1 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    else if ( info[ 1 ].IsObject()
+              && info[ 1 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
     {
-        double      value    = info[ 0 ].As< Napi::Number >().DoubleValue();
-        auto        rhs      = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() );
-        LinearExpr* pRhsExpr = rhs->pLinearExpr;
-        auto        range    = value == *pRhsExpr;
-        auto        external = Napi::External< LinearRange >::New( info.Env(), new LinearRange( range ) );
+        LinearExpr_rhs = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 1 ].As< Napi::Object >() )->pMPVariable;
+        is_rhs_ok      = true;
+    }
+
+    if ( is_lhs_ok && is_rhs_ok )
+    {
+        auto pLinearRange = new LinearRange( LinearExpr_lhs == LinearExpr_rhs );
+        auto external     = Napi::External< LinearRange >::New( info.Env(), pLinearRange );
         return GLinearRange::constructor.New( { external } );
     }
 
-    ThrowJsError( operator_equals : Invalid arguments );
+    ThrowJsError( operations_research::operator_equals : Invalid argument );
     return info.Env().Undefined();
 }
 
 Napi::Value operations_research::operator_greater_equals( const Napi::CallbackInfo& info )
 {
     // LinearRange operator>=( const LinearExpr& lhs, const LinearExpr& rhs );
-    if ( info.Length() == 2
-         && info[ 0 ].IsObject()
-         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() )
-         && info[ 1 ].IsObject()
+    if ( info.Length() != 2 )
+    {
+        ThrowJsError( operations_research::operator_greater_equals : Invalid argument );
+        return info.Env().Undefined();
+    }
+
+    LinearExpr LinearExpr_lhs;
+    bool       is_lhs_ok = false;
+
+    if ( info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    {
+        LinearExpr_lhs = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() )->pLinearExpr;
+        is_lhs_ok      = true;
+    }
+    else if ( info[ 0 ].IsNumber() )
+    {
+        LinearExpr_lhs = LinearExpr( info[ 0 ].As< Napi::Number >().DoubleValue() );
+        is_lhs_ok      = true;
+    }
+    else if ( info[ 0 ].IsObject()
+              && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
+    {
+        LinearExpr_lhs = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() )->pMPVariable;
+        is_lhs_ok      = true;
+    }
+
+    LinearExpr LinearExpr_rhs;
+    bool       is_rhs_ok = false;
+
+    if ( info[ 1 ].IsObject()
          && info[ 1 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
-        auto        lhs      = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() );
-        LinearExpr* pLhsExpr = lhs->pLinearExpr;
-        auto        rhs      = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() );
-        LinearExpr* pRhsExpr = rhs->pLinearExpr;
-        auto        range    = *pLhsExpr >= *pRhsExpr;
-        auto        external = Napi::External< LinearRange >::New( info.Env(), new LinearRange( range ) );
+        LinearExpr_rhs = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() )->pLinearExpr;
+        is_rhs_ok      = true;
+    }
+    else if ( info[ 1 ].IsNumber() )
+    {
+        LinearExpr_rhs = LinearExpr( info[ 1 ].As< Napi::Number >().DoubleValue() );
+        is_rhs_ok      = true;
+    }
+    else if ( info[ 1 ].IsObject()
+              && info[ 1 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
+    {
+        LinearExpr_rhs = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 1 ].As< Napi::Object >() )->pMPVariable;
+        is_rhs_ok      = true;
+    }
+
+    if ( is_lhs_ok && is_rhs_ok )
+    {
+        auto pLinearRange = new LinearRange( LinearExpr_lhs >= LinearExpr_rhs );
+        auto external     = Napi::External< LinearRange >::New( info.Env(), pLinearRange );
         return GLinearRange::constructor.New( { external } );
     }
 
+    ThrowJsError( operations_research::operator_greater_equals : Invalid argument );
+    return info.Env().Undefined();
+}
+
+operations_research::GMPConstraint::GMPConstraint( const Napi::CallbackInfo& info )
+    : Napi::ObjectWrap< operations_research::GMPConstraint >( info )
+{
+    if ( info.Length() == 1 && info[ 0 ].IsExternal() )
+    {
+        auto external = info[ 0 ].As< Napi::External< MPConstraint > >();
+        pMPConstraint = dynamic_cast< MPConstraint* >( external.Data() );
+        if ( pMPConstraint != nullptr ) return;
+    }
+
+    ThrowJsError( operations_research::GMPConstraint::GMPConstraint : Invalid argument );
+}
+
+operations_research::GMPConstraint::~GMPConstraint()
+{
+    delete pMPConstraint;
+}
+
+Napi::Value operations_research::GMPConstraint::SetCoefficient( const Napi::CallbackInfo& info )
+{
+    // void SetCoefficient( const MPVariable* const var, double coeff );
     if ( info.Length() == 2
          && info[ 0 ].IsObject()
-         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() )
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() )
          && info[ 1 ].IsNumber() )
     {
-        auto        lhs      = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() );
-        LinearExpr* pLhsExpr = lhs->pLinearExpr;
-        double      value    = info[ 1 ].As< Napi::Number >().DoubleValue();
-        auto        range    = *pLhsExpr >= value;
-        auto        external = Napi::External< LinearRange >::New( info.Env(), new LinearRange( range ) );
-        return GLinearRange::constructor.New( { external } );
+        auto   mp_variable = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        double coeff       = info[ 1 ].As< Napi::Number >().DoubleValue();
+        pMPConstraint->SetCoefficient( mp_variable->pMPVariable, coeff );
+        return info.Env().Undefined();
     }
 
-    if ( info.Length() == 2
-         && info[ 0 ].IsNumber()
-         && info[ 1 ].IsObject()
-         && info[ 1 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    ThrowJsError( operations_research::GMPConstraint::SetCoefficient : Invalid argument );
+    return info.Env().Undefined();
+}
+
+operations_research::GMPObjective::GMPObjective( const Napi::CallbackInfo& info )
+    : Napi::ObjectWrap< operations_research::GMPObjective >( info )
+{
+    if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
-        double      value    = info[ 0 ].As< Napi::Number >().DoubleValue();
-        auto        rhs      = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() );
-        LinearExpr* pRhsExpr = rhs->pLinearExpr;
-        auto        range    = value >= *pRhsExpr;
-        auto        external = Napi::External< LinearRange >::New( info.Env(), new LinearRange( range ) );
-        return GLinearRange::constructor.New( { external } );
+        auto external = info[ 0 ].As< Napi::External< MPObjective > >();
+        pMPObjective  = dynamic_cast< MPObjective* >( external.Data() );
+        if ( pMPObjective != nullptr ) return;
     }
 
-    ThrowJsError( operator_greater_equals : Invalid arguments );
+    ThrowJsError( operations_research::GMPObjective::GMPObjective : Invalid argument );
+}
+
+operations_research::GMPObjective::~GMPObjective()
+{
+    delete pMPObjective;
+}
+
+Napi::Value operations_research::GMPObjective::SetCoefficient( const Napi::CallbackInfo& info )
+{
+    //     void SetCoefficient( const MPVariable* const var, double coeff );
+    if ( info.Length() == 2
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() )
+         && info[ 1 ].IsNumber() )
+    {
+        auto   mp_variable = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        double coeff       = info[ 1 ].As< Napi::Number >().DoubleValue();
+        pMPObjective->SetCoefficient( mp_variable->pMPVariable, coeff );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPObjective::SetCoefficient : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPObjective::SetMinimization( const Napi::CallbackInfo& info )
+{
+    // void SetMinimization();
+    if ( info.Length() == 0 )
+    {
+        pMPObjective->SetMinimization();
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPObjective::SetMaximization : Invalid argument );
     return info.Env().Undefined();
 }
