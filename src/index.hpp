@@ -236,6 +236,11 @@ namespace sat
                 env, "CpModelBuilder",
                 {
                     InstanceMethod( "NewBoolVar", &GCpModelBuilder::NewBoolVar ),
+                    InstanceMethod( "AddAtMostOne", &GCpModelBuilder::AddAtMostOne ),
+                    InstanceMethod( "AddExactlyOne", &GCpModelBuilder::AddExactlyOne ),
+                    InstanceMethod( "AddEquality", &GCpModelBuilder::AddEquality ),
+                    InstanceMethod( "AddAllowedAssignments", &GCpModelBuilder::AddAllowedAssignments ),
+                    InstanceMethod( "Minimize", &GCpModelBuilder::Minimize ),
                 } );
 
             constructor = Napi::Persistent( func );
@@ -244,8 +249,12 @@ namespace sat
             return exports;
         }
 
-        Napi::Value NewBoolVar( const Napi::CallbackInfo& info );  // BoolVar NewBoolVar();
-
+        Napi::Value NewBoolVar( const Napi::CallbackInfo& info );             // BoolVar NewBoolVar();
+        Napi::Value AddAtMostOne( const Napi::CallbackInfo& info );           // Constraint AddAtMostOne( absl::Span< const BoolVar > literals );
+        Napi::Value AddExactlyOne( const Napi::CallbackInfo& info );          // Constraint AddExactlyOne( absl::Span< const BoolVar > literals );
+        Napi::Value AddEquality( const Napi::CallbackInfo& info );            // Constraint AddEquality( const LinearExpr& left, const LinearExpr& right );
+        Napi::Value AddAllowedAssignments( const Napi::CallbackInfo& info );  // TableConstraint AddAllowedAssignments( absl::Span< const IntVar > vars );
+        Napi::Value Minimize( const Napi::CallbackInfo& info );  // void Minimize( const LinearExpr& expr );
     };  // namespace sat
 
     Napi::FunctionReference GCpModelBuilder::constructor;
@@ -278,6 +287,119 @@ namespace sat
 
     Napi::FunctionReference GBoolVar::constructor;
 
+    class GConstraint : public Napi::ObjectWrap< GConstraint >
+    {
+    public:
+        static Napi::FunctionReference constructor;
+        Constraint*                    pConstraint = nullptr;
+        GConstraint( const Napi::CallbackInfo& info );
+        ~GConstraint();
+
+        static Napi::Object Init( Napi::Env env, Napi::Object exports )
+        {
+            Napi::HandleScope scope( env );
+            Napi::Function    func = DefineClass(
+                env, "Constraint",
+                {} );
+
+            constructor = Napi::Persistent( func );
+            constructor.SuppressDestruct();
+            exports.Set( Napi::String::New( env, "Constraint" ), func );
+            return exports;
+        }
+    };
+
+    Napi::FunctionReference GConstraint::constructor;
+
+    class GIntVar : public Napi::ObjectWrap< GIntVar >
+    {
+    public:
+        static Napi::FunctionReference constructor;
+        IntVar*                        pIntVar = nullptr;
+        GIntVar( const Napi::CallbackInfo& info );
+        ~GIntVar();
+
+        static Napi::Object Init( Napi::Env env, Napi::Object exports )
+        {
+            Napi::HandleScope scope( env );
+            Napi::Function    func = DefineClass(
+                env, "IntVar",
+                {} );
+
+            constructor = Napi::Persistent( func );
+            constructor.SuppressDestruct();
+            exports.Set( Napi::String::New( env, "IntVar" ), func );
+            return exports;
+        }
+    };
+
+    Napi::FunctionReference GIntVar::constructor;
+
+    class GLinearExpr : public Napi::ObjectWrap< GLinearExpr >
+    {
+    public:
+        static Napi::FunctionReference constructor;
+        LinearExpr*                    pLinearExpr = nullptr;
+        GLinearExpr( const Napi::CallbackInfo& info );
+        ~GLinearExpr();
+
+        static Napi::Object Init( Napi::Env env, Napi::Object exports )
+        {
+            Napi::HandleScope scope( env );
+            Napi::Function    func = DefineClass(
+                env, "LinearExpr",
+                {
+                    InstanceMethod( "operator_plus_equals", &GLinearExpr::operator_plus_equals ),
+                    InstanceMethod( "operator_minus_equals", &GLinearExpr::operator_minus_equals ),
+                    InstanceMethod( "operator_times_equals", &GLinearExpr::operator_times_equals ),
+                } );
+
+            constructor = Napi::Persistent( func );
+            constructor.SuppressDestruct();
+            exports.Set( Napi::String::New( env, "LinearExpr" ), func );
+            return exports;
+        }
+
+        Napi::Value operator_plus_equals( const Napi::CallbackInfo& info );   // LinearExpr& operator+=( const LinearExpr& other );
+        Napi::Value operator_minus_equals( const Napi::CallbackInfo& info );  // LinearExpr& operator-=( const LinearExpr& other );
+        Napi::Value operator_times_equals( const Napi::CallbackInfo& info );  // LinearExpr& operator*=( int64_t factor );
+    };
+
+    Napi::FunctionReference GLinearExpr::constructor;
+
+    class GTableConstraint : public Napi::ObjectWrap< GTableConstraint >
+    {
+    public:
+        static Napi::FunctionReference constructor;
+        TableConstraint*               pTableConstraint = nullptr;
+        GTableConstraint( const Napi::CallbackInfo& info );
+        ~GTableConstraint();
+
+        static Napi::Object Init( Napi::Env env, Napi::Object exports )
+        {
+            Napi::HandleScope scope( env );
+            Napi::Function    func = DefineClass(
+                env, "TableConstraint",
+                {
+                    InstanceMethod( "AddTuple", &GTableConstraint::AddTuple ),
+                } );
+
+            constructor = Napi::Persistent( func );
+            constructor.SuppressDestruct();
+            exports.Set( Napi::String::New( env, "TableConstraint" ), func );
+            return exports;
+        }
+
+        Napi::Value AddTuple( const Napi::CallbackInfo& info );  // void AddTuple( absl::Span< const int64_t > tuple );
+    };
+
+    Napi::FunctionReference GTableConstraint::constructor;
+
+    Napi::Value operator_plus( const Napi::CallbackInfo& info );   // inline LinearExpr operator+( const LinearExpr& lhs, const LinearExpr& rhs )
+    Napi::Value operator_minus( const Napi::CallbackInfo& info );  // inline LinearExpr operator-( const LinearExpr& lhs, const LinearExpr& rhs )
+    Napi::Value operator_times( const Napi::CallbackInfo& info );  // inline LinearExpr operator*( LinearExpr expr, int64_t factor )
+                                                                   // inline LinearExpr operator*( int64_t factor, LinearExpr expr )
+
 };  // namespace sat
 
 }  // namespace operations_research
@@ -289,6 +411,13 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     auto operations_research_sat_exports = Napi::Object::New( env );
     operations_research::sat::GCpModelBuilder::Init( env, operations_research_sat_exports );
     operations_research::sat::GBoolVar::Init( env, operations_research_sat_exports );
+    operations_research::sat::GConstraint::Init( env, operations_research_sat_exports );
+    operations_research::sat::GIntVar::Init( env, operations_research_sat_exports );
+    operations_research::sat::GLinearExpr::Init( env, operations_research_sat_exports );
+    operations_research::sat::GTableConstraint::Init( env, operations_research_sat_exports );
+    operations_research_sat_exports.Set( "operator_plus", Napi::Function::New( env, operations_research::sat::operator_plus ) );
+    operations_research_sat_exports.Set( "operator_minus", Napi::Function::New( env, operations_research::sat::operator_minus ) );
+    operations_research_sat_exports.Set( "operator_times", Napi::Function::New( env, operations_research::sat::operator_times ) );
 
     auto operations_research_exports = Napi::Object::New( env );
     operations_research::GMPSolver::Init( env, operations_research_exports );

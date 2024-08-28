@@ -1298,8 +1298,12 @@
             //     /// Sets the name of the model.
             //     void SetName( const std::string& name );
 
-            //     /// Creates an integer variable with the given domain.
-            //     IntVar NewIntVar( const Domain& domain );
+            /**
+             * Creates an integer variable with the given domain.
+             * 
+             * C++: IntVar NewIntVar( const Domain& domain );
+             */
+            // NewIntVar(domain: Domain): IntVar;
 
             /**
              * Creates a Boolean variable.
@@ -1358,11 +1362,19 @@
             //     /// Same as AddBoolOr(). Sum literals >= 1.
             //     Constraint AddAtLeastOne( absl::Span< const BoolVar > literals );
 
-            //     /// At most one literal is true. Sum literals <= 1.
-            //     Constraint AddAtMostOne( absl::Span< const BoolVar > literals );
+            /**
+             * At most one literal is true. Sum literals <= 1.
+             * 
+             * C++: Constraint AddAtMostOne( absl::Span< const BoolVar > literals );
+             */
+            AddAtMostOne(literals: Array<BoolVar>): Constraint;
 
-            //     /// Exactly one literal is true. Sum literals == 1.
-            //     Constraint AddExactlyOne( absl::Span< const BoolVar > literals );
+            /**
+             * Exactly one literal is true. Sum literals == 1.
+             * 
+             * C++: Constraint AddExactlyOne( absl::Span< const BoolVar > literals );
+             */
+            AddExactlyOne(literals: Array<BoolVar>): Constraint;
 
             //     /// Adds the constraint that all literals must be true.
             //     Constraint AddBoolAnd( absl::Span< const BoolVar > literals );
@@ -1383,8 +1395,12 @@
             //         return AddBoolAnd( rhs ).OnlyEnforceIf( lhs );
             //     }
 
-            //     /// Adds left == right.
-            //     Constraint AddEquality( const LinearExpr& left, const LinearExpr& right );
+            /**
+             * Adds left == right.
+             * 
+             * C++: Constraint AddEquality( const LinearExpr& left, const LinearExpr& right );
+             */
+            AddEquality(left: LinearExpr | IntVar | BoolVar | number, right: LinearExpr | IntVar | BoolVar | number): Constraint;
 
             //     /// Adds left >= right.
             //     Constraint AddGreaterOrEqual( const LinearExpr& left, const LinearExpr& right );
@@ -1455,18 +1471,20 @@
             //      */
             //     MultipleCircuitConstraint AddMultipleCircuitConstraint();
 
-            //     /**
-            //      * Adds an allowed assignments constraint.
-            //      *
-            //      * An AllowedAssignments constraint is a constraint on an array of variables
-            //      * that forces, when all variables are fixed to a single value, that the
-            //      * corresponding list of values is equal to one of the tuples added to the
-            //      * constraint.
-            //      *
-            //      * It returns a table constraint that allows adding tuples incrementally after
-            //      * construction.
-            //      */
-            //     TableConstraint AddAllowedAssignments( absl::Span< const IntVar > vars );
+            /**
+             * Adds an allowed assignments constraint.
+             *
+             * An AllowedAssignments constraint is a constraint on an array of variables
+             * that forces, when all variables are fixed to a single value, that the
+             * corresponding list of values is equal to one of the tuples added to the
+             * constraint.
+             *
+             * It returns a table constraint that allows adding tuples incrementally after
+             * construction.
+             * 
+             * C++: TableConstraint AddAllowedAssignments( absl::Span< const IntVar > vars );
+             */
+            AddAllowedAssignments(vars: Array<IntVar>): TableConstraint;
 
             //     /**
             //      * Adds an forbidden assignments constraint.
@@ -1612,8 +1630,10 @@
             //      */
             //     CumulativeConstraint AddCumulative( LinearExpr capacity );
 
-            //     /// Adds a linear minimization objective.
-            //     void Minimize( const LinearExpr& expr );
+            // Adds a linear minimization objective.
+            // void Minimize( const LinearExpr& expr );
+            Minimize(expr: LinearExpr): void;
+
 
             //     /// Adds a linear floating point minimization objective.
             //     /// Note that the coefficients will be internally scaled to integer.
@@ -1663,9 +1683,7 @@
             //     void ClearAssumptions();
 
             //     const CpModelProto& Build() const
-            //     {
-            //         return cp_model_;
-            //     };
+            // TODO  
             //     const CpModelProto& Proto() const
             //     {
             //         return cp_model_;
@@ -1752,5 +1770,302 @@
             //         return index_;
             //     }
         };
+
+        /**
+         * A constraint.
+         *
+         * This class enables you to modify the constraint that was previously added to
+         * the model.
+         *
+         * The constraint must be built using the different \c CpModelBuilder::AddXXX
+         * methods.
+         */
+        export class Constraint
+        {
+            // public:
+            //     /**
+            //      * The constraint will be enforced iff all literals listed here are true.
+            //      *
+            //      * If this is empty, then the constraint will always be enforced. An enforced
+            //      * constraint must be satisfied, and an un-enforced one will simply be
+            //      * ignored.
+            //      *
+            //      * This is also called half-reification. To have an equivalence between a
+            //      * literal and a constraint (full reification), one must add both a constraint
+            //      * (controlled by a literal l) and its negation (controlled by the negation of
+            //      * l).
+            //      *
+            //      * [Important] currently, only a few constraints support enforcement:
+            //      * - bool_or, bool_and, linear: fully supported.
+            //      * - interval: only support a single enforcement literal.
+            //      * - other: no support (but can be added on a per-demand basis).
+            //      */
+            //     Constraint OnlyEnforceIf( absl::Span< const BoolVar > literals );
+
+            //     /// See OnlyEnforceIf(absl::Span<const BoolVar> literals).
+            //     Constraint OnlyEnforceIf( BoolVar literal );
+
+            //     /// Sets the name of the constraint.
+            //     Constraint WithName( const std::string& name );
+
+            //     /// Returns the name of the constraint (or the empty string if not set).
+            //     const std::string& Name() const;
+
+            //     /// Returns the underlying protobuf object (useful for testing).
+            //     const ConstraintProto& Proto() const
+            //     {
+            //         return *proto_;
+            //     }
+
+            //     /// Returns the mutable underlying protobuf object (useful for model edition).
+            //     ConstraintProto* MutableProto() const
+            //     {
+            //         return proto_;
+            //     }
+
+        };
+
+        /**
+         * An integer variable.
+         *
+         * This class wraps an IntegerVariableProto.
+         * This can only be constructed via \c CpModelBuilder.NewIntVar().
+         */
+        export class IntVar
+        {
+            /**
+             * A default constructed IntVar can be used to mean not defined yet.
+             * However, it shouldn't be passed to any of the functions in this file.
+             * Doing so will crash in debug mode and will result in an invalid model in
+             * opt mode.
+             * 
+             * C++: IntVar() = default;
+             */
+            constructor();
+
+            /**
+             * Cast BoolVar -> IntVar.
+             * The IntVar will take the value 1 (when the bool is true) and 0 otherwise.
+             * 
+             * Warning: If you construct an IntVar from a negated BoolVar, this might
+             * create a new variable in the model. Otherwise this just point to the same
+             * underlying variable.
+             * 
+             * C++: explicit IntVar( const BoolVar& var );
+             */
+            constructor(var_: BoolVar);
+
+            //     /// Cast IntVar -> BoolVar.
+            //     ///
+            //     /// Warning: The domain of the var must be within {0,1}. If not, we crash
+            //     /// in debug mode, and in opt mode you will get an invalid model if you use
+            //     /// this BoolVar anywhere since it will not have a valid domain.
+            //     BoolVar ToBoolVar() const;
+
+            //     /// Sets the name of the variable.
+            //     IntVar WithName( const std::string& name );
+
+            //     /// Returns the name of the variable (or the empty string if not set).
+            //     std::string Name() const;
+
+            //     bool operator==( const IntVar& other ) const
+            //     {
+            //         return other.builder_ == builder_ && other.index_ == index_;
+            //     }
+
+            //     bool operator!=( const IntVar& other ) const
+            //     {
+            //         return other.builder_ != builder_ || other.index_ != index_;
+            //     }
+
+            //     // Returns the domain of the variable.
+            //     // Note that we keep the fully qualified return type as compilation fails with
+            //     // gcc otherwise.
+            //     ::operations_research::Domain Domain() const;
+
+            //     std::string DebugString() const;
+
+            //     /// Returns the index of the variable in the model. This will be non-negative.
+            //     int index() const
+            //     {
+            //         return index_;
+            //     }
+
+        };
+
+        /**
+         * A dedicated container for linear expressions.
+         *
+         * With the use of implicit constructors, it can accept integer values, Boolean
+         * and Integer variables. Note that Not(x) will be silently transformed into 1 -
+         * x when added to the linear expression. It also support operator overloads to
+         * construct the linear expression naturally.
+         *
+         * Furthermore, static methods allow to construct a linear expression from sums
+         * or scalar products.
+         *
+         * Usage:
+         * \code
+          CpModelBuilder cp_model;
+          IntVar x = model.NewIntVar({0, 10}).WithName("x");
+          IntVar y = model.NewIntVar({0, 10}).WithName("y");
+          BoolVar b = model.NewBoolVar().WithName("b");
+          BoolVar c = model.NewBoolVar().WithName("c");
+          LinearExpr e1(x);  // Or e1 = x.
+          LinearExpr e2 = x + y + 5;
+          LinearExpr e3 = 2 * x - y;
+          LinearExpr e4 = b;
+          LinearExpr e5 = b.Not();  // 1 - b.
+          std::vector<BoolVar> bools = {b, Not(c)};
+          LinearExpr e6 = LinearExpr::Sum(bools);   // b + 1 - c;
+          LinearExpr e7 = -3 * b + Not(c);  // -3 * b + 1 - c;
+          \endcode
+         *  This can be used implicitly in some of the CpModelBuilder methods.
+         * \code
+          cp_model.AddGreaterThan(x, 5);
+          cp_model.AddEquality(x, y + 5);
+          \endcode
+          */
+        export class LinearExpr
+        {
+            /**
+             * Creates an empty linear expression with value zero.
+             * 
+             * C++: LinearExpr() = default;
+             */
+            constructor();
+
+
+            /**
+             * Constructs a linear expression from an integer variable.
+             * It deals with logical negation correctly.
+             * 
+             * C++: LinearExpr( BoolVar var );
+             */
+            constructor(var_: BoolVar);
+
+            /**
+             * Constructs a linear expression from an integer variable.
+             * 
+             * C++: LinearExpr( IntVar var );
+             */
+            constructor(var_: IntVar);
+
+            /**
+             * Constructs a constant linear expression.
+             * 
+             * C++: LinearExpr( int64_t constant );
+             */
+            constructor(constant: number);
+
+            //       // NOLINTEND(google-explicit-constructor)
+
+            //       /// Constructs the sum of a list of variables.
+            //       static LinearExpr Sum( absl::Span< const IntVar > vars );
+
+            //       /// Constructs the sum of a list of Boolean variables.
+            //       static LinearExpr Sum( absl::Span< const BoolVar > vars );
+
+            //       /// Constructs the scalar product of variables and coefficients.
+            //       static LinearExpr WeightedSum( absl::Span< const IntVar >  vars,
+            //                                      absl::Span< const int64_t > coeffs );
+
+            //       /// Constructs the scalar product of Boolean variables and coefficients.
+            //       static LinearExpr WeightedSum( absl::Span< const BoolVar > vars,
+            //                                      absl::Span< const int64_t > coeffs );
+
+            //       /// Constructs var * coefficient.
+            //       static LinearExpr Term( IntVar var, int64_t coefficient );
+
+            //       /// Constructs bool * coefficient.
+            //       static LinearExpr Term( BoolVar var, int64_t coefficient );
+
+            //       /// Constructs a linear expr from its proto representation.
+            //       static LinearExpr FromProto( const LinearExpressionProto& proto );
+
+            /**
+             * C++: LinearExpr& operator+=( const LinearExpr& other );
+             */
+            operator_plus_equals(other: LinearExpr | number | BoolVar): LinearExpr;
+
+            /**
+             * LinearExpr& operator-=( const LinearExpr& other );
+             */
+            operator_minus_equals(other: LinearExpr | number | BoolVar): LinearExpr;
+
+            /**
+             * LinearExpr& operator*=( int64_t factor );
+             */
+            operator_times_equals(factor: number): LinearExpr;
+
+            //       /// Returns the vector of variable indices.
+            //       const std::vector< int >& variables() const
+            //       {
+            //           return variables_;
+            //       }
+
+            //       /// Returns the vector of coefficients.
+            //       const std::vector< int64_t >& coefficients() const
+            //       {
+            //           return coefficients_;
+            //       }
+
+            //       /// Returns true if the expression has no variables.
+            //       const bool IsConstant() const
+            //       {
+            //           return variables_.empty();
+            //       }
+
+            //       /// Returns the constant term.
+            //       int64_t constant() const
+            //       {
+            //           return constant_;
+            //       }
+
+            //       /**
+            //        * Debug string. If the CpModelBuilder is passed, the string will include
+            //        * variable names and domains. Otherwise, you will get a shorter string with
+            //        * only variable indices.
+            //        */
+            //       std::string DebugString( const CpModelProto* proto = nullptr ) const;
+
+        };
+
+        /**
+         * Specialized assignment constraint.
+         *
+         * This constraint allows adding tuples to the allowed/forbidden assignment
+         * constraint incrementally.
+         */
+        export class TableConstraint extends Constraint
+        {
+            /**
+             * Adds a tuple of possible values to the constraint.
+             * 
+             * C++: void AddTuple( absl::Span< const int64_t > tuple );
+             */
+            AddTuple(tuple: number[]): void;
+        };
+
+        // inline LinearExpr operator-( LinearExpr expr )
+        export function operator_negate(expr: LinearExpr): LinearExpr;
+
+        // inline LinearExpr operator+( LinearExpr&& lhs, LinearExpr&& rhs )
+        // inline LinearExpr operator+( LinearExpr&& lhs, const LinearExpr& rhs )
+        // inline LinearExpr operator+( const LinearExpr& lhs, LinearExpr&& rhs )
+        // inline LinearExpr operator+( const LinearExpr& lhs, const LinearExpr& rhs )
+        export function operator_plus(lhs: LinearExpr, rhs: LinearExpr): LinearExpr;
+
+        // inline LinearExpr operator-( LinearExpr&& lhs, LinearExpr&& rhs )
+        // inline LinearExpr operator-( const LinearExpr& lhs, LinearExpr&& rhs )
+        // inline LinearExpr operator-( LinearExpr&& lhs, const LinearExpr& rhs )
+        // inline LinearExpr operator-( const LinearExpr& lhs, const LinearExpr& rhs )
+        export function operator_minus(lhs: LinearExpr, rhs: LinearExpr): LinearExpr;
+
+        // inline LinearExpr operator*( LinearExpr expr, int64_t factor )
+        export function operator_times(expr: LinearExpr | BoolVar, factor: number): LinearExpr;
+        // inline LinearExpr operator*( int64_t factor, LinearExpr expr )
+        export function operator_times(factor: number, expr: LinearExpr | BoolVar): LinearExpr;
+
     }
 }
