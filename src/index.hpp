@@ -2,6 +2,7 @@
 
 #include <napi.h>
 #include "ortools/linear_solver/linear_solver.h"
+#include "ortools/sat/cp_model.h"
 
 // ThrowAsJavaScriptException
 #define ThrowJsError( errinfo ) \
@@ -220,14 +221,74 @@ Napi::FunctionReference GMPObjective::constructor;
 
 namespace sat
 {
+    class GCpModelBuilder : public Napi::ObjectWrap< GCpModelBuilder >
+    {
+    public:
+        static Napi::FunctionReference constructor;
+        CpModelBuilder*                pCpModelBuilder = nullptr;
+        GCpModelBuilder( const Napi::CallbackInfo& info );
+        ~GCpModelBuilder();
+
+        static Napi::Object Init( Napi::Env env, Napi::Object exports )
+        {
+            Napi::HandleScope scope( env );
+            Napi::Function    func = DefineClass(
+                env, "CpModelBuilder",
+                {
+                    InstanceMethod( "NewBoolVar", &GCpModelBuilder::NewBoolVar ),
+                } );
+
+            constructor = Napi::Persistent( func );
+            constructor.SuppressDestruct();
+            exports.Set( Napi::String::New( env, "CpModelBuilder" ), func );
+            return exports;
+        }
+
+        Napi::Value NewBoolVar( const Napi::CallbackInfo& info );  // BoolVar NewBoolVar();
+
+    };  // namespace sat
+
+    Napi::FunctionReference GCpModelBuilder::constructor;
+
+    class GBoolVar : public Napi::ObjectWrap< GBoolVar >
+    {
+    public:
+        static Napi::FunctionReference constructor;
+        BoolVar*                       pBoolVar = nullptr;
+        GBoolVar( const Napi::CallbackInfo& info );
+        ~GBoolVar();
+
+        static Napi::Object Init( Napi::Env env, Napi::Object exports )
+        {
+            Napi::HandleScope scope( env );
+            Napi::Function    func = DefineClass(
+                env, "BoolVar",
+                {
+                    InstanceMethod( "WithName", &GBoolVar::WithName ),
+                } );
+
+            constructor = Napi::Persistent( func );
+            constructor.SuppressDestruct();
+            exports.Set( Napi::String::New( env, "BoolVar" ), func );
+            return exports;
+        }
+
+        Napi::Value WithName( const Napi::CallbackInfo& info );  // BoolVar WithName( const std::string& name );
+    };
+
+    Napi::FunctionReference GBoolVar::constructor;
 
 };  // namespace sat
 
-};  // namespace operations_research
+}  // namespace operations_research
 
 Napi::Object Init( Napi::Env env, Napi::Object exports )
 {
     Napi::HandleScope scope( env );
+
+    auto operations_research_sat_exports = Napi::Object::New( env );
+    operations_research::sat::GCpModelBuilder::Init( env, operations_research_sat_exports );
+    operations_research::sat::GBoolVar::Init( env, operations_research_sat_exports );
 
     auto operations_research_exports = Napi::Object::New( env );
     operations_research::GMPSolver::Init( env, operations_research_exports );
@@ -240,6 +301,8 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research_exports.Set( "operator_less_equals", Napi::Function::New( env, operations_research::operator_less_equals ) );
     operations_research_exports.Set( "operator_equals", Napi::Function::New( env, operations_research::operator_equals ) );
     operations_research_exports.Set( "operator_greater_equals", Napi::Function::New( env, operations_research::operator_greater_equals ) );
+
+    operations_research_exports.Set( "sat", operations_research_sat_exports );
 
     exports.Set( "operations_research", operations_research_exports );
 

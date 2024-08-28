@@ -619,3 +619,74 @@ Napi::Value operations_research::GMPObjective::SetMinimization( const Napi::Call
     ThrowJsError( operations_research::GMPObjective::SetMaximization : Invalid argument );
     return info.Env().Undefined();
 }
+
+operations_research::sat::GCpModelBuilder::GCpModelBuilder( const Napi::CallbackInfo& info )
+    : Napi::ObjectWrap< operations_research::sat::GCpModelBuilder >( info )
+{
+    if ( info.Length() == 0 )
+    {
+        pCpModelBuilder = new CpModelBuilder();
+        return;
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::GCpModelBuilder : Invalid argument );
+}
+
+operations_research::sat::GCpModelBuilder::~GCpModelBuilder()
+{
+    delete pCpModelBuilder;
+}
+
+Napi::Value operations_research::sat::GCpModelBuilder::NewBoolVar( const Napi::CallbackInfo& info )
+{
+    // BoolVar NewBoolVar();
+    if ( info.Length() == 0 )
+    {
+        auto pBoolVar = pCpModelBuilder->NewBoolVar();
+        auto external = Napi::External< BoolVar >::New( info.Env(), new BoolVar( pBoolVar ) );
+        return GBoolVar::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::NewBoolVar : Invalid argument );
+    return info.Env().Undefined();
+}
+
+operations_research::sat::GBoolVar::GBoolVar( const Napi::CallbackInfo& info )
+    : Napi::ObjectWrap< operations_research::sat::GBoolVar >( info )
+{
+    if ( info.Length() == 1 && info[ 0 ].IsExternal() )
+    {
+        auto external = info[ 0 ].As< Napi::External< BoolVar > >();
+        pBoolVar      = dynamic_cast< BoolVar* >( external.Data() );
+        if ( pBoolVar != nullptr ) return;
+    }
+
+    // BoolVar() = default;
+    if ( info.Length() == 0 )
+    {
+        pBoolVar = new BoolVar();
+        return;
+    }
+
+    ThrowJsError( operations_research::sat::GBoolVar : Invalid argument );
+}
+
+operations_research::sat::GBoolVar::~GBoolVar()
+{
+    delete pBoolVar;
+}
+
+Napi::Value operations_research::sat::GBoolVar::WithName( const Napi::CallbackInfo& info )
+{
+    // BoolVar WithName( const std::string& name )
+    if ( info.Length() == 1 && info[ 0 ].IsString() )
+    {
+        std::string name     = info[ 0 ].As< Napi::String >().Utf8Value();
+        auto        boo      = pBoolVar->WithName( name );
+        auto        external = Napi::External< BoolVar >::New( info.Env(), new BoolVar( boo ) );
+        return GBoolVar::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GBoolVar::WithName : Invalid argument );
+    return info.Env().Undefined();
+}
