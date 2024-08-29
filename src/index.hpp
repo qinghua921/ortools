@@ -4,6 +4,7 @@
 #include "ortools/linear_solver/linear_solver.h"
 #include "ortools/sat/cp_model.h"
 #include "ortools/graph/assignment.h"
+#include "ortools/graph/min_cost_flow.h"
 
 // ThrowAsJavaScriptException
 #define ThrowJsError( errinfo ) \
@@ -231,9 +232,26 @@ public:
     static Napi::Object Init( Napi::Env env, Napi::Object exports )
     {
         Napi::HandleScope scope( env );
-        Napi::Function    func = DefineClass(
+
+        Napi::Object status = Napi::Object::New( env );
+        status.Set( Napi::String::New( env, "OPTIMAL" ), Napi::Number::New( env, SimpleLinearSumAssignment::OPTIMAL ) );
+        status.Set( Napi::String::New( env, "INFEASIBLE" ), Napi::Number::New( env, SimpleLinearSumAssignment::INFEASIBLE ) );
+        status.Set( Napi::String::New( env, "POSSIBLE_OVERFLOW" ), Napi::Number::New( env, SimpleLinearSumAssignment::POSSIBLE_OVERFLOW ) );
+
+        Napi::Function func = DefineClass(
             env, "SimpleLinearSumAssignment",
             {
+                StaticValue( "Status", status ),
+                InstanceMethod( "AddArcWithCost", &GSimpleLinearSumAssignment::AddArcWithCost ),
+                InstanceMethod( "Solve", &GSimpleLinearSumAssignment::Solve ),
+                InstanceMethod( "NumNodes", &GSimpleLinearSumAssignment::NumNodes ),
+                InstanceMethod( "NumArcs", &GSimpleLinearSumAssignment::NumArcs ),
+                InstanceMethod( "LeftNode", &GSimpleLinearSumAssignment::LeftNode ),
+                InstanceMethod( "RightNode", &GSimpleLinearSumAssignment::RightNode ),
+                InstanceMethod( "Cost", &GSimpleLinearSumAssignment::Cost ),
+                InstanceMethod( "OptimalCost", &GSimpleLinearSumAssignment::OptimalCost ),
+                InstanceMethod( "RightMate", &GSimpleLinearSumAssignment::RightMate ),
+                InstanceMethod( "AssignmentCost", &GSimpleLinearSumAssignment::AssignmentCost ),
             } );
 
         constructor = Napi::Persistent( func );
@@ -242,9 +260,107 @@ public:
         return exports;
     }
 
+    // ArcIndex AddArcWithCost( NodeIndex left_node, NodeIndex right_node, CostValue cost );
+    Napi::Value AddArcWithCost( const Napi::CallbackInfo& info );
+    // Status Solve();
+    Napi::Value Solve( const Napi::CallbackInfo& info );
+    //  NodeIndex NumNodes() const;
+    Napi::Value NumNodes( const Napi::CallbackInfo& info );
+    // ArcIndex NumArcs() const;
+    Napi::Value NumArcs( const Napi::CallbackInfo& info );
+    // NodeIndex LeftNode( ArcIndex arc ) const;
+    Napi::Value LeftNode( const Napi::CallbackInfo& info );
+    // NodeIndex RightNode( ArcIndex arc ) const;
+    Napi::Value RightNode( const Napi::CallbackInfo& info );
+    // CostValue Cost( ArcIndex arc ) const;
+    Napi::Value Cost( const Napi::CallbackInfo& info );
+    // CostValue OptimalCost() const;
+    Napi::Value OptimalCost( const Napi::CallbackInfo& info );
+    // NodeIndex RightMate( NodeIndex left_node ) const;
+    Napi::Value RightMate( const Napi::CallbackInfo& info );
+    // CostValue AssignmentCost( NodeIndex left_node ) const;
+    Napi::Value AssignmentCost( const Napi::CallbackInfo& info );
 };
 
 Napi::FunctionReference GSimpleLinearSumAssignment::constructor;
+
+class GSimpleMinCostFlow : public Napi::ObjectWrap< GSimpleMinCostFlow >
+{
+public:
+    static Napi::FunctionReference constructor;
+    SimpleMinCostFlow*             pSimpleMinCostFlow = nullptr;
+    GSimpleMinCostFlow( const Napi::CallbackInfo& info );
+    ~GSimpleMinCostFlow();
+
+    static Napi::Object Init( Napi::Env env, Napi::Object exports )
+    {
+        Napi::HandleScope scope( env );
+
+        Napi::Object status = Napi::Object::New( env );
+        status.Set( Napi::String::New( env, "NOT_SOLVED" ), Napi::Number::New( env, SimpleMinCostFlow::NOT_SOLVED ) );
+        status.Set( Napi::String::New( env, "OPTIMAL" ), Napi::Number::New( env, SimpleMinCostFlow::OPTIMAL ) );
+        status.Set( Napi::String::New( env, "FEASIBLE" ), Napi::Number::New( env, SimpleMinCostFlow::FEASIBLE ) );
+        status.Set( Napi::String::New( env, "INFEASIBLE" ), Napi::Number::New( env, SimpleMinCostFlow::INFEASIBLE ) );
+        status.Set( Napi::String::New( env, "UNBALANCED" ), Napi::Number::New( env, SimpleMinCostFlow::UNBALANCED ) );
+        status.Set( Napi::String::New( env, "BAD_RESULT" ), Napi::Number::New( env, SimpleMinCostFlow::BAD_RESULT ) );
+        status.Set( Napi::String::New( env, "BAD_COST_RANGE" ), Napi::Number::New( env, SimpleMinCostFlow::BAD_COST_RANGE ) );
+
+        Napi::Function func = DefineClass(
+            env, "SimpleMinCostFlow",
+            {
+                StaticValue( "Status", status ),
+                InstanceMethod( "AddArcWithCapacityAndUnitCost", &GSimpleMinCostFlow::AddArcWithCapacityAndUnitCost ),
+                InstanceMethod( "SetNodeSupply", &GSimpleMinCostFlow::SetNodeSupply ),
+                InstanceMethod( "Solve", &GSimpleMinCostFlow::Solve ),
+                InstanceMethod( "SolveMaxFlowWithMinCost", &GSimpleMinCostFlow::SolveMaxFlowWithMinCost ),
+                InstanceMethod( "OptimalCost", &GSimpleMinCostFlow::OptimalCost ),
+                InstanceMethod( "MaximumFlow", &GSimpleMinCostFlow::MaximumFlow ),
+                InstanceMethod( "Flow", &GSimpleMinCostFlow::Flow ),
+                InstanceMethod( "NumNodes", &GSimpleMinCostFlow::NumNodes ),
+                InstanceMethod( "NumArcs", &GSimpleMinCostFlow::NumArcs ),
+                InstanceMethod( "Tail", &GSimpleMinCostFlow::Tail ),
+                InstanceMethod( "Head", &GSimpleMinCostFlow::Head ),
+                InstanceMethod( "Capacity", &GSimpleMinCostFlow::Capacity ),
+                InstanceMethod( "Supply", &GSimpleMinCostFlow::Supply ),
+                InstanceMethod( "UnitCost", &GSimpleMinCostFlow::UnitCost ),
+            } );
+        constructor = Napi::Persistent( func );
+        constructor.SuppressDestruct();
+        exports.Set( Napi::String::New( env, "SimpleMinCostFlow" ), func );
+        return exports;
+    }
+
+    // ArcIndex AddArcWithCapacityAndUnitCost( NodeIndex tail, NodeIndex head, FlowQuantity capacity, CostValue unit_cost );
+    Napi::Value AddArcWithCapacityAndUnitCost( const Napi::CallbackInfo& info );
+    //  void SetNodeSupply( NodeIndex node, FlowQuantity supply );
+    Napi::Value SetNodeSupply( const Napi::CallbackInfo& info );
+    // Status Solve();
+    Napi::Value Solve( const Napi::CallbackInfo& info );
+    // Status SolveMaxFlowWithMinCost();
+    Napi::Value SolveMaxFlowWithMinCost( const Napi::CallbackInfo& info );
+    // CostValue OptimalCost() const;
+    Napi::Value OptimalCost( const Napi::CallbackInfo& info );
+    // FlowQuantity MaximumFlow() const;
+    Napi::Value MaximumFlow( const Napi::CallbackInfo& info );
+    // FlowQuantity Flow( ArcIndex arc ) const;
+    Napi::Value Flow( const Napi::CallbackInfo& info );
+    // NodeIndex    NumNodes() const;
+    Napi::Value NumNodes( const Napi::CallbackInfo& info );
+    // ArcIndex     NumArcs() const;
+    Napi::Value NumArcs( const Napi::CallbackInfo& info );
+    // NodeIndex    Tail( ArcIndex arc ) const;
+    Napi::Value Tail( const Napi::CallbackInfo& info );
+    // NodeIndex    Head( ArcIndex arc ) const;
+    Napi::Value Head( const Napi::CallbackInfo& info );
+    // FlowQuantity Capacity( ArcIndex arc ) const;
+    Napi::Value Capacity( const Napi::CallbackInfo& info );
+    // FlowQuantity Supply( NodeIndex node ) const;
+    Napi::Value Supply( const Napi::CallbackInfo& info );
+    // CostValue    UnitCost( ArcIndex arc ) const;
+    Napi::Value UnitCost( const Napi::CallbackInfo& info );
+};
+
+Napi::FunctionReference GSimpleMinCostFlow::constructor;
 
 namespace sat
 {
@@ -277,13 +393,20 @@ namespace sat
             return exports;
         }
 
-        Napi::Value NewBoolVar( const Napi::CallbackInfo& info );             // BoolVar NewBoolVar();
-        Napi::Value AddAtMostOne( const Napi::CallbackInfo& info );           // Constraint AddAtMostOne( absl::Span< const BoolVar > literals );
-        Napi::Value AddExactlyOne( const Napi::CallbackInfo& info );          // Constraint AddExactlyOne( absl::Span< const BoolVar > literals );
-        Napi::Value AddEquality( const Napi::CallbackInfo& info );            // Constraint AddEquality( const LinearExpr& left, const LinearExpr& right );
-        Napi::Value AddAllowedAssignments( const Napi::CallbackInfo& info );  // TableConstraint AddAllowedAssignments( absl::Span< const IntVar > vars );
-        Napi::Value Minimize( const Napi::CallbackInfo& info );               // void Minimize( const LinearExpr& expr );
-        Napi::Value Build( const Napi::CallbackInfo& info );                  // const CpModelProto& Build() const
+        // BoolVar NewBoolVar();
+        Napi::Value NewBoolVar( const Napi::CallbackInfo& info );
+        // Constraint AddAtMostOne( absl::Span< const BoolVar > literals );
+        Napi::Value AddAtMostOne( const Napi::CallbackInfo& info );
+        // Constraint AddExactlyOne( absl::Span< const BoolVar > literals );
+        Napi::Value AddExactlyOne( const Napi::CallbackInfo& info );
+        // Constraint AddEquality( const LinearExpr& left, const LinearExpr& right );
+        Napi::Value AddEquality( const Napi::CallbackInfo& info );
+        // TableConstraint AddAllowedAssignments( absl::Span< const IntVar > vars );
+        Napi::Value AddAllowedAssignments( const Napi::CallbackInfo& info );
+        // void Minimize( const LinearExpr& expr );
+        Napi::Value Minimize( const Napi::CallbackInfo& info );
+        // const CpModelProto& Build() const
+        Napi::Value Build( const Napi::CallbackInfo& info );
 
     };  // namespace sat
 
@@ -523,6 +646,8 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research::GLinearRange::Init( env, operations_research_exports );
     operations_research::GMPConstraint::Init( env, operations_research_exports );
     operations_research::GMPObjective::Init( env, operations_research_exports );
+    operations_research::GSimpleLinearSumAssignment::Init( env, operations_research_exports );
+    operations_research::GSimpleMinCostFlow::Init( env, operations_research_exports );
 
     operations_research_exports.Set( "operator_less_equals", Napi::Function::New( env, operations_research::operator_less_equals ) );
     operations_research_exports.Set( "operator_equals", Napi::Function::New( env, operations_research::operator_equals ) );

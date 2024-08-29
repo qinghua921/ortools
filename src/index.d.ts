@@ -1281,76 +1281,242 @@
 
     }
 
-    export class SimpleLinearSumAssignment
+    export namespace SimpleLinearSumAssignment
     {
-        // public:
-        //     // The constructor takes no size.
-        //     // New node indices will be created lazily by AddArcWithCost().
-        //     SimpleLinearSumAssignment();
-
-        //     // Adds an arc from a left node to a right node with a given cost.
-        //     // * Node indices must be non-negative (>= 0). For a perfect
-        //     //   matching to exist on n nodes, the values taken by "left_node"
-        //     //   must cover [0, n), same for "right_node".
-        //     // * The arc cost can be any integer, negative, positive or zero.
-        //     // * After the method finishes, NumArcs() == the returned ArcIndex + 1.
-        //     ArcIndex AddArcWithCost( NodeIndex left_node, NodeIndex right_node,
-        //                              CostValue cost );
-
-        //     // Returns the current number of left nodes which is the same as the
-        //     // number of right nodes. This is one greater than the largest node
-        //     // index seen so far in AddArcWithCost().
-        //     NodeIndex NumNodes() const;
-
-        //     // Returns the current number of arcs in the graph.
-        //     ArcIndex NumArcs() const;
-
-        //     // Returns user-provided data.
-        //     // The implementation will crash if "arc" is not in [0, NumArcs()).
-        //     NodeIndex LeftNode( ArcIndex arc ) const;
-        //     NodeIndex RightNode( ArcIndex arc ) const;
-        //     CostValue Cost( ArcIndex arc ) const;
-
-        //     // Solves the problem (finds the perfect matching that minimizes the
-        //     // cost) and returns the solver status.
-        //     enum Status
-        //     {
-        //         OPTIMAL,            // The algorithm found a minimum-cost perfect matching.
-        //         INFEASIBLE,         // The given problem admits no perfect matching.
-        //         POSSIBLE_OVERFLOW,  // Some cost magnitude is too large.
-        //     };
-        //     Status Solve();
-
-        //     // Returns the cost of an assignment with minimal cost.
-        //     // This is 0 if the last Solve() didn't return OPTIMAL.
-        //     CostValue OptimalCost() const
-        //     {
-        //         return optimal_cost_;
-        //     }
-
-        //     // Returns the right node assigned to the given left node in the
-        //     // last solution computed by Solve(). This works only if Solve()
-        //     // returned OPTIMAL.
-        //     //
-        //     // Note: It is possible that there is more than one optimal
-        //     // solution. The algorithm is deterministic so it will always return
-        //     // the same solution for a given problem. There is no such guarantee
-        //     // from one code version to the next, but the code does not change
-        //     // often.
-        //     NodeIndex RightMate( NodeIndex left_node ) const
-        //     {
-        //         return arc_head_[ assignment_arcs_[ left_node ] ];
-        //     }
-
-        //     // Returns the cost of the arc used for "left_node"'s assignment.
-        //     // This works only if Solve() returned OPTIMAL.
-        //     CostValue AssignmentCost( NodeIndex left_node ) const
-        //     {
-        //         return arc_cost_[ assignment_arcs_[ left_node ] ];
-        //     }
+        /**
+         * Solves the problem (finds the perfect matching that minimizes the
+         * cost) and returns the solver status.
+         */
+        export enum Status
+        {
+            OPTIMAL,            // The algorithm found a minimum-cost perfect matching.
+            INFEASIBLE,         // The given problem admits no perfect matching.
+            POSSIBLE_OVERFLOW,  // Some cost magnitude is too large.
+        }
 
     }
 
+    export class SimpleLinearSumAssignment
+    {
+        /**
+         * The constructor takes no size.
+         * New node indices will be created lazily by AddArcWithCost().
+         * 
+         * C++: SimpleLinearSumAssignment();
+         */
+        constructor();
+
+        /**
+         * Adds an arc from a left node to a right node with a given cost.
+         * * Node indices must be non-negative (>= 0). For a perfect
+         *   matching to exist on n nodes, the values taken by "left_node"
+         *   must cover [0, n), same for "right_node".
+         * * The arc cost can be any integer, negative, positive or zero.
+         * * After the method finishes, NumArcs() == the returned ArcIndex + 1.
+         * 
+         * C++: ArcIndex AddArcWithCost( NodeIndex left_node, NodeIndex right_node, CostValue cost );
+         */
+        AddArcWithCost(left_node: number, right_node: number, cost: number): number;
+
+        /**
+         * Returns the current number of left nodes which is the same as the
+         * number of right nodes. This is one greater than the largest node
+         * index seen so far in AddArcWithCost().
+         * 
+         * C++: NodeIndex NumNodes() const;
+         */
+        NumNodes(): number;
+
+        /**
+         * Returns the current number of arcs in the graph.
+         * 
+         * C++: ArcIndex NumArcs() const;
+         */
+        NumArcs(): number;
+
+        /**
+         * Returns user-provided data.
+         * The implementation will crash if "arc" is not in [0, NumArcs()).
+         * 
+         * C++: NodeIndex LeftNode( ArcIndex arc ) const;
+         * C++: NodeIndex RightNode( ArcIndex arc ) const;
+         * C++: CostValue Cost( ArcIndex arc ) const;
+         */
+        LeftNode(arc: number): number;
+        RightNode(arc: number): number;
+        Cost(arc: number): number;
+
+        /**
+         * C++: Status Solve();
+         */
+        Solve(): SimpleLinearSumAssignment.Status;
+
+        /**
+         * Returns the cost of an assignment with minimal cost.
+         * This is 0 if the last Solve() didn't return OPTIMAL.
+         * 
+         * C++: CostValue OptimalCost() const;
+         */
+        OptimalCost(): number;
+
+        /**
+         * Returns the right node assigned to the given left node in the
+         * last solution computed by Solve(). This works only if Solve()
+         * returned OPTIMAL.
+         * 
+         * Note: It is possible that there is more than one optimal
+         * solution. The algorithm is deterministic so it will always return
+         * the same solution for a given problem. There is no such guarantee
+         * from one code version to the next, but the code does not change
+         * often.
+         * 
+         * C++: NodeIndex RightMate( NodeIndex left_node ) const;
+         */
+        RightMate(left_node: number): number;
+
+        /**
+         * Returns the cost of the arc used for "left_node"'s assignment.
+         * This works only if Solve() returned OPTIMAL.
+         * 
+         * C++: CostValue AssignmentCost( NodeIndex left_node ) const;
+         */
+        AssignmentCost(left_node: number): number;
+    }
+
+    export namespace SimpleMinCostFlow
+    {
+        export enum Status
+        {
+            NOT_SOLVED,
+            OPTIMAL,
+            FEASIBLE,
+            INFEASIBLE,
+            UNBALANCED,
+            BAD_RESULT,
+            BAD_COST_RANGE
+        }
+    }
+
+    /**
+     * A simple and efficient min-cost flow interface. This is as fast as
+     * GenericMinCostFlow<ReverseArcStaticGraph>, which is the fastest, but is uses
+     * more memory in order to hide the somewhat involved construction of the
+     * static graph.
+     *
+     * TODO(user): If the need arises, extend this interface to support warm start
+     * and incrementality between solves. Note that this is already supported by the
+     * GenericMinCostFlow<> interface.
+     * 
+     * C++: class SimpleMinCostFlow : public MinCostFlowBase
+     */
+    export class SimpleMinCostFlow // : public MinCostFlowBase
+    {
+        constructor();
+
+        /**
+         * By default, the constructor takes no size. New node indices are created
+         * lazily by AddArcWithCapacityAndUnitCost() or SetNodeSupply() such that the
+         * set of valid nodes will always be [0, NumNodes()).
+         * 
+         * You may pre-reserve the internal data structures with a given expected
+         * number of nodes and arcs, to potentially gain performance.
+         * 
+         * C++: explicit SimpleMinCostFlow( NodeIndex reserve_num_nodes = 0, ArcIndex  reserve_num_arcs  = 0 );
+         */
+        constructor(reserve_num_nodes: number, reserve_num_arcs: number);
+
+        /**
+         * Adds a directed arc from tail to head to the underlying graph with
+         * a given capacity and cost per unit of flow.
+         * * Node indices and the capacity must be non-negative (>= 0).
+         * * The unit cost can take any integer value (even negative).
+         * * Self-looping and duplicate arcs are supported.
+         * * After the method finishes, NumArcs() == the returned ArcIndex + 1.
+         * 
+         * C++: ArcIndex AddArcWithCapacityAndUnitCost( NodeIndex tail, NodeIndex head,
+         *                                             FlowQuantity capacity,
+         *                                             CostValue    unit_cost );
+         */
+        AddArcWithCapacityAndUnitCost(tail: number, head: number, capacity: number, unit_cost: number): number;
+
+        /**
+         * Sets the supply of the given node. The node index must be non-negative (>=
+         * 0). Nodes implicitly created will have a default supply set to 0. A demand
+         * is modeled as a negative supply.
+         * 
+         * C++: void SetNodeSupply( NodeIndex node, FlowQuantity supply );
+         */
+        SetNodeSupply(node: number, supply: number): void;
+
+        /**
+         * Solves the problem and returns the problem status. This function
+         * requires that the sum of all node supply minus node demand is zero and
+         * that the graph has enough capacity to send all supplies and serve all
+         * demands. Otherwise, it will return INFEASIBLE.
+         * 
+         * C++: Status Solve();
+         */
+        Solve(): SimpleMinCostFlow.Status;
+
+        /**
+         * Same as Solve(), but does not have the restriction that the supply
+         * must match the demand or that the graph has enough capacity to serve
+         * all the demand or use all the supply. This will compute a maximum-flow
+         * with minimum cost. The value of the maximum-flow will be given by
+         * MaximumFlow().
+         * 
+         * C++: Status SolveMaxFlowWithMinCost();
+         */
+        SolveMaxFlowWithMinCost(): SimpleMinCostFlow.Status;
+
+        /**
+         * Returns the cost of the minimum-cost flow found by the algorithm when 
+         * the returned Status is OPTIMAL.
+         * 
+         * C++: CostValue OptimalCost() const;
+         */
+        OptimalCost(): number;
+
+        /**
+         * Returns the total flow of the minimum-cost flow found by the algorithm 
+         * when the returned Status is OPTIMAL.
+         * 
+         * C++: FlowQuantity MaximumFlow() const;
+         */
+        MaximumFlow(): number;
+
+        /**
+         * Returns the flow on arc, this only make sense for a successful Solve().
+         * 
+         * Note: It is possible that there is more than one optimal solution. The
+         * algorithm is deterministic so it will always return the same solution for
+         * a given problem. However, there is no guarantee of this from one code
+         * version to the next (but the code does not change often).
+         * 
+         * C++: FlowQuantity Flow( ArcIndex arc ) const;
+         */
+        Flow(arc: number): number;
+
+        /**
+         * Accessors for the user given data. The implementation will crash if "arc"
+         * is not in [0, NumArcs()) or "node" is not in [0, NumNodes()).
+         * 
+         * C++: NodeIndex    NumNodes() const;
+         * C++: ArcIndex     NumArcs() const;
+         * C++: NodeIndex    Tail( ArcIndex arc ) const;
+         * C++: NodeIndex    Head( ArcIndex arc ) const;
+         * C++: FlowQuantity Capacity( ArcIndex arc ) const;
+         * C++: FlowQuantity Supply( NodeIndex node ) const;
+         * C++: CostValue    UnitCost( ArcIndex arc ) const;
+         */
+        NumNodes(): number;
+        NumArcs(): number;
+        Tail(arc: number): number;
+        Head(arc: number): number;
+        Capacity(arc: number): number;
+        Supply(node: number): number;
+        UnitCost(arc: number): number;
+    }
 
     export namespace sat
     {

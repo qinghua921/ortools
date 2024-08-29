@@ -1327,10 +1327,384 @@ Napi::Value operations_research::sat::GCpSolverResponse::status( const Napi::Cal
 operations_research::GSimpleLinearSumAssignment::GSimpleLinearSumAssignment( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< operations_research::GSimpleLinearSumAssignment >( info )
 {
-    // TODO
+    // SimpleLinearSumAssignment();
+    if ( info.Length() == 0 )
+    {
+        pSimpleLinearSumAssignment = new operations_research::SimpleLinearSumAssignment();
+        return;
+    }
+
+    ThrowJsError( operations_research::GSimpleLinearSumAssignment : Invalid argument );
 }
 
 operations_research::GSimpleLinearSumAssignment::~GSimpleLinearSumAssignment()
 {
     delete pSimpleLinearSumAssignment;
+}
+
+Napi::Value operations_research::GSimpleLinearSumAssignment::AddArcWithCost( const Napi::CallbackInfo& info )
+{
+    // ArcIndex AddArcWithCost( NodeIndex left_node, NodeIndex right_node, CostValue cost );
+    if ( info.Length() == 3
+         && info[ 0 ].IsNumber()
+         && info[ 1 ].IsNumber()
+         && info[ 2 ].IsNumber() )
+    {
+        NodeIndex left_node  = info[ 0 ].As< Napi::Number >().Int64Value();
+        NodeIndex right_node = info[ 1 ].As< Napi::Number >().Int64Value();
+        CostValue cost       = info[ 2 ].As< Napi::Number >().Int64Value();
+        ArcIndex  arc_index  = pSimpleLinearSumAssignment->AddArcWithCost( left_node, right_node, cost );
+        return Napi::Number::New( info.Env(), arc_index );
+    }
+
+    ThrowJsError( operations_research::GSimpleLinearSumAssignment::AddArcWithCost : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleLinearSumAssignment::Solve( const Napi::CallbackInfo& info )
+{
+    // Status Solve();
+    if ( info.Length() == 0 )
+    {
+        operations_research::SimpleLinearSumAssignment::Status status = pSimpleLinearSumAssignment->Solve();
+        return Napi::Number::New( info.Env(), status );
+    }
+
+    ThrowJsError( operations_research::GSimpleLinearSumAssignment::Solve : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleLinearSumAssignment::NumNodes( const Napi::CallbackInfo& info )
+{
+    //  NodeIndex NumNodes() const;
+    if ( info.Length() == 0 )
+    {
+        return Napi::Number::New( info.Env(), pSimpleLinearSumAssignment->NumNodes() );
+    }
+
+    ThrowJsError( operations_research::GSimpleLinearSumAssignment::NumNodes : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleLinearSumAssignment::NumArcs( const Napi::CallbackInfo& info )
+{
+    // ArcIndex NumArcs() const;
+    if ( info.Length() == 0 )
+    {
+        return Napi::Number::New( info.Env(), pSimpleLinearSumAssignment->NumArcs() );
+    }
+
+    ThrowJsError( operations_research::GSimpleLinearSumAssignment::NumArcs : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleLinearSumAssignment::RightNode( const Napi::CallbackInfo& info )
+{
+    // NodeIndex RightNode( ArcIndex arc ) const;
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        ArcIndex  arc        = info[ 0 ].As< Napi::Number >().Int32Value();
+        NodeIndex right_node = pSimpleLinearSumAssignment->RightNode( arc );
+        return Napi::Number::New( info.Env(), right_node );
+    }
+
+    ThrowJsError( operations_research::GSimpleLinearSumAssignment::RightNode : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleLinearSumAssignment::Cost( const Napi::CallbackInfo& info )
+{
+    // CostValue Cost( ArcIndex arc ) const;
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        ArcIndex  arc  = info[ 0 ].As< Napi::Number >().Int32Value();
+        CostValue cost = pSimpleLinearSumAssignment->Cost( arc );
+        return Napi::Number::New( info.Env(), cost );
+    }
+
+    ThrowJsError( operations_research::GSimpleLinearSumAssignment::Cost : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleLinearSumAssignment::OptimalCost( const Napi::CallbackInfo& info )
+{
+    // CostValue OptimalCost() const;
+    if ( info.Length() == 0 )
+    {
+        CostValue optimal_cost = pSimpleLinearSumAssignment->OptimalCost();
+        return Napi::Number::New( info.Env(), optimal_cost );
+    }
+
+    ThrowJsError( operations_research::GSimpleLinearSumAssignment::OptimalCost : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleLinearSumAssignment::RightMate( const Napi::CallbackInfo& info )
+{
+    //    NodeIndex RightMate( NodeIndex left_node ) const;
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        NodeIndex left_node  = info[ 0 ].As< Napi::Number >().Int32Value();
+        NodeIndex right_mate = pSimpleLinearSumAssignment->RightMate( left_node );
+        return Napi::Number::New( info.Env(), right_mate );
+    }
+
+    ThrowJsError( operations_research::GSimpleLinearSumAssignment::RightMate : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleLinearSumAssignment::AssignmentCost( const Napi::CallbackInfo& info )
+{
+    // CostValue AssignmentCost( NodeIndex left_node ) const;
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        NodeIndex node = info[ 0 ].As< Napi::Number >().Int32Value();
+        CostValue cost = pSimpleLinearSumAssignment->AssignmentCost( node );
+        return Napi::Number::New( info.Env(), cost );
+    }
+
+    ThrowJsError( operations_research::GSimpleLinearSumAssignment::AssignmentCost : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleLinearSumAssignment::LeftNode( const Napi::CallbackInfo& info )
+{
+    //  NodeIndex LeftNode( ArcIndex arc ) const;
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        ArcIndex  arc       = info[ 0 ].As< Napi::Number >().Int32Value();
+        NodeIndex left_node = pSimpleLinearSumAssignment->LeftNode( arc );
+        return Napi::Number::New( info.Env(), left_node );
+    }
+
+    ThrowJsError( operations_research::GSimpleLinearSumAssignment::LeftNode : Invalid argument );
+    return info.Env().Undefined();
+}
+
+operations_research::GSimpleMinCostFlow::GSimpleMinCostFlow( const Napi::CallbackInfo& info )
+    : Napi::ObjectWrap< operations_research::GSimpleMinCostFlow >( info )
+{
+    if ( info.Length() == 0 )
+    {
+        pSimpleMinCostFlow = new operations_research::SimpleMinCostFlow();
+        return;
+    }
+
+    //  explicit SimpleMinCostFlow( NodeIndex reserve_num_nodes = 0, ArcIndex  reserve_num_arcs  = 0 );
+    if ( info.Length() == 2
+         && info[ 0 ].IsNumber()
+         && info[ 1 ].IsNumber() )
+    {
+        NodeIndex reserve_num_nodes = info[ 0 ].As< Napi::Number >().Int64Value();
+        ArcIndex  reserve_num_arcs  = info[ 1 ].As< Napi::Number >().Int64Value();
+        pSimpleMinCostFlow          = new operations_research::SimpleMinCostFlow( reserve_num_nodes, reserve_num_arcs );
+        return;
+    }
+
+    ThrowJsError( operations_research::GSimpleMinCostFlow : Invalid argument );
+}
+
+operations_research::GSimpleMinCostFlow::~GSimpleMinCostFlow()
+{
+    delete pSimpleMinCostFlow;
+}
+
+Napi::Value operations_research::GSimpleMinCostFlow::AddArcWithCapacityAndUnitCost( const Napi::CallbackInfo& info )
+{
+    // ArcIndex AddArcWithCapacityAndUnitCost( NodeIndex tail, NodeIndex head, FlowQuantity capacity, CostValue unit_cost );
+    if ( info.Length() == 4
+         && info[ 0 ].IsNumber()
+         && info[ 1 ].IsNumber()
+         && info[ 2 ].IsNumber()
+         && info[ 3 ].IsNumber() )
+    {
+        NodeIndex    tail      = info[ 0 ].As< Napi::Number >().Int32Value();
+        NodeIndex    head      = info[ 1 ].As< Napi::Number >().Int32Value();
+        FlowQuantity capacity  = info[ 2 ].As< Napi::Number >().Int64Value();
+        CostValue    unit_cost = info[ 3 ].As< Napi::Number >().Int64Value();
+        ArcIndex     arc_index = pSimpleMinCostFlow->AddArcWithCapacityAndUnitCost( tail, head, capacity, unit_cost );
+        return Napi::Number::New( info.Env(), arc_index );
+    }
+
+    ThrowJsError( operations_research::GSimpleMinCostFlow::AddArcWithCapacityAndUnitCost : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleMinCostFlow::SetNodeSupply( const Napi::CallbackInfo& info )
+{
+    //   void SetNodeSupply( NodeIndex node, FlowQuantity supply );
+    if ( info.Length() == 2
+         && info[ 0 ].IsNumber()
+         && info[ 1 ].IsNumber() )
+    {
+        NodeIndex    node   = info[ 0 ].As< Napi::Number >().Int32Value();
+        FlowQuantity supply = info[ 1 ].As< Napi::Number >().Int64Value();
+        pSimpleMinCostFlow->SetNodeSupply( node, supply );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GSimpleMinCostFlow::SetNodeSupply : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleMinCostFlow::Solve( const Napi::CallbackInfo& info )
+{
+    // Status Solve();
+    if ( info.Length() == 0 )
+    {
+        operations_research::SimpleMinCostFlow::Status status = pSimpleMinCostFlow->Solve();
+        return Napi::Number::New( info.Env(), status );
+    }
+
+    ThrowJsError( operations_research::GSimpleMinCostFlow::Solve : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleMinCostFlow::SolveMaxFlowWithMinCost( const Napi::CallbackInfo& info )
+{
+    // Status SolveMaxFlowWithMinCost();
+    if ( info.Length() == 0 )
+    {
+        operations_research::SimpleMinCostFlow::Status status = pSimpleMinCostFlow->SolveMaxFlowWithMinCost();
+        return Napi::Number::New( info.Env(), status );
+    }
+
+    ThrowJsError( operations_research::GSimpleMinCostFlow::SolveMaxFlowWithMinCost : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleMinCostFlow::OptimalCost( const Napi::CallbackInfo& info )
+{
+    // CostValue OptimalCost() const;
+    if ( info.Length() == 0 )
+    {
+        CostValue optimal_cost = pSimpleMinCostFlow->OptimalCost();
+        return Napi::Number::New( info.Env(), optimal_cost );
+    }
+
+    ThrowJsError( operations_research::GSimpleMinCostFlow::OptimalCost : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleMinCostFlow::MaximumFlow( const Napi::CallbackInfo& info )
+{
+    // FlowQuantity MaximumFlow() const;
+    if ( info.Length() == 0 )
+    {
+        FlowQuantity maximum_flow = pSimpleMinCostFlow->MaximumFlow();
+        return Napi::Number::New( info.Env(), maximum_flow );
+    }
+
+    ThrowJsError( operations_research::GSimpleMinCostFlow::MaximumFlow : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleMinCostFlow::Flow( const Napi::CallbackInfo& info )
+{
+    // FlowQuantity Flow( ArcIndex arc ) const;
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        ArcIndex     arc  = info[ 0 ].As< Napi::Number >().Int32Value();
+        FlowQuantity flow = pSimpleMinCostFlow->Flow( arc );
+        return Napi::Number::New( info.Env(), flow );
+    }
+
+    ThrowJsError( operations_research::GSimpleMinCostFlow::Flow : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleMinCostFlow::NumNodes( const Napi::CallbackInfo& info )
+{
+    // NodeIndex    NumNodes() const;
+    if ( info.Length() == 0 )
+    {
+        NodeIndex num_nodes = pSimpleMinCostFlow->NumNodes();
+        return Napi::Number::New( info.Env(), num_nodes );
+    }
+
+    ThrowJsError( operations_research::GSimpleMinCostFlow::NumNodes : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleMinCostFlow::NumArcs( const Napi::CallbackInfo& info )
+{
+    // ArcIndex     NumArcs() const;
+    if ( info.Length() == 0 )
+    {
+        ArcIndex num_arcs = pSimpleMinCostFlow->NumArcs();
+        return Napi::Number::New( info.Env(), num_arcs );
+    }
+
+    ThrowJsError( operations_research::GSimpleMinCostFlow::NumArcs : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleMinCostFlow::Tail( const Napi::CallbackInfo& info )
+{
+    // NodeIndex    Tail( ArcIndex arc ) const;
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        ArcIndex  arc       = info[ 0 ].As< Napi::Number >().Int32Value();
+        NodeIndex tail_node = pSimpleMinCostFlow->Tail( arc );
+        return Napi::Number::New( info.Env(), tail_node );
+    }
+
+    ThrowJsError( operations_research::GSimpleMinCostFlow::Tail : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleMinCostFlow::Head( const Napi::CallbackInfo& info )
+{
+    // NodeIndex    Head( ArcIndex arc ) const;
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        ArcIndex  arc       = info[ 0 ].As< Napi::Number >().Int32Value();
+        NodeIndex head_node = pSimpleMinCostFlow->Head( arc );
+        return Napi::Number::New( info.Env(), head_node );
+    }
+
+    ThrowJsError( operations_research::GSimpleMinCostFlow::Head : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleMinCostFlow::Capacity( const Napi::CallbackInfo& info )
+{
+    // FlowQuantity Capacity( ArcIndex arc ) const;
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        ArcIndex     arc      = info[ 0 ].As< Napi::Number >().Int32Value();
+        FlowQuantity capacity = pSimpleMinCostFlow->Capacity( arc );
+        return Napi::Number::New( info.Env(), capacity );
+    }
+
+    ThrowJsError( operations_research::GSimpleMinCostFlow::Capacity : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleMinCostFlow::Supply( const Napi::CallbackInfo& info )
+{
+    // FlowQuantity Supply( NodeIndex node ) const;
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        NodeIndex    node   = info[ 0 ].As< Napi::Number >().Int32Value();
+        FlowQuantity supply = pSimpleMinCostFlow->Supply( node );
+        return Napi::Number::New( info.Env(), supply );
+    }
+
+    ThrowJsError( operations_research::GSimpleMinCostFlow::Supply : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GSimpleMinCostFlow::UnitCost( const Napi::CallbackInfo& info )
+{
+    // CostValue    UnitCost( ArcIndex arc ) const;
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        ArcIndex  arc        = info[ 0 ].As< Napi::Number >().Int32Value();
+        CostValue unit_cost = pSimpleMinCostFlow->UnitCost( arc );
+        return Napi::Number::New( info.Env(), unit_cost );
+    }
+
+    ThrowJsError( operations_research::GSimpleMinCostFlow::UnitCost : Invalid argument );
+    return info.Env().Undefined();
 }
