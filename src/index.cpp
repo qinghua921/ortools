@@ -1324,9 +1324,10 @@ Napi::Value operations_research::sat::GCpSolverResponse::status( const Napi::Cal
     return info.Env().Undefined();
 }
 
-operations_research::GSimpleLinearSumAssignment::GSimpleLinearSumAssignment(const Napi::CallbackInfo & info)
+operations_research::GSimpleLinearSumAssignment::GSimpleLinearSumAssignment( const Napi::CallbackInfo& info )
+    : Napi::ObjectWrap< operations_research::GSimpleLinearSumAssignment >( info )
 {
-    // TODO  
+    // TODO
 }
 
 operations_research::GSimpleLinearSumAssignment::~GSimpleLinearSumAssignment()

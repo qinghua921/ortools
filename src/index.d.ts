@@ -1900,7 +1900,7 @@
             //         return proto_;
             //     }
 
-        };
+        }
 
         /**
          * An integer variable.
@@ -1968,7 +1968,7 @@
             //         return index_;
             //     }
 
-        };
+        }
 
         /**
          * A dedicated container for linear expressions.
@@ -2106,7 +2106,7 @@
             //        */
             //       std::string DebugString( const CpModelProto* proto = nullptr ) const;
 
-        };
+        }
 
         /**
          * Specialized assignment constraint.
@@ -2122,7 +2122,7 @@
              * C++: void AddTuple( absl::Span< const int64_t > tuple );
              */
             AddTuple(tuple: number[]): void;
-        };
+        }
 
         // inline LinearExpr operator-( LinearExpr expr )
         export function operator_negate(expr: LinearExpr): LinearExpr;
@@ -2434,7 +2434,7 @@
             //         ::operations_research::sat::FloatObjectiveProto* unsafe_arena_release_floating_point_objective();
 
             //         // @@protoc_insertion_point(class_scope:operations_research.sat.CpModelProto)
-        };
+        }
 
         export class CpSolverResponse  
         {
@@ -2822,6 +2822,6 @@
             FEASIBLE = 2,
             INFEASIBLE = 3,
             OPTIMAL = 4,
-        };
+        }
     }
 }
