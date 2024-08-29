@@ -85,7 +85,16 @@
     {
         //     /// Create a solver with the given name and underlying solver backend.
         //     MPSolver( const std::string& name, OptimizationProblemType problem_type );
+        /**
+         * Create a solver with the given name and underlying solver backend.
+         * 
+         * C++: MPSolver( const std::string& name, OptimizationProblemType problem_type );
+         */
+
         //     virtual ~MPSolver();
+        /**
+         * C++: virtual ~MPSolver();
+         */
 
         /**
          * Recommended factory method to create a MPSolver instance, especially in
@@ -134,53 +143,76 @@
             "GLPK_MIXED_INTEGER_PROGRAMMING" | "GLPK" | "GLPK_MIP"
         ): MPSolver;
 
-        //     /**
-        //      * Whether the given problem type is supported (this will depend on the
-        //      * targets that you linked).
-        //      */
-        //     static bool SupportsProblemType( OptimizationProblemType problem_type );
+        /**
+         * Whether the given problem type is supported (this will depend on the
+         * targets that you linked).
+         * 
+         * C++: static bool SupportsProblemType( OptimizationProblemType problem_type );
+         */
 
-        //     /**
-        //      * Parses the name of the solver. Returns true if the solver type is
-        //      * successfully parsed as one of the OptimizationProblemType.
-        //      * See the documentation of CreateSolver() for the list of supported names.
-        //      */
-        //     static bool ParseSolverType( absl::string_view        solver_id,
-        //                                  OptimizationProblemType* type );
+        /**
+         * Parses the name of the solver. Returns true if the solver type is
+         * successfully parsed as one of the OptimizationProblemType.
+         * See the documentation of CreateSolver() for the list of supported names.
+         * 
+         * C++: static bool ParseSolverType( absl::string_view        solver_id,
+         *                                  OptimizationProblemType* type );
+         */
 
-        //     /**
-        //      * Parses the name of the solver and returns the correct optimization type or
-        //      * dies. Invariant: ParseSolverTypeOrDie(ToString(type)) = type.
-        //      */
+        /**
+         * Parses the name of the solver and returns the correct optimization type or
+         * dies. Invariant: ParseSolverTypeOrDie(ToString(type)) = type.
+         * 
+         * C++: static OptimizationProblemType ParseSolverTypeOrDie( const std::string& solver_id );
+         */
         //     static OptimizationProblemType ParseSolverTypeOrDie(
         //         const std::string& solver_id );
 
         //     bool IsMIP() const;
+        /**
+         * C++: bool IsMIP() const;
+         */
 
         //     /// Returns the name of the model set at construction.
         //     const std::string& Name() const
         //     {
         //         return name_;  // Set at construction.
         //     }
+        /**
+         * Returns the name of the model set at construction.
+         * 
+         * C++: const std::string& Name() const;
+         */
 
         //     /// Returns the optimization problem type set at construction.
         //     virtual OptimizationProblemType ProblemType() const
         //     {
         //         return problem_type_;  // Set at construction.
         //     }
+        /**
+         * Returns the optimization problem type set at construction.
+         * 
+         * C++: virtual OptimizationProblemType ProblemType() const;
+         */
 
-        //     /**
-        //      * Clears the objective (including the optimization direction), all variables
-        //      * and constraints. All the other properties of the MPSolver (like the time
-        //      * limit) are kept untouched.
-        //      */
-        //     void Clear();
+        /**
+         * Clears the objective (including the optimization direction), all variables
+         * and constraints. All the other properties of the MPSolver (like the time
+         * limit) are kept untouched.
+         * 
+         * C++: void Clear();
+         */
 
         //     /// Returns the number of variables.
         //     int NumVariables() const
         //     {
         //         return variables_.size();
         //     }
+        /**
+         * Returns the number of variables.
+         * 
+         * C++: int NumVariables() const;
+         */
 
         //     /**
         //      * Returns the array of variables handled by the MPSolver. (They are listed in
@@ -190,6 +222,12 @@
         //     {
         //         return variables_;
         //     }
+        /**
+         * Returns the array of variables handled by the MPSolver. (They are listed in
+         * the order in which they were created.)
+         * 
+         * C++: const std::vector< MPVariable* >& variables() const;
+         */
 
         //     /**
         //      * Returns the variable at position index.
@@ -198,6 +236,11 @@
         //     {
         //         return variables_[ index ];
         //     }
+        /**
+         * Returns the variable at position index.
+         * 
+         * C++: MPVariable* variable( int index ) const;
+         */
 
         //     /**
         //      * Looks up a variable by name, and returns nullptr if it does not exist. The
@@ -205,6 +248,13 @@
         //      * created upon first use. Will crash if variable names are not unique.
         //      */
         //     MPVariable* LookupVariableOrNull( const std::string& var_name ) const;
+        /**
+         * Looks up a variable by name, and returns nullptr if it does not exist. The
+         * first call has a O(n) complexity, as the variable name index is lazily
+         * created upon first use. Will crash if variable names are not unique.
+         * 
+         * C++: MPVariable* LookupVariableOrNull( const std::string& var_name ) const;
+         */
 
         //     /**
         //      * Creates a variable with the given bounds, integrality requirement and
@@ -215,12 +265,31 @@
         //      */
         //     MPVariable* MakeVar( double lb, double ub, bool integer,
         //                          const std::string& name );
+        /**
+         * Creates a variable with the given bounds, integrality requirement and
+         * name. Bounds can be finite or +/- MPSolver::infinity(). The MPSolver owns
+         * the variable (i.e. the returned pointer is borrowed). Variable names are
+         * optional. If you give an empty name, name() will auto-generate one for you
+         * upon request.
+         * 
+         * C++: MPVariable* MakeVar( double lb, double ub, bool integer, const std::string& name );
+         */
 
         //     /// Creates a continuous variable.
         //     MPVariable* MakeNumVar( double lb, double ub, const std::string& name );
+        /**
+         * Creates a continuous variable.
+         * 
+         * C++: MPVariable* MakeNumVar( double lb, double ub, const std::string& name );
+         */
 
         //     /// Creates an integer variable.
         //     MPVariable* MakeIntVar( double lb, double ub, const std::string& name );
+        /**
+         * Creates an integer variable.
+         * 
+         * C++: MPVariable* MakeIntVar( double lb, double ub, const std::string& name );
+         */
 
         /**
          * Creates a boolean variable.
@@ -246,24 +315,65 @@
         //     void MakeVarArray( int nb, double lb, double ub, bool integer,
         //                        const std::string&          name_prefix,
         //                        std::vector< MPVariable* >* vars );
+        /**
+         * Creates an array of variables. All variables created have the same bounds
+         * and integrality requirement. If nb <= 0, no variables are created, the
+         * function crashes in non-opt mode.
+         * 
+         * @param nb the number of variables to create.
+         * @param lb the lower bound of created variables
+         * @param ub the upper bound of created variables
+         * @param integer controls whether the created variables are continuous or
+         * integral.
+         * @param name_prefix the prefix of the variable names. Variables are named
+         * name_prefix0, name_prefix1, ...
+         * @param[out] vars the vector of variables to fill with variables.
+         * 
+         * C++: void MakeVarArray( int nb, double lb, double ub, bool integer, 
+         *                         const std::string&          name_prefix, 
+         *                         std::vector< MPVariable* >* vars );
+         */
 
         //     /// Creates an array of continuous variables.
         //     void MakeNumVarArray( int nb, double lb, double ub, const std::string& name,
         //                           std::vector< MPVariable* >* vars );
+        /**
+         * Creates an array of continuous variables.
+         * 
+         * C++: void MakeNumVarArray( int nb, double lb, double ub, const std::string& name,
+         *                           std::vector< MPVariable* >* vars );
+         */
 
         //     ///  Creates an array of integer variables.
         //     void MakeIntVarArray( int nb, double lb, double ub, const std::string& name,
         //                           std::vector< MPVariable* >* vars );
+        /**
+         * Creates an array of integer variables.
+         * 
+         * C++: void MakeIntVarArray( int nb, double lb, double ub, const std::string& name,
+         *                           std::vector< MPVariable* >* vars );
+         */
 
         //     /// Creates an array of boolean variables.
         //     void MakeBoolVarArray( int nb, const std::string& name,
         //                            std::vector< MPVariable* >* vars );
+        /**
+         * Creates an array of boolean variables.
+         * 
+         * C++: void MakeBoolVarArray( int nb, const std::string& name,
+         *                            std::vector< MPVariable* >* vars );
+         */
 
         //     /// Returns the number of constraints.
         //     int NumConstraints() const
         //     {
         //         return constraints_.size();
         //     }
+        /**
+         * Returns the number of constraints.
+         * 
+         * C++: int NumConstraints() const;
+         */
 
         //     /**
         //      * Returns the array of constraints handled by the MPSolver.
@@ -274,12 +384,24 @@
         //     {
         //         return constraints_;
         //     }
+        /**
+         * Returns the array of constraints handled by the MPSolver.
+         * 
+         * They are listed in the order in which they were created.
+         * 
+         * C++: const std::vector< MPConstraint* >& constraints() const;
+         */
 
         //     /** Returns the constraint at the given index. */
         //     MPConstraint* constraint( int index ) const
         //     {
         //         return constraints_[ index ];
         //     }
+        /**
+         * Returns the constraint at the given index.
+         * 
+         * C++: MPConstraint* constraint( int index ) const;
+         */
 
         //     /**
         //      *  Looks up a constraint by name, and returns nullptr if it does not exist.
@@ -290,6 +412,15 @@
         //      */
         //     MPConstraint* LookupConstraintOrNull(
         //         const std::string& constraint_name ) const;
+        /**
+         *  Looks up a constraint by name, and returns nullptr if it does not exist.
+         *  
+         *  The first call has a O(n) complexity, as the constraint name index is
+         *  lazily created upon first use. Will crash if constraint names are not
+         *  unique.
+         * 
+         * C++: MPConstraint* LookupConstraintOrNull( const std::string& constraint_name ) const;
+         */
 
         /**
          * Creates a linear constraint with given bounds.
@@ -349,6 +480,14 @@
         //     {
         //         return *objective_;
         //     }
+        /**
+         * Returns the objective object.
+         * 
+         * Note that the objective is owned by the solver, and is initialized to its
+         * default value (see the MPObjective class below) at construction.
+         * 
+         * C++: const MPObjective& Objective() const;
+         */
 
         /**
          * Returns the mutable objective object.
@@ -357,10 +496,6 @@
          */
         MutableObjective(): MPObjective;
 
-
-
-        //     /// Solves the problem using the default parameter values.
-        //     ResultStatus Solve();
         /**
          * Solves the problem using the default parameter values.
          * 
@@ -369,8 +504,6 @@
         Solve(): MPSolver.ResultStatus;
 
 
-        //     /// Solves the problem using the specified parameter values.
-        //     ResultStatus Solve( const MPSolverParameters& param );
         /**
          * Solves the problem using the specified parameter values.
          * 
