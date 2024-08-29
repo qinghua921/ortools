@@ -3,6 +3,7 @@
 #include <napi.h>
 #include "ortools/linear_solver/linear_solver.h"
 #include "ortools/sat/cp_model.h"
+#include "ortools/graph/assignment.h"
 
 // ThrowAsJavaScriptException
 #define ThrowJsError( errinfo ) \
@@ -219,6 +220,32 @@ public:
 
 Napi::FunctionReference GMPObjective::constructor;
 
+class GSimpleLinearSumAssignment : public Napi::ObjectWrap< GSimpleLinearSumAssignment >
+{
+public:
+    static Napi::FunctionReference constructor;
+    SimpleLinearSumAssignment*     pSimpleLinearSumAssignment = nullptr;
+    GSimpleLinearSumAssignment( const Napi::CallbackInfo& info );
+    ~GSimpleLinearSumAssignment();
+
+    static Napi::Object Init( Napi::Env env, Napi::Object exports )
+    {
+        Napi::HandleScope scope( env );
+        Napi::Function    func = DefineClass(
+            env, "SimpleLinearSumAssignment",
+            {
+            } );
+
+        constructor = Napi::Persistent( func );
+        constructor.SuppressDestruct();
+        exports.Set( Napi::String::New( env, "SimpleLinearSumAssignment" ), func );
+        return exports;
+    }
+
+};
+
+Napi::FunctionReference GSimpleLinearSumAssignment::constructor;
+
 namespace sat
 {
     class GCpModelBuilder : public Napi::ObjectWrap< GCpModelBuilder >
@@ -241,6 +268,7 @@ namespace sat
                     InstanceMethod( "AddEquality", &GCpModelBuilder::AddEquality ),
                     InstanceMethod( "AddAllowedAssignments", &GCpModelBuilder::AddAllowedAssignments ),
                     InstanceMethod( "Minimize", &GCpModelBuilder::Minimize ),
+                    InstanceMethod( "Build", &GCpModelBuilder::Build ),
                 } );
 
             constructor = Napi::Persistent( func );
@@ -254,7 +282,9 @@ namespace sat
         Napi::Value AddExactlyOne( const Napi::CallbackInfo& info );          // Constraint AddExactlyOne( absl::Span< const BoolVar > literals );
         Napi::Value AddEquality( const Napi::CallbackInfo& info );            // Constraint AddEquality( const LinearExpr& left, const LinearExpr& right );
         Napi::Value AddAllowedAssignments( const Napi::CallbackInfo& info );  // TableConstraint AddAllowedAssignments( absl::Span< const IntVar > vars );
-        Napi::Value Minimize( const Napi::CallbackInfo& info );  // void Minimize( const LinearExpr& expr );
+        Napi::Value Minimize( const Napi::CallbackInfo& info );               // void Minimize( const LinearExpr& expr );
+        Napi::Value Build( const Napi::CallbackInfo& info );                  // const CpModelProto& Build() const
+
     };  // namespace sat
 
     Napi::FunctionReference GCpModelBuilder::constructor;
@@ -395,10 +425,63 @@ namespace sat
 
     Napi::FunctionReference GTableConstraint::constructor;
 
-    Napi::Value operator_plus( const Napi::CallbackInfo& info );   // inline LinearExpr operator+( const LinearExpr& lhs, const LinearExpr& rhs )
-    Napi::Value operator_minus( const Napi::CallbackInfo& info );  // inline LinearExpr operator-( const LinearExpr& lhs, const LinearExpr& rhs )
-    Napi::Value operator_times( const Napi::CallbackInfo& info );  // inline LinearExpr operator*( LinearExpr expr, int64_t factor )
-                                                                   // inline LinearExpr operator*( int64_t factor, LinearExpr expr )
+    Napi::Value Goperator_plus( const Napi::CallbackInfo& info );   // inline LinearExpr operator+( const LinearExpr& lhs, const LinearExpr& rhs )
+    Napi::Value Goperator_minus( const Napi::CallbackInfo& info );  // inline LinearExpr operator-( const LinearExpr& lhs, const LinearExpr& rhs )
+    Napi::Value Goperator_times( const Napi::CallbackInfo& info );  // inline LinearExpr operator*( LinearExpr expr, int64_t factor )
+                                                                    // inline LinearExpr operator*( int64_t factor, LinearExpr expr )
+    Napi::Value GSolve( const Napi::CallbackInfo& info );           // CpSolverResponse Solve( const CpModelProto& model_proto );
+
+    class GCpModelProto : public Napi::ObjectWrap< GCpModelProto >
+    {
+    public:
+        static Napi::FunctionReference constructor;
+        CpModelProto*                  pCpModelProto = nullptr;
+        GCpModelProto( const Napi::CallbackInfo& info );
+        ~GCpModelProto();
+
+        static Napi::Object Init( Napi::Env env, Napi::Object exports )
+        {
+            Napi::HandleScope scope( env );
+            Napi::Function    func = DefineClass(
+                env, "CpModelProto",
+                {} );
+
+            constructor = Napi::Persistent( func );
+            constructor.SuppressDestruct();
+            exports.Set( Napi::String::New( env, "CpModelProto" ), func );
+            return exports;
+        }
+    };
+
+    Napi::FunctionReference GCpModelProto::constructor;
+
+    class GCpSolverResponse : public Napi::ObjectWrap< GCpSolverResponse >
+    {
+    public:
+        static Napi::FunctionReference constructor;
+        CpSolverResponse*              pCpSolverResponse = nullptr;
+        GCpSolverResponse( const Napi::CallbackInfo& info );
+        ~GCpSolverResponse();
+
+        static Napi::Object Init( Napi::Env env, Napi::Object exports )
+        {
+            Napi::HandleScope scope( env );
+            Napi::Function    func = DefineClass(
+                env, "CpSolverResponse",
+                {
+                    InstanceMethod( "status", &GCpSolverResponse::status ),
+                } );
+
+            constructor = Napi::Persistent( func );
+            constructor.SuppressDestruct();
+            exports.Set( Napi::String::New( env, "CpSolverResponse" ), func );
+            return exports;
+        }
+
+        Napi::Value status( const Napi::CallbackInfo& info );  // ::operations_research::sat::CpSolverStatus status() const;
+    };
+
+    Napi::FunctionReference GCpSolverResponse::constructor;
 
 };  // namespace sat
 
@@ -409,17 +492,31 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     Napi::HandleScope scope( env );
 
     auto operations_research_sat_exports = Napi::Object::New( env );
+
     operations_research::sat::GCpModelBuilder::Init( env, operations_research_sat_exports );
     operations_research::sat::GBoolVar::Init( env, operations_research_sat_exports );
     operations_research::sat::GConstraint::Init( env, operations_research_sat_exports );
     operations_research::sat::GIntVar::Init( env, operations_research_sat_exports );
     operations_research::sat::GLinearExpr::Init( env, operations_research_sat_exports );
     operations_research::sat::GTableConstraint::Init( env, operations_research_sat_exports );
-    operations_research_sat_exports.Set( "operator_plus", Napi::Function::New( env, operations_research::sat::operator_plus ) );
-    operations_research_sat_exports.Set( "operator_minus", Napi::Function::New( env, operations_research::sat::operator_minus ) );
-    operations_research_sat_exports.Set( "operator_times", Napi::Function::New( env, operations_research::sat::operator_times ) );
+    operations_research::sat::GCpModelProto::Init( env, operations_research_sat_exports );
+    operations_research::sat::GCpSolverResponse::Init( env, operations_research_sat_exports );
+
+    operations_research_sat_exports.Set( "operator_plus", Napi::Function::New( env, operations_research::sat::Goperator_plus ) );
+    operations_research_sat_exports.Set( "operator_minus", Napi::Function::New( env, operations_research::sat::Goperator_minus ) );
+    operations_research_sat_exports.Set( "operator_times", Napi::Function::New( env, operations_research::sat::Goperator_times ) );
+    operations_research_sat_exports.Set( "Solve", Napi::Function::New( env, operations_research::sat::GSolve ) );
+
+    auto operations_research_sat_cp_solver_status = Napi::Object::New( env );
+    operations_research_sat_cp_solver_status.Set( "UNKNOWN", Napi::Number::New( env, operations_research::sat::CpSolverStatus::UNKNOWN ) );
+    operations_research_sat_cp_solver_status.Set( "MODEL_INVALID", Napi::Number::New( env, operations_research::sat::CpSolverStatus::MODEL_INVALID ) );
+    operations_research_sat_cp_solver_status.Set( "FEASIBLE", Napi::Number::New( env, operations_research::sat::CpSolverStatus::FEASIBLE ) );
+    operations_research_sat_cp_solver_status.Set( "INFEASIBLE", Napi::Number::New( env, operations_research::sat::CpSolverStatus::INFEASIBLE ) );
+    operations_research_sat_cp_solver_status.Set( "OPTIMAL", Napi::Number::New( env, operations_research::sat::CpSolverStatus::OPTIMAL ) );
+    operations_research_sat_exports.Set( "CpSolverStatus", operations_research_sat_cp_solver_status );
 
     auto operations_research_exports = Napi::Object::New( env );
+
     operations_research::GMPSolver::Init( env, operations_research_exports );
     operations_research::GMPVariable::Init( env, operations_research_exports );
     operations_research::GLinearExpr::Init( env, operations_research_exports );

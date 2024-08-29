@@ -811,6 +811,20 @@ Napi::Value operations_research::sat::GCpModelBuilder::Minimize( const Napi::Cal
     return info.Env().Undefined();
 }
 
+Napi::Value operations_research::sat::GCpModelBuilder::Build( const Napi::CallbackInfo& info )
+{
+    // const CpModelProto& Build() const
+    if ( info.Length() == 0 )
+    {
+        auto pCpModelProto = pCpModelBuilder->Build();
+        auto external      = Napi::External< CpModelProto >::New( info.Env(), new CpModelProto( pCpModelProto ) );
+        return GCpModelProto::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::Build : Invalid argument );
+    return info.Env().Undefined();
+}
+
 operations_research::sat::GBoolVar::GBoolVar( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< operations_research::sat::GBoolVar >( info )
 {
@@ -1066,7 +1080,7 @@ Napi::Value operations_research::sat::GTableConstraint::AddTuple( const Napi::Ca
     return info.Env().Undefined();
 }
 
-Napi::Value operations_research::sat::operator_plus( const Napi::CallbackInfo& info )
+Napi::Value operations_research::sat::Goperator_plus( const Napi::CallbackInfo& info )
 {
     // inline LinearExpr operator+( const LinearExpr& lhs, const LinearExpr& rhs )
     if ( info.Length() != 2 )
@@ -1122,7 +1136,7 @@ Napi::Value operations_research::sat::operator_plus( const Napi::CallbackInfo& i
     return GLinearExpr::constructor.New( { Napi::External< LinearExpr >::New( info.Env(), new LinearExpr( result ) ) } );
 }
 
-Napi::Value operations_research::sat::operator_minus( const Napi::CallbackInfo& info )
+Napi::Value operations_research::sat::Goperator_minus( const Napi::CallbackInfo& info )
 {
     // inline LinearExpr operator-( const LinearExpr& lhs, const LinearExpr& rhs )
     if ( info.Length() != 2 )
@@ -1178,7 +1192,7 @@ Napi::Value operations_research::sat::operator_minus( const Napi::CallbackInfo& 
     return GLinearExpr::constructor.New( { Napi::External< LinearExpr >::New( info.Env(), new LinearExpr( result ) ) } );
 }
 
-Napi::Value operations_research::sat::operator_times( const Napi::CallbackInfo& info )
+Napi::Value operations_research::sat::Goperator_times( const Napi::CallbackInfo& info )
 {
     if ( info.Length() != 2 )
     {
@@ -1243,4 +1257,79 @@ Napi::Value operations_research::sat::operator_times( const Napi::CallbackInfo& 
 
     ThrowJsError( operations_research::sat::operator_times : Invalid argument );
     return info.Env().Undefined();
+}
+
+Napi::Value operations_research::sat::GSolve( const Napi::CallbackInfo& info )
+{
+    // CpSolverResponse Solve( const CpModelProto& model_proto );
+    if ( info.Length() == 1
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GCpModelProto::constructor.Value() ) )
+    {
+        auto             model_proto = Napi::ObjectWrap< GCpModelProto >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        CpModelProto*    pModelProto = model_proto->pCpModelProto;
+        CpSolverResponse response    = Solve( *pModelProto );
+        return GCpSolverResponse::constructor.New( { Napi::External< CpSolverResponse >::New( info.Env(), new CpSolverResponse( response ) ) } );
+    }
+
+    ThrowJsError( operations_research::sat::Solve : Invalid argument );
+    return info.Env().Undefined();
+}
+
+operations_research::sat::GCpModelProto::GCpModelProto( const Napi::CallbackInfo& info )
+    : Napi::ObjectWrap< operations_research::sat::GCpModelProto >( info )
+{
+    if ( info.Length() == 1 && info[ 0 ].IsExternal() )
+    {
+        auto external = info[ 0 ].As< Napi::External< CpModelProto > >();
+        pCpModelProto = dynamic_cast< CpModelProto* >( external.Data() );
+        if ( pCpModelProto != nullptr ) return;
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelProto : Invalid argument );
+}
+
+operations_research::sat::GCpModelProto::~GCpModelProto()
+{
+    delete pCpModelProto;
+}
+
+operations_research::sat::GCpSolverResponse::GCpSolverResponse( const Napi::CallbackInfo& info )
+    : Napi::ObjectWrap< operations_research::sat::GCpSolverResponse >( info )
+{
+    if ( info.Length() == 1 && info[ 0 ].IsExternal() )
+    {
+        auto external     = info[ 0 ].As< Napi::External< CpSolverResponse > >();
+        pCpSolverResponse = dynamic_cast< CpSolverResponse* >( external.Data() );
+        if ( pCpSolverResponse != nullptr ) return;
+    }
+
+    ThrowJsError( operations_research::sat::GCpSolverResponse : Invalid argument );
+}
+
+operations_research::sat::GCpSolverResponse::~GCpSolverResponse()
+{
+    delete pCpSolverResponse;
+}
+
+Napi::Value operations_research::sat::GCpSolverResponse::status( const Napi::CallbackInfo& info )
+{
+    // ::operations_research::sat::CpSolverStatus status() const;
+    if ( info.Length() == 0 )
+    {
+        return Napi::Number::New( info.Env(), pCpSolverResponse->status() );
+    }
+
+    ThrowJsError( operations_research::sat::GCpSolverResponse::status : Invalid argument );
+    return info.Env().Undefined();
+}
+
+operations_research::GSimpleLinearSumAssignment::GSimpleLinearSumAssignment(const Napi::CallbackInfo & info)
+{
+    // TODO  
+}
+
+operations_research::GSimpleLinearSumAssignment::~GSimpleLinearSumAssignment()
+{
+    delete pSimpleLinearSumAssignment;
 }

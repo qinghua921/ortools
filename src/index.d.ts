@@ -1281,9 +1281,86 @@
 
     }
 
+    export class SimpleLinearSumAssignment
+    {
+        // public:
+        //     // The constructor takes no size.
+        //     // New node indices will be created lazily by AddArcWithCost().
+        //     SimpleLinearSumAssignment();
+
+        //     // Adds an arc from a left node to a right node with a given cost.
+        //     // * Node indices must be non-negative (>= 0). For a perfect
+        //     //   matching to exist on n nodes, the values taken by "left_node"
+        //     //   must cover [0, n), same for "right_node".
+        //     // * The arc cost can be any integer, negative, positive or zero.
+        //     // * After the method finishes, NumArcs() == the returned ArcIndex + 1.
+        //     ArcIndex AddArcWithCost( NodeIndex left_node, NodeIndex right_node,
+        //                              CostValue cost );
+
+        //     // Returns the current number of left nodes which is the same as the
+        //     // number of right nodes. This is one greater than the largest node
+        //     // index seen so far in AddArcWithCost().
+        //     NodeIndex NumNodes() const;
+
+        //     // Returns the current number of arcs in the graph.
+        //     ArcIndex NumArcs() const;
+
+        //     // Returns user-provided data.
+        //     // The implementation will crash if "arc" is not in [0, NumArcs()).
+        //     NodeIndex LeftNode( ArcIndex arc ) const;
+        //     NodeIndex RightNode( ArcIndex arc ) const;
+        //     CostValue Cost( ArcIndex arc ) const;
+
+        //     // Solves the problem (finds the perfect matching that minimizes the
+        //     // cost) and returns the solver status.
+        //     enum Status
+        //     {
+        //         OPTIMAL,            // The algorithm found a minimum-cost perfect matching.
+        //         INFEASIBLE,         // The given problem admits no perfect matching.
+        //         POSSIBLE_OVERFLOW,  // Some cost magnitude is too large.
+        //     };
+        //     Status Solve();
+
+        //     // Returns the cost of an assignment with minimal cost.
+        //     // This is 0 if the last Solve() didn't return OPTIMAL.
+        //     CostValue OptimalCost() const
+        //     {
+        //         return optimal_cost_;
+        //     }
+
+        //     // Returns the right node assigned to the given left node in the
+        //     // last solution computed by Solve(). This works only if Solve()
+        //     // returned OPTIMAL.
+        //     //
+        //     // Note: It is possible that there is more than one optimal
+        //     // solution. The algorithm is deterministic so it will always return
+        //     // the same solution for a given problem. There is no such guarantee
+        //     // from one code version to the next, but the code does not change
+        //     // often.
+        //     NodeIndex RightMate( NodeIndex left_node ) const
+        //     {
+        //         return arc_head_[ assignment_arcs_[ left_node ] ];
+        //     }
+
+        //     // Returns the cost of the arc used for "left_node"'s assignment.
+        //     // This works only if Solve() returned OPTIMAL.
+        //     CostValue AssignmentCost( NodeIndex left_node ) const
+        //     {
+        //         return arc_cost_[ assignment_arcs_[ left_node ] ];
+        //     }
+
+    }
+
 
     export namespace sat
     {
+        /**
+         * Solves the given CpModelProto and returns an instance of CpSolverResponse.
+         * 
+         * C++: CpSolverResponse Solve( const CpModelProto& model_proto );
+         */
+        export function Solve(model_proto: CpModelProto): CpSolverResponse;
+
         /**
          * Wrapper class around the cp_model proto.
          *
@@ -1682,8 +1759,8 @@
             //     /// Remove all assumptions from the model.
             //     void ClearAssumptions();
 
-            //     const CpModelProto& Build() const
-            // TODO  
+            Build(): CpModelProto;
+
             //     const CpModelProto& Proto() const
             //     {
             //         return cp_model_;
@@ -1769,7 +1846,7 @@
             //     {
             //         return index_;
             //     }
-        };
+        }
 
         /**
          * A constraint.
@@ -2067,5 +2144,684 @@
         // inline LinearExpr operator*( int64_t factor, LinearExpr expr )
         export function operator_times(factor: number, expr: LinearExpr | BoolVar): LinearExpr;
 
+
+        export class CpModelProto 
+        {
+            //     public:
+            //         inline CpModelProto()
+            //             : CpModelProto( nullptr ) {}
+            //         ~CpModelProto() override;
+            //         explicit PROTOBUF_CONSTEXPR CpModelProto( ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized );
+
+            //         CpModelProto( const CpModelProto& from );
+            //         CpModelProto( CpModelProto&& from ) noexcept
+            //             : CpModelProto()
+            //         {
+            //             *this = ::std::move( from );
+            //         }
+
+            //         inline CpModelProto& operator=( const CpModelProto& from )
+            //         {
+            //             CopyFrom( from );
+            //             return *this;
+            //         }
+            //         inline CpModelProto& operator=( CpModelProto&& from ) noexcept
+            //         {
+            //             if ( this == &from ) return *this;
+            //             if ( GetOwningArena() == from.GetOwningArena()
+            // #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+            //                  && GetOwningArena() != nullptr
+            // #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+            //             )
+            //             {
+            //                 InternalSwap( &from );
+            //             }
+            //             else
+            //             {
+            //                 CopyFrom( from );
+            //             }
+            //             return *this;
+            //         }
+
+            //         static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor()
+            //         {
+            //             return GetDescriptor();
+            //         }
+            //         static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor()
+            //         {
+            //             return default_instance().GetMetadata().descriptor;
+            //         }
+            //         static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection()
+            //         {
+            //             return default_instance().GetMetadata().reflection;
+            //         }
+            //         static const CpModelProto& default_instance()
+            //         {
+            //             return *internal_default_instance();
+            //         }
+            //         static inline const CpModelProto* internal_default_instance()
+            //         {
+            //             return reinterpret_cast< const CpModelProto* >(
+            //                 &_CpModelProto_default_instance_ );
+            //         }
+            //         static constexpr int kIndexInFileMessages =
+            //             27;
+
+            //         friend void swap( CpModelProto& a, CpModelProto& b )
+            //         {
+            //             a.Swap( &b );
+            //         }
+            //         inline void Swap( CpModelProto* other )
+            //         {
+            //             if ( other == this ) return;
+            // #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+            //             if ( GetOwningArena() != nullptr && GetOwningArena() == other->GetOwningArena() )
+            //             {
+            // #else   // PROTOBUF_FORCE_COPY_IN_SWAP
+            //             if ( GetOwningArena() == other->GetOwningArena() )
+            //             {
+            // #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+            //                 InternalSwap( other );
+            //             }
+            //             else
+            //             {
+            //                 ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap( this, other );
+            //             }
+            //         }
+            //         void UnsafeArenaSwap( CpModelProto* other )
+            //         {
+            //             if ( other == this ) return;
+            //             GOOGLE_DCHECK( GetOwningArena() == other->GetOwningArena() );
+            //             InternalSwap( other );
+            //         }
+
+            //         // implements Message ----------------------------------------------
+
+            //         CpModelProto* New( ::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr ) const final
+            //         {
+            //             return CreateMaybeMessage< CpModelProto >( arena );
+            //         }
+            //         using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+            //         void CopyFrom( const CpModelProto& from );
+            //         using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+            //         void MergeFrom( const CpModelProto& from )
+            //         {
+            //             CpModelProto::MergeImpl( *this, from );
+            //         }
+
+
+            //     public:
+            //         PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+            //         bool                                  IsInitialized() const final;
+
+            //         size_t      ByteSizeLong() const final;
+            //         const char* _InternalParse( const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx ) final;
+            //         uint8_t*    _InternalSerialize(
+            //                uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream ) const final;
+            //         int GetCachedSize() const final
+            //         {
+            //             return _impl_._cached_size_.Get();
+            //         }
+
+
+            //     public:
+            //         static const ClassData                             _class_data_;
+            //         const ::PROTOBUF_NAMESPACE_ID::Message::ClassData* GetClassData() const final;
+
+            //         ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+            //         // nested types ----------------------------------------------------
+
+            //         // accessors -------------------------------------------------------
+
+            //         enum : int
+            //         {
+            //             kVariablesFieldNumber              = 2,
+            //             kConstraintsFieldNumber            = 3,
+            //             kSearchStrategyFieldNumber         = 5,
+            //             kAssumptionsFieldNumber            = 7,
+            //             kNameFieldNumber                   = 1,
+            //             kObjectiveFieldNumber              = 4,
+            //             kSolutionHintFieldNumber           = 6,
+            //             kSymmetryFieldNumber               = 8,
+            //             kFloatingPointObjectiveFieldNumber = 9,
+            //         };
+            //         // repeated .operations_research.sat.IntegerVariableProto variables = 2;
+            //         int variables_size() const;
+
+
+            //     public:
+            //         void                                              clear_variables();
+            //         ::operations_research::sat::IntegerVariableProto* mutable_variables( int index );
+            //         ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::sat::IntegerVariableProto >*
+            //         mutable_variables();
+
+
+            //     public:
+            //         const ::operations_research::sat::IntegerVariableProto& variables( int index ) const;
+            //         ::operations_research::sat::IntegerVariableProto*       add_variables();
+            //         const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::sat::IntegerVariableProto >&
+            //         variables() const;
+
+            //         // repeated .operations_research.sat.ConstraintProto constraints = 3;
+            //         int constraints_size() const;
+
+
+            //     public:
+            //         void                                         clear_constraints();
+            //         ::operations_research::sat::ConstraintProto* mutable_constraints( int index );
+            //         ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::sat::ConstraintProto >*
+            //         mutable_constraints();
+
+
+            //     public:
+            //         const ::operations_research::sat::ConstraintProto& constraints( int index ) const;
+            //         ::operations_research::sat::ConstraintProto*       add_constraints();
+            //         const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::sat::ConstraintProto >&
+            //         constraints() const;
+
+            //         // repeated .operations_research.sat.DecisionStrategyProto search_strategy = 5;
+            //         int search_strategy_size() const;
+
+
+            //     public:
+            //         void                                               clear_search_strategy();
+            //         ::operations_research::sat::DecisionStrategyProto* mutable_search_strategy( int index );
+            //         ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::sat::DecisionStrategyProto >*
+            //         mutable_search_strategy();
+
+
+            //     public:
+            //         const ::operations_research::sat::DecisionStrategyProto& search_strategy( int index ) const;
+            //         ::operations_research::sat::DecisionStrategyProto*       add_search_strategy();
+            //         const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::sat::DecisionStrategyProto >&
+            //         search_strategy() const;
+
+            //         // repeated int32 assumptions = 7;
+            //         int assumptions_size() const;
+
+
+            //     public:
+            //         void clear_assumptions();
+
+
+            //     public:
+            //         int32_t assumptions( int index ) const;
+            //         void    set_assumptions( int index, int32_t value );
+            //         void    add_assumptions( int32_t value );
+            //         const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+            //         assumptions() const;
+            //         ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+            //         mutable_assumptions();
+
+            //         // string name = 1;
+            //         void               clear_name();
+            //         const std::string& name() const;
+            //         template < typename ArgT0 = const std::string&, typename... ArgT >
+            //         void               set_name( ArgT0&& arg0, ArgT... args );
+            //         std::string*       mutable_name();
+            //         PROTOBUF_NODISCARD std::string* release_name();
+            //         void                            set_allocated_name( std::string* name );
+
+
+            //     public:
+            //         // .operations_research.sat.CpObjectiveProto objective = 4;
+            //         bool has_objective() const;
+
+
+            //     public:
+            //         void                                                             clear_objective();
+            //         const ::operations_research::sat::CpObjectiveProto&              objective() const;
+            //         PROTOBUF_NODISCARD ::operations_research::sat::CpObjectiveProto* release_objective();
+            //         ::operations_research::sat::CpObjectiveProto*                    mutable_objective();
+            //         void                                                             set_allocated_objective( ::operations_research::sat::CpObjectiveProto* objective );
+
+
+            //     public:
+            //         void unsafe_arena_set_allocated_objective(
+            //             ::operations_research::sat::CpObjectiveProto* objective );
+            //         ::operations_research::sat::CpObjectiveProto* unsafe_arena_release_objective();
+
+            //         // .operations_research.sat.PartialVariableAssignment solution_hint = 6;
+            //         bool has_solution_hint() const;
+
+
+            //     public:
+            //         void                                                                      clear_solution_hint();
+            //         const ::operations_research::sat::PartialVariableAssignment&              solution_hint() const;
+            //         PROTOBUF_NODISCARD ::operations_research::sat::PartialVariableAssignment* release_solution_hint();
+            //         ::operations_research::sat::PartialVariableAssignment*                    mutable_solution_hint();
+            //         void                                                                      set_allocated_solution_hint( ::operations_research::sat::PartialVariableAssignment* solution_hint );
+
+
+            //     public:
+            //         void unsafe_arena_set_allocated_solution_hint(
+            //             ::operations_research::sat::PartialVariableAssignment* solution_hint );
+            //         ::operations_research::sat::PartialVariableAssignment* unsafe_arena_release_solution_hint();
+
+            //         // .operations_research.sat.SymmetryProto symmetry = 8;
+            //         bool has_symmetry() const;
+
+
+            //     public:
+            //         void                                                          clear_symmetry();
+            //         const ::operations_research::sat::SymmetryProto&              symmetry() const;
+            //         PROTOBUF_NODISCARD ::operations_research::sat::SymmetryProto* release_symmetry();
+            //         ::operations_research::sat::SymmetryProto*                    mutable_symmetry();
+            //         void                                                          set_allocated_symmetry( ::operations_research::sat::SymmetryProto* symmetry );
+
+
+            //     public:
+            //         void unsafe_arena_set_allocated_symmetry(
+            //             ::operations_research::sat::SymmetryProto* symmetry );
+            //         ::operations_research::sat::SymmetryProto* unsafe_arena_release_symmetry();
+
+            //         // .operations_research.sat.FloatObjectiveProto floating_point_objective = 9;
+            //         bool has_floating_point_objective() const;
+
+
+            //     public:
+            //         void                                                                clear_floating_point_objective();
+            //         const ::operations_research::sat::FloatObjectiveProto&              floating_point_objective() const;
+            //         PROTOBUF_NODISCARD ::operations_research::sat::FloatObjectiveProto* release_floating_point_objective();
+            //         ::operations_research::sat::FloatObjectiveProto*                    mutable_floating_point_objective();
+            //         void                                                                set_allocated_floating_point_objective( ::operations_research::sat::FloatObjectiveProto* floating_point_objective );
+
+
+            //     public:
+            //         void unsafe_arena_set_allocated_floating_point_objective(
+            //             ::operations_research::sat::FloatObjectiveProto* floating_point_objective );
+            //         ::operations_research::sat::FloatObjectiveProto* unsafe_arena_release_floating_point_objective();
+
+            //         // @@protoc_insertion_point(class_scope:operations_research.sat.CpModelProto)
+        };
+
+        export class CpSolverResponse  
+        {
+            //     public:
+            //         inline CpSolverResponse()
+            //             : CpSolverResponse( nullptr ) {}
+            //         ~CpSolverResponse() override;
+            //         explicit PROTOBUF_CONSTEXPR CpSolverResponse( ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized );
+
+            //         CpSolverResponse( const CpSolverResponse& from );
+            //         CpSolverResponse( CpSolverResponse&& from ) noexcept
+            //             : CpSolverResponse()
+            //         {
+            //             *this = ::std::move( from );
+            //         }
+
+            //         inline CpSolverResponse& operator=( const CpSolverResponse& from )
+            //         {
+            //             CopyFrom( from );
+            //             return *this;
+            //         }
+            //         inline CpSolverResponse& operator=( CpSolverResponse&& from ) noexcept
+            //         {
+            //             if ( this == &from ) return *this;
+            //             if ( GetOwningArena() == from.GetOwningArena()
+            // #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+            //                  && GetOwningArena() != nullptr
+            // #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+            //             )
+            //             {
+            //                 InternalSwap( &from );
+            //             }
+            //             else
+            //             {
+            //                 CopyFrom( from );
+            //             }
+            //             return *this;
+            //         }
+
+            //         static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor()
+            //         {
+            //             return GetDescriptor();
+            //         }
+            //         static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor()
+            //         {
+            //             return default_instance().GetMetadata().descriptor;
+            //         }
+            //         static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection()
+            //         {
+            //             return default_instance().GetMetadata().reflection;
+            //         }
+            //         static const CpSolverResponse& default_instance()
+            //         {
+            //             return *internal_default_instance();
+            //         }
+            //         static inline const CpSolverResponse* internal_default_instance()
+            //         {
+            //             return reinterpret_cast< const CpSolverResponse* >(
+            //                 &_CpSolverResponse_default_instance_ );
+            //         }
+            //         static constexpr int kIndexInFileMessages =
+            //             29;
+
+            //         friend void swap( CpSolverResponse& a, CpSolverResponse& b )
+            //         {
+            //             a.Swap( &b );
+            //         }
+            //         inline void Swap( CpSolverResponse* other )
+            //         {
+            //             if ( other == this ) return;
+            // #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+            //             if ( GetOwningArena() != nullptr && GetOwningArena() == other->GetOwningArena() )
+            //             {
+            // #else   // PROTOBUF_FORCE_COPY_IN_SWAP
+            //             if ( GetOwningArena() == other->GetOwningArena() )
+            //             {
+            // #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+            //                 InternalSwap( other );
+            //             }
+            //             else
+            //             {
+            //                 ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap( this, other );
+            //             }
+            //         }
+            //         void UnsafeArenaSwap( CpSolverResponse* other )
+            //         {
+            //             if ( other == this ) return;
+            //             GOOGLE_DCHECK( GetOwningArena() == other->GetOwningArena() );
+            //             InternalSwap( other );
+            //         }
+
+            //         // implements Message ----------------------------------------------
+
+            //         CpSolverResponse* New( ::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr ) const final
+            //         {
+            //             return CreateMaybeMessage< CpSolverResponse >( arena );
+            //         }
+            //         using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+            //         void CopyFrom( const CpSolverResponse& from );
+            //         using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+            //         void MergeFrom( const CpSolverResponse& from )
+            //         {
+            //             CpSolverResponse::MergeImpl( *this, from );
+            //         }
+
+
+            //     public:
+            //         PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+            //         bool                                  IsInitialized() const final;
+
+            //         size_t      ByteSizeLong() const final;
+            //         const char* _InternalParse( const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx ) final;
+            //         uint8_t*    _InternalSerialize(
+            //                uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream ) const final;
+            //         int GetCachedSize() const final
+            //         {
+            //             return _impl_._cached_size_.Get();
+            //         }
+
+
+
+
+            //     public:
+            //         static const ClassData                             _class_data_;
+            //         const ::PROTOBUF_NAMESPACE_ID::Message::ClassData* GetClassData() const final;
+
+            //         ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+            //         // nested types ----------------------------------------------------
+
+            //         // accessors -------------------------------------------------------
+
+            //         enum : int
+            //         {
+            //             kSolutionFieldNumber                              = 2,
+            //             kTightenedVariablesFieldNumber                    = 21,
+            //             kSufficientAssumptionsForInfeasibilityFieldNumber = 23,
+            //             kAdditionalSolutionsFieldNumber                   = 27,
+            //             kSolutionInfoFieldNumber                          = 20,
+            //             kSolveLogFieldNumber                              = 26,
+            //             kIntegerObjectiveFieldNumber                      = 28,
+            //             kObjectiveValueFieldNumber                        = 3,
+            //             kBestObjectiveBoundFieldNumber                    = 4,
+            //             kNumBooleansFieldNumber                           = 10,
+            //             kNumConflictsFieldNumber                          = 11,
+            //             kNumBranchesFieldNumber                           = 12,
+            //             kNumBinaryPropagationsFieldNumber                 = 13,
+            //             kNumIntegerPropagationsFieldNumber                = 14,
+            //             kWallTimeFieldNumber                              = 15,
+            //             kUserTimeFieldNumber                              = 16,
+            //             kDeterministicTimeFieldNumber                     = 17,
+            //             kGapIntegralFieldNumber                           = 22,
+            //             kNumRestartsFieldNumber                           = 24,
+            //             kNumLpIterationsFieldNumber                       = 25,
+            //             kInnerObjectiveLowerBoundFieldNumber              = 29,
+            //             kNumIntegersFieldNumber                           = 30,
+            //             kStatusFieldNumber                                = 1,
+            //         };
+            //         // repeated int64 solution = 2;
+            //         int solution_size() const;
+
+
+            //     public:
+            //         void clear_solution();
+
+
+            //     public:
+            //         int64_t solution( int index ) const;
+            //         void    set_solution( int index, int64_t value );
+            //         void    add_solution( int64_t value );
+            //         const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int64_t >&
+            //         solution() const;
+            //         ::PROTOBUF_NAMESPACE_ID::RepeatedField< int64_t >*
+            //         mutable_solution();
+
+            //         // repeated .operations_research.sat.IntegerVariableProto tightened_variables = 21;
+            //         int tightened_variables_size() const;
+
+
+            //     public:
+            //         void                                              clear_tightened_variables();
+            //         ::operations_research::sat::IntegerVariableProto* mutable_tightened_variables( int index );
+            //         ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::sat::IntegerVariableProto >*
+            //         mutable_tightened_variables();
+
+
+            //     public:
+            //         const ::operations_research::sat::IntegerVariableProto& tightened_variables( int index ) const;
+            //         ::operations_research::sat::IntegerVariableProto*       add_tightened_variables();
+            //         const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::sat::IntegerVariableProto >&
+            //         tightened_variables() const;
+
+            //         // repeated int32 sufficient_assumptions_for_infeasibility = 23;
+            //         int sufficient_assumptions_for_infeasibility_size() const;
+
+
+            //     public:
+            //         void clear_sufficient_assumptions_for_infeasibility();
+
+
+            //     public:
+            //         int32_t sufficient_assumptions_for_infeasibility( int index ) const;
+            //         void    set_sufficient_assumptions_for_infeasibility( int index, int32_t value );
+            //         void    add_sufficient_assumptions_for_infeasibility( int32_t value );
+            //         const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
+            //         sufficient_assumptions_for_infeasibility() const;
+            //         ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
+            //         mutable_sufficient_assumptions_for_infeasibility();
+
+            //         // repeated .operations_research.sat.CpSolverSolution additional_solutions = 27;
+            //         int additional_solutions_size() const;
+
+
+            //     public:
+            //         void                                          clear_additional_solutions();
+            //         ::operations_research::sat::CpSolverSolution* mutable_additional_solutions( int index );
+            //         ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::sat::CpSolverSolution >*
+            //         mutable_additional_solutions();
+
+
+            //     public:
+            //         const ::operations_research::sat::CpSolverSolution& additional_solutions( int index ) const;
+            //         ::operations_research::sat::CpSolverSolution*       add_additional_solutions();
+            //         const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::sat::CpSolverSolution >&
+            //         additional_solutions() const;
+
+            //         // string solution_info = 20;
+            //         void               clear_solution_info();
+            //         const std::string& solution_info() const;
+            //         template < typename ArgT0 = const std::string&, typename... ArgT >
+            //         void               set_solution_info( ArgT0&& arg0, ArgT... args );
+            //         std::string*       mutable_solution_info();
+            //         PROTOBUF_NODISCARD std::string* release_solution_info();
+            //         void                            set_allocated_solution_info( std::string* solution_info );
+
+
+            //     public:
+            //         // string solve_log = 26;
+            //         void               clear_solve_log();
+            //         const std::string& solve_log() const;
+            //         template < typename ArgT0 = const std::string&, typename... ArgT >
+            //         void               set_solve_log( ArgT0&& arg0, ArgT... args );
+            //         std::string*       mutable_solve_log();
+            //         PROTOBUF_NODISCARD std::string* release_solve_log();
+            //         void                            set_allocated_solve_log( std::string* solve_log );
+
+
+            //     public:
+            //         // .operations_research.sat.CpObjectiveProto integer_objective = 28;
+            //         bool has_integer_objective() const;
+
+
+            //     public:
+            //         void                                                             clear_integer_objective();
+            //         const ::operations_research::sat::CpObjectiveProto&              integer_objective() const;
+            //         PROTOBUF_NODISCARD ::operations_research::sat::CpObjectiveProto* release_integer_objective();
+            //         ::operations_research::sat::CpObjectiveProto*                    mutable_integer_objective();
+            //         void                                                             set_allocated_integer_objective( ::operations_research::sat::CpObjectiveProto* integer_objective );
+
+
+            //     public:
+            //         void unsafe_arena_set_allocated_integer_objective(
+            //             ::operations_research::sat::CpObjectiveProto* integer_objective );
+            //         ::operations_research::sat::CpObjectiveProto* unsafe_arena_release_integer_objective();
+
+            //         // double objective_value = 3;
+            //         void   clear_objective_value();
+            //         double objective_value() const;
+            //         void   set_objective_value( double value );
+
+
+            //     public:
+            //         // double best_objective_bound = 4;
+            //         void   clear_best_objective_bound();
+            //         double best_objective_bound() const;
+            //         void   set_best_objective_bound( double value );
+
+
+            //     public:
+            //         // int64 num_booleans = 10;
+            //         void    clear_num_booleans();
+            //         int64_t num_booleans() const;
+            //         void    set_num_booleans( int64_t value );
+
+
+            //     public:
+            //         // int64 num_conflicts = 11;
+            //         void    clear_num_conflicts();
+            //         int64_t num_conflicts() const;
+            //         void    set_num_conflicts( int64_t value );
+
+
+            //     public:
+            //         // int64 num_branches = 12;
+            //         void    clear_num_branches();
+            //         int64_t num_branches() const;
+            //         void    set_num_branches( int64_t value );
+
+
+            //     public:
+            //         // int64 num_binary_propagations = 13;
+            //         void    clear_num_binary_propagations();
+            //         int64_t num_binary_propagations() const;
+            //         void    set_num_binary_propagations( int64_t value );
+
+
+            //     public:
+            //         // int64 num_integer_propagations = 14;
+            //         void    clear_num_integer_propagations();
+            //         int64_t num_integer_propagations() const;
+            //         void    set_num_integer_propagations( int64_t value );
+
+
+            //     public:
+            //         // double wall_time = 15;
+            //         void   clear_wall_time();
+            //         double wall_time() const;
+            //         void   set_wall_time( double value );
+
+
+            //     public:
+            //         // double user_time = 16;
+            //         void   clear_user_time();
+            //         double user_time() const;
+            //         void   set_user_time( double value );
+
+
+            //     public:
+            //         // double deterministic_time = 17;
+            //         void   clear_deterministic_time();
+            //         double deterministic_time() const;
+            //         void   set_deterministic_time( double value );
+
+
+            //     public:
+            //         // double gap_integral = 22;
+            //         void   clear_gap_integral();
+            //         double gap_integral() const;
+            //         void   set_gap_integral( double value );
+
+
+            //     public:
+            //         // int64 num_restarts = 24;
+            //         void    clear_num_restarts();
+            //         int64_t num_restarts() const;
+            //         void    set_num_restarts( int64_t value );
+
+
+            //     public:
+            //         // int64 num_lp_iterations = 25;
+            //         void    clear_num_lp_iterations();
+            //         int64_t num_lp_iterations() const;
+            //         void    set_num_lp_iterations( int64_t value );
+
+
+            //     public:
+            //         // int64 inner_objective_lower_bound = 29;
+            //         void    clear_inner_objective_lower_bound();
+            //         int64_t inner_objective_lower_bound() const;
+            //         void    set_inner_objective_lower_bound( int64_t value );
+
+
+            //     public:
+            //         // int64 num_integers = 30;
+            //         void    clear_num_integers();
+            //         int64_t num_integers() const;
+            //         void    set_num_integers( int64_t value );
+
+
+            //         // .operations_research.sat.CpSolverStatus status = 1;
+            //         void                                       clear_status();
+            // ::operations_research::sat::CpSolverStatus status() const;
+            status(): CpSolverStatus
+            //         void                                       set_status( ::operations_research::sat::CpSolverStatus value );
+
+
+            //     public:
+            //         // @@protoc_insertion_point(class_scope:operations_research.sat.CpSolverResponse)
+        }
+
+        export enum CpSolverStatus 
+        {
+            UNKNOWN = 0,
+            MODEL_INVALID = 1,
+            FEASIBLE = 2,
+            INFEASIBLE = 3,
+            OPTIMAL = 4,
+        };
     }
 }
