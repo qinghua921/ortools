@@ -28,6 +28,19 @@ operations_research::GMPSolver::~GMPSolver()
     delete pMPSolver;
 }
 
+Napi::Value operations_research::GMPSolver::SolverTypeSupportsInterruption( const Napi::CallbackInfo& info )
+{
+    // static bool SolverTypeSupportsInterruption(const MPModelRequest::SolverType solver );
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        int solver_type = info[ 0 ].As< Napi::Number >();
+        return Napi::Boolean::New( info.Env(), MPSolver::SolverTypeSupportsInterruption( static_cast< MPModelRequest::SolverType >( solver_type ) ) );
+    }
+
+    ThrowJsError( operations_research::GMPSolver::SolverTypeSupportsInterruption : Invalid argument );
+    return info.Env().Undefined();
+}
+
 Napi::Value operations_research::GMPSolver::ParseSolverTypeOrDie( const Napi::CallbackInfo& info )
 {
     // static OptimizationProblemType ParseSolverTypeOrDie( const std::string& solver_id );
@@ -84,6 +97,165 @@ Napi::Value operations_research::GMPSolver::CreateSolver( const Napi::CallbackIn
     }
 
     ThrowJsError( operations_research::GMPSolver::CreateSolver : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPSolver::SolveWithProto( const Napi::CallbackInfo& info )
+{
+    // static void SolveWithProto( const MPModelRequest& model_request, MPSolutionResponse*   response, std::atomic< bool >* interrupt = nullptr );
+    if ( info.Length() == 2
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GMPModelRequest::constructor.Value() )
+         && info[ 1 ].IsObject()
+         && info[ 1 ].As< Napi::Object >().InstanceOf( GMPSolutionResponse::constructor.Value() ) )
+    {
+        auto                 gmp_model_request     = Napi::ObjectWrap< GMPModelRequest >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto                 gmp_solution_response = Napi::ObjectWrap< GMPSolutionResponse >::Unwrap( info[ 1 ].As< Napi::Object >() );
+        std::atomic< bool >* interrupt             = nullptr;
+        MPSolver::SolveWithProto( *gmp_model_request->pMPModelRequest, gmp_solution_response->pMPSolutionResponse, interrupt );
+        return info.Env().Undefined();
+    }
+
+    if ( info.Length() == 3
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GMPModelRequest::constructor.Value() )
+         && info[ 1 ].IsObject()
+         && info[ 1 ].As< Napi::Object >().InstanceOf( GMPSolutionResponse::constructor.Value() )
+         && info[ 2 ].IsBoolean() )
+    {
+        auto                 gmp_model_request     = Napi::ObjectWrap< GMPModelRequest >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto                 gmp_solution_response = Napi::ObjectWrap< GMPSolutionResponse >::Unwrap( info[ 1 ].As< Napi::Object >() );
+        std::atomic< bool >* interrupt             = new std::atomic< bool >( info[ 2 ].As< Napi::Boolean >().Value() );
+        MPSolver::SolveWithProto( *gmp_model_request->pMPModelRequest, gmp_solution_response->pMPSolutionResponse, interrupt );
+        delete interrupt;
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPSolver::SolveWithProto : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPSolver::FillSolutionResponseProto( const Napi::CallbackInfo& info )
+{
+    // void FillSolutionResponseProto( MPSolutionResponse* response ) const;
+    if ( info.Length() == 1
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GMPSolutionResponse::constructor.Value() ) )
+    {
+        auto gmp_solution_response = Napi::ObjectWrap< GMPSolutionResponse >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        pMPSolver->FillSolutionResponseProto( gmp_solution_response->pMPSolutionResponse );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPSolver::FillSolutionResponseProto : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPSolver::LoadModelFromProtoWithUniqueNamesOrDie( const Napi::CallbackInfo& info )
+{
+    //  MPSolverResponseStatus LoadModelFromProtoWithUniqueNamesOrDie(  const MPModelProto& input_model, std::string* error_message );
+    if ( info.Length() == 2
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GMPModelProto::constructor.Value() )
+         && info[ 1 ].IsString() )
+    {
+        auto                   gmp_model_proto = Napi::ObjectWrap< GMPModelProto >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        std::string            error_message;
+        MPSolverResponseStatus status = pMPSolver->LoadModelFromProtoWithUniqueNamesOrDie( *gmp_model_proto->pMPModelProto, &error_message );
+        return Napi::Number::New( info.Env(), static_cast< int >( status ) );
+    }
+
+    ThrowJsError( operations_research::GMPSolver::LoadModelFromProtoWithUniqueNamesOrDie : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPSolver::LoadModelFromProto( const Napi::CallbackInfo& info )
+{
+    // MPSolverResponseStatus LoadModelFromProto( const MPModelProto& input_model, std::string*        error_message );
+    if ( info.Length() == 2
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GMPModelProto::constructor.Value() )
+         && info[ 1 ].IsString() )
+    {
+        auto                   gmp_model_proto = Napi::ObjectWrap< GMPModelProto >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        std::string            error_message;
+        MPSolverResponseStatus status = pMPSolver->LoadModelFromProto( *gmp_model_proto->pMPModelProto, &error_message );
+        return Napi::Number::New( info.Env(), static_cast< int >( status ) );
+    }
+
+    ThrowJsError( operations_research::GMPSolver::LoadModelFromProto : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPSolver::InterruptSolve( const Napi::CallbackInfo& info )
+{
+    // bool InterruptSolve();
+    if ( info.Length() == 0 )
+    {
+        return Napi::Boolean::New( info.Env(), pMPSolver->InterruptSolve() );
+    }
+
+    ThrowJsError( operations_research::GMPSolver::InterruptSolve : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPSolver::Reset( const Napi::CallbackInfo& info )
+{
+    //  void Reset();
+    if ( info.Length() == 0 )
+    {
+        pMPSolver->Reset();
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPSolver::Reset : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPSolver::VerifySolution( const Napi::CallbackInfo& info )
+{
+    // bool VerifySolution( double tolerance, bool log_errors ) const;
+    if ( info.Length() == 2 && info[ 0 ].IsNumber() && info[ 1 ].IsBoolean() )
+    {
+        double tolerance  = info[ 0 ].As< Napi::Number >();
+        bool   log_errors = info[ 1 ].As< Napi::Boolean >();
+        bool   result     = pMPSolver->VerifySolution( tolerance, log_errors );
+        return Napi::Boolean::New( info.Env(), result );
+    }
+
+    ThrowJsError( operations_research::GMPSolver::VerifySolution : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPSolver::ComputeConstraintActivities( const Napi::CallbackInfo& info )
+{
+    // std::vector< double > ComputeConstraintActivities() const;
+    if ( info.Length() == 0 )
+    {
+        std::vector< double > activities = pMPSolver->ComputeConstraintActivities();
+        Napi::Array           result     = Napi::Array::New( info.Env(), activities.size() );
+        for ( int i = 0; i < activities.size(); i++ )
+        {
+            result[ i ] = Napi::Number::New( info.Env(), activities[ i ] );
+        }
+        return result;
+    }
+
+    ThrowJsError( operations_research::GMPSolver::ComputeConstraintActivities : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPSolver::Write( const Napi::CallbackInfo& info )
+{
+    // void Write( const std::string& file_name );
+    if ( info.Length() == 1 && info[ 0 ].IsString() )
+    {
+        std::string file_name = info[ 0 ].As< Napi::String >();
+        pMPSolver->Write( file_name );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPSolver::Write : Invalid argument );
     return info.Env().Undefined();
 }
 
@@ -191,6 +363,16 @@ Napi::Value operations_research::GMPSolver::Solve( const Napi::CallbackInfo& inf
     if ( info.Length() == 0 )
     {
         return Napi::Number::New( info.Env(), pMPSolver->Solve() );
+    }
+
+    // ResultStatus Solve( const MPSolverParameters& param );
+    if ( info.Length() == 1
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GMPSolverParameters::constructor.Value() ) )
+    {
+        auto mp_solver_parameters = Napi::ObjectWrap< GMPSolverParameters >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto status               = pMPSolver->Solve( *mp_solver_parameters->pMPSolverParameters );
+        return Napi::Number::New( info.Env(), status );
     }
 
     ThrowJsError( operations_research::GMPSolver::Solve : Invalid argument );
@@ -1346,7 +1528,14 @@ Napi::Value operations_research::sat::GBoolVar::WithName( const Napi::CallbackIn
 operations_research::sat::GConstraint::GConstraint( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< operations_research::sat::GConstraint >( info )
 {
-    // TODO
+    if ( info.Length() == 1 && info[ 0 ].IsExternal() )
+    {
+        auto external = info[ 0 ].As< Napi::External< Constraint > >();
+        pConstraint   = dynamic_cast< Constraint* >( external.Data() );
+        if ( pConstraint != nullptr ) return;
+    }
+
+    ThrowJsError( operations_research::sat::GConstraint : Invalid argument );
 }
 
 operations_research::sat::GConstraint::~GConstraint()
@@ -2329,7 +2518,7 @@ Napi::Value operations_research::GMPObjective::BestBound( const Napi::CallbackIn
     return info.Env().Undefined();
 }
 
-Napi::Value operations_research::GMPVariable::name(const Napi::CallbackInfo & info)
+Napi::Value operations_research::GMPVariable::name( const Napi::CallbackInfo& info )
 {
     // const std::string& name() const;
     if ( info.Length() == 0 )
@@ -2515,4 +2704,76 @@ Napi::Value operations_research::GMPVariable::SetBranchingPriority( const Napi::
 
     ThrowJsError( operations_research::GMPVariable::SetBranchingPriority : Invalid argument );
     return info.Env().Undefined();
+}
+
+operations_research::GMPSolverParameters::~GMPSolverParameters()
+{
+    delete pMPSolverParameters;
+}
+
+operations_research::GMPSolverParameters::GMPSolverParameters( const Napi::CallbackInfo& info )
+    : Napi::ObjectWrap< GMPSolverParameters >( info )
+{
+    if ( info.Length() == 1 && info[ 0 ].IsExternal() )
+    {
+        auto external       = info[ 0 ].As< Napi::External< MPSolverParameters > >();
+        pMPSolverParameters = dynamic_cast< MPSolverParameters* >( external.Data() );
+        if ( pMPSolverParameters != nullptr ) return;
+    }
+
+    ThrowJsError( operations_research::GMPSolverParameters : Invalid argument );
+}
+
+operations_research::GMPModelProto::GMPModelProto( const Napi::CallbackInfo& info )
+    : Napi::ObjectWrap< GMPModelProto >( info )
+{
+    if ( info.Length() == 1 && info[ 0 ].IsExternal() )
+    {
+        auto external = info[ 0 ].As< Napi::External< MPModelProto > >();
+        pMPModelProto = dynamic_cast< MPModelProto* >( external.Data() );
+        if ( pMPModelProto != nullptr ) return;
+    }
+
+    ThrowJsError( operations_research::GMPModelProto : Invalid argument );
+}
+
+operations_research::GMPModelProto::~GMPModelProto()
+{
+    delete pMPModelProto;
+}
+
+operations_research::GMPSolutionResponse::GMPSolutionResponse( const Napi::CallbackInfo& info )
+    : Napi::ObjectWrap< GMPSolutionResponse >( info )
+{
+    if ( info.Length() == 1 && info[ 0 ].IsExternal() )
+    {
+        auto external       = info[ 0 ].As< Napi::External< MPSolutionResponse > >();
+        pMPSolutionResponse = dynamic_cast< MPSolutionResponse* >( external.Data() );
+        if ( pMPSolutionResponse != nullptr ) return;
+    }
+
+    ThrowJsError( operations_research::GMPSolutionResponse : Invalid argument );
+}
+
+operations_research::GMPSolutionResponse::~GMPSolutionResponse()
+{
+    delete pMPSolutionResponse;
+}
+
+operations_research::GMPModelRequest::GMPModelRequest( const Napi::CallbackInfo& info )
+    : Napi::ObjectWrap< GMPModelRequest >( info )
+{
+    if ( info.Length() == 1 && info[ 0 ].IsExternal() )
+    {
+        auto external   = info[ 0 ].As< Napi::External< MPModelRequest > >();
+        pMPModelRequest = dynamic_cast< MPModelRequest* >( external.Data() );
+        if ( pMPModelRequest != nullptr ) return;
+    }
+
+    ThrowJsError( operations_research::GMPModelRequest : Invalid argument );
+}
+
+operations_research::GMPModelRequest::~GMPModelRequest()
+{
+    delete pMPModelRequest;
 }

@@ -59,7 +59,16 @@ public:
                 StaticMethod( "ParseSolverType", &GMPSolver::ParseSolverType ),
                 StaticMethod( "SupportsProblemType", &GMPSolver::SupportsProblemType ),
                 StaticMethod( "CreateSolver", &GMPSolver::CreateSolver ),
+                StaticMethod( "SolveWithProto", &GMPSolver::SolveWithProto ),
+                StaticMethod( "SolverTypeSupportsInterruption", &GMPSolver::SolverTypeSupportsInterruption ),
 
+                InstanceMethod( "LoadModelFromProtoWithUniqueNamesOrDie", &GMPSolver::LoadModelFromProtoWithUniqueNamesOrDie ),
+                InstanceMethod( "LoadModelFromProto", &GMPSolver::LoadModelFromProto ),
+                InstanceMethod( "InterruptSolve", &GMPSolver::InterruptSolve ),
+                InstanceMethod( "Reset", &GMPSolver::Reset ),
+                InstanceMethod( "VerifySolution", &GMPSolver::VerifySolution ),
+                InstanceMethod( "ComputeConstraintActivities", &GMPSolver::ComputeConstraintActivities ),
+                InstanceMethod( "Write", &GMPSolver::Write ),
                 InstanceMethod( "MakeBoolVar", &GMPSolver::MakeBoolVar ),
                 InstanceMethod( "MakeRowConstraint", &GMPSolver::MakeRowConstraint ),
                 InstanceMethod( "MutableObjective", &GMPSolver::MutableObjective ),
@@ -94,6 +103,8 @@ public:
         return exports;
     }
 
+    // static bool SolverTypeSupportsInterruption(const MPModelRequest::SolverType solver );
+    static Napi::Value SolverTypeSupportsInterruption( const Napi::CallbackInfo& info );
     // static OptimizationProblemType ParseSolverTypeOrDie( const std::string& solver_id );
     static Napi::Value ParseSolverTypeOrDie( const Napi::CallbackInfo& info );
     // static bool ParseSolverType( absl::string_view solver_id, OptimizationProblemType* type );
@@ -102,6 +113,25 @@ public:
     static Napi::Value SupportsProblemType( const Napi::CallbackInfo& info );
     // static MPSolver* CreateSolver( const std::string& solver_id );
     static Napi::Value CreateSolver( const Napi::CallbackInfo& info );
+    // static void SolveWithProto( const MPModelRequest& model_request, MPSolutionResponse*   response, std::atomic< bool >* interrupt = nullptr );
+    static Napi::Value SolveWithProto( const Napi::CallbackInfo& info );
+
+    //  void FillSolutionResponseProto( MPSolutionResponse* response ) const;
+    Napi::Value FillSolutionResponseProto( const Napi::CallbackInfo& info );
+    //  MPSolverResponseStatus LoadModelFromProtoWithUniqueNamesOrDie(  const MPModelProto& input_model, std::string* error_message );
+    Napi::Value LoadModelFromProtoWithUniqueNamesOrDie( const Napi::CallbackInfo& info );
+    // MPSolverResponseStatus LoadModelFromProto( const MPModelProto& input_model, std::string*        error_message );
+    Napi::Value LoadModelFromProto( const Napi::CallbackInfo& info );
+    // bool InterruptSolve();
+    Napi::Value InterruptSolve( const Napi::CallbackInfo& info );
+    //  void Reset();
+    Napi::Value Reset( const Napi::CallbackInfo& info );
+    // bool VerifySolution( double tolerance, bool log_errors ) const;
+    Napi::Value VerifySolution( const Napi::CallbackInfo& info );
+    // std::vector< double > ComputeConstraintActivities() const;
+    Napi::Value ComputeConstraintActivities( const Napi::CallbackInfo& info );
+    // Write(file_name: string): void;
+    Napi::Value Write( const Napi::CallbackInfo& info );
     // MPVariable* MakeBoolVar( const std::string& name );
     Napi::Value MakeBoolVar( const Napi::CallbackInfo& info );
     // MPConstraint* MakeRowConstraint( double lb, double ub );
@@ -153,6 +183,98 @@ public:
 };
 
 Napi::FunctionReference GMPSolver::constructor;
+
+class GMPModelRequest : public Napi::ObjectWrap< GMPModelRequest >
+{
+public:
+    static Napi::FunctionReference constructor;
+    MPModelRequest*                pMPModelRequest = nullptr;
+    GMPModelRequest( const Napi::CallbackInfo& info );
+    ~GMPModelRequest();
+
+    static Napi::Object Init( Napi::Env env, Napi::Object exports )
+    {
+        Napi::HandleScope scope( env );
+        Napi::Function    func = DefineClass(
+            env, "MPModelRequest",
+            {} );
+        constructor = Napi::Persistent( func );
+        constructor.SuppressDestruct();
+        exports.Set( Napi::String::New( env, "MPModelRequest" ), func );
+        return exports;
+    }
+};
+
+Napi::FunctionReference GMPModelRequest::constructor;
+
+class GMPSolutionResponse : public Napi::ObjectWrap< GMPSolutionResponse >
+{
+public:
+    static Napi::FunctionReference constructor;
+    MPSolutionResponse*            pMPSolutionResponse = nullptr;
+    GMPSolutionResponse( const Napi::CallbackInfo& info );
+    ~GMPSolutionResponse();
+
+    static Napi::Object Init( Napi::Env env, Napi::Object exports )
+    {
+        Napi::HandleScope scope( env );
+        Napi::Function    func = DefineClass(
+            env, "MPSolutionResponse",
+            {} );
+        constructor = Napi::Persistent( func );
+        constructor.SuppressDestruct();
+        exports.Set( Napi::String::New( env, "MPSolutionResponse" ), func );
+        return exports;
+    }
+};
+
+Napi::FunctionReference GMPSolutionResponse::constructor;
+
+class GMPModelProto : public Napi::ObjectWrap< GMPModelProto >
+{
+public:
+    static Napi::FunctionReference constructor;
+    MPModelProto*                  pMPModelProto = nullptr;
+    GMPModelProto( const Napi::CallbackInfo& info );
+    ~GMPModelProto();
+
+    static Napi::Object Init( Napi::Env env, Napi::Object exports )
+    {
+        Napi::HandleScope scope( env );
+        Napi::Function    func = DefineClass(
+            env, "MPModelProto",
+            {} );
+        constructor = Napi::Persistent( func );
+        constructor.SuppressDestruct();
+        exports.Set( Napi::String::New( env, "MPModelProto" ), func );
+        return exports;
+    }
+};
+
+Napi::FunctionReference GMPModelProto::constructor;
+
+class GMPSolverParameters : public Napi::ObjectWrap< GMPSolverParameters >
+{
+public:
+    static Napi::FunctionReference constructor;
+    MPSolverParameters*            pMPSolverParameters = nullptr;
+    GMPSolverParameters( const Napi::CallbackInfo& info );
+    ~GMPSolverParameters();
+
+    static Napi::Object Init( Napi::Env env, Napi::Object exports )
+    {
+        Napi::HandleScope scope( env );
+        Napi::Function    func = DefineClass(
+            env, "MPSolverParameters",
+            {} );
+        constructor = Napi::Persistent( func );
+        constructor.SuppressDestruct();
+        exports.Set( Napi::String::New( env, "MPSolverParameters" ), func );
+        return exports;
+    }
+};
+
+Napi::FunctionReference GMPSolverParameters::constructor;
 
 class GMPVariable : public Napi::ObjectWrap< GMPVariable >
 {

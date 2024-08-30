@@ -77,6 +77,49 @@
         }
     }
 
+    export enum MPSolverResponseStatus 
+    {
+        MPSOLVER_OPTIMAL = 0,
+        MPSOLVER_FEASIBLE = 1,
+        MPSOLVER_INFEASIBLE = 2,
+        MPSOLVER_UNBOUNDED = 3,
+        MPSOLVER_ABNORMAL = 4,
+        MPSOLVER_NOT_SOLVED = 6,
+        MPSOLVER_MODEL_IS_VALID = 97,
+        MPSOLVER_CANCELLED_BY_USER = 98,
+        MPSOLVER_UNKNOWN_STATUS = 99,
+        MPSOLVER_MODEL_INVALID = 5,
+        MPSOLVER_MODEL_INVALID_SOLUTION_HINT = 84,
+        MPSOLVER_MODEL_INVALID_SOLVER_PARAMETERS = 85,
+        MPSOLVER_SOLVER_TYPE_UNAVAILABLE = 7,
+        MPSOLVER_INCOMPATIBLE_OPTIONS = 113
+    }
+
+    export namespace MPModelRequest
+    {
+        enum SolverType  
+        {
+            CLP_LINEAR_PROGRAMMING = 0,
+            GLOP_LINEAR_PROGRAMMING = 2,
+            GLPK_LINEAR_PROGRAMMING = 1,
+            GUROBI_LINEAR_PROGRAMMING = 6,
+            XPRESS_LINEAR_PROGRAMMING = 101,
+            CPLEX_LINEAR_PROGRAMMING = 10,
+            HIGHS_LINEAR_PROGRAMMING = 15,
+            SCIP_MIXED_INTEGER_PROGRAMMING = 3,
+            GLPK_MIXED_INTEGER_PROGRAMMING = 4,
+            CBC_MIXED_INTEGER_PROGRAMMING = 5,
+            GUROBI_MIXED_INTEGER_PROGRAMMING = 7,
+            XPRESS_MIXED_INTEGER_PROGRAMMING = 102,
+            CPLEX_MIXED_INTEGER_PROGRAMMING = 11,
+            HIGHS_MIXED_INTEGER_PROGRAMMING = 16,
+            BOP_INTEGER_PROGRAMMING = 12,
+            SAT_INTEGER_PROGRAMMING = 14,
+            PDLP_LINEAR_PROGRAMMING = 8,
+            KNAPSACK_MIXED_INTEGER_PROGRAMMING = 13
+        }
+    }
+
     /**
      * This mathematical programming (MP) solver class is the main class
      * though which users build and solve problems.
@@ -404,12 +447,12 @@
          */
         Solve(): MPSolver.ResultStatus;
 
-        // TODO  from here on, the methods are not yet implemented in the TypeScript version
         /**
          * Solves the problem using the specified parameter values.
          * 
          * C++: ResultStatus Solve( const MPSolverParameters& param );
          */
+        Solve(param: MPSolverParameters): MPSolver.ResultStatus;
 
         /**
          * Writes the model using the solver internal write function.  Currently only
@@ -417,6 +460,7 @@
          * 
          * C++: void Write( const std::string& file_name );
          */
+        Write(file_name: string): void;
 
         /**
          * Advanced usage: compute the "activities" of all constraints, which are the
@@ -426,6 +470,7 @@
          * 
          * C++: std::vector< double > ComputeConstraintActivities() const;
          */
+        ComputeConstraintActivities(): number[];
 
         /**
          * Advanced usage: Verifies the *correctness* of the solution.
@@ -447,6 +492,7 @@
          * 
          * C++: bool VerifySolution( double tolerance, bool log_errors ) const;
          */
+        VerifySolution(tolerance: number, log_errors: boolean): boolean;
 
         /**
          * Advanced usage: resets extracted model to solve from scratch.
@@ -458,6 +504,7 @@
          * 
          * C++: void Reset();
          */
+        Reset(): void;
 
         /** 
          * Interrupts the Solve() execution to terminate processing if possible.
@@ -471,6 +518,7 @@
          * 
          * C++: bool InterruptSolve();
          */
+        InterruptSolve(): boolean;
 
         /**
          * Loads model from protocol buffer.
@@ -482,6 +530,7 @@
          * C++: MPSolverResponseStatus LoadModelFromProto( const MPModelProto& input_model,
          *                                                std::string*        error_message );
          */
+        LoadModelFromProto(input_model: MPModelProto, error_message: string): MPSolverResponseStatus;
 
         /**
          * Loads model from protocol buffer.
@@ -493,12 +542,14 @@
          * C++: MPSolverResponseStatus LoadModelFromProtoWithUniqueNamesOrDie( 
          *       const MPModelProto& input_model, std::string* error_message );
          */
+        LoadModelFromProtoWithUniqueNamesOrDie(input_model: MPModelProto, error_message: string): MPSolverResponseStatus;
 
         /**
          * Encodes the current solution in a solution response protocol buffer.
          * 
          * C++: void FillSolutionResponseProto( MPSolutionResponse* response ) const;
          */
+        FillSolutionResponseProto(response: MPSolutionResponse): void;
 
         /**
          * Solves the model encoded by a MPModelRequest protocol buffer and fills the
@@ -521,11 +572,14 @@
          *                                 // solver may set it to true itself, in some cases.
          *                                 std::atomic< bool >* interrupt = nullptr );
          */
+        static SolveWithProto(model_request: MPModelRequest, response: MPSolutionResponse, interrupt: boolean): void;
 
+        // TODO  from here on, the methods are not yet implemented in the TypeScript version
         /**
          * C++: static bool SolverTypeSupportsInterruption(
          *     const MPModelRequest::SolverType solver );
          */
+        static SolverTypeSupportsInterruption(solver: MPModelRequest.SolverType): boolean;
 
         /**
          * Exports model to protocol buffer.
@@ -534,8 +588,8 @@
          */
 
         /**
-         * Load a solution encoded in a protocol buffer onto this solver for easy
-        access via the MPSolver interface.
+         * Load a solution encoded in a protocol buffer onto this solver for easy 
+         * access via the MPSolver interface.
          *
          * IMPORTANT: This may only be used in conjunction with ExportModel(),
         following this example:
@@ -826,6 +880,1240 @@
 
         //     // Debugging: verify that the given MPVariable* belongs to this solver.
         //     bool OwnsVariable( const MPVariable* var ) const;
+
+    }
+
+    // TODO  to add class in operations_research
+
+    export class MPModelRequest 
+    {
+        // public:
+        //     inline MPModelRequest()
+        //         : MPModelRequest( nullptr ) {}
+        //     ~MPModelRequest() override;
+        //     explicit PROTOBUF_CONSTEXPR MPModelRequest( ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized );
+
+        //     MPModelRequest( const MPModelRequest& from );
+        //     MPModelRequest( MPModelRequest&& from ) noexcept
+        //         : MPModelRequest()
+        //     {
+        //         *this = ::std::move( from );
+        //     }
+
+        //     inline MPModelRequest& operator=( const MPModelRequest& from )
+        //     {
+        //         CopyFrom( from );
+        //         return *this;
+        //     }
+        //     inline MPModelRequest& operator=( MPModelRequest&& from ) noexcept
+        //     {
+        //         if ( this == &from ) return *this;
+        //         if ( GetOwningArena() == from.GetOwningArena()
+        // #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        //              && GetOwningArena() != nullptr
+        // #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+        //         )
+        //         {
+        //             InternalSwap( &from );
+        //         }
+        //         else
+        //         {
+        //             CopyFrom( from );
+        //         }
+        //         return *this;
+        //     }
+
+        //     inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const
+        //     {
+        //         return _internal_metadata_.unknown_fields< ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet >( ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance );
+        //     }
+        //     inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields()
+        //     {
+        //         return _internal_metadata_.mutable_unknown_fields< ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet >();
+        //     }
+
+        //     static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor()
+        //     {
+        //         return GetDescriptor();
+        //     }
+        //     static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor()
+        //     {
+        //         return default_instance().GetMetadata().descriptor;
+        //     }
+        //     static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection()
+        //     {
+        //         return default_instance().GetMetadata().reflection;
+        //     }
+        //     static const MPModelRequest& default_instance()
+        //     {
+        //         return *internal_default_instance();
+        //     }
+        //     static inline const MPModelRequest* internal_default_instance()
+        //     {
+        //         return reinterpret_cast< const MPModelRequest* >(
+        //             &_MPModelRequest_default_instance_ );
+        //     }
+        //     static constexpr int kIndexInFileMessages =
+        //         18;
+
+        //     friend void swap( MPModelRequest& a, MPModelRequest& b )
+        //     {
+        //         a.Swap( &b );
+        //     }
+        //     inline void Swap( MPModelRequest* other )
+        //     {
+        //         if ( other == this ) return;
+        // #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+        //         if ( GetOwningArena() != nullptr && GetOwningArena() == other->GetOwningArena() )
+        //         {
+        // #else   // PROTOBUF_FORCE_COPY_IN_SWAP
+        //         if ( GetOwningArena() == other->GetOwningArena() )
+        //         {
+        // #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+        //             InternalSwap( other );
+        //         }
+        //         else
+        //         {
+        //             ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap( this, other );
+        //         }
+        //     }
+        //     void UnsafeArenaSwap( MPModelRequest* other )
+        //     {
+        //         if ( other == this ) return;
+        //         GOOGLE_DCHECK( GetOwningArena() == other->GetOwningArena() );
+        //         InternalSwap( other );
+        //     }
+
+        //     // implements Message ----------------------------------------------
+
+        //     MPModelRequest* New( ::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr ) const final
+        //     {
+        //         return CreateMaybeMessage< MPModelRequest >( arena );
+        //     }
+        //     using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+        //     void CopyFrom( const MPModelRequest& from );
+        //     using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+        //     void MergeFrom( const MPModelRequest& from )
+        //     {
+        //         MPModelRequest::MergeImpl( *this, from );
+        //     }
+
+        // private:
+        //     static void MergeImpl( ::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg );
+
+        // public:
+        //     PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+        //     bool                                  IsInitialized() const final;
+
+        //     size_t      ByteSizeLong() const final;
+        //     const char* _InternalParse( const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx ) final;
+        //     uint8_t*    _InternalSerialize(
+        //            uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream ) const final;
+        //     int GetCachedSize() const final
+        //     {
+        //         return _impl_._cached_size_.Get();
+        //     }
+
+        // private:
+        //     void SharedCtor( ::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned );
+        //     void SharedDtor();
+        //     void SetCachedSize( int size ) const final;
+        //     void InternalSwap( MPModelRequest* other );
+
+        // private:
+        //     friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+        //     static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName()
+        //     {
+        //         return "operations_research.MPModelRequest";
+        //     }
+
+        // protected:
+        //     explicit MPModelRequest( ::PROTOBUF_NAMESPACE_ID::Arena* arena,
+        //                              bool                            is_message_owned = false );
+
+        // public:
+        //     static const ClassData                             _class_data_;
+        //     const ::PROTOBUF_NAMESPACE_ID::Message::ClassData* GetClassData() const final;
+
+        //     ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+        //     // nested types ----------------------------------------------------
+
+        //     typedef MPModelRequest_SolverType SolverType;
+        //     static constexpr SolverType       CLP_LINEAR_PROGRAMMING =
+        //         MPModelRequest_SolverType_CLP_LINEAR_PROGRAMMING;
+        //     static constexpr SolverType GLOP_LINEAR_PROGRAMMING =
+        //         MPModelRequest_SolverType_GLOP_LINEAR_PROGRAMMING;
+        //     static constexpr SolverType GLPK_LINEAR_PROGRAMMING =
+        //         MPModelRequest_SolverType_GLPK_LINEAR_PROGRAMMING;
+        //     static constexpr SolverType GUROBI_LINEAR_PROGRAMMING =
+        //         MPModelRequest_SolverType_GUROBI_LINEAR_PROGRAMMING;
+        //     static constexpr SolverType XPRESS_LINEAR_PROGRAMMING =
+        //         MPModelRequest_SolverType_XPRESS_LINEAR_PROGRAMMING;
+        //     static constexpr SolverType CPLEX_LINEAR_PROGRAMMING =
+        //         MPModelRequest_SolverType_CPLEX_LINEAR_PROGRAMMING;
+        //     static constexpr SolverType HIGHS_LINEAR_PROGRAMMING =
+        //         MPModelRequest_SolverType_HIGHS_LINEAR_PROGRAMMING;
+        //     static constexpr SolverType SCIP_MIXED_INTEGER_PROGRAMMING =
+        //         MPModelRequest_SolverType_SCIP_MIXED_INTEGER_PROGRAMMING;
+        //     static constexpr SolverType GLPK_MIXED_INTEGER_PROGRAMMING =
+        //         MPModelRequest_SolverType_GLPK_MIXED_INTEGER_PROGRAMMING;
+        //     static constexpr SolverType CBC_MIXED_INTEGER_PROGRAMMING =
+        //         MPModelRequest_SolverType_CBC_MIXED_INTEGER_PROGRAMMING;
+        //     static constexpr SolverType GUROBI_MIXED_INTEGER_PROGRAMMING =
+        //         MPModelRequest_SolverType_GUROBI_MIXED_INTEGER_PROGRAMMING;
+        //     static constexpr SolverType XPRESS_MIXED_INTEGER_PROGRAMMING =
+        //         MPModelRequest_SolverType_XPRESS_MIXED_INTEGER_PROGRAMMING;
+        //     static constexpr SolverType CPLEX_MIXED_INTEGER_PROGRAMMING =
+        //         MPModelRequest_SolverType_CPLEX_MIXED_INTEGER_PROGRAMMING;
+        //     static constexpr SolverType HIGHS_MIXED_INTEGER_PROGRAMMING =
+        //         MPModelRequest_SolverType_HIGHS_MIXED_INTEGER_PROGRAMMING;
+        //     static constexpr SolverType BOP_INTEGER_PROGRAMMING =
+        //         MPModelRequest_SolverType_BOP_INTEGER_PROGRAMMING;
+        //     static constexpr SolverType SAT_INTEGER_PROGRAMMING =
+        //         MPModelRequest_SolverType_SAT_INTEGER_PROGRAMMING;
+        //     static constexpr SolverType PDLP_LINEAR_PROGRAMMING =
+        //         MPModelRequest_SolverType_PDLP_LINEAR_PROGRAMMING;
+        //     static constexpr SolverType KNAPSACK_MIXED_INTEGER_PROGRAMMING =
+        //         MPModelRequest_SolverType_KNAPSACK_MIXED_INTEGER_PROGRAMMING;
+        //     static inline bool SolverType_IsValid( int value )
+        //     {
+        //         return MPModelRequest_SolverType_IsValid( value );
+        //     }
+        //     static constexpr SolverType SolverType_MIN =
+        //         MPModelRequest_SolverType_SolverType_MIN;
+        //     static constexpr SolverType SolverType_MAX =
+        //         MPModelRequest_SolverType_SolverType_MAX;
+        //     static constexpr int SolverType_ARRAYSIZE =
+        //         MPModelRequest_SolverType_SolverType_ARRAYSIZE;
+        //     static inline const ::PROTOBUF_NAMESPACE_ID::EnumDescriptor*
+        //     SolverType_descriptor()
+        //     {
+        //         return MPModelRequest_SolverType_descriptor();
+        //     }
+        //     template < typename T >
+        //     static inline const std::string& SolverType_Name( T enum_t_value )
+        //     {
+        //         static_assert( ::std::is_same< T, SolverType >::value || ::std::is_integral< T >::value,
+        //                        "Incorrect type passed to function SolverType_Name." );
+        //         return MPModelRequest_SolverType_Name( enum_t_value );
+        //     }
+        //     static inline bool SolverType_Parse( ::PROTOBUF_NAMESPACE_ID::ConstStringParam name,
+        //                                          SolverType*                               value )
+        //     {
+        //         return MPModelRequest_SolverType_Parse( name, value );
+        //     }
+
+        //     // accessors -------------------------------------------------------
+
+        //     enum : int
+        //     {
+        //         kSolverSpecificParametersFieldNumber              = 5,
+        //         kModelFieldNumber                                 = 1,
+        //         kModelDeltaFieldNumber                            = 8,
+        //         kSolverTimeLimitSecondsFieldNumber                = 3,
+        //         kEnableInternalSolverOutputFieldNumber            = 4,
+        //         kIgnoreSolverSpecificParametersFailureFieldNumber = 9,
+        //         kPopulateAdditionalSolutionsUpToFieldNumber       = 11,
+        //         kSolverTypeFieldNumber                            = 2,
+        //     };
+        //     // optional string solver_specific_parameters = 5;
+        //     bool has_solver_specific_parameters() const;
+
+        // private:
+        //     bool _internal_has_solver_specific_parameters() const;
+
+        // public:
+        //     void               clear_solver_specific_parameters();
+        //     const std::string& solver_specific_parameters() const;
+        //     template < typename ArgT0 = const std::string&, typename... ArgT >
+        //     void               set_solver_specific_parameters( ArgT0&& arg0, ArgT... args );
+        //     std::string*       mutable_solver_specific_parameters();
+        //     PROTOBUF_NODISCARD std::string* release_solver_specific_parameters();
+        //     void                            set_allocated_solver_specific_parameters( std::string* solver_specific_parameters );
+
+        // private:
+        //     const std::string&                 _internal_solver_specific_parameters() const;
+        //     inline PROTOBUF_ALWAYS_INLINE void _internal_set_solver_specific_parameters( const std::string& value );
+        //     std::string*                       _internal_mutable_solver_specific_parameters();
+
+        // public:
+        //     // optional .operations_research.MPModelProto model = 1;
+        //     bool has_model() const;
+
+        // private:
+        //     bool _internal_has_model() const;
+
+        // public:
+        //     void                                                    clear_model();
+        //     const ::operations_research::MPModelProto&              model() const;
+        //     PROTOBUF_NODISCARD ::operations_research::MPModelProto* release_model();
+        //     ::operations_research::MPModelProto*                    mutable_model();
+        //     void                                                    set_allocated_model( ::operations_research::MPModelProto* model );
+
+        // private:
+        //     const ::operations_research::MPModelProto& _internal_model() const;
+        //     ::operations_research::MPModelProto*       _internal_mutable_model();
+
+        // public:
+        //     void unsafe_arena_set_allocated_model(
+        //         ::operations_research::MPModelProto* model );
+        //     ::operations_research::MPModelProto* unsafe_arena_release_model();
+
+        //     // optional .operations_research.MPModelDeltaProto model_delta = 8;
+        //     bool has_model_delta() const;
+
+        // private:
+        //     bool _internal_has_model_delta() const;
+
+        // public:
+        //     void                                                         clear_model_delta();
+        //     const ::operations_research::MPModelDeltaProto&              model_delta() const;
+        //     PROTOBUF_NODISCARD ::operations_research::MPModelDeltaProto* release_model_delta();
+        //     ::operations_research::MPModelDeltaProto*                    mutable_model_delta();
+        //     void                                                         set_allocated_model_delta( ::operations_research::MPModelDeltaProto* model_delta );
+
+        // private:
+        //     const ::operations_research::MPModelDeltaProto& _internal_model_delta() const;
+        //     ::operations_research::MPModelDeltaProto*       _internal_mutable_model_delta();
+
+        // public:
+        //     void unsafe_arena_set_allocated_model_delta(
+        //         ::operations_research::MPModelDeltaProto* model_delta );
+        //     ::operations_research::MPModelDeltaProto* unsafe_arena_release_model_delta();
+
+        //     // optional double solver_time_limit_seconds = 3;
+        //     bool has_solver_time_limit_seconds() const;
+
+        // private:
+        //     bool _internal_has_solver_time_limit_seconds() const;
+
+        // public:
+        //     void   clear_solver_time_limit_seconds();
+        //     double solver_time_limit_seconds() const;
+        //     void   set_solver_time_limit_seconds( double value );
+
+        // private:
+        //     double _internal_solver_time_limit_seconds() const;
+        //     void   _internal_set_solver_time_limit_seconds( double value );
+
+        // public:
+        //     // optional bool enable_internal_solver_output = 4 [default = false];
+        //     bool has_enable_internal_solver_output() const;
+
+        // private:
+        //     bool _internal_has_enable_internal_solver_output() const;
+
+        // public:
+        //     void clear_enable_internal_solver_output();
+        //     bool enable_internal_solver_output() const;
+        //     void set_enable_internal_solver_output( bool value );
+
+        // private:
+        //     bool _internal_enable_internal_solver_output() const;
+        //     void _internal_set_enable_internal_solver_output( bool value );
+
+        // public:
+        //     // optional bool ignore_solver_specific_parameters_failure = 9 [default = false];
+        //     bool has_ignore_solver_specific_parameters_failure() const;
+
+        // private:
+        //     bool _internal_has_ignore_solver_specific_parameters_failure() const;
+
+        // public:
+        //     void clear_ignore_solver_specific_parameters_failure();
+        //     bool ignore_solver_specific_parameters_failure() const;
+        //     void set_ignore_solver_specific_parameters_failure( bool value );
+
+        // private:
+        //     bool _internal_ignore_solver_specific_parameters_failure() const;
+        //     void _internal_set_ignore_solver_specific_parameters_failure( bool value );
+
+        // public:
+        //     // optional int32 populate_additional_solutions_up_to = 11 [default = 0];
+        //     bool has_populate_additional_solutions_up_to() const;
+
+        // private:
+        //     bool _internal_has_populate_additional_solutions_up_to() const;
+
+        // public:
+        //     void    clear_populate_additional_solutions_up_to();
+        //     int32_t populate_additional_solutions_up_to() const;
+        //     void    set_populate_additional_solutions_up_to( int32_t value );
+
+        // private:
+        //     int32_t _internal_populate_additional_solutions_up_to() const;
+        //     void    _internal_set_populate_additional_solutions_up_to( int32_t value );
+
+        // public:
+        //     // optional .operations_research.MPModelRequest.SolverType solver_type = 2 [default = GLOP_LINEAR_PROGRAMMING];
+        //     bool has_solver_type() const;
+
+        // private:
+        //     bool _internal_has_solver_type() const;
+
+        // public:
+        //     void                                             clear_solver_type();
+        //     ::operations_research::MPModelRequest_SolverType solver_type() const;
+        //     void                                             set_solver_type( ::operations_research::MPModelRequest_SolverType value );
+
+        // private:
+        //     ::operations_research::MPModelRequest_SolverType _internal_solver_type() const;
+        //     void                                             _internal_set_solver_type( ::operations_research::MPModelRequest_SolverType value );
+
+        // public:
+        //     // @@protoc_insertion_point(class_scope:operations_research.MPModelRequest)
+        // private:
+        //     class _Internal;
+
+        //     template < typename T >
+        //     friend class ::PROTOBUF_NAMESPACE_ID::Arena::InternalHelper;
+        //     typedef void InternalArenaConstructable_;
+        //     typedef void DestructorSkippable_;
+        //     struct Impl_
+        //     {
+        //         ::PROTOBUF_NAMESPACE_ID::internal::HasBits< 1 >       _has_bits_;
+        //         mutable ::PROTOBUF_NAMESPACE_ID::internal::CachedSize _cached_size_;
+        //         ::PROTOBUF_NAMESPACE_ID::internal::ArenaStringPtr     solver_specific_parameters_;
+        //         ::operations_research::MPModelProto*                  model_;
+        //         ::operations_research::MPModelDeltaProto*             model_delta_;
+        //         double                                                solver_time_limit_seconds_;
+        //         bool                                                  enable_internal_solver_output_;
+        //         bool                                                  ignore_solver_specific_parameters_failure_;
+        //         int32_t                                               populate_additional_solutions_up_to_;
+        //         int                                                   solver_type_;
+        //     };
+        //     union
+        //     {
+        //         Impl_ _impl_;
+        //     };
+        //     friend struct ::TableStruct_ortools_2flinear_5fsolver_2flinear_5fsolver_2eproto;
+    };
+
+
+    export class MPSolutionResponse 
+    {
+        // public:
+        //     inline MPSolutionResponse()
+        //         : MPSolutionResponse( nullptr ) {}
+        //     ~MPSolutionResponse() override;
+        //     explicit PROTOBUF_CONSTEXPR MPSolutionResponse( ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized );
+
+        //     MPSolutionResponse( const MPSolutionResponse& from );
+        //     MPSolutionResponse( MPSolutionResponse&& from ) noexcept
+        //         : MPSolutionResponse()
+        //     {
+        //         *this = ::std::move( from );
+        //     }
+
+        //     inline MPSolutionResponse& operator=( const MPSolutionResponse& from )
+        //     {
+        //         CopyFrom( from );
+        //         return *this;
+        //     }
+        //     inline MPSolutionResponse& operator=( MPSolutionResponse&& from ) noexcept
+        //     {
+        //         if ( this == &from ) return *this;
+        //         if ( GetOwningArena() == from.GetOwningArena()
+        // #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        //              && GetOwningArena() != nullptr
+        // #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+        //         )
+        //         {
+        //             InternalSwap( &from );
+        //         }
+        //         else
+        //         {
+        //             CopyFrom( from );
+        //         }
+        //         return *this;
+        //     }
+
+        //     inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const
+        //     {
+        //         return _internal_metadata_.unknown_fields< ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet >( ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance );
+        //     }
+        //     inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields()
+        //     {
+        //         return _internal_metadata_.mutable_unknown_fields< ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet >();
+        //     }
+
+        //     static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor()
+        //     {
+        //         return GetDescriptor();
+        //     }
+        //     static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor()
+        //     {
+        //         return default_instance().GetMetadata().descriptor;
+        //     }
+        //     static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection()
+        //     {
+        //         return default_instance().GetMetadata().reflection;
+        //     }
+        //     static const MPSolutionResponse& default_instance()
+        //     {
+        //         return *internal_default_instance();
+        //     }
+        //     static inline const MPSolutionResponse* internal_default_instance()
+        //     {
+        //         return reinterpret_cast< const MPSolutionResponse* >(
+        //             &_MPSolutionResponse_default_instance_ );
+        //     }
+        //     static constexpr int kIndexInFileMessages =
+        //         21;
+
+        //     friend void swap( MPSolutionResponse& a, MPSolutionResponse& b )
+        //     {
+        //         a.Swap( &b );
+        //     }
+        //     inline void Swap( MPSolutionResponse* other )
+        //     {
+        //         if ( other == this ) return;
+        // #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+        //         if ( GetOwningArena() != nullptr && GetOwningArena() == other->GetOwningArena() )
+        //         {
+        // #else   // PROTOBUF_FORCE_COPY_IN_SWAP
+        //         if ( GetOwningArena() == other->GetOwningArena() )
+        //         {
+        // #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+        //             InternalSwap( other );
+        //         }
+        //         else
+        //         {
+        //             ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap( this, other );
+        //         }
+        //     }
+        //     void UnsafeArenaSwap( MPSolutionResponse* other )
+        //     {
+        //         if ( other == this ) return;
+        //         GOOGLE_DCHECK( GetOwningArena() == other->GetOwningArena() );
+        //         InternalSwap( other );
+        //     }
+
+        //     // implements Message ----------------------------------------------
+
+        //     MPSolutionResponse* New( ::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr ) const final
+        //     {
+        //         return CreateMaybeMessage< MPSolutionResponse >( arena );
+        //     }
+        //     using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+        //     void CopyFrom( const MPSolutionResponse& from );
+        //     using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+        //     void MergeFrom( const MPSolutionResponse& from )
+        //     {
+        //         MPSolutionResponse::MergeImpl( *this, from );
+        //     }
+
+        // private:
+        //     static void MergeImpl( ::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg );
+
+        // public:
+        //     PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+        //     bool                                  IsInitialized() const final;
+
+        //     size_t      ByteSizeLong() const final;
+        //     const char* _InternalParse( const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx ) final;
+        //     uint8_t*    _InternalSerialize(
+        //            uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream ) const final;
+        //     int GetCachedSize() const final
+        //     {
+        //         return _impl_._cached_size_.Get();
+        //     }
+
+        // private:
+        //     void SharedCtor( ::PROTOBUF_NAMESPACE_ID::Arena* arena, bool is_message_owned );
+        //     void SharedDtor();
+        //     void SetCachedSize( int size ) const final;
+        //     void InternalSwap( MPSolutionResponse* other );
+
+        // private:
+        //     friend class ::PROTOBUF_NAMESPACE_ID::internal::AnyMetadata;
+        //     static ::PROTOBUF_NAMESPACE_ID::StringPiece FullMessageName()
+        //     {
+        //         return "operations_research.MPSolutionResponse";
+        //     }
+
+        // protected:
+        //     explicit MPSolutionResponse( ::PROTOBUF_NAMESPACE_ID::Arena* arena,
+        //                                  bool                            is_message_owned = false );
+
+        // public:
+        //     static const ClassData                             _class_data_;
+        //     const ::PROTOBUF_NAMESPACE_ID::Message::ClassData* GetClassData() const final;
+
+        //     ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+        //     // nested types ----------------------------------------------------
+
+        //     // accessors -------------------------------------------------------
+
+        //     enum : int
+        //     {
+        //         kVariableValueFieldNumber       = 3,
+        //         kDualValueFieldNumber           = 4,
+        //         kReducedCostFieldNumber         = 6,
+        //         kAdditionalSolutionsFieldNumber = 8,
+        //         kStatusStrFieldNumber           = 7,
+        //         kSolverSpecificInfoFieldNumber  = 11,
+        //         kSolveInfoFieldNumber           = 10,
+        //         kObjectiveValueFieldNumber      = 2,
+        //         kBestObjectiveBoundFieldNumber  = 5,
+        //         kStatusFieldNumber              = 1,
+        //     };
+        //     // repeated double variable_value = 3 [packed = true];
+        //     int variable_value_size() const;
+
+        // private:
+        //     int _internal_variable_value_size() const;
+
+        // public:
+        //     void clear_variable_value();
+
+        // private:
+        //     double _internal_variable_value( int index ) const;
+        //     const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+        //          _internal_variable_value() const;
+        //     void _internal_add_variable_value( double value );
+        //     ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+        //     _internal_mutable_variable_value();
+
+        // public:
+        //     double variable_value( int index ) const;
+        //     void   set_variable_value( int index, double value );
+        //     void   add_variable_value( double value );
+        //     const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+        //     variable_value() const;
+        //     ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+        //     mutable_variable_value();
+
+        //     // repeated double dual_value = 4 [packed = true];
+        //     int dual_value_size() const;
+
+        // private:
+        //     int _internal_dual_value_size() const;
+
+        // public:
+        //     void clear_dual_value();
+
+        // private:
+        //     double _internal_dual_value( int index ) const;
+        //     const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+        //          _internal_dual_value() const;
+        //     void _internal_add_dual_value( double value );
+        //     ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+        //     _internal_mutable_dual_value();
+
+        // public:
+        //     double dual_value( int index ) const;
+        //     void   set_dual_value( int index, double value );
+        //     void   add_dual_value( double value );
+        //     const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+        //     dual_value() const;
+        //     ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+        //     mutable_dual_value();
+
+        //     // repeated double reduced_cost = 6 [packed = true];
+        //     int reduced_cost_size() const;
+
+        // private:
+        //     int _internal_reduced_cost_size() const;
+
+        // public:
+        //     void clear_reduced_cost();
+
+        // private:
+        //     double _internal_reduced_cost( int index ) const;
+        //     const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+        //          _internal_reduced_cost() const;
+        //     void _internal_add_reduced_cost( double value );
+        //     ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+        //     _internal_mutable_reduced_cost();
+
+        // public:
+        //     double reduced_cost( int index ) const;
+        //     void   set_reduced_cost( int index, double value );
+        //     void   add_reduced_cost( double value );
+        //     const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
+        //     reduced_cost() const;
+        //     ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
+        //     mutable_reduced_cost();
+
+        //     // repeated .operations_research.MPSolution additional_solutions = 8;
+        //     int additional_solutions_size() const;
+
+        // private:
+        //     int _internal_additional_solutions_size() const;
+
+        // public:
+        //     void                               clear_additional_solutions();
+        //     ::operations_research::MPSolution* mutable_additional_solutions( int index );
+        //     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::MPSolution >*
+        //     mutable_additional_solutions();
+
+        // private:
+        //     const ::operations_research::MPSolution& _internal_additional_solutions( int index ) const;
+        //     ::operations_research::MPSolution*       _internal_add_additional_solutions();
+
+        // public:
+        //     const ::operations_research::MPSolution& additional_solutions( int index ) const;
+        //     ::operations_research::MPSolution*       add_additional_solutions();
+        //     const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::MPSolution >&
+        //     additional_solutions() const;
+
+        //     // optional string status_str = 7;
+        //     bool has_status_str() const;
+
+        // private:
+        //     bool _internal_has_status_str() const;
+
+        // public:
+        //     void               clear_status_str();
+        //     const std::string& status_str() const;
+        //     template < typename ArgT0 = const std::string&, typename... ArgT >
+        //     void               set_status_str( ArgT0&& arg0, ArgT... args );
+        //     std::string*       mutable_status_str();
+        //     PROTOBUF_NODISCARD std::string* release_status_str();
+        //     void                            set_allocated_status_str( std::string* status_str );
+
+        // private:
+        //     const std::string&                 _internal_status_str() const;
+        //     inline PROTOBUF_ALWAYS_INLINE void _internal_set_status_str( const std::string& value );
+        //     std::string*                       _internal_mutable_status_str();
+
+        // public:
+        //     // optional bytes solver_specific_info = 11;
+        //     bool has_solver_specific_info() const;
+
+        // private:
+        //     bool _internal_has_solver_specific_info() const;
+
+        // public:
+        //     void               clear_solver_specific_info();
+        //     const std::string& solver_specific_info() const;
+        //     template < typename ArgT0 = const std::string&, typename... ArgT >
+        //     void               set_solver_specific_info( ArgT0&& arg0, ArgT... args );
+        //     std::string*       mutable_solver_specific_info();
+        //     PROTOBUF_NODISCARD std::string* release_solver_specific_info();
+        //     void                            set_allocated_solver_specific_info( std::string* solver_specific_info );
+
+        // private:
+        //     const std::string&                 _internal_solver_specific_info() const;
+        //     inline PROTOBUF_ALWAYS_INLINE void _internal_set_solver_specific_info( const std::string& value );
+        //     std::string*                       _internal_mutable_solver_specific_info();
+
+        // public:
+        //     // optional .operations_research.MPSolveInfo solve_info = 10;
+        //     bool has_solve_info() const;
+
+        // private:
+        //     bool _internal_has_solve_info() const;
+
+        // public:
+        //     void                                                   clear_solve_info();
+        //     const ::operations_research::MPSolveInfo&              solve_info() const;
+        //     PROTOBUF_NODISCARD ::operations_research::MPSolveInfo* release_solve_info();
+        //     ::operations_research::MPSolveInfo*                    mutable_solve_info();
+        //     void                                                   set_allocated_solve_info( ::operations_research::MPSolveInfo* solve_info );
+
+        // private:
+        //     const ::operations_research::MPSolveInfo& _internal_solve_info() const;
+        //     ::operations_research::MPSolveInfo*       _internal_mutable_solve_info();
+
+        // public:
+        //     void unsafe_arena_set_allocated_solve_info(
+        //         ::operations_research::MPSolveInfo* solve_info );
+        //     ::operations_research::MPSolveInfo* unsafe_arena_release_solve_info();
+
+        //     // optional double objective_value = 2;
+        //     bool has_objective_value() const;
+
+        // private:
+        //     bool _internal_has_objective_value() const;
+
+        // public:
+        //     void   clear_objective_value();
+        //     double objective_value() const;
+        //     void   set_objective_value( double value );
+
+        // private:
+        //     double _internal_objective_value() const;
+        //     void   _internal_set_objective_value( double value );
+
+        // public:
+        //     // optional double best_objective_bound = 5;
+        //     bool has_best_objective_bound() const;
+
+        // private:
+        //     bool _internal_has_best_objective_bound() const;
+
+        // public:
+        //     void   clear_best_objective_bound();
+        //     double best_objective_bound() const;
+        //     void   set_best_objective_bound( double value );
+
+        // private:
+        //     double _internal_best_objective_bound() const;
+        //     void   _internal_set_best_objective_bound( double value );
+
+        // public:
+        //     // optional .operations_research.MPSolverResponseStatus status = 1 [default = MPSOLVER_UNKNOWN_STATUS];
+        //     bool has_status() const;
+
+
+        // public:
+        //     void                                          clear_status();
+        //     ::operations_research::MPSolverResponseStatus status() const;
+        //     void                                          set_status( ::operations_research::MPSolverResponseStatus value );
+
+
+        // public:
+        //     // @@protoc_insertion_point(class_scope:operations_research.MPSolutionResponse)
+    };
+
+    export class MPModelProto 
+    {
+        // public:
+        //     inline MPModelProto()
+        //         : MPModelProto( nullptr ) {}
+        //     ~MPModelProto() override;
+        //     explicit PROTOBUF_CONSTEXPR MPModelProto( ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized );
+
+        //     MPModelProto( const MPModelProto& from );
+        //     MPModelProto( MPModelProto&& from ) noexcept
+        //         : MPModelProto()
+        //     {
+        //         *this = ::std::move( from );
+        //     }
+
+        //     inline MPModelProto& operator=( const MPModelProto& from )
+        //     {
+        //         CopyFrom( from );
+        //         return *this;
+        //     }
+        //     inline MPModelProto& operator=( MPModelProto&& from ) noexcept
+        //     {
+        //         if ( this == &from ) return *this;
+        //         if ( GetOwningArena() == from.GetOwningArena()
+        // #ifdef PROTOBUF_FORCE_COPY_IN_MOVE
+        //              && GetOwningArena() != nullptr
+        // #endif  // !PROTOBUF_FORCE_COPY_IN_MOVE
+        //         )
+        //         {
+        //             InternalSwap( &from );
+        //         }
+        //         else
+        //         {
+        //             CopyFrom( from );
+        //         }
+        //         return *this;
+        //     }
+
+        //     inline const ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet& unknown_fields() const
+        //     {
+        //         return _internal_metadata_.unknown_fields< ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet >( ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet::default_instance );
+        //     }
+        //     inline ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet* mutable_unknown_fields()
+        //     {
+        //         return _internal_metadata_.mutable_unknown_fields< ::PROTOBUF_NAMESPACE_ID::UnknownFieldSet >();
+        //     }
+
+        //     static const ::PROTOBUF_NAMESPACE_ID::Descriptor* descriptor()
+        //     {
+        //         return GetDescriptor();
+        //     }
+        //     static const ::PROTOBUF_NAMESPACE_ID::Descriptor* GetDescriptor()
+        //     {
+        //         return default_instance().GetMetadata().descriptor;
+        //     }
+        //     static const ::PROTOBUF_NAMESPACE_ID::Reflection* GetReflection()
+        //     {
+        //         return default_instance().GetMetadata().reflection;
+        //     }
+        //     static const MPModelProto& default_instance()
+        //     {
+        //         return *internal_default_instance();
+        //     }
+        //     static inline const MPModelProto* internal_default_instance()
+        //     {
+        //         return reinterpret_cast< const MPModelProto* >(
+        //             &_MPModelProto_default_instance_ );
+        //     }
+        //     static constexpr int kIndexInFileMessages =
+        //         12;
+
+        //     friend void swap( MPModelProto& a, MPModelProto& b )
+        //     {
+        //         a.Swap( &b );
+        //     }
+        //     inline void Swap( MPModelProto* other )
+        //     {
+        //         if ( other == this ) return;
+        // #ifdef PROTOBUF_FORCE_COPY_IN_SWAP
+        //         if ( GetOwningArena() != nullptr && GetOwningArena() == other->GetOwningArena() )
+        //         {
+        // #else   // PROTOBUF_FORCE_COPY_IN_SWAP
+        //         if ( GetOwningArena() == other->GetOwningArena() )
+        //         {
+        // #endif  // !PROTOBUF_FORCE_COPY_IN_SWAP
+        //             InternalSwap( other );
+        //         }
+        //         else
+        //         {
+        //             ::PROTOBUF_NAMESPACE_ID::internal::GenericSwap( this, other );
+        //         }
+        //     }
+        //     void UnsafeArenaSwap( MPModelProto* other )
+        //     {
+        //         if ( other == this ) return;
+        //         GOOGLE_DCHECK( GetOwningArena() == other->GetOwningArena() );
+        //         InternalSwap( other );
+        //     }
+
+        //     // implements Message ----------------------------------------------
+
+        //     MPModelProto* New( ::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr ) const final
+        //     {
+        //         return CreateMaybeMessage< MPModelProto >( arena );
+        //     }
+        //     using ::PROTOBUF_NAMESPACE_ID::Message::CopyFrom;
+        //     void CopyFrom( const MPModelProto& from );
+        //     using ::PROTOBUF_NAMESPACE_ID::Message::MergeFrom;
+        //     void MergeFrom( const MPModelProto& from )
+        //     {
+        //         MPModelProto::MergeImpl( *this, from );
+        //     }
+
+
+        // public:
+        //     PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
+        //     bool                                  IsInitialized() const final;
+
+        //     size_t      ByteSizeLong() const final;
+        //     const char* _InternalParse( const char* ptr, ::PROTOBUF_NAMESPACE_ID::internal::ParseContext* ctx ) final;
+        //     uint8_t*    _InternalSerialize(
+        //            uint8_t* target, ::PROTOBUF_NAMESPACE_ID::io::EpsCopyOutputStream* stream ) const final;
+        //     int GetCachedSize() const final
+        //     {
+        //         return _impl_._cached_size_.Get();
+        //     }
+
+
+
+        // public:
+        //     static const ClassData                             _class_data_;
+        //     const ::PROTOBUF_NAMESPACE_ID::Message::ClassData* GetClassData() const final;
+
+        //     ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
+
+        //     // nested types ----------------------------------------------------
+
+        //     typedef MPModelProto_Annotation Annotation;
+
+        //     // accessors -------------------------------------------------------
+
+        //     enum : int
+        //     {
+        //         kVariableFieldNumber           = 3,
+        //         kConstraintFieldNumber         = 4,
+        //         kGeneralConstraintFieldNumber  = 7,
+        //         kAnnotationFieldNumber         = 9,
+        //         kNameFieldNumber               = 5,
+        //         kSolutionHintFieldNumber       = 6,
+        //         kQuadraticObjectiveFieldNumber = 8,
+        //         kObjectiveOffsetFieldNumber    = 2,
+        //         kMaximizeFieldNumber           = 1,
+        //     };
+        //     // repeated .operations_research.MPVariableProto variable = 3;
+        //     int variable_size() const;
+
+
+        // public:
+        //     void                                    clear_variable();
+        //     ::operations_research::MPVariableProto* mutable_variable( int index );
+        //     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::MPVariableProto >*
+        //     mutable_variable();
+
+
+        // public:
+        //     const ::operations_research::MPVariableProto& variable( int index ) const;
+        //     ::operations_research::MPVariableProto*       add_variable();
+        //     const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::MPVariableProto >&
+        //     variable() const;
+
+        //     // repeated .operations_research.MPConstraintProto constraint = 4;
+        //     int constraint_size() const;
+
+
+        // public:
+        //     void                                      clear_constraint();
+        //     ::operations_research::MPConstraintProto* mutable_constraint( int index );
+        //     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::MPConstraintProto >*
+        //     mutable_constraint();
+
+
+        // public:
+        //     const ::operations_research::MPConstraintProto& constraint( int index ) const;
+        //     ::operations_research::MPConstraintProto*       add_constraint();
+        //     const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::MPConstraintProto >&
+        //     constraint() const;
+
+        //     // repeated .operations_research.MPGeneralConstraintProto general_constraint = 7;
+        //     int general_constraint_size() const;
+
+
+        // public:
+        //     void                                             clear_general_constraint();
+        //     ::operations_research::MPGeneralConstraintProto* mutable_general_constraint( int index );
+        //     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::MPGeneralConstraintProto >*
+        //     mutable_general_constraint();
+
+
+        // public:
+        //     const ::operations_research::MPGeneralConstraintProto& general_constraint( int index ) const;
+        //     ::operations_research::MPGeneralConstraintProto*       add_general_constraint();
+        //     const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::MPGeneralConstraintProto >&
+        //     general_constraint() const;
+
+        //     // repeated .operations_research.MPModelProto.Annotation annotation = 9;
+        //     int annotation_size() const;
+
+
+        // public:
+        //     void                                            clear_annotation();
+        //     ::operations_research::MPModelProto_Annotation* mutable_annotation( int index );
+        //     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::MPModelProto_Annotation >*
+        //     mutable_annotation();
+
+
+        // public:
+        //     const ::operations_research::MPModelProto_Annotation& annotation( int index ) const;
+        //     ::operations_research::MPModelProto_Annotation*       add_annotation();
+        //     const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::MPModelProto_Annotation >&
+        //     annotation() const;
+
+        //     // optional string name = 5 [default = ""];
+        //     bool has_name() const;
+
+
+        // public:
+        //     void               clear_name();
+        //     const std::string& name() const;
+        //     template < typename ArgT0 = const std::string&, typename... ArgT >
+        //     void               set_name( ArgT0&& arg0, ArgT... args );
+        //     std::string*       mutable_name();
+        //     PROTOBUF_NODISCARD std::string* release_name();
+        //     void                            set_allocated_name( std::string* name );
+
+
+        // public:
+        //     // optional .operations_research.PartialVariableAssignment solution_hint = 6;
+        //     bool has_solution_hint() const;
+
+
+        // public:
+        //     void                                                                 clear_solution_hint();
+        //     const ::operations_research::PartialVariableAssignment&              solution_hint() const;
+        //     PROTOBUF_NODISCARD ::operations_research::PartialVariableAssignment* release_solution_hint();
+        //     ::operations_research::PartialVariableAssignment*                    mutable_solution_hint();
+        //     void                                                                 set_allocated_solution_hint( ::operations_research::PartialVariableAssignment* solution_hint );
+
+
+        // public:
+        //     void unsafe_arena_set_allocated_solution_hint(
+        //         ::operations_research::PartialVariableAssignment* solution_hint );
+        //     ::operations_research::PartialVariableAssignment* unsafe_arena_release_solution_hint();
+
+        //     // optional .operations_research.MPQuadraticObjective quadratic_objective = 8;
+        //     bool has_quadratic_objective() const;
+
+
+        // public:
+        //     void                                                            clear_quadratic_objective();
+        //     const ::operations_research::MPQuadraticObjective&              quadratic_objective() const;
+        //     PROTOBUF_NODISCARD ::operations_research::MPQuadraticObjective* release_quadratic_objective();
+        //     ::operations_research::MPQuadraticObjective*                    mutable_quadratic_objective();
+        //     void                                                            set_allocated_quadratic_objective( ::operations_research::MPQuadraticObjective* quadratic_objective );
+
+
+        // public:
+        //     void unsafe_arena_set_allocated_quadratic_objective(
+        //         ::operations_research::MPQuadraticObjective* quadratic_objective );
+        //     ::operations_research::MPQuadraticObjective* unsafe_arena_release_quadratic_objective();
+
+        //     // optional double objective_offset = 2 [default = 0];
+        //     bool has_objective_offset() const;
+
+        // public:
+        //     void   clear_objective_offset();
+        //     double objective_offset() const;
+        //     void   set_objective_offset( double value );
+
+
+        // public:
+        //     // optional bool maximize = 1 [default = false];
+        //     bool has_maximize() const;
+
+
+        // public:
+        //     void clear_maximize();
+        //     bool maximize() const;
+        //     void set_maximize( bool value );
+
+
+    }
+
+    /**
+     * This class stores parameter settings for LP and MIP solvers. Some parameters
+     * are marked as advanced: do not change their values unless you know what you
+     * are doing!
+     *
+     * For developers: how to add a new parameter:
+     * - Add the new Foo parameter in the DoubleParam or IntegerParam enum.
+     * - If it is a categorical param, add a FooValues enum.
+     * - Decide if the wrapper should define a default value for it: yes
+     *   if it controls the properties of the solution (example:
+     *   tolerances) or if it consistently improves performance, no
+     *   otherwise. If yes, define kDefaultFoo.
+     * - Add a foo_value_ member and, if no default value is defined, a
+     *   foo_is_default_ member.
+     * - Add code to handle Foo in Set...Param, Reset...Param,
+     *   Get...Param, Reset and the constructor.
+     * - In class MPSolverInterface, add a virtual method SetFoo, add it
+     *   to SetCommonParameters or SetMIPParameters, and implement it for
+     *   each solver. Sometimes, parameters need to be implemented
+     *   differently, see for example the INCREMENTALITY implementation.
+     * - Add a test in linear_solver_test.cc.
+     *
+     * TODO(user): store the parameter values in a protocol buffer
+     * instead. We need to figure out how to deal with the subtleties of
+     * the default values.
+     */
+    export class MPSolverParameters
+    {
+        // public:
+        //     /// Enumeration of parameters that take continuous values.
+        //     enum DoubleParam
+        //     {
+        //         /// Limit for relative MIP gap.
+        //         RELATIVE_MIP_GAP = 0,
+
+        //         /**
+        //          * Advanced usage: tolerance for primal feasibility of basic solutions.
+        //          *
+        //          * This does not control the integer feasibility tolerance of integer
+        //          * solutions for MIP or the tolerance used during presolve.
+        //          */
+        //         PRIMAL_TOLERANCE = 1,
+        //         /// Advanced usage: tolerance for dual feasibility of basic solutions.
+        //         DUAL_TOLERANCE = 2
+        //     };
+
+        //     /// Enumeration of parameters that take integer or categorical values.
+        //     enum IntegerParam
+        //     {
+        //         /// Advanced usage: presolve mode.
+        //         PRESOLVE = 1000,
+        //         /// Algorithm to solve linear programs.
+        //         LP_ALGORITHM = 1001,
+        //         /// Advanced usage: incrementality from one solve to the next.
+        //         INCREMENTALITY = 1002,
+        //         /// Advanced usage: enable or disable matrix scaling.
+        //         SCALING = 1003
+        //     };
+
+        //     /// For each categorical parameter, enumeration of possible values.
+        //     enum PresolveValues
+        //     {
+        //         /// Presolve is off.
+        //         PRESOLVE_OFF = 0,
+        //         /// Presolve is on.
+        //         PRESOLVE_ON = 1
+        //     };
+
+        //     /// LP algorithm to use.
+        //     enum LpAlgorithmValues
+        //     {
+        //         /// Dual simplex.
+        //         DUAL = 10,
+        //         /// Primal simplex.
+        //         PRIMAL = 11,
+        //         /// Barrier algorithm.
+        //         BARRIER = 12
+        //     };
+
+        //     /// Advanced usage: Incrementality options.
+        //     enum IncrementalityValues
+        //     {
+        //         /// Start solve from scratch.
+        //         INCREMENTALITY_OFF = 0,
+
+        //         /**
+        //          * Reuse results from previous solve as much as the underlying solver
+        //          * allows.
+        //          */
+        //         INCREMENTALITY_ON = 1
+        //     };
+
+        //     /// Advanced usage: Scaling options.
+        //     enum ScalingValues
+        //     {
+        //         /// Scaling is off.
+        //         SCALING_OFF = 0,
+        //         /// Scaling is on.
+        //         SCALING_ON = 1
+        //     };
+
+        //     // Placeholder value to indicate that a parameter is set to
+        //     // the default value defined in the wrapper.
+        //     static const double kDefaultDoubleParamValue;
+        //     static const int    kDefaultIntegerParamValue;
+
+        //     // Placeholder value to indicate that a parameter is unknown.
+        //     static const double kUnknownDoubleParamValue;
+        //     static const int    kUnknownIntegerParamValue;
+
+        //     // Default values for parameters. Only parameters that define the
+        //     // properties of the solution returned need to have a default value
+        //     // (that is the same for all solvers). You can also define a default
+        //     // value for performance parameters when you are confident it is a
+        //     // good choice (example: always turn presolve on).
+        //     static const double               kDefaultRelativeMipGap;
+        //     static const double               kDefaultPrimalTolerance;
+        //     static const double               kDefaultDualTolerance;
+        //     static const PresolveValues       kDefaultPresolve;
+        //     static const IncrementalityValues kDefaultIncrementality;
+
+        //     /// The constructor sets all parameters to their default value.
+        //     MPSolverParameters();
+
+        //     /// Sets a double parameter to a specific value.
+        //     void SetDoubleParam( MPSolverParameters::DoubleParam param, double value );
+
+        //     /// Sets a integer parameter to a specific value.
+        //     void SetIntegerParam( MPSolverParameters::IntegerParam param, int value );
+
+        //     /**
+        //      * Sets a double parameter to its default value (default value defined in
+        //      * MPSolverParameters if it exists, otherwise the default value defined in
+        //      * the underlying solver).
+        //      */
+        //     void ResetDoubleParam( MPSolverParameters::DoubleParam param );
+
+        //     /**
+        //      * Sets an integer parameter to its default value (default value defined in
+        //      * MPSolverParameters if it exists, otherwise the default value defined in
+        //      * the underlying solver).
+        //      */
+        //     void ResetIntegerParam( MPSolverParameters::IntegerParam param );
+
+        //     /// Sets all parameters to their default value.
+        //     void Reset();
+
+        //     /// Returns the value of a double parameter.
+        //     double GetDoubleParam( MPSolverParameters::DoubleParam param ) const;
+
+        //     /// Returns the value of an integer parameter.
+        //     int GetIntegerParam( MPSolverParameters::IntegerParam param ) const;
 
     }
 
