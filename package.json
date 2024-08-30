@@ -1,7 +1,10 @@
 {
   "name": "ts-ortools",
-  "version": "0.0.10",
-  "repository": "https://github.com/qinghua921/ortools.git",
+  "version": "0.0.11",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/qinghua921/ortools.git"
+  },
   "description": "Google OR-Tools for Node.js",
   "main": "src/index.js",
   "types": "src/index.d.ts",
