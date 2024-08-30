@@ -1495,13 +1495,6 @@
         // public:
         //     void clear_dual_value();
 
-        // private:
-        //     double _internal_dual_value( int index ) const;
-        //     const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-        //          _internal_dual_value() const;
-        //     void _internal_add_dual_value( double value );
-        //     ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-        //     _internal_mutable_dual_value();
 
         // public:
         //     double dual_value( int index ) const;
@@ -1521,13 +1514,6 @@
         // public:
         //     void clear_reduced_cost();
 
-        // private:
-        //     double _internal_reduced_cost( int index ) const;
-        //     const ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >&
-        //          _internal_reduced_cost() const;
-        //     void _internal_add_reduced_cost( double value );
-        //     ::PROTOBUF_NAMESPACE_ID::RepeatedField< double >*
-        //     _internal_mutable_reduced_cost();
 
         // public:
         //     double reduced_cost( int index ) const;
@@ -1541,8 +1527,6 @@
         //     // repeated .operations_research.MPSolution additional_solutions = 8;
         //     int additional_solutions_size() const;
 
-        // private:
-        //     int _internal_additional_solutions_size() const;
 
         // public:
         //     void                               clear_additional_solutions();
@@ -1550,9 +1534,6 @@
         //     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::MPSolution >*
         //     mutable_additional_solutions();
 
-        // private:
-        //     const ::operations_research::MPSolution& _internal_additional_solutions( int index ) const;
-        //     ::operations_research::MPSolution*       _internal_add_additional_solutions();
 
         // public:
         //     const ::operations_research::MPSolution& additional_solutions( int index ) const;
@@ -1563,8 +1544,6 @@
         //     // optional string status_str = 7;
         //     bool has_status_str() const;
 
-        // private:
-        //     bool _internal_has_status_str() const;
 
         // public:
         //     void               clear_status_str();
@@ -1575,17 +1554,11 @@
         //     PROTOBUF_NODISCARD std::string* release_status_str();
         //     void                            set_allocated_status_str( std::string* status_str );
 
-        // private:
-        //     const std::string&                 _internal_status_str() const;
-        //     inline PROTOBUF_ALWAYS_INLINE void _internal_set_status_str( const std::string& value );
-        //     std::string*                       _internal_mutable_status_str();
 
         // public:
         //     // optional bytes solver_specific_info = 11;
         //     bool has_solver_specific_info() const;
 
-        // private:
-        //     bool _internal_has_solver_specific_info() const;
 
         // public:
         //     void               clear_solver_specific_info();
@@ -1596,17 +1569,11 @@
         //     PROTOBUF_NODISCARD std::string* release_solver_specific_info();
         //     void                            set_allocated_solver_specific_info( std::string* solver_specific_info );
 
-        // private:
-        //     const std::string&                 _internal_solver_specific_info() const;
-        //     inline PROTOBUF_ALWAYS_INLINE void _internal_set_solver_specific_info( const std::string& value );
-        //     std::string*                       _internal_mutable_solver_specific_info();
 
         // public:
         //     // optional .operations_research.MPSolveInfo solve_info = 10;
         //     bool has_solve_info() const;
 
-        // private:
-        //     bool _internal_has_solve_info() const;
 
         // public:
         //     void                                                   clear_solve_info();
@@ -1615,9 +1582,6 @@
         //     ::operations_research::MPSolveInfo*                    mutable_solve_info();
         //     void                                                   set_allocated_solve_info( ::operations_research::MPSolveInfo* solve_info );
 
-        // private:
-        //     const ::operations_research::MPSolveInfo& _internal_solve_info() const;
-        //     ::operations_research::MPSolveInfo*       _internal_mutable_solve_info();
 
         // public:
         //     void unsafe_arena_set_allocated_solve_info(
@@ -1627,8 +1591,6 @@
         //     // optional double objective_value = 2;
         //     bool has_objective_value() const;
 
-        // private:
-        //     bool _internal_has_objective_value() const;
 
         // public:
         //     void   clear_objective_value();
@@ -2357,7 +2319,7 @@
     // LinearRange operator>=( const LinearExpr& lhs, const LinearExpr& rhs );
     export function operator_greater_equals(lhs: LinearExpr | number | MPVariable, rhs: LinearExpr | number | MPVariable): LinearRange;
 
- 
+
 
     /**
      * An expression of the form:
@@ -4280,7 +4242,10 @@
 
             //         // double objective_value = 3;
             //         void   clear_objective_value();
-            //         double objective_value() const;
+
+            // double objective_value() const;
+            objective_value(): number
+            
             //         void   set_objective_value( double value );
 
 

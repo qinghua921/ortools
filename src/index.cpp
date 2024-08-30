@@ -1961,6 +1961,18 @@ Napi::Value operations_research::sat::GSolutionBooleanValue( const Napi::Callbac
     return info.Env().Undefined();
 }
 
+Napi::Value operations_research::sat::GCpSolverResponse::objective_value( const Napi::CallbackInfo& info )
+{
+    // double objective_value() const;
+    if ( info.Length() == 0 )
+    {
+        return Napi::Number::New( info.Env(), pCpSolverResponse->objective_value() );
+    }
+
+    ThrowJsError( operations_research::sat::objective_value : Invalid argument );
+    return info.Env().Undefined();
+}
+
 operations_research::sat::GCpModelProto::GCpModelProto( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< operations_research::sat::GCpModelProto >( info )
 {

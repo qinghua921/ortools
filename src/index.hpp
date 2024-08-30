@@ -885,6 +885,7 @@ namespace sat
                 env, "CpSolverResponse",
                 {
                     InstanceMethod( "status", &GCpSolverResponse::status ),
+                    InstanceMethod( "objective_value", &GCpSolverResponse::objective_value ),
                 } );
 
             constructor = Napi::Persistent( func );
@@ -893,14 +894,18 @@ namespace sat
             return exports;
         }
 
-        Napi::Value status( const Napi::CallbackInfo& info );  // ::operations_research::sat::CpSolverStatus status() const;
+        // operations_research::sat::CpSolverStatus status() const;
+        Napi::Value status( const Napi::CallbackInfo& info );  
+   
+        // double objective_value() const;
+        Napi::Value objective_value( const Napi::CallbackInfo& info );
     };
 
     Napi::FunctionReference GCpSolverResponse::constructor;
 
     //  bool SolutionBooleanValue( const CpSolverResponse& r, const BoolVar& x );
     Napi::Value GSolutionBooleanValue( const Napi::CallbackInfo& info );
-
+    
 };  // namespace sat
 
 };  // namespace operations_research
