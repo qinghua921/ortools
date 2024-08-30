@@ -404,188 +404,210 @@
          */
         Solve(): MPSolver.ResultStatus;
 
-
+        // TODO  from here on, the methods are not yet implemented in the TypeScript version
         /**
          * Solves the problem using the specified parameter values.
          * 
          * C++: ResultStatus Solve( const MPSolverParameters& param );
          */
 
-        //     /**
-        //      * Writes the model using the solver internal write function.  Currently only
-        //      * available for Gurobi.
-        //      */
-        //     void Write( const std::string& file_name );
+        /**
+         * Writes the model using the solver internal write function.  Currently only
+         * available for Gurobi.
+         * 
+         * C++: void Write( const std::string& file_name );
+         */
 
-        //     /**
-        //      * Advanced usage: compute the "activities" of all constraints, which are the
-        //      * sums of their linear terms. The activities are returned in the same order
-        //      * as constraints(), which is the order in which constraints were added; but
-        //      * you can also use MPConstraint::index() to get a constraint's index.
-        //      */
-        //     std::vector< double > ComputeConstraintActivities() const;
+        /**
+         * Advanced usage: compute the "activities" of all constraints, which are the
+         * sums of their linear terms. The activities are returned in the same order
+         * as constraints(), which is the order in which constraints were added; but
+         * you can also use MPConstraint::index() to get a constraint's index.
+         * 
+         * C++: std::vector< double > ComputeConstraintActivities() const;
+         */
 
-        //     /**
-        //      * Advanced usage: Verifies the *correctness* of the solution.
-        //      *
-        //      * It verifies that all variables must be within their domains, all
-        //      * constraints must be satisfied, and the reported objective value must be
-        //      * accurate.
-        //      *
-        //      * Usage:
-        //      * - This can only be called after Solve() was called.
-        //      * - "tolerance" is interpreted as an absolute error threshold.
-        //      * - For the objective value only, if the absolute error is too large,
-        //      *   the tolerance is interpreted as a relative error threshold instead.
-        //      * - If "log_errors" is true, every single violation will be logged.
-        //      * - If "tolerance" is negative, it will be set to infinity().
-        //      *
-        //      * Most users should just set the --verify_solution flag and not bother using
-        //      * this method directly.
-        //      */
-        //     bool VerifySolution( double tolerance, bool log_errors ) const;
+        /**
+         * Advanced usage: Verifies the *correctness* of the solution.
+         *
+         * It verifies that all variables must be within their domains, all
+         * constraints must be satisfied, and the reported objective value must be
+         * accurate.
+         *
+         * Usage:
+         * - This can only be called after Solve() was called.
+         * - "tolerance" is interpreted as an absolute error threshold.
+         * - For the objective value only, if the absolute error is too large,
+         *   the tolerance is interpreted as a relative error threshold instead.
+         * - If "log_errors" is true, every single violation will be logged.
+         * - If "tolerance" is negative, it will be set to infinity().
+         *
+         * Most users should just set the --verify_solution flag and not bother using
+         * this method directly.
+         * 
+         * C++: bool VerifySolution( double tolerance, bool log_errors ) const;
+         */
 
-        //     /**
-        //      * Advanced usage: resets extracted model to solve from scratch.
-        //      *
-        //      * This won't reset the parameters that were set with
-        //      * SetSolverSpecificParametersAsString() or set_time_limit() or even clear the
-        //      * linear program. It will just make sure that next Solve() will be as if
-        //      * everything was reconstructed from scratch.
-        //      */
-        //     void Reset();
+        /**
+         * Advanced usage: resets extracted model to solve from scratch.
+         *
+         * This won't reset the parameters that were set with
+         * SetSolverSpecificParametersAsString() or set_time_limit() or even clear the
+         * linear program. It will just make sure that next Solve() will be as if
+         * everything was reconstructed from scratch.
+         * 
+         * C++: void Reset();
+         */
 
-        //     /** Interrupts the Solve() execution to terminate processing if possible.
-        //      *
-        //      * If the underlying interface supports interruption; it does that and returns
-        //      * true regardless of whether there's an ongoing Solve() or not. The Solve()
-        //      * call may still linger for a while depending on the conditions.  If
-        //      * interruption is not supported; returns false and does nothing.
-        //      * MPSolver::SolverTypeSupportsInterruption can be used to check if
-        //      * interruption is supported for a given solver type.
-        //      */
-        //     bool InterruptSolve();
+        /** 
+         * Interrupts the Solve() execution to terminate processing if possible.
+         *
+         * If the underlying interface supports interruption; it does that and returns
+         * true regardless of whether there's an ongoing Solve() or not. The Solve()
+         * call may still linger for a while depending on the conditions.  If
+         * interruption is not supported; returns false and does nothing.
+         * MPSolver::SolverTypeSupportsInterruption can be used to check if
+         * interruption is supported for a given solver type.
+         * 
+         * C++: bool InterruptSolve();
+         */
 
-        //     /**
-        //      * Loads model from protocol buffer.
-        //      *
-        //      * Returns MPSOLVER_MODEL_IS_VALID if the model is valid, and another status
-        //      * otherwise (currently only MPSOLVER_MODEL_INVALID and MPSOLVER_INFEASIBLE).
-        //      * If the model isn't valid, populates "error_message".
-        //      */
-        //     MPSolverResponseStatus LoadModelFromProto( const MPModelProto& input_model,
-        //                                                std::string*        error_message );
-        //     /**
-        //      * Loads model from protocol buffer.
-        //      *
-        //      * The same as above, except that the loading keeps original variable and
-        //      * constraint names. Caller should make sure that all variable names and
-        //      * constraint names are unique, respectively.
-        //      */
-        //     MPSolverResponseStatus LoadModelFromProtoWithUniqueNamesOrDie(
-        //         const MPModelProto& input_model, std::string* error_message );
+        /**
+         * Loads model from protocol buffer.
+         *
+         * Returns MPSOLVER_MODEL_IS_VALID if the model is valid, and another status
+         * otherwise (currently only MPSOLVER_MODEL_INVALID and MPSOLVER_INFEASIBLE).
+         * If the model isn't valid, populates "error_message".
+         * 
+         * C++: MPSolverResponseStatus LoadModelFromProto( const MPModelProto& input_model,
+         *                                                std::string*        error_message );
+         */
 
-        //     /// Encodes the current solution in a solution response protocol buffer.
-        //     void FillSolutionResponseProto( MPSolutionResponse* response ) const;
+        /**
+         * Loads model from protocol buffer.
+         *
+         * The same as above, except that the loading keeps original variable and
+         * constraint names. Caller should make sure that all variable names and
+         * constraint names are unique, respectively.
+         * 
+         * C++: MPSolverResponseStatus LoadModelFromProtoWithUniqueNamesOrDie( 
+         *       const MPModelProto& input_model, std::string* error_message );
+         */
 
-        //     /**
-        //      * Solves the model encoded by a MPModelRequest protocol buffer and fills the
-        //      * solution encoded as a MPSolutionResponse. The solve is stopped prematurely
-        //      * if interrupt is non-null at set to true during (or before) solving.
-        //      * Interruption is only supported if SolverTypeSupportsInterruption() returns
-        //      * true for the requested solver. Passing a non-null interruption with any
-        //      * other solver type immediately returns an MPSOLVER_INCOMPATIBLE_OPTIONS
-        //      * error.
-        //      *
-        //      * Note(user): This attempts to first use `DirectlySolveProto()` (if
-        //      * implemented). Consequently, this most likely does *not* override any of
-        //      * the default parameters of the underlying solver. This behavior *differs*
-        //      * from `MPSolver::Solve()` which by default sets the feasibility tolerance
-        //      * and the gap limit (as of 2020/02/11, to 1e-7 and 0.0001, respectively).
-        //      */
-        //     static void SolveWithProto( const MPModelRequest& model_request,
-        //                                 MPSolutionResponse*   response,
-        //                                 // `interrupt` is non-const because the internal
-        //                                 // solver may set it to true itself, in some cases.
-        //                                 std::atomic< bool >* interrupt = nullptr );
+        /**
+         * Encodes the current solution in a solution response protocol buffer.
+         * 
+         * C++: void FillSolutionResponseProto( MPSolutionResponse* response ) const;
+         */
 
-        //     static bool SolverTypeSupportsInterruption(
-        //         const MPModelRequest::SolverType solver )
-        //     {
-        //         // Interruption requires that MPSolver::InterruptSolve is supported for the
-        //         // underlying solver. Interrupting requests using SCIP is also not supported
-        //         // as of 2021/08/23, since InterruptSolve is not go/thread-safe
-        //         // for SCIP (see e.g. cl/350545631 for details).
-        //         return solver == MPModelRequest::GLOP_LINEAR_PROGRAMMING || solver == MPModelRequest::GUROBI_LINEAR_PROGRAMMING || solver == MPModelRequest::GUROBI_MIXED_INTEGER_PROGRAMMING || solver == MPModelRequest::SAT_INTEGER_PROGRAMMING || solver == MPModelRequest::PDLP_LINEAR_PROGRAMMING;
-        //     }
+        /**
+         * Solves the model encoded by a MPModelRequest protocol buffer and fills the
+         * solution encoded as a MPSolutionResponse. The solve is stopped prematurely
+         * if interrupt is non-null at set to true during (or before) solving.
+         * Interruption is only supported if SolverTypeSupportsInterruption() returns
+         * true for the requested solver. Passing a non-null interruption with any
+         * other solver type immediately returns an MPSOLVER_INCOMPATIBLE_OPTIONS
+         * error.
+         *
+         * Note(user): This attempts to first use `DirectlySolveProto()` (if
+         * implemented). Consequently, this most likely does *not* override any of
+         * the default parameters of the underlying solver. This behavior *differs*
+         * from `MPSolver::Solve()` which by default sets the feasibility tolerance
+         * and the gap limit (as of 2020/02/11, to 1e-7 and 0.0001, respectively).
+         * 
+         * C++: static void SolveWithProto( const MPModelRequest& model_request,
+         *                                 MPSolutionResponse*   response,
+         *                                 // `interrupt` is non-const because the internal
+         *                                 // solver may set it to true itself, in some cases.
+         *                                 std::atomic< bool >* interrupt = nullptr );
+         */
 
-        //     /// Exports model to protocol buffer.
-        //     void ExportModelToProto( MPModelProto* output_model ) const;
+        /**
+         * C++: static bool SolverTypeSupportsInterruption(
+         *     const MPModelRequest::SolverType solver );
+         */
 
-        //     /**
-        //      * Load a solution encoded in a protocol buffer onto this solver for easy
-        //     access via the MPSolver interface.
-        //      *
-        //      * IMPORTANT: This may only be used in conjunction with ExportModel(),
-        //     following this example:
-        //      *
-        //      \code
-        //        MPSolver my_solver;
-        //        ... add variables and constraints ...
-        //        MPModelProto model_proto;
-        //        my_solver.ExportModelToProto(&model_proto);
-        //        MPSolutionResponse solver_response;
-        //        MPSolver::SolveWithProto(model_proto, &solver_response);
-        //        if (solver_response.result_status() == MPSolutionResponse::OPTIMAL) {
-        //          CHECK_OK(my_solver.LoadSolutionFromProto(solver_response));
-        //          ... inspect the solution using the usual API: solution_value(), etc...
-        //        }
-        //     \endcode
-        //      *
-        //      * The response must be in OPTIMAL or FEASIBLE status.
-        //      *
-        //      * Returns a non-OK status if a problem arised (typically, if it wasn't used
-        //      *     like it should be):
-        //      * - loading a solution whose variables don't correspond to the solver's
-        //      *   current variables
-        //      * - loading a dual solution whose constraints don't correspond to the
-        //      *   solver's current constraints
-        //      * - loading a solution with a status other than OPTIMAL / FEASIBLE.
-        //      *
-        //      * Note: the objective value isn't checked. You can use VerifySolution() for
-        //      *       that.
-        //      */
+        /**
+         * Exports model to protocol buffer.
+         * 
+         * C++: void ExportModelToProto( MPModelProto* output_model ) const;
+         */
+
+        /**
+         * Load a solution encoded in a protocol buffer onto this solver for easy
+        access via the MPSolver interface.
+         *
+         * IMPORTANT: This may only be used in conjunction with ExportModel(),
+        following this example:
+         *
+         \code
+           MPSolver my_solver;
+           ... add variables and constraints ...
+           MPModelProto model_proto;
+           my_solver.ExportModelToProto(&model_proto);
+           MPSolutionResponse solver_response;
+           MPSolver::SolveWithProto(model_proto, &solver_response);
+           if (solver_response.result_status() == MPSolutionResponse::OPTIMAL) {
+             CHECK_OK(my_solver.LoadSolutionFromProto(solver_response));
+             ... inspect the solution using the usual API: solution_value(), etc...
+           }
+        \endcode
+         *
+         * The response must be in OPTIMAL or FEASIBLE status.
+         *
+         * Returns a non-OK status if a problem arised (typically, if it wasn't used
+         *     like it should be):
+         * - loading a solution whose variables don't correspond to the solver's
+         *   current variables
+         * - loading a dual solution whose constraints don't correspond to the
+         *   solver's current constraints
+         * - loading a solution with a status other than OPTIMAL / FEASIBLE.
+         *
+         * Note: the objective value isn't checked. You can use VerifySolution() for
+         *       that.
+         * 
+         * C++: absl::Status LoadSolutionFromProto( 
+         *         const MPSolutionResponse& response,
+         *         double                    tolerance = std::numeric_limits< double >::infinity() );
+         */
         //     absl::Status LoadSolutionFromProto(
         //         const MPSolutionResponse& response,
         //         double                    tolerance = std::numeric_limits< double >::infinity() );
 
-        //     /**
-        //      * Resets values of out of bound variables to the corresponding bound and
-        //      * returns an error if any of the variables have NaN value.
-        //      */
-        //     absl::Status ClampSolutionWithinBounds();
+        /**
+         * Resets values of out of bound variables to the corresponding bound and
+         * returns an error if any of the variables have NaN value.
+         * 
+         * C++: absl::Status ClampSolutionWithinBounds();
+         */
 
-        //     /**
-        //      * Shortcuts to the homonymous MPModelProtoExporter methods, via exporting to
-        //      * a MPModelProto with ExportModelToProto() (see above).
-        //      *
-        //      * Produces empty std::string on portable platforms (e.g. android, ios).
-        //      */
+        /**
+         * Shortcuts to the homonymous MPModelProtoExporter methods, via exporting to
+         * a MPModelProto with ExportModelToProto() (see above).
+         *
+         * Produces empty std::string on portable platforms (e.g. android, ios).
+         * 
+         * C++: bool ExportModelAsLpFormat( bool obfuscate, std::string* model_str ) const;
+         */
         //     bool ExportModelAsLpFormat( bool obfuscate, std::string* model_str ) const;
-        //     bool ExportModelAsMpsFormat( bool fixed_format, bool obfuscate,
-        //                                  std::string* model_str ) const;
 
-        //     /**
-        //      *  Sets the number of threads to use by the underlying solver.
-        //      *
-        //      * Returns OkStatus if the operation was successful. num_threads must be equal
-        //      * to or greater than 1. Note that the behaviour of this call depends on the
-        //      * underlying solver. E.g., it may set the exact number of threads or the max
-        //      * number of threads (check the solver's interface implementation for
-        //      * details). Also, some solvers may not (yet) support this function, but still
-        //      * enable multi-threading via SetSolverSpecificParametersAsString().
-        //      */
-        //     absl::Status SetNumThreads( int num_threads );
+        /**
+         * bool ExportModelAsMpsFormat( bool fixed_format, bool obfuscate,
+         *                             std::string* model_str ) const;
+         */
+
+        /**
+         *  Sets the number of threads to use by the underlying solver.
+         *
+         * Returns OkStatus if the operation was successful. num_threads must be equal
+         * to or greater than 1. Note that the behaviour of this call depends on the
+         * underlying solver. E.g., it may set the exact number of threads or the max
+         * number of threads (check the solver's interface implementation for
+         * details). Also, some solvers may not (yet) support this function, but still
+         * enable multi-threading via SetSolverSpecificParametersAsString().
+         * 
+         * C++: absl::Status SetNumThreads( int num_threads );
+         */
 
         //     /// Returns the number of threads to be used during solve.
         //     int GetNumThreads() const
