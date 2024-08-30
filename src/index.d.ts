@@ -2357,7 +2357,7 @@
     // LinearRange operator>=( const LinearExpr& lhs, const LinearExpr& rhs );
     export function operator_greater_equals(lhs: LinearExpr | number | MPVariable, rhs: LinearExpr | number | MPVariable): LinearRange;
 
-
+ 
 
     /**
      * An expression of the form:
@@ -2924,6 +2924,14 @@
 
     export namespace sat
     {
+        // TODO  to add class in sat 
+        /**
+         * Evaluates the value of a Boolean literal in a solver response.
+         *  
+         * C++: bool SolutionBooleanValue( const CpSolverResponse& r, const BoolVar& x );
+         */
+        export function SolutionBooleanValue(r: CpSolverResponse, x: BoolVar): boolean;
+
         /**
          * Solves the given CpModelProto and returns an instance of CpSolverResponse.
          * 

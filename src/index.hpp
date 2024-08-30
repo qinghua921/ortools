@@ -898,6 +898,9 @@ namespace sat
 
     Napi::FunctionReference GCpSolverResponse::constructor;
 
+    //  bool SolutionBooleanValue( const CpSolverResponse& r, const BoolVar& x );
+    Napi::Value GSolutionBooleanValue( const Napi::CallbackInfo& info );
+
 };  // namespace sat
 
 };  // namespace operations_research
@@ -921,6 +924,7 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research_sat_exports.Set( "operator_minus", Napi::Function::New( env, operations_research::sat::Goperator_minus ) );
     operations_research_sat_exports.Set( "operator_times", Napi::Function::New( env, operations_research::sat::Goperator_times ) );
     operations_research_sat_exports.Set( "Solve", Napi::Function::New( env, operations_research::sat::GSolve ) );
+    operations_research_sat_exports.Set( "SolutionBooleanValue", Napi::Function::New( env, operations_research::sat::GSolutionBooleanValue ) );
 
     auto operations_research_sat_cp_solver_status = Napi::Object::New( env );
     operations_research_sat_cp_solver_status.Set( "UNKNOWN", Napi::Number::New( env, operations_research::sat::CpSolverStatus::UNKNOWN ) );

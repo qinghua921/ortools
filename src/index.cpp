@@ -1943,6 +1943,24 @@ Napi::Value operations_research::sat::GSolve( const Napi::CallbackInfo& info )
     return info.Env().Undefined();
 }
 
+Napi::Value operations_research::sat::GSolutionBooleanValue( const Napi::CallbackInfo& info )
+{
+    //  bool SolutionBooleanValue( const CpSolverResponse& r, const BoolVar& x );
+    if ( info.Length() == 2 
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GCpSolverResponse::constructor.Value() )
+         && info[ 1 ].IsObject()
+         && info[ 1 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+    {
+        auto solver_response = Napi::ObjectWrap< GCpSolverResponse >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto bool_var        = Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 1 ].As< Napi::Object >() );
+        return Napi::Boolean::New( info.Env(), SolutionBooleanValue( *solver_response->pCpSolverResponse, *bool_var->pBoolVar ) );
+    }
+
+    ThrowJsError( operations_research::sat::SolutionBooleanValue : Invalid argument );
+    return info.Env().Undefined();
+}
+
 operations_research::sat::GCpModelProto::GCpModelProto( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< operations_research::sat::GCpModelProto >( info )
 {
