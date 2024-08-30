@@ -55,11 +55,36 @@ public:
         Napi::Function func = DefineClass(
             env, "MPSolver",
             {
+                StaticMethod( "ParseSolverTypeOrDie", &GMPSolver::ParseSolverTypeOrDie ),
+                StaticMethod( "ParseSolverType", &GMPSolver::ParseSolverType ),
+                StaticMethod( "SupportsProblemType", &GMPSolver::SupportsProblemType ),
                 StaticMethod( "CreateSolver", &GMPSolver::CreateSolver ),
+
                 InstanceMethod( "MakeBoolVar", &GMPSolver::MakeBoolVar ),
                 InstanceMethod( "MakeRowConstraint", &GMPSolver::MakeRowConstraint ),
                 InstanceMethod( "MutableObjective", &GMPSolver::MutableObjective ),
                 InstanceMethod( "Solve", &GMPSolver::Solve ),
+                InstanceMethod( "IsMIP", &GMPSolver::IsMIP ),
+                InstanceMethod( "Name", &GMPSolver::Name ),
+                InstanceMethod( "ProblemType", &GMPSolver::ProblemType ),
+                InstanceMethod( "Clear", &GMPSolver::Clear ),
+                InstanceMethod( "NumVariables", &GMPSolver::NumVariables ),
+                InstanceMethod( "variables", &GMPSolver::variables ),
+                InstanceMethod( "variable", &GMPSolver::variable ),
+                InstanceMethod( "LookupVariableOrNull", &GMPSolver::LookupVariableOrNull ),
+                InstanceMethod( "MakeVar", &GMPSolver::MakeVar ),
+                InstanceMethod( "MakeNumVar", &GMPSolver::MakeNumVar ),
+                InstanceMethod( "MakeIntVar", &GMPSolver::MakeIntVar ),
+                InstanceMethod( "MakeVarArray", &GMPSolver::MakeVarArray ),
+                InstanceMethod( "MakeNumVarArray", &GMPSolver::MakeNumVarArray ),
+                InstanceMethod( "MakeIntVarArray", &GMPSolver::MakeIntVarArray ),
+                InstanceMethod( "MakeBoolVarArray", &GMPSolver::MakeBoolVarArray ),
+                InstanceMethod( "NumConstraints", &GMPSolver::NumConstraints ),
+                InstanceMethod( "constraints", &GMPSolver::constraints ),
+                InstanceMethod( "constraint", &GMPSolver::constraint ),
+                InstanceMethod( "LookupConstraintOrNull", &GMPSolver::LookupConstraintOrNull ),
+                InstanceMethod( "Objective", &GMPSolver::Objective ),
+                
                 StaticValue( "ResultStatus", resultStatus ),
                 StaticValue( "OptimizationProblemType", optimizationProblemType ),
             } );
@@ -69,11 +94,62 @@ public:
         return exports;
     }
 
-    static Napi::Value CreateSolver( const Napi::CallbackInfo& info );       // static MPSolver* CreateSolver( const std::string& solver_id );
-    Napi::Value        MakeBoolVar( const Napi::CallbackInfo& info );        // MPVariable* MakeBoolVar( const std::string& name );
-    Napi::Value        MakeRowConstraint( const Napi::CallbackInfo& info );  // MPConstraint* MakeRowConstraint( double lb, double ub );
-    Napi::Value        MutableObjective( const Napi::CallbackInfo& info );   // MPObjective* MutableObjective();
-    Napi::Value        Solve( const Napi::CallbackInfo& info );              // ResultStatus Solve();
+    // static OptimizationProblemType ParseSolverTypeOrDie( const std::string& solver_id );
+    static Napi::Value ParseSolverTypeOrDie( const Napi::CallbackInfo& info );
+    // static bool ParseSolverType( absl::string_view solver_id, OptimizationProblemType* type );
+    static Napi::Value ParseSolverType( const Napi::CallbackInfo& info );
+    // static bool SupportsProblemType( OptimizationProblemType problem_type );
+    static Napi::Value SupportsProblemType( const Napi::CallbackInfo& info );
+    // static MPSolver* CreateSolver( const std::string& solver_id );
+    static Napi::Value CreateSolver( const Napi::CallbackInfo& info );
+    // MPVariable* MakeBoolVar( const std::string& name );
+    Napi::Value MakeBoolVar( const Napi::CallbackInfo& info );
+    // MPConstraint* MakeRowConstraint( double lb, double ub );
+    Napi::Value MakeRowConstraint( const Napi::CallbackInfo& info );
+    // MPObjective* MutableObjective();
+    Napi::Value MutableObjective( const Napi::CallbackInfo& info );
+    // ResultStatus Solve();
+    Napi::Value Solve( const Napi::CallbackInfo& info );
+    // bool IsMIP() const;
+    Napi::Value IsMIP( const Napi::CallbackInfo& info );
+    // const std::string& Name() const;
+    Napi::Value Name( const Napi::CallbackInfo& info );
+    // virtual OptimizationProblemType ProblemType() const;
+    Napi::Value ProblemType( const Napi::CallbackInfo& info );
+    // void Clear();
+    Napi::Value Clear( const Napi::CallbackInfo& info );
+    // int NumVariables() const;
+    Napi::Value NumVariables( const Napi::CallbackInfo& info );
+    //  const std::vector< MPVariable* >& variables() const;
+    Napi::Value variables( const Napi::CallbackInfo& info );
+    // MPVariable* variable( int index ) const;
+    Napi::Value variable( const Napi::CallbackInfo& info );
+    //  MPVariable* LookupVariableOrNull( const std::string& var_name ) const;
+    Napi::Value LookupVariableOrNull( const Napi::CallbackInfo& info );
+    // MPVariable* MakeVar( double lb, double ub, bool integer, const std::string& name );
+    Napi::Value MakeVar( const Napi::CallbackInfo& info );
+    // MPVariable* MakeNumVar( double lb, double ub, const std::string& name );
+    Napi::Value MakeNumVar( const Napi::CallbackInfo& info );
+    // MPVariable* MakeIntVar( double lb, double ub, const std::string& name );
+    Napi::Value MakeIntVar( const Napi::CallbackInfo& info );
+    // void MakeVarArray( int nb, double lb, double ub, bool integer,  const std::string& name_prefix, std::vector< MPVariable* >* vars );
+    Napi::Value MakeVarArray( const Napi::CallbackInfo& info );
+    // void MakeNumVarArray( int nb, double lb, double ub, const std::string& name, std::vector< MPVariable* >* vars );
+    Napi::Value MakeNumVarArray( const Napi::CallbackInfo& info );
+    // void MakeIntVarArray( int nb, double lb, double ub, const std::string& name, std::vector< MPVariable* >* vars );
+    Napi::Value MakeIntVarArray( const Napi::CallbackInfo& info );
+    // void MakeBoolVarArray( int nb, const std::string& name, std::vector< MPVariable* >* vars );
+    Napi::Value MakeBoolVarArray( const Napi::CallbackInfo& info );
+    // int NumConstraints() const;
+    Napi::Value NumConstraints( const Napi::CallbackInfo& info );
+    // const std::vector< MPConstraint* >& constraints() const;
+    Napi::Value constraints( const Napi::CallbackInfo& info );
+    //  MPConstraint* constraint( int index ) const;
+    Napi::Value constraint( const Napi::CallbackInfo& info );
+    // MPConstraint* LookupConstraintOrNull( const std::string& constraint_name ) const;
+    Napi::Value LookupConstraintOrNull( const Napi::CallbackInfo& info );
+    // const MPObjective& Objective() const;
+    Napi::Value Objective( const Napi::CallbackInfo& info );
 };
 
 Napi::FunctionReference GMPSolver::constructor;
@@ -608,7 +684,7 @@ namespace sat
 
 };  // namespace sat
 
-}  // namespace operations_research
+};  // namespace operations_research
 
 Napi::Object Init( Napi::Env env, Napi::Object exports )
 {
