@@ -400,11 +400,11 @@ Napi::Value operations_research::GMPSolver::MakeNumVarArray( const Napi::Callbac
          && info[ 2 ].IsNumber()
          && info[ 3 ].IsString() )
     {
-        int                         nb          = info[ 0 ].As< Napi::Number >();
-        double                      lb          = info[ 1 ].As< Napi::Number >();
-        double                      ub          = info[ 2 ].As< Napi::Number >();
-        std::string                 name        = info[ 3 ].As< Napi::String >();
-        std::vector< MPVariable* >* vars        = new std::vector< MPVariable* >();
+        int                         nb   = info[ 0 ].As< Napi::Number >();
+        double                      lb   = info[ 1 ].As< Napi::Number >();
+        double                      ub   = info[ 2 ].As< Napi::Number >();
+        std::string                 name = info[ 3 ].As< Napi::String >();
+        std::vector< MPVariable* >* vars = new std::vector< MPVariable* >();
         pMPSolver->MakeNumVarArray( nb, lb, ub, name, vars );
         auto gmp_variables = Napi::Array::New( info.Env(), vars->size() );
         for ( int i = 0; i < vars->size(); i++ )
@@ -428,11 +428,11 @@ Napi::Value operations_research::GMPSolver::MakeIntVarArray( const Napi::Callbac
          && info[ 2 ].IsNumber()
          && info[ 3 ].IsString() )
     {
-        int                         nb          = info[ 0 ].As< Napi::Number >();
-        double                      lb          = info[ 1 ].As< Napi::Number >();
-        double                      ub          = info[ 2 ].As< Napi::Number >();
-        std::string                 name        = info[ 3 ].As< Napi::String >();
-        std::vector< MPVariable* >* vars        = new std::vector< MPVariable* >();
+        int                         nb   = info[ 0 ].As< Napi::Number >();
+        double                      lb   = info[ 1 ].As< Napi::Number >();
+        double                      ub   = info[ 2 ].As< Napi::Number >();
+        std::string                 name = info[ 3 ].As< Napi::String >();
+        std::vector< MPVariable* >* vars = new std::vector< MPVariable* >();
         pMPSolver->MakeIntVarArray( nb, lb, ub, name, vars );
         auto gmp_variables = Napi::Array::New( info.Env(), vars->size() );
         for ( int i = 0; i < vars->size(); i++ )
@@ -452,9 +452,9 @@ Napi::Value operations_research::GMPSolver::MakeBoolVarArray( const Napi::Callba
     // void MakeBoolVarArray( int nb, const std::string& name, std::vector< MPVariable* >* vars );
     if ( info.Length() == 3 && info[ 0 ].IsNumber() && info[ 1 ].IsString() )
     {
-        int                         nb          = info[ 0 ].As< Napi::Number >();
-        std::string                 name        = info[ 1 ].As< Napi::String >();
-        std::vector< MPVariable* >* vars        = new std::vector< MPVariable* >();
+        int                         nb   = info[ 0 ].As< Napi::Number >();
+        std::string                 name = info[ 1 ].As< Napi::String >();
+        std::vector< MPVariable* >* vars = new std::vector< MPVariable* >();
         pMPSolver->MakeBoolVarArray( nb, name, vars );
         auto gmp_variables = Napi::Array::New( info.Env(), vars->size() );
         for ( int i = 0; i < vars->size(); i++ )
@@ -481,53 +481,53 @@ Napi::Value operations_research::GMPSolver::NumConstraints( const Napi::Callback
     return info.Env().Undefined();
 }
 
-Napi::Value operations_research::GMPSolver::constraints(const Napi::CallbackInfo & info)
+Napi::Value operations_research::GMPSolver::constraints( const Napi::CallbackInfo& info )
 {
     // const std::vector< MPConstraint* >& constraints() const;
-    if (info.Length() == 0) 
+    if ( info.Length() == 0 )
     {
-        auto constraints =pMPSolver->constraints();
-        auto gmp_constraints = Napi::Array::New(info.Env(), constraints.size());
-        for (int i = 0; i < constraints.size(); i++) 
+        auto constraints     = pMPSolver->constraints();
+        auto gmp_constraints = Napi::Array::New( info.Env(), constraints.size() );
+        for ( int i = 0; i < constraints.size(); i++ )
         {
-            auto gmp_constraint = Napi::External< MPConstraint >::New(info.Env(), constraints[i]);
-            gmp_constraints.Set(i, GMPConstraint::constructor.New({gmp_constraint}));
+            auto gmp_constraint = Napi::External< MPConstraint >::New( info.Env(), constraints[ i ] );
+            gmp_constraints.Set( i, GMPConstraint::constructor.New( { gmp_constraint } ) );
         }
         return gmp_constraints;
     }
 
-    ThrowJsError(operations_research::GMPSolver::constraints : Invalid argument);
+    ThrowJsError( operations_research::GMPSolver::constraints : Invalid argument );
     return info.Env().Undefined();
 }
 
-Napi::Value operations_research::GMPSolver::constraint(const Napi::CallbackInfo & info)
+Napi::Value operations_research::GMPSolver::constraint( const Napi::CallbackInfo& info )
 {
     //  MPConstraint* constraint( int index ) const;
-    if (info.Length() == 1 && info[0].IsNumber()) 
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
     {
-        int index = info[0].As<Napi::Number>();
-        MPConstraint* pMPConstraint = pMPSolver->constraint(index);
-        auto gmp_constraint = Napi::External< MPConstraint >::New(info.Env(), pMPConstraint);
-        return GMPConstraint::constructor.New({gmp_constraint});
+        int           index          = info[ 0 ].As< Napi::Number >();
+        MPConstraint* pMPConstraint  = pMPSolver->constraint( index );
+        auto          gmp_constraint = Napi::External< MPConstraint >::New( info.Env(), pMPConstraint );
+        return GMPConstraint::constructor.New( { gmp_constraint } );
     }
 
-    ThrowJsError(operations_research::GMPSolver::constraint : Invalid argument);
+    ThrowJsError( operations_research::GMPSolver::constraint : Invalid argument );
     return info.Env().Undefined();
 }
 
-Napi::Value operations_research::GMPSolver::LookupConstraintOrNull(const Napi::CallbackInfo & info)
+Napi::Value operations_research::GMPSolver::LookupConstraintOrNull( const Napi::CallbackInfo& info )
 {
     // MPConstraint* LookupConstraintOrNull( const std::string& constraint_name ) const;
-    if (info.Length() == 1 && info[0].IsString()) 
+    if ( info.Length() == 1 && info[ 0 ].IsString() )
     {
-        std::string constraint_name = info[0].As<Napi::String>();
-        MPConstraint* pMPConstraint = pMPSolver->LookupConstraintOrNull(constraint_name);
-        if (pMPConstraint == nullptr) return info.Env().Null();
-        auto gmp_constraint = Napi::External< MPConstraint >::New(info.Env(), pMPConstraint);
-        return GMPConstraint::constructor.New({gmp_constraint});
+        std::string   constraint_name = info[ 0 ].As< Napi::String >();
+        MPConstraint* pMPConstraint   = pMPSolver->LookupConstraintOrNull( constraint_name );
+        if ( pMPConstraint == nullptr ) return info.Env().Null();
+        auto gmp_constraint = Napi::External< MPConstraint >::New( info.Env(), pMPConstraint );
+        return GMPConstraint::constructor.New( { gmp_constraint } );
     }
 
-    ThrowJsError(operations_research::GMPSolver::LookupConstraintOrNull : Invalid argument);
+    ThrowJsError( operations_research::GMPSolver::LookupConstraintOrNull : Invalid argument );
     return info.Env().Undefined();
 }
 
@@ -536,8 +536,8 @@ Napi::Value operations_research::GMPSolver::Objective( const Napi::CallbackInfo&
     // const MPObjective& Objective() const;
     if ( info.Length() == 0 )
     {
-        const MPObjective& objective = pMPSolver->Objective();
-        auto gmp_objective = Napi::External< MPObjective >::New( info.Env(), const_cast< MPObjective* >( &objective ) );
+        const MPObjective& objective     = pMPSolver->Objective();
+        auto               gmp_objective = Napi::External< MPObjective >::New( info.Env(), const_cast< MPObjective* >( &objective ) );
         return GMPObjective::constructor.New( { gmp_objective } );
     }
 
@@ -1007,6 +1007,82 @@ Napi::Value operations_research::GMPObjective::SetMinimization( const Napi::Call
     }
 
     ThrowJsError( operations_research::GMPObjective::SetMaximization : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPObjective::Value( const Napi::CallbackInfo& info )
+{
+    // double Value() const;
+    if ( info.Length() == 0 )
+    {
+        return Napi::Number::New( info.Env(), pMPObjective->Value() );
+    }
+
+    ThrowJsError( operations_research::GMPObjective::Value : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPObjective::Clear( const Napi::CallbackInfo& info )
+{
+    // void Clear();
+    if ( info.Length() == 0 )
+    {
+        pMPObjective->Clear();
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPObjective::Clear : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPObjective::GetCoefficient( const Napi::CallbackInfo& info )
+{
+    // double GetCoefficient( const MPVariable* const var ) const;
+    if ( info.Length() == 1
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
+    {
+        auto mp_variable = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        return Napi::Number::New( info.Env(), pMPObjective->GetCoefficient( mp_variable->pMPVariable ) );
+    }
+
+    ThrowJsError( operations_research::GMPObjective::GetCoefficient : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPObjective::terms( const Napi::CallbackInfo& info )
+{
+    // const absl::flat_hash_map< const MPVariable*, double >& terms() const;
+    if ( info.Length() == 0 )
+    {
+        auto terms = pMPObjective->terms();
+        auto obj   = Napi::Object::New( info.Env() );
+        for ( auto it = terms.begin(); it != terms.end(); it++ )
+        {
+            auto mp_variable = it->first;
+            auto coeff       = it->second;
+            auto external    = Napi::External< MPVariable >::New( info.Env(), ( MPVariable* )mp_variable );
+            auto variable    = GMPVariable::constructor.New( { external } );
+            obj.Set( variable, Napi::Number::New( info.Env(), coeff ) );
+        }
+        return obj;
+    }
+
+    ThrowJsError( operations_research::GMPObjective::terms : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPObjective::SetOffset( const Napi::CallbackInfo& info )
+{
+    // void SetOffset( double value );
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        double value = info[ 0 ].As< Napi::Number >().DoubleValue();
+        pMPObjective->SetOffset( value );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPObjective::SetOffset : Invalid argument );
     return info.Env().Undefined();
 }
 
@@ -2108,5 +2184,335 @@ Napi::Value operations_research::GSimpleMinCostFlow::UnitCost( const Napi::Callb
     }
 
     ThrowJsError( operations_research::GSimpleMinCostFlow::UnitCost : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPObjective::offset( const Napi::CallbackInfo& info )
+{
+    // double offset() const;
+    if ( info.Length() == 0 )
+    {
+        double offset = pMPObjective->offset();
+        return Napi::Number::New( info.Env(), offset );
+    }
+
+    ThrowJsError( operations_research::GMPObjective::offset : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPObjective::OptimizeLinearExpr( const Napi::CallbackInfo& info )
+{
+    // void OptimizeLinearExpr( const LinearExpr& linear_expr, bool is_maximization );
+    if ( info.Length() == 2
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() )
+         && info[ 1 ].IsBoolean() )
+    {
+        auto linear_expr     = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        bool is_maximization = info[ 1 ].As< Napi::Boolean >().Value();
+        pMPObjective->OptimizeLinearExpr( *linear_expr->pLinearExpr, is_maximization );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPObjective::OptimizeLinearExpr : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPObjective::MaximizeLinearExpr( const Napi::CallbackInfo& info )
+{
+    // void MaximizeLinearExpr( const LinearExpr& linear_expr );
+    if ( info.Length() == 1
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    {
+        auto linear_expr = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPObjective::MaximizeLinearExpr : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPObjective::MinimizeLinearExpr( const Napi::CallbackInfo& info )
+{
+    // void MinimizeLinearExpr( const LinearExpr& linear_expr );
+    if ( info.Length() == 1
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    {
+        auto linear_expr = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPObjective::MinimizeLinearExpr : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPObjective::AddLinearExpr( const Napi::CallbackInfo& info )
+{
+    //  void AddLinearExpr( const LinearExpr& linear_expr );
+    if ( info.Length() == 1
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    {
+        auto linear_expr = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPObjective::AddLinearExpr : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPObjective::SetOptimizationDirection( const Napi::CallbackInfo& info )
+{
+    // void SetOptimizationDirection( bool maximize );
+    if ( info.Length() == 1 && info[ 0 ].IsBoolean() )
+    {
+        bool maximize = info[ 0 ].As< Napi::Boolean >().Value();
+        pMPObjective->SetOptimizationDirection( maximize );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPObjective::SetOptimizationDirection : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPObjective::SetMaximization( const Napi::CallbackInfo& info )
+{
+    // void SetMaximization();
+    if ( info.Length() == 0 )
+    {
+        pMPObjective->SetMaximization();
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPObjective::SetMaximization : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPObjective::maximization( const Napi::CallbackInfo& info )
+{
+    // bool maximization() const;
+    if ( info.Length() == 0 )
+    {
+        bool maximization = pMPObjective->maximization();
+        return Napi::Boolean::New( info.Env(), maximization );
+    }
+
+    ThrowJsError( operations_research::GMPObjective::maximization : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPObjective::minimization( const Napi::CallbackInfo& info )
+{
+    // bool minimization() const;
+    if ( info.Length() == 0 )
+    {
+        bool minimization = pMPObjective->minimization();
+        return Napi::Boolean::New( info.Env(), minimization );
+    }
+
+    ThrowJsError( operations_research::GMPObjective::minimization : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPObjective::BestBound( const Napi::CallbackInfo& info )
+{
+    // double BestBound() const;
+    if ( info.Length() == 0 )
+    {
+        double best_bound = pMPObjective->BestBound();
+        return Napi::Number::New( info.Env(), best_bound );
+    }
+
+    ThrowJsError( operations_research::GMPObjective::BestBound : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPVariable::name(const Napi::CallbackInfo & info)
+{
+    // const std::string& name() const;
+    if ( info.Length() == 0 )
+    {
+        const std::string& name = pMPVariable->name();
+        return Napi::String::New( info.Env(), name );
+    }
+
+    ThrowJsError( operations_research::GMPVariable::name : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::GMPVariable::SetInteger( const Napi::CallbackInfo& info )
+{
+    // void SetInteger( bool integer );
+    if ( info.Length() == 1 && info[ 0 ].IsBoolean() )
+    {
+        bool integer = info[ 0 ].As< Napi::Boolean >().Value();
+        pMPVariable->SetInteger( integer );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPVariable::SetInteger : Invalid argument );
+    return info.Env().Undefined();
+}
+Napi::Value operations_research::GMPVariable::integer( const Napi::CallbackInfo& info )
+{
+    // bool integer() const;
+    if ( info.Length() == 0 )
+    {
+        bool integer = pMPVariable->integer();
+        return Napi::Boolean::New( info.Env(), integer );
+    }
+
+    ThrowJsError( operations_research::GMPVariable::integer : Invalid argument );
+    return info.Env().Undefined();
+}
+Napi::Value operations_research::GMPVariable::solution_value( const Napi::CallbackInfo& info )
+{
+    // double solution_value() const;
+    if ( info.Length() == 0 )
+    {
+        double solution_value = pMPVariable->solution_value();
+        return Napi::Number::New( info.Env(), solution_value );
+    }
+
+    ThrowJsError( operations_research::GMPVariable::solution_value : Invalid argument );
+    return info.Env().Undefined();
+}
+Napi::Value operations_research::GMPVariable::index( const Napi::CallbackInfo& info )
+{
+    // int index() const;
+    if ( info.Length() == 0 )
+    {
+        int index = pMPVariable->index();
+        return Napi::Number::New( info.Env(), index );
+    }
+
+    ThrowJsError( operations_research::GMPVariable::index : Invalid argument );
+    return info.Env().Undefined();
+}
+Napi::Value operations_research::GMPVariable::lb( const Napi::CallbackInfo& info )
+{
+    // double lb() const;
+    if ( info.Length() == 0 )
+    {
+        double lb = pMPVariable->lb();
+        return Napi::Number::New( info.Env(), lb );
+    }
+
+    ThrowJsError( operations_research::GMPVariable::lb : Invalid argument );
+    return info.Env().Undefined();
+}
+Napi::Value operations_research::GMPVariable::ub( const Napi::CallbackInfo& info )
+{
+    // double ub() const;
+    if ( info.Length() == 0 )
+    {
+        double ub = pMPVariable->ub();
+        return Napi::Number::New( info.Env(), ub );
+    }
+
+    ThrowJsError( operations_research::GMPVariable::ub : Invalid argument );
+    return info.Env().Undefined();
+}
+Napi::Value operations_research::GMPVariable::SetLB( const Napi::CallbackInfo& info )
+{
+    // void SetLB( double lb );
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        double lb = info[ 0 ].As< Napi::Number >().DoubleValue();
+        pMPVariable->SetLB( lb );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPVariable::SetLB : Invalid argument );
+    return info.Env().Undefined();
+}
+Napi::Value operations_research::GMPVariable::SetUB( const Napi::CallbackInfo& info )
+{
+    // void SetUB( double ub );
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        double ub = info[ 0 ].As< Napi::Number >().DoubleValue();
+        pMPVariable->SetUB( ub );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPVariable::SetUB : Invalid argument );
+    return info.Env().Undefined();
+}
+Napi::Value operations_research::GMPVariable::SetBounds( const Napi::CallbackInfo& info )
+{
+    // void SetBounds( double lb, double ub );
+    if ( info.Length() == 2 && info[ 0 ].IsNumber() && info[ 1 ].IsNumber() )
+    {
+        double lb = info[ 0 ].As< Napi::Number >().DoubleValue();
+        double ub = info[ 1 ].As< Napi::Number >().DoubleValue();
+        pMPVariable->SetBounds( lb, ub );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPVariable::SetBounds : Invalid argument );
+    return info.Env().Undefined();
+}
+Napi::Value operations_research::GMPVariable::unrounded_solution_value( const Napi::CallbackInfo& info )
+{
+    // double unrounded_solution_value() const;
+    if ( info.Length() == 0 )
+    {
+        double unrounded_solution_value = pMPVariable->unrounded_solution_value();
+        return Napi::Number::New( info.Env(), unrounded_solution_value );
+    }
+
+    ThrowJsError( operations_research::GMPVariable::unrounded_solution_value : Invalid argument );
+    return info.Env().Undefined();
+}
+Napi::Value operations_research::GMPVariable::reduced_cost( const Napi::CallbackInfo& info )
+{
+    // double reduced_cost() const;
+    if ( info.Length() == 0 )
+    {
+        double reduced_cost = pMPVariable->reduced_cost();
+        return Napi::Number::New( info.Env(), reduced_cost );
+    }
+
+    ThrowJsError( operations_research::GMPVariable::reduced_cost : Invalid argument );
+    return info.Env().Undefined();
+}
+Napi::Value operations_research::GMPVariable::basis_status( const Napi::CallbackInfo& info )
+{
+    // MPSolver::BasisStatus basis_status() const;
+    if ( info.Length() == 0 )
+    {
+        MPSolver::BasisStatus basis_status = pMPVariable->basis_status();
+        return Napi::Number::New( info.Env(), basis_status );
+    }
+
+    ThrowJsError( operations_research::GMPVariable::basis_status : Invalid argument );
+    return info.Env().Undefined();
+}
+Napi::Value operations_research::GMPVariable::branching_priority( const Napi::CallbackInfo& info )
+{
+    // int branching_priority() const;
+    if ( info.Length() == 0 )
+    {
+        int branching_priority = pMPVariable->branching_priority();
+        return Napi::Number::New( info.Env(), branching_priority );
+    }
+
+    ThrowJsError( operations_research::GMPVariable::branching_priority : Invalid argument );
+    return info.Env().Undefined();
+}
+Napi::Value operations_research::GMPVariable::SetBranchingPriority( const Napi::CallbackInfo& info )
+{
+    // void SetBranchingPriority( int priority );
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        int priority = info[ 0 ].As< Napi::Number >().Int32Value();
+        pMPVariable->SetBranchingPriority( priority );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPVariable::SetBranchingPriority : Invalid argument );
     return info.Env().Undefined();
 }

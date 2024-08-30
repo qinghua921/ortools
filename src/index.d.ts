@@ -91,10 +91,6 @@
         constructor(name: string, problem_type: MPSolver.OptimizationProblemType);
 
         /**
-         * C++: virtual ~MPSolver();
-         */
-
-        /**
          * Recommended factory method to create a MPSolver instance, especially in
          * non C++ languages.
          *
@@ -414,7 +410,7 @@
          * 
          * C++: ResultStatus Solve( const MPSolverParameters& param );
          */
-        
+
         //     /**
         //      * Writes the model using the solver internal write function.  Currently only
         //      * available for Gurobi.
@@ -816,102 +812,127 @@
      */
     export class MPVariable
     {
-        //     /// Returns the name of the variable.
-        //     const std::string& name() const
-        //     {
-        //         return name_;
-        //     }
+        /**
+         * Returns the name of the variable.
+         * 
+         * C++: const std::string& name() const;
+         */
+        name(): string;
 
-        //     /// Sets the integrality requirement of the variable.
-        //     void SetInteger( bool integer );
+        /**
+         * Sets the integrality requirement of the variable.
+         * 
+         * C++: void SetInteger( bool integer );
+         */
+        SetInteger(integer: boolean): void;
 
-        //     /// Returns the integrality requirement of the variable.
-        //     bool integer() const
-        //     {
-        //         return integer_;
-        //     }
+        /**
+         * Returns the integrality requirement of the variable.
+         * 
+         * C++: bool integer() const;
+         */
+        integer(): boolean;
 
-        //     /**
-        //      * Returns the value of the variable in the current solution.
-        //      *
-        //      * If the variable is integer, then the value will always be an integer (the
-        //      * underlying solver handles floating-point values only, but this function
-        //      * automatically rounds it to the nearest integer; see: man 3 round).
-        //      */
-        //     double solution_value() const;
+        /**
+         * Returns the value of the variable in the current solution.
+         *
+         * If the variable is integer, then the value will always be an integer (the
+         * underlying solver handles floating-point values only, but this function
+         * automatically rounds it to the nearest integer; see: man 3 round).
+         * 
+         * C++: double solution_value() const;
+         */
+        solution_value(): number;
 
-        //     /// Returns the index of the variable in the MPSolver::variables_.
-        //     int index() const
-        //     {
-        //         return index_;
-        //     }
+        /**
+         * Returns the index of the variable in the MPSolver::variables_.
+         *  
+         * C++: int index() const;
+         */
+        index(): number;
 
-        //     /// Returns the lower bound.
-        //     double lb() const
-        //     {
-        //         return lb_;
-        //     }
+        /**
+         * Returns the lower bound.
+         * 
+         * C++: double lb() const;
+         */
+        lb(): number;
 
-        //     /// Returns the upper bound.
-        //     double ub() const
-        //     {
-        //         return ub_;
-        //     }
+        /**
+         * Returns the upper bound.
+         * 
+         * C++: double ub() const;
+         */
+        ub(): number;
 
-        //     /// Sets the lower bound.
-        //     void SetLB( double lb )
-        //     {
-        //         SetBounds( lb, ub_ );
-        //     }
-
-        //     /// Sets the upper bound.
-        //     void SetUB( double ub )
-        //     {
-        //         SetBounds( lb_, ub );
-        //     }
-
-        //     /// Sets both the lower and upper bounds.
-        //     void SetBounds( double lb, double ub );
-
-        //     /**
-        //      * Advanced usage: unrounded solution value.
-        //      *
-        //      * The returned value won't be rounded to the nearest integer even if the
-        //      * variable is integer.
-        //      */
-        //     double unrounded_solution_value() const;
-
-        //     /**
-        //      * Advanced usage: returns the reduced cost of the variable in the current
-        //      * solution (only available for continuous problems).
-        //      */
-        //     double reduced_cost() const;
-
-        //     /**
-        //      * Advanced usage: returns the basis status of the variable in the current
-        //      * solution (only available for continuous problems).
-        //      *
-        //      * @see MPSolver::BasisStatus.
-        //      */
-        //     MPSolver::BasisStatus basis_status() const;
-
-        //     /**
-        //      * Advanced usage: Certain MIP solvers (e.g. Gurobi or SCIP) allow you to set
-        //      * a per-variable priority for determining which variable to branch on.
-        //      *
-        //      * A value of 0 is treated as default, and is equivalent to not setting the
-        //      * branching priority. The solver looks first to branch on fractional
-        //      * variables in higher priority levels. As of 2019-05, only Gurobi and SCIP
-        //      * support setting branching priority; all other solvers will simply ignore
-        //      * this annotation.
-        //      */
-        //     int branching_priority() const
-        //     {
-        //         return branching_priority_;
-        //     }
-        //     void SetBranchingPriority( int priority );
+        /**
+         * Sets the lower bound.
+         * 
+         * C++: void SetLB( double lb );
+         */
+        SetLB(lb: number): void;
 
 
+        /**
+         * Sets the upper bound.
+         * 
+         * C++: void SetUB( double ub );
+         */
+        SetUB(ub: number): void;
+
+        /**
+         * Sets both the lower and upper bounds.
+         * 
+         * C++: void SetBounds( double lb, double ub );
+         */
+        SetBounds(lb: number, ub: number): void;
+
+        /**
+         * Advanced usage: unrounded solution value.
+         *
+         * The returned value won't be rounded to the nearest integer even if the
+         * variable is integer.
+         * 
+         * C++: double unrounded_solution_value() const;
+         */
+        unrounded_solution_value(): number;
+
+        /**
+         * Advanced usage: returns the reduced cost of the variable in the current
+         * solution (only available for continuous problems).
+         * 
+         * C++: double reduced_cost() const;
+         */
+        reduced_cost(): number;
+
+        /**
+         * Advanced usage: returns the basis status of the variable in the current
+         * solution (only available for continuous problems).
+         *
+         * C++: MPSolver::BasisStatus basis_status() const;
+         * 
+         * @see MPSolver::BasisStatus.
+         */
+        basis_status(): number;
+
+        /**
+         * Advanced usage: Certain MIP solvers (e.g. Gurobi or SCIP) allow you to set
+         * a per-variable priority for determining which variable to branch on.
+         *
+         * A value of 0 is treated as default, and is equivalent to not setting the
+         * branching priority. The solver looks first to branch on fractional
+         * variables in higher priority levels. As of 2019-05, only Gurobi and SCIP
+         * support setting branching priority; all other solvers will simply ignore
+         * this annotation.
+         * 
+         * C++: int branching_priority() const;
+         */
+        branching_priority(): number;
+
+        /**
+         * C++: void SetBranchingPriority( int priority );
+         */
+        SetBranchingPriority(priority: number): void;
     }
 
     /**
@@ -1210,12 +1231,13 @@
      */
     export class MPObjective
     {
-        // public:
-        //     /**
-        //      *  Clears the offset, all variables and coefficients, and the optimization
-        //      * direction.
-        //      */
-        //     void Clear();
+        /**
+         *  Clears the offset, all variables and coefficients, and the optimization
+         * direction.
+         * 
+         * C++: void Clear();
+         */
+        Clear(): void;
 
         /**
          * Sets the coefficient of the variable in the objective.
@@ -1227,54 +1249,76 @@
          */
         SetCoefficient(var_: MPVariable, coeff: number): void;
 
-        //     /**
-        //      *  Gets the coefficient of a given variable in the objective
-        //      *
-        //      * It returns 0 if the variable does not appear in the objective).
-        //      */
-        //     double GetCoefficient( const MPVariable* const var ) const;
+        /**
+         *  Gets the coefficient of a given variable in the objective
+         *
+         * It returns 0 if the variable does not appear in the objective).
+         * 
+         * C++: double GetCoefficient( const MPVariable* const var ) const;
+         */
+        GetCoefficient(var_: MPVariable): number;
 
-        //     /**
-        //      * Returns a map from variables to their coefficients in the objective.
-        //      *
-        //      * If a variable is not present in the map, then its coefficient is zero.
-        //      */
-        //     const absl::flat_hash_map< const MPVariable*, double >& terms() const
-        //     {
-        //         return coefficients_;
-        //     }
+        /**
+         * Returns a map from variables to their coefficients in the objective.
+         *
+         * If a variable is not present in the map, then its coefficient is zero.
+         * 
+         * Note: the map is const, so you can't modify it directly.
+         * 
+         * C++: const absl::flat_hash_map< const MPVariable*, double >& terms() const;
+         */
+        terms(): Map<Readonly<MPVariable>, number>;
 
-        //     /// Sets the constant term in the objective.
-        //     void SetOffset( double value );
+        /**
+         * Sets the constant term in the objective.
+         * 
+         * C++: void SetOffset( double value );
+         */
+        SetOffset(value: number): void;
 
-        //     /// Gets the constant term in the objective.
-        //     double offset() const
-        //     {
-        //         return offset_;
-        //     }
+        /**
+         * Gets the constant term in the objective.
+         * 
+         * C++: double offset() const;
+         */
+        offset(): number;
 
-        //     /**
-        //      * Resets the current objective to take the value of linear_expr, and sets the
-        //      * objective direction to maximize if "is_maximize", otherwise minimizes.
-        //      */
-        //     void OptimizeLinearExpr( const LinearExpr& linear_expr, bool is_maximization );
+        /**
+         * Resets the current objective to take the value of linear_expr, and sets the
+         * objective direction to maximize if "is_maximize", otherwise minimizes.
+         * 
+         * C++: void OptimizeLinearExpr( const LinearExpr& linear_expr, bool is_maximization );
+         */
+        OptimizeLinearExpr(linear_expr: LinearExpr, is_maximization: boolean): void;
 
-        //     /// Resets the current objective to maximize linear_expr.
-        //     void MaximizeLinearExpr( const LinearExpr& linear_expr )
-        //     {
-        //         OptimizeLinearExpr( linear_expr, true );
-        //     }
-        //     /// Resets the current objective to minimize linear_expr.
-        //     void MinimizeLinearExpr( const LinearExpr& linear_expr )
-        //     {
-        //         OptimizeLinearExpr( linear_expr, false );
-        //     }
+        /**
+         * Resets the current objective to maximize linear_expr.
+         * 
+         * C++: void MaximizeLinearExpr( const LinearExpr& linear_expr );
+         */
+        MaximizeLinearExpr(linear_expr: LinearExpr): void;
 
-        //     /// Adds linear_expr to the current objective, does not change the direction.
-        //     void AddLinearExpr( const LinearExpr& linear_expr );
 
-        //     /// Sets the optimization direction (maximize: true or minimize: false).
-        //     void SetOptimizationDirection( bool maximize );
+        /**
+         * Resets the current objective to minimize linear_expr.
+         * 
+         * C++: void MinimizeLinearExpr( const LinearExpr& linear_expr );
+         */
+        MinimizeLinearExpr(linear_expr: LinearExpr): void;
+
+        /**
+         * Adds linear_expr to the current objective, does not change the direction.
+         * 
+         * C++: void AddLinearExpr( const LinearExpr& linear_expr );
+         */
+        AddLinearExpr(linear_expr: LinearExpr): void;
+
+        /**
+         * Sets the optimization direction (maximize: true or minimize: false).
+         * 
+         * C++: void SetOptimizationDirection( bool maximize );
+         */
+        SetOptimizationDirection(maximize: boolean): void;
 
         /**
          * Sets the optimization direction to minimize.
@@ -1283,38 +1327,51 @@
          */
         SetMinimization(): void;
 
-        //     /// Sets the optimization direction to maximize.
-        //     void SetMaximization()
-        //     {
-        //         SetOptimizationDirection( true );
-        //     }
+        /**
+         * Sets the optimization direction to maximize.
+         * 
+         * C++: void SetMaximization();
+         */
+        SetMaximization(): void;
 
-        //     /// Is the optimization direction set to maximize?
-        //     bool maximization() const;
+        /**
+         * Is the optimization direction set to maximize?
+         * 
+         * C++: bool maximization() const;
+         */
+        maximization(): boolean;
 
-        //     /// Is the optimization direction set to minimize?
-        //     bool minimization() const;
+        /**
+         * Is the optimization direction set to minimize?
+         * 
+         * C++: bool minimization() const;
+         */
+        minimization(): boolean;
 
-        //     /**
-        //      * Returns the objective value of the best solution found so far.
-        //      *
-        //      * It is the optimal objective value if the problem has been solved to
-        //      * optimality.
-        //      *
-        //      * Note: the objective value may be slightly different than what you could
-        //      * compute yourself using \c MPVariable::solution_value(); please use the
-        //      * --verify_solution flag to gain confidence about the numerical stability of
-        //      * your solution.
-        //      */
-        //     double Value() const;
+        /**
+         * Returns the objective value of the best solution found so far.
+         *
+         * It is the optimal objective value if the problem has been solved to
+         * optimality.
+         *
+         * Note: the objective value may be slightly different than what you could
+         * compute yourself using \c MPVariable::solution_value(); please use the
+         * --verify_solution flag to gain confidence about the numerical stability of
+         * your solution.
+         * 
+         * C++: double Value() const;
+         */
+        Value(): number;
 
-        //     /**
-        //      * Returns the best objective bound.
-        //      *
-        //      * In case of minimization, it is a lower bound on the objective value of the
-        //      * optimal integer solution. Only available for discrete problems.
-        //      */
-        //     double BestBound() const;
+        /**
+         * Returns the best objective bound.
+         *
+         * In case of minimization, it is a lower bound on the objective value of the
+         * optimal integer solution. Only available for discrete problems.
+         * 
+         * C++: double BestBound() const;
+         */
+        BestBound(): number;
 
     }
 

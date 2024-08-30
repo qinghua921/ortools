@@ -84,7 +84,7 @@ public:
                 InstanceMethod( "constraint", &GMPSolver::constraint ),
                 InstanceMethod( "LookupConstraintOrNull", &GMPSolver::LookupConstraintOrNull ),
                 InstanceMethod( "Objective", &GMPSolver::Objective ),
-                
+
                 StaticValue( "ResultStatus", resultStatus ),
                 StaticValue( "OptimizationProblemType", optimizationProblemType ),
             } );
@@ -167,12 +167,59 @@ public:
         Napi::HandleScope scope( env );
         Napi::Function    func = DefineClass(
             env, "MPVariable",
-            {} );
+            {
+                InstanceMethod( "name", &GMPVariable::name ),
+                InstanceMethod( "SetInteger", &GMPVariable::SetInteger ),
+                InstanceMethod( "integer", &GMPVariable::integer ),
+                InstanceMethod( "solution_value", &GMPVariable::solution_value ),
+                InstanceMethod( "index", &GMPVariable::index ),
+                InstanceMethod( "lb", &GMPVariable::lb ),
+                InstanceMethod( "ub", &GMPVariable::ub ),
+                InstanceMethod( "SetLB", &GMPVariable::SetLB ),
+                InstanceMethod( "SetUB", &GMPVariable::SetUB ),
+                InstanceMethod( "SetBounds", &GMPVariable::SetBounds ),
+                InstanceMethod( "unrounded_solution_value", &GMPVariable::unrounded_solution_value ),
+                InstanceMethod( "reduced_cost", &GMPVariable::reduced_cost ),
+                InstanceMethod( "basis_status", &GMPVariable::basis_status ),
+                InstanceMethod( "branching_priority", &GMPVariable::branching_priority ),
+                InstanceMethod( "SetBranchingPriority", &GMPVariable::SetBranchingPriority ),
+            } );
         constructor = Napi::Persistent( func );
         constructor.SuppressDestruct();
         exports.Set( Napi::String::New( env, "MPVariable" ), func );
         return exports;
     }
+
+    // const std::string& name() const;
+    Napi::Value name( const Napi::CallbackInfo& info );
+    // void SetInteger( bool integer );
+    Napi::Value SetInteger( const Napi::CallbackInfo& info );
+    // bool integer() const;
+    Napi::Value integer( const Napi::CallbackInfo& info );
+    // double solution_value() const;
+    Napi::Value solution_value( const Napi::CallbackInfo& info );
+    // int index() const;
+    Napi::Value index( const Napi::CallbackInfo& info );
+    // double lb() const;
+    Napi::Value lb( const Napi::CallbackInfo& info );
+    // double ub() const;
+    Napi::Value ub( const Napi::CallbackInfo& info );
+    // void SetLB( double lb );
+    Napi::Value SetLB( const Napi::CallbackInfo& info );
+    // void SetUB( double ub );
+    Napi::Value SetUB( const Napi::CallbackInfo& info );
+    // void SetBounds( double lb, double ub );
+    Napi::Value SetBounds( const Napi::CallbackInfo& info );
+    // double unrounded_solution_value() const;
+    Napi::Value unrounded_solution_value( const Napi::CallbackInfo& info );
+    // double reduced_cost() const;
+    Napi::Value reduced_cost( const Napi::CallbackInfo& info );
+    // MPSolver::BasisStatus basis_status() const;
+    Napi::Value basis_status( const Napi::CallbackInfo& info );
+    // int branching_priority() const;
+    Napi::Value branching_priority( const Napi::CallbackInfo& info );
+    // void SetBranchingPriority( int priority );
+    Napi::Value SetBranchingPriority( const Napi::CallbackInfo& info );
 };
 
 Napi::FunctionReference GMPVariable::constructor;
@@ -283,6 +330,21 @@ public:
             {
                 InstanceMethod( "SetCoefficient", &GMPObjective::SetCoefficient ),
                 InstanceMethod( "SetMinimization", &GMPObjective::SetMinimization ),
+                InstanceMethod( "Value", &GMPObjective::Value ),
+                InstanceMethod( "Clear", &GMPObjective::Clear ),
+                InstanceMethod( "GetCoefficient", &GMPObjective::GetCoefficient ),
+                InstanceMethod( "terms", &GMPObjective::terms ),
+                InstanceMethod( "SetOffset", &GMPObjective::SetOffset ),
+                InstanceMethod( "offset", &GMPObjective::offset ),
+                InstanceMethod( "OptimizeLinearExpr", &GMPObjective::OptimizeLinearExpr ),
+                InstanceMethod( "MaximizeLinearExpr", &GMPObjective::MaximizeLinearExpr ),
+                InstanceMethod( "MinimizeLinearExpr", &GMPObjective::MinimizeLinearExpr ),
+                InstanceMethod( "AddLinearExpr", &GMPObjective::AddLinearExpr ),
+                InstanceMethod( "SetOptimizationDirection", &GMPObjective::SetOptimizationDirection ),
+                InstanceMethod( "SetMaximization", &GMPObjective::SetMaximization ),
+                InstanceMethod( "maximization", &GMPObjective::maximization ),
+                InstanceMethod( "minimization", &GMPObjective::minimization ),
+                InstanceMethod( "BestBound", &GMPObjective::BestBound ),
             } );
 
         constructor = Napi::Persistent( func );
@@ -291,8 +353,40 @@ public:
         return exports;
     }
 
-    Napi::Value SetCoefficient( const Napi::CallbackInfo& info );   // void SetCoefficient( const MPVariable* const var, double coeff );
-    Napi::Value SetMinimization( const Napi::CallbackInfo& info );  // void SetMinimization();
+    // void SetCoefficient( const MPVariable* const var, double coeff );
+    Napi::Value SetCoefficient( const Napi::CallbackInfo& info );
+    // void SetMinimization();
+    Napi::Value SetMinimization( const Napi::CallbackInfo& info );
+    // double Value() const;
+    Napi::Value Value( const Napi::CallbackInfo& info );
+    // void Clear();
+    Napi::Value Clear( const Napi::CallbackInfo& info );
+    // double GetCoefficient( const MPVariable* const var ) const;
+    Napi::Value GetCoefficient( const Napi::CallbackInfo& info );
+    // const absl::flat_hash_map< const MPVariable*, double >& terms() const;
+    Napi::Value terms( const Napi::CallbackInfo& info );
+    // void SetOffset( double value );
+    Napi::Value SetOffset( const Napi::CallbackInfo& info );
+    // double offset() const;
+    Napi::Value offset( const Napi::CallbackInfo& info );
+    // void OptimizeLinearExpr( const LinearExpr& linear_expr, bool is_maximization );
+    Napi::Value OptimizeLinearExpr( const Napi::CallbackInfo& info );
+    // void MaximizeLinearExpr( const LinearExpr& linear_expr );
+    Napi::Value MaximizeLinearExpr( const Napi::CallbackInfo& info );
+    // void MinimizeLinearExpr( const LinearExpr& linear_expr );
+    Napi::Value MinimizeLinearExpr( const Napi::CallbackInfo& info );
+    //  void AddLinearExpr( const LinearExpr& linear_expr );
+    Napi::Value AddLinearExpr( const Napi::CallbackInfo& info );
+    // void SetOptimizationDirection( bool maximize );
+    Napi::Value SetOptimizationDirection( const Napi::CallbackInfo& info );
+    // void SetMaximization();
+    Napi::Value SetMaximization( const Napi::CallbackInfo& info );
+    // bool maximization() const;
+    Napi::Value maximization( const Napi::CallbackInfo& info );
+    // bool minimization() const;
+    Napi::Value minimization( const Napi::CallbackInfo& info );
+    // double BestBound() const;
+    Napi::Value BestBound( const Napi::CallbackInfo& info );
 };
 
 Napi::FunctionReference GMPObjective::constructor;
