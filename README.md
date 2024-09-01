@@ -45,7 +45,7 @@ The code is quite large, and the priority is to implement the code in the exampl
 - course_scheduling_run
 - cp_is_fun_cp
 - cp_is_fun_sat
-- cp_sat_example
+- cp_sat_example - 🆗
 - cryptarithm_sat
 - cutting_stock_mo
 - cvrp_disjoint_tw

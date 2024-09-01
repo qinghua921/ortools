@@ -942,21 +942,21 @@ Napi::Value operations_research::operator_less_equals( const Napi::CallbackInfo&
         return info.Env().Undefined();
     }
 
-    LinearExpr LinearExpr_lhs;
+    LinearExpr lhsLinearExpr;
 
     if ( info[ 0 ].IsObject()
          && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
-        LinearExpr_lhs = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() )->pLinearExpr;
+        lhsLinearExpr = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() )->pLinearExpr;
     }
     else if ( info[ 0 ].IsNumber() )
     {
-        LinearExpr_lhs = LinearExpr( info[ 0 ].As< Napi::Number >().DoubleValue() );
+        lhsLinearExpr = LinearExpr( info[ 0 ].As< Napi::Number >().DoubleValue() );
     }
     else if ( info[ 0 ].IsObject()
               && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
     {
-        LinearExpr_lhs = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() )->pMPVariable;
+        lhsLinearExpr = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() )->pMPVariable;
     }
     else
     {
@@ -964,21 +964,21 @@ Napi::Value operations_research::operator_less_equals( const Napi::CallbackInfo&
         return info.Env().Undefined();
     }
 
-    LinearExpr LinearExpr_rhs;
+    LinearExpr rhsLinearExpr;
 
     if ( info[ 1 ].IsObject()
          && info[ 1 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
-        LinearExpr_rhs = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() )->pLinearExpr;
+        rhsLinearExpr = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() )->pLinearExpr;
     }
     else if ( info[ 1 ].IsNumber() )
     {
-        LinearExpr_rhs = LinearExpr( info[ 1 ].As< Napi::Number >().DoubleValue() );
+        rhsLinearExpr = LinearExpr( info[ 1 ].As< Napi::Number >().DoubleValue() );
     }
     else if ( info[ 1 ].IsObject()
               && info[ 1 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
     {
-        LinearExpr_rhs = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 1 ].As< Napi::Object >() )->pMPVariable;
+        rhsLinearExpr = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 1 ].As< Napi::Object >() )->pMPVariable;
     }
     else
     {
@@ -986,7 +986,7 @@ Napi::Value operations_research::operator_less_equals( const Napi::CallbackInfo&
         return info.Env().Undefined();
     }
 
-    auto pLinearRange = new LinearRange( LinearExpr_lhs <= LinearExpr_rhs );
+    auto pLinearRange = new LinearRange( lhsLinearExpr <= rhsLinearExpr );
     auto external     = Napi::External< LinearRange >::New( info.Env(), pLinearRange );
     return GLinearRange::constructor.New( { external } );
 }
@@ -1000,21 +1000,21 @@ Napi::Value operations_research::operator_equals( const Napi::CallbackInfo& info
         return info.Env().Undefined();
     }
 
-    LinearExpr LinearExpr_lhs;
+    LinearExpr lhsLinearExpr;
 
     if ( info[ 0 ].IsObject()
          && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
-        LinearExpr_lhs = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() )->pLinearExpr;
+        lhsLinearExpr = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() )->pLinearExpr;
     }
     else if ( info[ 0 ].IsNumber() )
     {
-        LinearExpr_lhs = LinearExpr( info[ 0 ].As< Napi::Number >().DoubleValue() );
+        lhsLinearExpr = LinearExpr( info[ 0 ].As< Napi::Number >().DoubleValue() );
     }
     else if ( info[ 0 ].IsObject()
               && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
     {
-        LinearExpr_lhs = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() )->pMPVariable;
+        lhsLinearExpr = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() )->pMPVariable;
     }
     else
     {
@@ -1022,21 +1022,21 @@ Napi::Value operations_research::operator_equals( const Napi::CallbackInfo& info
         return info.Env().Undefined();
     }
 
-    LinearExpr LinearExpr_rhs;
+    LinearExpr rhsLinearExpr;
 
     if ( info[ 1 ].IsObject()
          && info[ 1 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
-        LinearExpr_rhs = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() )->pLinearExpr;
+        rhsLinearExpr = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() )->pLinearExpr;
     }
     else if ( info[ 1 ].IsNumber() )
     {
-        LinearExpr_rhs = LinearExpr( info[ 1 ].As< Napi::Number >().DoubleValue() );
+        rhsLinearExpr = LinearExpr( info[ 1 ].As< Napi::Number >().DoubleValue() );
     }
     else if ( info[ 1 ].IsObject()
               && info[ 1 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
     {
-        LinearExpr_rhs = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 1 ].As< Napi::Object >() )->pMPVariable;
+        rhsLinearExpr = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 1 ].As< Napi::Object >() )->pMPVariable;
     }
     else
     {
@@ -1044,7 +1044,7 @@ Napi::Value operations_research::operator_equals( const Napi::CallbackInfo& info
         return info.Env().Undefined();
     }
 
-    auto pLinearRange = new LinearRange( LinearExpr_lhs == LinearExpr_rhs );
+    auto pLinearRange = new LinearRange( lhsLinearExpr == rhsLinearExpr );
     auto external     = Napi::External< LinearRange >::New( info.Env(), pLinearRange );
     return GLinearRange::constructor.New( { external } );
 }
@@ -1058,21 +1058,21 @@ Napi::Value operations_research::operator_greater_equals( const Napi::CallbackIn
         return info.Env().Undefined();
     }
 
-    LinearExpr LinearExpr_lhs;
+    LinearExpr lhsLinearExpr;
 
     if ( info[ 0 ].IsObject()
          && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
-        LinearExpr_lhs = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() )->pLinearExpr;
+        lhsLinearExpr = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() )->pLinearExpr;
     }
     else if ( info[ 0 ].IsNumber() )
     {
-        LinearExpr_lhs = LinearExpr( info[ 0 ].As< Napi::Number >().DoubleValue() );
+        lhsLinearExpr = LinearExpr( info[ 0 ].As< Napi::Number >().DoubleValue() );
     }
     else if ( info[ 0 ].IsObject()
               && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
     {
-        LinearExpr_lhs = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() )->pMPVariable;
+        lhsLinearExpr = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 0 ].As< Napi::Object >() )->pMPVariable;
     }
     else
     {
@@ -1080,21 +1080,21 @@ Napi::Value operations_research::operator_greater_equals( const Napi::CallbackIn
         return info.Env().Undefined();
     }
 
-    LinearExpr LinearExpr_rhs;
+    LinearExpr rhsLinearExpr;
 
     if ( info[ 1 ].IsObject()
          && info[ 1 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
-        LinearExpr_rhs = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() )->pLinearExpr;
+        rhsLinearExpr = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() )->pLinearExpr;
     }
     else if ( info[ 1 ].IsNumber() )
     {
-        LinearExpr_rhs = LinearExpr( info[ 1 ].As< Napi::Number >().DoubleValue() );
+        rhsLinearExpr = LinearExpr( info[ 1 ].As< Napi::Number >().DoubleValue() );
     }
     else if ( info[ 1 ].IsObject()
               && info[ 1 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
     {
-        LinearExpr_rhs = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 1 ].As< Napi::Object >() )->pMPVariable;
+        rhsLinearExpr = Napi::ObjectWrap< GMPVariable >::Unwrap( info[ 1 ].As< Napi::Object >() )->pMPVariable;
     }
     else
     {
@@ -1102,7 +1102,7 @@ Napi::Value operations_research::operator_greater_equals( const Napi::CallbackIn
         return info.Env().Undefined();
     }
 
-    auto pLinearRange = new LinearRange( LinearExpr_lhs >= LinearExpr_rhs );
+    auto pLinearRange = new LinearRange( lhsLinearExpr >= rhsLinearExpr );
     auto external     = Napi::External< LinearRange >::New( info.Env(), pLinearRange );
     return GLinearRange::constructor.New( { external } );
 }
@@ -1485,6 +1485,107 @@ Napi::Value operations_research::sat::GCpModelBuilder::Build( const Napi::Callba
     return info.Env().Undefined();
 }
 
+Napi::Value operations_research::sat::GCpModelBuilder::NewIntVar( const Napi::CallbackInfo& info )
+{
+    // IntVar NewIntVar( const Domain& domain );
+    if ( info.Length() == 1
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GDomain::constructor.Value() ) )
+    {
+        auto domain   = Napi::ObjectWrap< GDomain >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto pIntVar  = pCpModelBuilder->NewIntVar( *domain->pDomain );
+        auto external = Napi::External< IntVar >::New( info.Env(), new IntVar( pIntVar ) );
+        return GIntVar::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::NewIntVar : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::sat::GCpModelBuilder::AddLessOrEqual( const Napi::CallbackInfo& info )
+{
+    // Constraint AddLessOrEqual( const LinearExpr& left, const LinearExpr& right );
+    if ( info.Length() != 2 )
+    {
+        ThrowJsError( operations_research::sat::GCpModelBuilder::AddLessOrEqual : Invalid argument );
+        return info.Env().Undefined();
+    }
+
+    LinearExpr LinearExpr_left;
+
+    if ( info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    {
+        LinearExpr_left = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() )->pLinearExpr;
+    }
+    else if ( info[ 0 ].IsNumber() )
+    {
+        LinearExpr_left = LinearExpr( info[ 0 ].As< Napi::Number >().DoubleValue() );
+    }
+    else if ( info[ 0 ].IsObject()
+              && info[ 0 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+    {
+        LinearExpr_left = LinearExpr( *Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 0 ].As< Napi::Object >() )->pBoolVar );
+    }
+    else if ( info[ 0 ].IsObject()
+              && info[ 0 ].As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
+    {
+        LinearExpr_left = LinearExpr( *Napi::ObjectWrap< GIntVar >::Unwrap( info[ 0 ].As< Napi::Object >() )->pIntVar );
+    }
+    else
+    {
+        ThrowJsError( operations_research::sat::GCpModelBuilder::AddLessOrEqual : Invalid argument );
+        return info.Env().Undefined();
+    }
+
+    LinearExpr LinearExpr_right;
+
+    if ( info[ 1 ].IsObject()
+         && info[ 1 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    {
+        LinearExpr_right = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() )->pLinearExpr;
+    }
+    else if ( info[ 1 ].IsNumber() )
+    {
+        LinearExpr_right = LinearExpr( info[ 1 ].As< Napi::Number >().DoubleValue() );
+    }
+    else if ( info[ 1 ].IsObject()
+              && info[ 1 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+    {
+        LinearExpr_right = LinearExpr( *Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 1 ].As< Napi::Object >() )->pBoolVar );
+    }
+    else if ( info[ 1 ].IsObject()
+              && info[ 1 ].As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
+    {
+        LinearExpr_right = LinearExpr( *Napi::ObjectWrap< GIntVar >::Unwrap( info[ 1 ].As< Napi::Object >() )->pIntVar );
+    }
+    else
+    {
+        ThrowJsError( operations_research::sat::GCpModelBuilder::AddLessOrEqual : Invalid argument );
+        return info.Env().Undefined();
+    }
+
+    auto pConstraint = pCpModelBuilder->AddLessOrEqual( LinearExpr_left, LinearExpr_right );
+    auto external    = Napi::External< Constraint >::New( info.Env(), new Constraint( pConstraint ) );
+    return GConstraint::constructor.New( { external } );
+}
+
+Napi::Value operations_research::sat::GCpModelBuilder::Maximize( const Napi::CallbackInfo& info )
+{
+    // void Maximize( const LinearExpr& expr );
+    if ( info.Length() == 1
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    {
+        auto linear_expr = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        pCpModelBuilder->Maximize( *linear_expr->pLinearExpr );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::Maximize : Invalid argument );
+    return info.Env().Undefined();
+}
+
 operations_research::sat::GBoolVar::GBoolVar( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< operations_research::sat::GBoolVar >( info )
 {
@@ -1546,6 +1647,7 @@ operations_research::sat::GConstraint::~GConstraint()
 operations_research::sat::GIntVar::GIntVar( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< operations_research::sat::GIntVar >( info )
 {
+    // IntVar() = default;
     if ( info.Length() == 0 )
     {
         pIntVar = new IntVar();
@@ -1560,6 +1662,13 @@ operations_research::sat::GIntVar::GIntVar( const Napi::CallbackInfo& info )
         auto bool_var = Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 0 ].As< Napi::Object >() );
         pIntVar       = new IntVar( *bool_var->pBoolVar );
         return;
+    }
+
+    if ( info.Length() == 1 && info[ 0 ].IsExternal() )
+    {
+        auto external = info[ 0 ].As< Napi::External< IntVar > >();
+        pIntVar       = dynamic_cast< IntVar* >( external.Data() );
+        if ( pIntVar != nullptr ) return;
     }
 
     ThrowJsError( operations_research::sat::GIntVar : Invalid argument );
@@ -1756,21 +1865,21 @@ Napi::Value operations_research::sat::Goperator_plus( const Napi::CallbackInfo& 
         return info.Env().Undefined();
     }
 
-    LinearExpr LinearExpr_lhs;
+    LinearExpr lhsLinearExpr;
 
     if ( info[ 0 ].IsObject()
          && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
-        LinearExpr_lhs = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() )->pLinearExpr;
+        lhsLinearExpr = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() )->pLinearExpr;
     }
     else if ( info[ 0 ].IsNumber() )
     {
-        LinearExpr_lhs = LinearExpr( info[ 0 ].As< Napi::Number >().DoubleValue() );
+        lhsLinearExpr = LinearExpr( info[ 0 ].As< Napi::Number >().DoubleValue() );
     }
     else if ( info[ 0 ].IsObject()
               && info[ 0 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
     {
-        LinearExpr_lhs = LinearExpr( *Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 0 ].As< Napi::Object >() )->pBoolVar );
+        lhsLinearExpr = LinearExpr( *Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 0 ].As< Napi::Object >() )->pBoolVar );
     }
     else
     {
@@ -1778,20 +1887,20 @@ Napi::Value operations_research::sat::Goperator_plus( const Napi::CallbackInfo& 
         return info.Env().Undefined();
     }
 
-    LinearExpr LinearExpr_rhs;
+    LinearExpr rhsLinearExpr;
     if ( info[ 1 ].IsObject()
          && info[ 1 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
-        LinearExpr_rhs = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() )->pLinearExpr;
+        rhsLinearExpr = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() )->pLinearExpr;
     }
     else if ( info[ 1 ].IsNumber() )
     {
-        LinearExpr_rhs = LinearExpr( info[ 1 ].As< Napi::Number >().DoubleValue() );
+        rhsLinearExpr = LinearExpr( info[ 1 ].As< Napi::Number >().DoubleValue() );
     }
     else if ( info[ 1 ].IsObject()
               && info[ 1 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
     {
-        LinearExpr_rhs = LinearExpr( *Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 1 ].As< Napi::Object >() )->pBoolVar );
+        rhsLinearExpr = LinearExpr( *Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 1 ].As< Napi::Object >() )->pBoolVar );
     }
     else
     {
@@ -1799,7 +1908,7 @@ Napi::Value operations_research::sat::Goperator_plus( const Napi::CallbackInfo& 
         return info.Env().Undefined();
     }
 
-    LinearExpr result = LinearExpr_lhs + LinearExpr_rhs;
+    LinearExpr result = lhsLinearExpr + rhsLinearExpr;
     return GLinearExpr::constructor.New( { Napi::External< LinearExpr >::New( info.Env(), new LinearExpr( result ) ) } );
 }
 
@@ -1812,21 +1921,21 @@ Napi::Value operations_research::sat::Goperator_minus( const Napi::CallbackInfo&
         return info.Env().Undefined();
     }
 
-    LinearExpr LinearExpr_lhs;
+    LinearExpr lhsLinearExpr;
 
     if ( info[ 0 ].IsObject()
          && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
-        LinearExpr_lhs = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() )->pLinearExpr;
+        lhsLinearExpr = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 0 ].As< Napi::Object >() )->pLinearExpr;
     }
     else if ( info[ 0 ].IsNumber() )
     {
-        LinearExpr_lhs = LinearExpr( info[ 0 ].As< Napi::Number >().DoubleValue() );
+        lhsLinearExpr = LinearExpr( info[ 0 ].As< Napi::Number >().DoubleValue() );
     }
     else if ( info[ 0 ].IsObject()
               && info[ 0 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
     {
-        LinearExpr_lhs = LinearExpr( *Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 0 ].As< Napi::Object >() )->pBoolVar );
+        lhsLinearExpr = LinearExpr( *Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 0 ].As< Napi::Object >() )->pBoolVar );
     }
     else
     {
@@ -1834,20 +1943,20 @@ Napi::Value operations_research::sat::Goperator_minus( const Napi::CallbackInfo&
         return info.Env().Undefined();
     }
 
-    LinearExpr LinearExpr_rhs;
+    LinearExpr rhsLinearExpr;
     if ( info[ 1 ].IsObject()
          && info[ 1 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
-        LinearExpr_rhs = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() )->pLinearExpr;
+        rhsLinearExpr = *Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() )->pLinearExpr;
     }
     else if ( info[ 1 ].IsNumber() )
     {
-        LinearExpr_rhs = LinearExpr( info[ 1 ].As< Napi::Number >().DoubleValue() );
+        rhsLinearExpr = LinearExpr( info[ 1 ].As< Napi::Number >().DoubleValue() );
     }
     else if ( info[ 1 ].IsObject()
               && info[ 1 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
     {
-        LinearExpr_rhs = LinearExpr( *Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 1 ].As< Napi::Object >() )->pBoolVar );
+        rhsLinearExpr = LinearExpr( *Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 1 ].As< Napi::Object >() )->pBoolVar );
     }
     else
     {
@@ -1855,7 +1964,7 @@ Napi::Value operations_research::sat::Goperator_minus( const Napi::CallbackInfo&
         return info.Env().Undefined();
     }
 
-    LinearExpr result = LinearExpr_lhs - LinearExpr_rhs;
+    LinearExpr result = lhsLinearExpr - rhsLinearExpr;
     return GLinearExpr::constructor.New( { Napi::External< LinearExpr >::New( info.Env(), new LinearExpr( result ) ) } );
 }
 
@@ -1868,7 +1977,7 @@ Napi::Value operations_research::sat::Goperator_times( const Napi::CallbackInfo&
     }
 
     // inline LinearExpr operator*( LinearExpr expr, int64_t factor )
-    if ( info[ 0 ].IsObject() && info[ 1 ].IsNumber() )
+    if ( ( info[ 0 ].IsObject() || info[ 0 ].IsNumber() ) && info[ 1 ].IsNumber() )
     {
         LinearExpr expr;
         if ( info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
@@ -1883,6 +1992,10 @@ Napi::Value operations_research::sat::Goperator_times( const Napi::CallbackInfo&
         {
             expr = LinearExpr( *Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 0 ].As< Napi::Object >() )->pBoolVar );
         }
+        else if ( info[ 0 ].As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
+        {
+            expr = LinearExpr( *Napi::ObjectWrap< GIntVar >::Unwrap( info[ 0 ].As< Napi::Object >() )->pIntVar );
+        }
         else
         {
             ThrowJsError( operations_research::sat::operator_times : Invalid argument );
@@ -1895,8 +2008,7 @@ Napi::Value operations_research::sat::Goperator_times( const Napi::CallbackInfo&
     }
 
     // inline LinearExpr operator*( int64_t factor, LinearExpr expr )
-    if ( info[ 1 ].IsObject()
-         && info[ 0 ].IsNumber() )
+    if ( ( info[ 1 ].IsObject() || info[ 1 ].IsNumber() ) && info[ 0 ].IsNumber() )
     {
         LinearExpr expr;
         if ( info[ 1 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
@@ -1910,6 +2022,10 @@ Napi::Value operations_research::sat::Goperator_times( const Napi::CallbackInfo&
         else if ( info[ 1 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
         {
             expr = LinearExpr( *Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 1 ].As< Napi::Object >() )->pBoolVar );
+        }
+        else if ( info[ 1 ].As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
+        {
+            expr = LinearExpr( *Napi::ObjectWrap< GIntVar >::Unwrap( info[ 1 ].As< Napi::Object >() )->pIntVar );
         }
         else
         {
@@ -1943,10 +2059,58 @@ Napi::Value operations_research::sat::GSolve( const Napi::CallbackInfo& info )
     return info.Env().Undefined();
 }
 
+Napi::Value operations_research::sat::GSolutionIntegerValue( const Napi::CallbackInfo& info )
+{
+    // int64_t SolutionIntegerValue( const CpSolverResponse& r, const LinearExpr& expr );
+    if ( info.Length() != 2 )
+    {
+        ThrowJsError( operations_research::sat::SolutionIntegerValue : Invalid argument );
+        return info.Env().Undefined();
+    }
+
+    if ( !info[ 0 ].IsObject()
+         || !info[ 0 ].As< Napi::Object >().InstanceOf( GCpSolverResponse::constructor.Value() ) )
+    {
+        ThrowJsError( operations_research::sat::SolutionIntegerValue : Invalid argument );
+        return info.Env().Undefined();
+    }
+
+    if ( !info[ 1 ].IsObject() )
+    {
+        ThrowJsError( operations_research::sat::SolutionIntegerValue : Invalid argument );
+        return info.Env().Undefined();
+    }
+
+    if ( info[ 1 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    {
+        auto linear_expr     = Napi::ObjectWrap< GLinearExpr >::Unwrap( info[ 1 ].As< Napi::Object >() );
+        auto expr            = *linear_expr->pLinearExpr;
+        auto solver_response = Napi::ObjectWrap< GCpSolverResponse >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        return Napi::Number::New( info.Env(), SolutionIntegerValue( *solver_response->pCpSolverResponse, expr ) );
+    }
+
+    if ( info[ 1 ].As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
+    {
+        auto int_var         = Napi::ObjectWrap< GIntVar >::Unwrap( info[ 1 ].As< Napi::Object >() );
+        auto solver_response = Napi::ObjectWrap< GCpSolverResponse >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        return Napi::Number::New( info.Env(), SolutionIntegerValue( *solver_response->pCpSolverResponse, *int_var->pIntVar ) );
+    }
+
+    if ( info[ 1 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+    {
+        auto bool_var        = Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 1 ].As< Napi::Object >() );
+        auto solver_response = Napi::ObjectWrap< GCpSolverResponse >::Unwrap( info[ 0 ].As< Napi::Object >() );
+        return Napi::Boolean::New( info.Env(), SolutionBooleanValue( *solver_response->pCpSolverResponse, *bool_var->pBoolVar ) );
+    }
+
+    ThrowJsError( operations_research::sat::SolutionIntegerValue : Invalid argument );
+    return info.Env().Undefined();
+}
+
 Napi::Value operations_research::sat::GSolutionBooleanValue( const Napi::CallbackInfo& info )
 {
     //  bool SolutionBooleanValue( const CpSolverResponse& r, const BoolVar& x );
-    if ( info.Length() == 2 
+    if ( info.Length() == 2
          && info[ 0 ].IsObject()
          && info[ 0 ].As< Napi::Object >().InstanceOf( GCpSolverResponse::constructor.Value() )
          && info[ 1 ].IsObject()
@@ -2806,4 +2970,158 @@ operations_research::GMPModelRequest::GMPModelRequest( const Napi::CallbackInfo&
 operations_research::GMPModelRequest::~GMPModelRequest()
 {
     delete pMPModelRequest;
+}
+
+operations_research::GDomain::GDomain( const Napi::CallbackInfo& info )
+    : Napi::ObjectWrap< GDomain >( info )
+{
+    if ( info.Length() == 1 && info[ 0 ].IsExternal() )
+    {
+        auto external = info[ 0 ].As< Napi::External< operations_research::Domain > >();
+        pDomain       = dynamic_cast< operations_research::Domain* >( external.Data() );
+        if ( pDomain != nullptr ) return;
+    }
+
+    //  Domain() {}
+    if ( info.Length() == 0 )
+    {
+        pDomain = new Domain();
+        return;
+    }
+
+    // explicit Domain( int64_t value );
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        int64_t value = info[ 0 ].As< Napi::Number >().Int64Value();
+        pDomain       = new Domain( value );
+        return;
+    }
+
+    // Domain(int64_t left, int64_t right);
+    if ( info.Length() == 2 && info[ 0 ].IsNumber() && info[ 1 ].IsNumber() )
+    {
+        int64_t left  = info[ 0 ].As< Napi::Number >().Int64Value();
+        int64_t right = info[ 1 ].As< Napi::Number >().Int64Value();
+        pDomain       = new Domain( left, right );
+        return;
+    }
+
+    ThrowJsError( operations_research::sat::GDomain : Invalid argument );
+}
+
+operations_research::GDomain::~GDomain()
+{
+    delete pDomain;
+}
+
+Napi::Value operations_research::sat::GIntVar::ToBoolVar( const Napi::CallbackInfo& info )
+{
+    // BoolVar ToBoolVar() const;
+    if ( info.Length() == 0 )
+    {
+        auto result  = pIntVar->ToBoolVar();
+        auto wrapper = Napi::External< BoolVar >::New( info.Env(), new BoolVar( result ) );
+        return GBoolVar::constructor.New( { wrapper } );
+    }
+
+    ThrowJsError( operations_research::sat::GIntVar::ToBoolVar : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::sat::GIntVar::WithName( const Napi::CallbackInfo& info )
+{
+    // IntVar WithName( const std::string& name ) const;
+    if ( info.Length() == 1 && info[ 0 ].IsString() )
+    {
+        std::string name    = info[ 0 ].As< Napi::String >().Utf8Value();
+        auto        result  = pIntVar->WithName( name );
+        auto        wrapper = Napi::External< IntVar >::New( info.Env(), new IntVar( result ) );
+        return GIntVar::constructor.New( { wrapper } );
+    }
+
+    ThrowJsError( operations_research::sat::GIntVar::WithName : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::sat::GIntVar::Name( const Napi::CallbackInfo& info )
+{
+    // std::string Name() const;
+    if ( info.Length() == 0 )
+    {
+        std::string name = pIntVar->Name();
+        return Napi::String::New( info.Env(), name );
+    }
+
+    ThrowJsError( operations_research::sat::GIntVar::Name : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::sat::GIntVar::operator_equals( const Napi::CallbackInfo& info )
+{
+    // bool operator==( const IntVar& other ) const;
+    if ( info.Length() == 1
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
+    {
+        auto other = GIntVar::Unwrap( info[ 0 ].As< Napi::Object >() );
+        return Napi::Boolean::New( info.Env(), *pIntVar == *other->pIntVar );
+    }
+
+    ThrowJsError( operations_research::sat::GIntVar::operator_equals : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::sat::GIntVar::operator_not_equals( const Napi::CallbackInfo& info )
+{
+    // bool operator!=( const IntVar& other ) const;
+    if ( info.Length() == 1
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
+    {
+        auto other = GIntVar::Unwrap( info[ 0 ].As< Napi::Object >() );
+        return Napi::Boolean::New( info.Env(), *pIntVar != *other->pIntVar );
+    }
+
+    ThrowJsError( operations_research::sat::GIntVar::operator_not_equals : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::sat::GIntVar::Domain( const Napi::CallbackInfo& info )
+{
+    // ::operations_research::Domain Domain() const;
+    if ( info.Length() == 0 )
+    {
+        auto domain  = pIntVar->Domain();
+        auto wrapper = Napi::External< operations_research::Domain >::New( info.Env(), new operations_research::Domain( domain ) );
+        return GDomain::constructor.New( { wrapper } );
+    }
+
+    ThrowJsError( operations_research::sat::GIntVar::Domain : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::sat::GIntVar::DebugString( const Napi::CallbackInfo& info )
+{
+    // std::string DebugString() const;
+    if ( info.Length() == 0 )
+    {
+        std::string debug_string = pIntVar->DebugString();
+        return Napi::String::New( info.Env(), debug_string );
+    }
+
+    ThrowJsError( operations_research::sat::GIntVar::DebugString : Invalid argument );
+    return info.Env().Undefined();
+}
+
+Napi::Value operations_research::sat::GIntVar::index( const Napi::CallbackInfo& info )
+{
+    // int index() const;
+    if ( info.Length() == 0 )
+    {
+        int index = pIntVar->index();
+        return Napi::Number::New( info.Env(), index );
+    }
+
+    ThrowJsError( operations_research::sat::GIntVar::index : Invalid argument );
+    return info.Env().Undefined();
 }

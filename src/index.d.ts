@@ -1288,7 +1288,7 @@
         //         Impl_ _impl_;
         //     };
         //     friend struct ::TableStruct_ortools_2flinear_5fsolver_2flinear_5fsolver_2eproto;
-    };
+    }
 
 
     export class MPSolutionResponse 
@@ -1630,7 +1630,7 @@
 
         // public:
         //     // @@protoc_insertion_point(class_scope:operations_research.MPSolutionResponse)
-    };
+    }
 
     export class MPModelProto 
     {
@@ -2884,9 +2884,411 @@
         UnitCost(arc: number): number;
     }
 
+
+    /**
+     * We call \e domain any subset of Int64 = [kint64min, kint64max].
+     *
+     * This class can be used to represent such set efficiently as a sorted and
+     * non-adjacent list of intervals. This is efficient as long as the size of such
+     * list stays reasonable.
+     *
+     * In the comments below, the domain of *this will always be written 'D'.
+     * Note that all the functions are safe with respect to integer overflow.
+     */
+    export class Domain
+    {
+        /**
+         * By default, Domain will be empty.
+         * 
+         * C++: Domain() {}
+         */
+        constructor();
+
+        //    #if !defined(SWIG)
+        //      /// Copy constructor (mandatory as we define the move constructor).
+        //      Domain(const Domain& other) : intervals_(other.intervals_) {}
+
+        //      /// Copy operator (mandatory as we define the move operator).
+        //      Domain& operator=(const Domain& other) {
+        //        intervals_ = other.intervals_;
+        //        return *this;
+        //      }
+
+        //      /// Move constructor.
+        //      Domain(Domain&& other) : intervals_(std::move(other.intervals_)) {}
+
+        //      /// Move operator.
+        //      Domain& operator=(Domain&& other) {
+        //        intervals_ = std::move(other.intervals_);
+        //        return *this;
+        //      }
+        //    #endif  // !defined(SWIG)
+
+        /**
+         * Constructor for the common case of a singleton domain.
+         * 
+         * C++: explicit Domain( int64_t value );
+         */
+        constructor(value: number);
+
+        /**
+         * Constructor for the common case of a single interval [left, right].
+         * If left > right, this will result in the empty domain.
+         * 
+         * C++: Domain(int64_t left, int64_t right);
+         */
+        constructor(left: number, right: number);
+
+        //      /**
+        //       * Returns the full domain Int64.
+        //       */
+        //      static Domain AllValues();
+
+        //      /**
+        //       * Creates a domain from the union of an unsorted list of integer values.
+        //       * Input values may be repeated, with no consequence on the output
+        //       */
+        //      static Domain FromValues(std::vector<int64_t> values);
+
+        //      /**
+        //       * Creates a domain from the union of an unsorted list of intervals.
+        //       */
+        //      static Domain FromIntervals(absl::Span<const ClosedInterval> intervals);
+
+        //      /**
+        //       * Same as FromIntervals() for a flattened representation (start, end,
+        //       * start, end, ...).
+        //       */
+        //      static Domain FromFlatSpanOfIntervals(
+        //          absl::Span<const int64_t> flat_intervals);
+
+        //      /**
+        //       * This method is available in Python, Java and .NET. It allows
+        //       * building a Domain object from a list of intervals (long[][] in Java and
+        //       * .NET, [[0, 2], [5, 5], [8, 10]] in python).
+        //       */
+        //      static Domain FromVectorIntervals(
+        //          const std::vector<std::vector<int64_t> >& intervals);
+
+        //      /**
+        //       * This method is available in Python, Java and .NET. It allows
+        //       * building a Domain object from a flattened list of intervals
+        //       * (long[] in Java and .NET, [0, 2, 5, 5, 8, 10] in python).
+        //       */
+        //      static Domain FromFlatIntervals(const std::vector<int64_t>& flat_intervals);
+
+        //      /**
+        //       * This method returns the flattened list of interval bounds of the domain.
+        //       *
+        //       * Thus the domain {0, 1, 2, 5, 8, 9, 10} will return [0, 2, 5, 5,
+        //       * 8, 10] (as a C++ std::vector<int64_t>, as a java or C# long[], as
+        //       * a python list of integers).
+        //       */
+        //      std::vector<int64_t> FlattenedIntervals() const;
+
+        //    #if !defined(SWIG)
+        //      /**
+        //       * Allows to iterate over all values of a domain in order with
+        //       * for (const int64_t v : domain.Values()) { ... }
+        //       *
+        //       * Note that this shouldn't be used in another context !!
+        //       * We don't implement full fledged iterator APIs.
+        //       */
+        //      class DomainIterator {
+        //       public:
+        //        explicit DomainIterator(
+        //            const absl::InlinedVector<ClosedInterval, 1>& intervals)
+        //            : value_(intervals.empty() ? int64_t{0} : intervals.front().start),
+        //              it_(intervals.begin()),
+        //              end_(intervals.end()) {}
+
+        //        int64_t operator*() const { return value_; }
+
+        //        void operator++() {
+        //          if (value_ == it_->end) {
+        //            ++it_;
+        //            if (it_ != end_) value_ = it_->start;
+        //          } else {
+        //            ++value_;
+        //          }
+        //        }
+
+        //        bool operator!=(
+        //            absl::InlinedVector<ClosedInterval, 1>::const_iterator end) const {
+        //          return it_ != end;
+        //        }
+
+        //       private:
+        //        int64_t value_;
+        //        absl::InlinedVector<ClosedInterval, 1>::const_iterator it_;
+        //        absl::InlinedVector<ClosedInterval, 1>::const_iterator end_;
+        //      };
+        //      struct DomainIteratorBeginEnd {
+        //        DomainIterator begin() const { return DomainIterator(intervals); }
+        //        absl::InlinedVector<ClosedInterval, 1>::const_iterator end() const {
+        //          return intervals.end();
+        //        }
+        //        const absl::InlinedVector<ClosedInterval, 1>& intervals;
+        //      };
+        //      struct DomainIteratorBeginEndWithOwnership {
+        //        DomainIterator begin() const { return DomainIterator(intervals); }
+        //        absl::InlinedVector<ClosedInterval, 1>::const_iterator end() const {
+        //          return intervals.end();
+        //        }
+        //        absl::InlinedVector<ClosedInterval, 1> intervals;
+        //      };
+        //      DomainIteratorBeginEnd Values() const& { return {this->intervals_}; }
+        //      DomainIteratorBeginEndWithOwnership Values() const&& {
+        //        return {std::move(this->intervals_)};
+        //      }
+        //    #endif  // !defined(SWIG)
+
+        //      /**
+        //       * Returns true if this is the empty set.
+        //       */
+        //      bool IsEmpty() const;
+
+        //      /**
+        //       * Returns the number of elements in the domain. It is capped at kint64max
+        //       */
+        //      int64_t Size() const;
+
+        //      /**
+        //       * Returns the min value of the domain.
+        //       * The domain must not be empty.
+        //       */
+        //      int64_t Min() const;
+
+        //      /**
+        //       * Returns the max value of the domain.
+        //       * The domain must not be empty.
+        //       */
+        //      int64_t Max() const;
+
+        //      /**
+        //       * Returns the value closest to zero. If there is a tie, pick positive one.
+        //       */
+        //      int64_t SmallestValue() const;
+
+        //      /**
+        //       * Returns the closest value in the domain that is <= (resp. >=) to the input.
+        //       * Do not change the input if there is no such value.
+        //       */
+        //      int64_t ValueAtOrBefore(int64_t input) const;
+        //      int64_t ValueAtOrAfter(int64_t input) const;
+
+        //      /**
+        //       * Returns true iff the domain is reduced to a single value.
+        //       * The domain must not be empty.
+        //       */
+        //      bool IsFixed() const;
+
+        //      /**
+        //       * Returns the value of a fixed domain. IsFixed() must be true.
+        //       * This is the same as Min() or Max() but allows for a more readable code and
+        //       * also crash in debug mode if called on a non fixed domain.
+        //       */
+        //      int64_t FixedValue() const;
+
+        //      /**
+        //       * Returns true iff value is in Domain.
+        //       */
+        //      bool Contains(int64_t value) const;
+
+        //      /**
+        //       * Returns true iff D is included in the given domain.
+        //       */
+        //      bool IsIncludedIn(const Domain& domain) const;
+
+        //      /**
+        //       * Returns the set Int64 ∖ D.
+        //       */
+        //      Domain Complement() const;
+
+        //      /**
+        //       * Returns {x ∈ Int64, ∃ e ∈ D, x = -e}.
+        //       *
+        //       * Note in particular that if the negation of Int64 is not Int64 but
+        //       * Int64 \ {kint64min} !!
+        //       */
+        //      Domain Negation() const;
+
+        //      /**
+        //       * Returns the intersection of D and domain.
+        //       */
+        //      Domain IntersectionWith(const Domain& domain) const;
+
+        //      /**
+        //       * Returns the union of D and domain.
+        //       */
+        //      Domain UnionWith(const Domain& domain) const;
+
+        //      /**
+        //       * Returns {x ∈ Int64, ∃ a ∈ D, ∃ b ∈ domain, x = a + b}.
+        //       */
+        //      Domain AdditionWith(const Domain& domain) const;
+
+        //      /**
+        //       * Returns {x ∈ Int64, ∃ e ∈ D, x = e * coeff}.
+        //       *
+        //       * Note that because the resulting domain will only contains multiple of
+        //       * coeff, the size of intervals.size() can become really large. If it is
+        //       * larger than a fixed constant, exact will be set to false and the result
+        //       * will be set to ContinuousMultiplicationBy(coeff).
+        //       *
+        //       * Note that if you multiply by a negative coeff, kint64min will be dropped
+        //       * from the result even if it was here due to how this is implemented.
+        //       */
+        //      Domain MultiplicationBy(int64_t coeff, bool* exact = nullptr) const;
+
+        //      /**
+        //       * If NumIntervals() is too large, this return a superset of the domain.
+        //       */
+        //      Domain RelaxIfTooComplex() const;
+
+        //      /**
+        //       * Returns a superset of MultiplicationBy() to avoid the explosion in the
+        //       * representation size. This behaves as if we replace the set D of
+        //       * non-adjacent integer intervals by the set of floating-point elements in the
+        //       * same intervals.
+        //       *
+        //       * For instance, [1, 100] * 2 will be transformed in [2, 200] and not in
+        //       * [2][4][6]...[200] like in MultiplicationBy(). Note that this would be
+        //       * similar to a InverseDivisionBy(), but not quite the same because if we
+        //       * look for {x ∈ Int64, ∃ e ∈ D, x / coeff = e}, then we will get [2, 201] in
+        //       * the case above.
+        //       */
+        //      Domain ContinuousMultiplicationBy(int64_t coeff) const;
+
+        //      /**
+        //       * Returns a superset of MultiplicationBy() to avoid the explosion in the
+        //       * representation size. This behaves as if we replace the set D of
+        //       * non-adjacent integer intervals by the set of floating-point elements in the
+        //       * same intervals.
+        //       *
+        //       * For instance, [1, 100] * 2 will be transformed in [2, 200] and not in
+        //       * [2][4][6]...[200] like in MultiplicationBy(). Note that this would be
+        //       * similar to a InverseDivisionBy(), but not quite the same because if we
+        //       * look for {x ∈ Int64, ∃ e ∈ D, x / coeff = e}, then we will get [2, 201] in
+        //       * the case above.
+        //       */
+        //      Domain ContinuousMultiplicationBy(const Domain& domain) const;
+
+        //      /**
+        //       * Returns {x ∈ Int64, ∃ e ∈ D, x = e / coeff}.
+        //       *
+        //       * For instance Domain(1, 7).DivisionBy(2) == Domain(0, 3).
+        //       */
+        //      Domain DivisionBy(int64_t coeff) const;
+
+        //      /**
+        //       * Returns {x ∈ Int64, ∃ e ∈ D, x * coeff = e}.
+        //       *
+        //       * For instance Domain(1, 7).InverseMultiplicationBy(2) == Domain(1, 3).
+        //       */
+        //      Domain InverseMultiplicationBy(const int64_t coeff) const;
+
+        //      /**
+        //       * Returns a superset of {x ∈ Int64, ∃ e ∈ D, ∃ m ∈ modulo, x = e % m }.
+        //       *
+        //       * We check that modulo is strictly positive.
+        //       * The sign of the modulo depends on the sign of e.
+        //       * We compute the exact min/max if the modulo is fixed, otherwise we will
+        //       * just return a superset.
+        //       */
+        //      Domain PositiveModuloBySuperset(const Domain& modulo) const;
+
+        //      /**
+        //       * Returns a superset of {x ∈ Int64, ∃ e ∈ D, ∃ d ∈ divisor, x = e / d }.
+        //       *
+        //       * We check that divisor is strictly positive.
+        //       * For now we just intersect with the min/max possible value.
+        //       */
+        //      Domain PositiveDivisionBySuperset(const Domain& divisor) const;
+
+        //      /**
+        //       * Returns a superset of {x ∈ Int64, ∃ y ∈ D, x = y * y }.
+        //       */
+        //      Domain SquareSuperset() const;
+
+        //      /**
+        //       * Advanced usage. Given some \e implied information on this domain that is
+        //       * assumed to be always true (i.e. only values in the intersection with
+        //       * implied domain matter), this function will simplify the current domain
+        //       * without changing the set of "possible values".
+        //       *
+        //       * More precisely, this will:
+        //       *  - Take the intersection with implied_domain.
+        //       *  - Minimize the number of intervals. For example, if the
+        //       *    domain is [1,2][4] and implied is [1][4], then the domain can be
+        //       *    relaxed to [1, 4] to simplify its complexity without changing the set
+        //       *    of admissible value assuming only implied values can be seen.
+        //       *  - Restrict as much as possible the bounds of the remaining intervals.
+        //       *    For example, if the input is [1,2] and implied is [0,4], then the domain
+        //       * will not be changed.
+        //       *
+        //       * Note that \b domain.SimplifyUsingImpliedDomain(domain) will just return
+        //       * [domain.Min(), domain.Max()]. This is meant to be applied to the right-hand
+        //       * side of a constraint to make its propagation more efficient.
+        //       */
+        //      Domain SimplifyUsingImpliedDomain(const Domain& implied_domain) const;
+
+        //      /**
+        //       * Returns a compact string of a vector of intervals like "[1,4][6][10,20]".
+        //       */
+        //      std::string ToString() const;
+
+        //      /**
+        //       * Lexicographic order on the intervals() representation.
+        //       */
+        //      bool operator<(const Domain& other) const;
+
+        //      bool operator==(const Domain& other) const {
+        //        return intervals_ == other.intervals_;
+        //      }
+
+        //      bool operator!=(const Domain& other) const {
+        //        return intervals_ != other.intervals_;
+        //      }
+
+        //      /**
+        //       * Basic read-only std::vector<> wrapping to view a Domain as a sorted list of
+        //       * non-adjacent intervals. Note that we don't expose size() which might be
+        //       * confused with the number of values in the domain.
+        //       */
+        //      int NumIntervals() const { return intervals_.size(); }
+        //      ClosedInterval front() const { return intervals_.front(); }
+        //      ClosedInterval back() const { return intervals_.back(); }
+        //      ClosedInterval operator[](int i) const { return intervals_[i]; }
+        //      absl::InlinedVector<ClosedInterval, 1>::const_iterator begin() const {
+        //        return intervals_.begin();
+        //      }
+        //      absl::InlinedVector<ClosedInterval, 1>::const_iterator end() const {
+        //        return intervals_.end();
+        //      }
+
+        //      // Deprecated.
+        //      //
+        //      // TODO(user): remove, this makes a copy and is of a different type that our
+        //      // internal InlinedVector() anyway.
+        //      std::vector<ClosedInterval> intervals() const {
+        //        return {intervals_.begin(), intervals_.end()};
+        //      }
+
+    }
+
+
     export namespace sat
     {
         // TODO  to add class in sat 
+
+        /**
+         * Evaluates the value of an linear expression in a solver response.
+         * 
+         * C++: int64_t SolutionIntegerValue( const CpSolverResponse& r, const LinearExpr& expr );
+         */
+        export function SolutionIntegerValue(r: CpSolverResponse, expr: LinearExpr | IntVar | BoolVar): number;
+
         /**
          * Evaluates the value of a Boolean literal in a solver response.
          *  
@@ -2911,16 +3313,19 @@
         export class CpModelBuilder
         {
             constructor();
-            // public:
-            //     /// Sets the name of the model.
-            //     void SetName( const std::string& name );
+
+            /**
+             * Sets the name of the model.
+             * 
+             * C++: void SetName( const std::string& name );
+             */
 
             /**
              * Creates an integer variable with the given domain.
              * 
              * C++: IntVar NewIntVar( const Domain& domain );
              */
-            // NewIntVar(domain: Domain): IntVar;
+            NewIntVar(domain: Domain): IntVar;
 
             /**
              * Creates a Boolean variable.
@@ -2933,33 +3338,79 @@
             //     /// NewVariable(Domain(value)).but it will return the same variable if used
             //     /// twice with the same constant.
             //     IntVar NewConstant( int64_t value );
+            /**
+             * Creates a constant variable. This is a shortcut for
+             * NewVariable(Domain(value)).but it will return the same variable if used
+             * twice with the same constant.
+             * 
+             * C++: IntVar NewConstant( int64_t value );
+             */
 
             //     /// Creates an always true Boolean variable.
             //     /// If this is called multiple times, the same variable will always be
             //     /// returned.
             //     BoolVar TrueVar();
+            /**
+             * Creates an always true Boolean variable.
+             * If this is called multiple times, the same variable will always be
+             * returned.
+             * 
+             * C++: BoolVar TrueVar();
+             */
 
             //     /// Creates an always false Boolean variable.
             //     /// If this is called multiple times, the same variable will always be
             //     /// returned.
             //     BoolVar FalseVar();
+            /**
+             * Creates an always false Boolean variable.
+             * If this is called multiple times, the same variable will always be
+             * returned.
+             * 
+             * C++: BoolVar FalseVar();
+             */
 
             //     /// Creates an interval variable from 3 affine expressions.
             //     IntervalVar NewIntervalVar( const LinearExpr& start, const LinearExpr& size,
             //                                 const LinearExpr& end );
+            /**
+             * Creates an interval variable from 3 affine expressions.
+             * 
+             * C++: IntervalVar NewIntervalVar( const LinearExpr& start, const LinearExpr& size,
+             *                                 const LinearExpr& end );
+             */
 
             //     /// Creates an interval variable with a fixed size.
             //     IntervalVar NewFixedSizeIntervalVar( const LinearExpr& start, int64_t size );
+            /**
+             * Creates an interval variable with a fixed size.
+             * 
+             * C++: IntervalVar NewFixedSizeIntervalVar( const LinearExpr& start, int64_t size );
+             */
 
             //     /// Creates an optional interval variable from 3 affine expressions and a
             //     /// Boolean variable.
             //     IntervalVar NewOptionalIntervalVar( const LinearExpr& start,
             //                                         const LinearExpr& size,
             //                                         const LinearExpr& end, BoolVar presence );
+            /**
+             * Creates an optional interval variable from 3 affine expressions and a
+             * Boolean variable.
+             * 
+             * C++: IntervalVar NewOptionalIntervalVar( const LinearExpr& start,
+             *                                         const LinearExpr& size,
+             *                                         const LinearExpr& end, BoolVar presence );
+             */
 
             //     /// Creates an optional interval variable with a fixed size.
             //     IntervalVar NewOptionalFixedSizeIntervalVar( const LinearExpr& start,
             //                                                  int64_t size, BoolVar presence );
+            /**
+             * Creates an optional interval variable with a fixed size.
+             * 
+             * C++: IntervalVar NewOptionalFixedSizeIntervalVar( const LinearExpr& start,
+             *                                                  int64_t size, BoolVar presence );
+             */
 
             //     /// It is sometime convenient when building a model to create a bunch of
             //     /// variables that will later be fixed. Instead of doing AddEquality(var,
@@ -2971,13 +3422,40 @@
             //     /// variable domain. You can still use AddEquality() if this is not what you
             //     /// want.
             //     void FixVariable( IntVar var, int64_t value );
+            /**
+             * It is sometime convenient when building a model to create a bunch of
+             * variables that will later be fixed. Instead of doing AddEquality(var,
+             * value) which add a constraint, these functions modify directly the
+             * underlying variable domain.
+             * 
+             * Note that this ignore completely the original variable domain and just fix
+             * the given variable to the given value, even if it was outside the given
+             * variable domain. You can still use AddEquality() if this is not what you
+             * want.
+             * 
+             * C++: void FixVariable( IntVar var, int64_t value );
+             */
+
             //     void FixVariable( BoolVar var, bool value );
+            /**
+             * C++: void FixVariable( BoolVar var, bool value );
+             */
 
             //     /// Adds the constraint that at least one of the literals must be true.
             //     Constraint AddBoolOr( absl::Span< const BoolVar > literals );
+            /**
+             * Adds the constraint that at least one of the literals must be true.
+             * 
+             * C++: Constraint AddBoolOr( absl::Span< const BoolVar > literals );
+             */
 
             //     /// Same as AddBoolOr(). Sum literals >= 1.
             //     Constraint AddAtLeastOne( absl::Span< const BoolVar > literals );
+            /**
+             * Same as AddBoolOr(). Sum literals >= 1.
+             * 
+             * C++: Constraint AddAtLeastOne( absl::Span< const BoolVar > literals );
+             */
 
             /**
              * At most one literal is true. Sum literals <= 1.
@@ -2995,15 +3473,30 @@
 
             //     /// Adds the constraint that all literals must be true.
             //     Constraint AddBoolAnd( absl::Span< const BoolVar > literals );
+            /**
+             * Adds the constraint that all literals must be true.
+             * 
+             * C++: Constraint AddBoolAnd( absl::Span< const BoolVar > literals );
+             */
 
             //     /// Adds the constraint that an odd number of literals is true.
             //     Constraint AddBoolXor( absl::Span< const BoolVar > literals );
+            /**
+             * Adds the constraint that an odd number of literals is true.
+             * 
+             * C++: Constraint AddBoolXor( absl::Span< const BoolVar > literals );
+             */
 
             //     /// Adds a => b.
             //     Constraint AddImplication( BoolVar a, BoolVar b )
             //     {
             //         return AddBoolOr( { a.Not(), b } );
             //     }
+            /**
+             * Adds a => b.
+             * 
+             * C++: Constraint AddImplication( BoolVar a, BoolVar b );
+             */
 
             //     /// Adds implication: if all lhs vars are true then all rhs vars must be true.
             //     Constraint AddImplication( absl::Span< const BoolVar > lhs,
@@ -3011,6 +3504,12 @@
             //     {
             //         return AddBoolAnd( rhs ).OnlyEnforceIf( lhs );
             //     }
+            /**
+             * Adds implication: if all lhs vars are true then all rhs vars must be true.
+             * 
+             * C++: Constraint AddImplication( absl::Span< const BoolVar > lhs,
+             *                                absl::Span< const BoolVar > rhs );
+             */
 
             /**
              * Adds left == right.
@@ -3021,72 +3520,130 @@
 
             //     /// Adds left >= right.
             //     Constraint AddGreaterOrEqual( const LinearExpr& left, const LinearExpr& right );
+            /**
+             * Adds left >= right.
+             * 
+             * C++: Constraint AddGreaterOrEqual( const LinearExpr& left, const LinearExpr& right );
+             */
 
             //     /// Adds left > right.
             //     Constraint AddGreaterThan( const LinearExpr& left, const LinearExpr& right );
+            /**
+             * Adds left > right.
+             * 
+             * C++: Constraint AddGreaterThan( const LinearExpr& left, const LinearExpr& right );
+             */
 
-            //     /// Adds left <= right.
-            //     Constraint AddLessOrEqual( const LinearExpr& left, const LinearExpr& right );
+            /**
+             * Adds left <= right.
+             * 
+             * C++: Constraint AddLessOrEqual( const LinearExpr& left, const LinearExpr& right );
+             */
+            AddLessOrEqual(left: LinearExpr | IntVar | BoolVar | number, right: LinearExpr | IntVar | BoolVar | number): Constraint;
 
             //     /// Adds left < right.
             //     Constraint AddLessThan( const LinearExpr& left, const LinearExpr& right );
+            /**
+             * Adds left < right.
+             * 
+             * C++: Constraint AddLessThan( const LinearExpr& left, const LinearExpr& right );
+             */
 
             //     /// Adds expr in domain.
             //     Constraint AddLinearConstraint( const LinearExpr& expr, const Domain& domain );
+            /**
+             * Adds expr in domain.
+             * 
+             * C++: Constraint AddLinearConstraint( const LinearExpr& expr, const Domain& domain );
+             */
 
             //     /// Adds left != right.
             //     Constraint AddNotEqual( const LinearExpr& left, const LinearExpr& right );
+            /**
+             * Adds left != right.
+             * 
+             * C++: Constraint AddNotEqual( const LinearExpr& left, const LinearExpr& right );
+             */
 
             //     /// This constraint forces all variables to have different values.
             //     Constraint AddAllDifferent( absl::Span< const IntVar > vars );
+            /**
+             * This constraint forces all variables to have different values.
+             * 
+             * C++: Constraint AddAllDifferent( absl::Span< const IntVar > vars );
+             */
 
             //     /// This constraint forces all expressions to have different values.
             //     Constraint AddAllDifferent( absl::Span< const LinearExpr > exprs );
+            /**
+             * This constraint forces all expressions to have different values.
+             * 
+             * C++: Constraint AddAllDifferent( absl::Span< const LinearExpr > exprs );
+             */
 
             //     /// This constraint forces all expressions to have different values.
             //     Constraint AddAllDifferent( std::initializer_list< LinearExpr > exprs );
+            /**
+             * This constraint forces all expressions to have different values.
+             * 
+             * C++: Constraint AddAllDifferent( std::initializer_list< LinearExpr > exprs );
+             */
 
             //     /// Adds the element constraint: variables[index] == target
             //     Constraint AddVariableElement( IntVar                     index,
             //                                    absl::Span< const IntVar > variables,
             //                                    IntVar                     target );
+            /**
+             * Adds the element constraint: variables[index] == target
+             * 
+             * C++: Constraint AddVariableElement( IntVar                     index,
+             *                                    absl::Span< const IntVar > variables,
+             *                                    IntVar                     target );
+             */
 
             //     /// Adds the element constraint: values[index] == target
             //     Constraint AddElement( IntVar index, absl::Span< const int64_t > values,
             //                            IntVar target );
+            /**
+             * Adds the element constraint: values[index] == target
+             * 
+             * C++: Constraint AddElement( IntVar index, absl::Span< const int64_t > values,
+             *                            IntVar target );
+             */
 
-            //     /**
-            //      * Adds a circuit constraint.
-            //      *
-            //      * The circuit constraint is defined on a graph where the arc presence is
-            //      * controlled by literals. That is the arc is part of the circuit of its
-            //      * corresponding literal is assigned to true.
-            //      *
-            //      * For now, we ignore node indices with no incident arc. All the other nodes
-            //      * must have exactly one incoming and one outgoing selected arc (i.e. literal
-            //      * at true). All the selected arcs that are not self-loops must form a single
-            //      * circuit.
-            //      *
-            //      * It returns a circuit constraint that allows adding arcs incrementally after
-            //      * construction.
-            //      *
-            //      */
-            //     CircuitConstraint AddCircuitConstraint();
+            /**
+             * Adds a circuit constraint.
+             *
+             * The circuit constraint is defined on a graph where the arc presence is
+             * controlled by literals. That is the arc is part of the circuit of its
+             * corresponding literal is assigned to true.
+             *
+             * For now, we ignore node indices with no incident arc. All the other nodes
+             * must have exactly one incoming and one outgoing selected arc (i.e. literal
+             * at true). All the selected arcs that are not self-loops must form a single
+             * circuit.
+             *
+             * It returns a circuit constraint that allows adding arcs incrementally after
+             * construction.
+             * 
+             * C++: CircuitConstraint AddCircuitConstraint();
+             */
 
-            //     /**
-            //      * Adds a multiple circuit constraint, aka the "VRP" (Vehicle Routing Problem)
-            //      * constraint.
-            //      *
-            //      * The direct graph where arc #i (from tails[i] to head[i]) is present iff
-            //      * literals[i] is true must satisfy this set of properties:
-            //      * - #incoming arcs == 1 except for node 0.
-            //      * - #outgoing arcs == 1 except for node 0.
-            //      * - for node zero, #incoming arcs == #outgoing arcs.
-            //      * - There are no duplicate arcs.
-            //      * - Self-arcs are allowed except for node 0.
-            //      * - There is no cycle in this graph, except through node 0.
-            //      */
-            //     MultipleCircuitConstraint AddMultipleCircuitConstraint();
+            /**
+             * Adds a multiple circuit constraint, aka the "VRP" (Vehicle Routing Problem)
+             * constraint.
+             *
+             * The direct graph where arc #i (from tails[i] to head[i]) is present iff
+             * literals[i] is true must satisfy this set of properties:
+             * - #incoming arcs == 1 except for node 0.
+             * - #outgoing arcs == 1 except for node 0.
+             * - for node zero, #incoming arcs == #outgoing arcs.
+             * - There are no duplicate arcs.
+             * - Self-arcs are allowed except for node 0.
+             * - There is no cycle in this graph, except through node 0.
+             * 
+             * C++: MultipleCircuitConstraint AddMultipleCircuitConstraint();
+             */
 
             /**
              * Adds an allowed assignments constraint.
@@ -3103,25 +3660,28 @@
              */
             AddAllowedAssignments(vars: Array<IntVar>): TableConstraint;
 
-            //     /**
-            //      * Adds an forbidden assignments constraint.
-            //      *
-            //      * A ForbiddenAssignments constraint is a constraint on an array of variables
-            //      * where the list of impossible combinations is provided in the tuples added
-            //      * to the constraint.
-            //      *
-            //      * It returns a table constraint that allows adding tuples incrementally after
-            //      * construction.
-            //      */
+            /**
+             * Adds an forbidden assignments constraint.
+             *
+             * A ForbiddenAssignments constraint is a constraint on an array of variables
+             * where the list of impossible combinations is provided in the tuples added
+             * to the constraint.
+             *
+             * It returns a table constraint that allows adding tuples incrementally after
+             * construction.
+             * 
+             * C++: TableConstraint AddForbiddenAssignments( absl::Span< const IntVar > vars );
+             */
             //     TableConstraint AddForbiddenAssignments( absl::Span< const IntVar > vars );
 
-            //     /** An inverse constraint.
-            //      *
-            //      * It enforces that if 'variables[i]' is assigned a value
-            //      * 'j', then inverse_variables[j] is assigned a value 'i'. And vice versa.
-            //      */
+            /** An inverse constraint.
+             *
+             * It enforces that if 'variables[i]' is assigned a value
+             * 'j', then inverse_variables[j] is assigned a value 'i'. And vice versa.
+             */
             //     Constraint AddInverseConstraint( absl::Span< const IntVar > variables,
             //                                      absl::Span< const IntVar > inverse_variables );
+
 
             //     /**
             //      * Adds a reservoir constraint with optional refill/emptying events.
@@ -3256,8 +3816,12 @@
             //     /// Note that the coefficients will be internally scaled to integer.
             //     void Minimize( const DoubleLinearExpr& expr );
 
-            //     /// Adds a linear maximization objective.
-            //     void Maximize( const LinearExpr& expr );
+            /**
+             * Adds a linear maximization objective.
+             * 
+             * C++: void Maximize( const LinearExpr& expr );
+             */
+            Maximize(expr: LinearExpr): void;
 
             //     /// Adds a linear floating point maximization objective.
             //     /// Note that the coefficients will be internally scaled to integer.
@@ -3472,41 +4036,61 @@
              */
             constructor(var_: BoolVar);
 
-            //     /// Cast IntVar -> BoolVar.
-            //     ///
-            //     /// Warning: The domain of the var must be within {0,1}. If not, we crash
-            //     /// in debug mode, and in opt mode you will get an invalid model if you use
-            //     /// this BoolVar anywhere since it will not have a valid domain.
-            //     BoolVar ToBoolVar() const;
+            /**
+             * Cast IntVar -> BoolVar.
+             * 
+             * Warning: The domain of the var must be within {0,1}. If not, we crash
+             * in debug mode, and in opt mode you will get an invalid model if you use
+             * this BoolVar anywhere since it will not have a valid domain.
+             * 
+             * C++: BoolVar ToBoolVar() const;
+             */
+            ToBoolVar(): BoolVar;
 
-            //     /// Sets the name of the variable.
-            //     IntVar WithName( const std::string& name );
+            /**
+             * Sets the name of the variable.
+             * 
+             * C++: IntVar WithName( const std::string& name )
+             */
+            WithName(name: string): IntVar;
 
-            //     /// Returns the name of the variable (or the empty string if not set).
-            //     std::string Name() const;
+            /**
+             * Returns the name of the variable (or the empty string if not set).
+             * 
+             * C++:  std::string Name() const;
+             */
+            Name(): string;
 
-            //     bool operator==( const IntVar& other ) const
-            //     {
-            //         return other.builder_ == builder_ && other.index_ == index_;
-            //     }
+            /**
+             * C++: bool operator==( const IntVar& other ) const;
+             */
+            operator_equals(other: IntVar): boolean;
 
-            //     bool operator!=( const IntVar& other ) const
-            //     {
-            //         return other.builder_ != builder_ || other.index_ != index_;
-            //     }
+            /**
+             * C++: bool operator!=( const IntVar& other ) const;
+             */
+            operator_not_equals(other: IntVar): boolean;
 
-            //     // Returns the domain of the variable.
-            //     // Note that we keep the fully qualified return type as compilation fails with
-            //     // gcc otherwise.
-            //     ::operations_research::Domain Domain() const;
+            /**
+             * Returns the domain of the variable.
+             * Note that we keep the fully qualified return type as compilation fails with
+             * gcc otherwise.
+             * 
+             * C++: ::operations_research::Domain Domain() const;
+             */
+            Domain(): Domain;
 
-            //     std::string DebugString() const;
+            /**
+             * C++: std::string DebugString() const;
+             */
+            DebugString(): string;
 
-            //     /// Returns the index of the variable in the model. This will be non-negative.
-            //     int index() const
-            //     {
-            //         return index_;
-            //     }
+            /**
+             * Returns the index of the variable in the model. This will be non-negative.
+             * 
+             * C++: int index() const;
+             */
+            index(): number;
 
         }
 
@@ -4245,7 +4829,7 @@
 
             // double objective_value() const;
             objective_value(): number
-            
+
             //         void   set_objective_value( double value );
 
 

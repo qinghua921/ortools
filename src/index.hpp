@@ -404,9 +404,12 @@ public:
 
 Napi::FunctionReference GLinearRange::constructor;
 
-Napi::Value operator_less_equals( const Napi::CallbackInfo& info );     // LinearRange operator<=( const LinearExpr& lhs, const LinearExpr& rhs );
-Napi::Value operator_equals( const Napi::CallbackInfo& info );          // LinearRange operator==( const LinearExpr& lhs, const LinearExpr& rhs );
-Napi::Value operator_greater_equals( const Napi::CallbackInfo& info );  // LinearRange operator>=( const LinearExpr& lhs, const LinearExpr& rhs );
+// LinearRange operator<=( const LinearExpr& lhs, const LinearExpr& rhs );
+Napi::Value operator_less_equals( const Napi::CallbackInfo& info );
+// LinearRange operator==( const LinearExpr& lhs, const LinearExpr& rhs );
+Napi::Value operator_equals( const Napi::CallbackInfo& info );
+// LinearRange operator>=( const LinearExpr& lhs, const LinearExpr& rhs );
+Napi::Value operator_greater_equals( const Napi::CallbackInfo& info );
 
 class GMPConstraint : public Napi::ObjectWrap< GMPConstraint >
 {
@@ -654,6 +657,30 @@ public:
 
 Napi::FunctionReference GSimpleMinCostFlow::constructor;
 
+class GDomain : public Napi::ObjectWrap< GDomain >
+{
+public:
+    static Napi::FunctionReference constructor;
+    Domain*                        pDomain = nullptr;
+    GDomain( const Napi::CallbackInfo& info );
+    ~GDomain();
+
+    static Napi::Object Init( Napi::Env env, Napi::Object exports )
+    {
+        Napi::HandleScope scope( env );
+        Napi::Function    func = DefineClass(
+            env, "Domain",
+            {} );
+
+        constructor = Napi::Persistent( func );
+        constructor.SuppressDestruct();
+        exports.Set( Napi::String::New( env, "Domain" ), func );
+        return exports;
+    }
+};
+
+Napi::FunctionReference GDomain::constructor;
+
 namespace sat
 {
     class GCpModelBuilder : public Napi::ObjectWrap< GCpModelBuilder >
@@ -677,6 +704,9 @@ namespace sat
                     InstanceMethod( "AddAllowedAssignments", &GCpModelBuilder::AddAllowedAssignments ),
                     InstanceMethod( "Minimize", &GCpModelBuilder::Minimize ),
                     InstanceMethod( "Build", &GCpModelBuilder::Build ),
+                    InstanceMethod( "NewIntVar", &GCpModelBuilder::NewIntVar ),
+                    InstanceMethod( "AddLessOrEqual", &GCpModelBuilder::AddLessOrEqual ),
+                    InstanceMethod( "Maximize", &GCpModelBuilder::Maximize ),
                 } );
 
             constructor = Napi::Persistent( func );
@@ -699,6 +729,12 @@ namespace sat
         Napi::Value Minimize( const Napi::CallbackInfo& info );
         // const CpModelProto& Build() const
         Napi::Value Build( const Napi::CallbackInfo& info );
+        // IntVar NewIntVar( const Domain& domain );
+        Napi::Value NewIntVar( const Napi::CallbackInfo& info );
+        // Constraint AddLessOrEqual( const LinearExpr& left, const LinearExpr& right );
+        Napi::Value AddLessOrEqual( const Napi::CallbackInfo& info );
+        // void Maximize( const LinearExpr& expr );
+        Napi::Value Maximize( const Napi::CallbackInfo& info );
 
     };  // namespace sat
 
@@ -769,13 +805,39 @@ namespace sat
             Napi::HandleScope scope( env );
             Napi::Function    func = DefineClass(
                 env, "IntVar",
-                {} );
+                {
+                    InstanceMethod( "ToBoolVar", &GIntVar::ToBoolVar ),
+                    InstanceMethod( "WithName", &GIntVar::WithName ),
+                    InstanceMethod( "Name", &GIntVar::Name ),
+                    InstanceMethod( "operator_equals", &GIntVar::operator_equals ),
+                    InstanceMethod( "operator_not_equals", &GIntVar::operator_not_equals ),
+                    InstanceMethod( "Domain", &GIntVar::Domain ),
+                    InstanceMethod( "DebugString", &GIntVar::DebugString ),
+                    InstanceMethod( "index", &GIntVar::index ),
+                } );
 
             constructor = Napi::Persistent( func );
             constructor.SuppressDestruct();
             exports.Set( Napi::String::New( env, "IntVar" ), func );
             return exports;
         }
+
+        // BoolVar ToBoolVar() const;
+        Napi::Value ToBoolVar( const Napi::CallbackInfo& info );
+        // IntVar WithName( const std::string& name )
+        Napi::Value WithName( const Napi::CallbackInfo& info );
+        // std::string Name() const;
+        Napi::Value Name( const Napi::CallbackInfo& info );
+        // bool operator==( const IntVar& other ) const;
+        Napi::Value operator_equals( const Napi::CallbackInfo& info );
+        // bool operator!=( const IntVar& other ) const;
+        Napi::Value operator_not_equals( const Napi::CallbackInfo& info );
+        // ::operations_research::Domain Domain() const;
+        Napi::Value Domain( const Napi::CallbackInfo& info );
+        // std::string DebugString() const;
+        Napi::Value DebugString( const Napi::CallbackInfo& info );
+        // int index() const;
+        Napi::Value index( const Napi::CallbackInfo& info );
     };
 
     Napi::FunctionReference GIntVar::constructor;
@@ -840,11 +902,17 @@ namespace sat
 
     Napi::FunctionReference GTableConstraint::constructor;
 
-    Napi::Value Goperator_plus( const Napi::CallbackInfo& info );   // inline LinearExpr operator+( const LinearExpr& lhs, const LinearExpr& rhs )
-    Napi::Value Goperator_minus( const Napi::CallbackInfo& info );  // inline LinearExpr operator-( const LinearExpr& lhs, const LinearExpr& rhs )
-    Napi::Value Goperator_times( const Napi::CallbackInfo& info );  // inline LinearExpr operator*( LinearExpr expr, int64_t factor )
-                                                                    // inline LinearExpr operator*( int64_t factor, LinearExpr expr )
-    Napi::Value GSolve( const Napi::CallbackInfo& info );           // CpSolverResponse Solve( const CpModelProto& model_proto );
+    // inline LinearExpr operator+( const LinearExpr& lhs, const LinearExpr& rhs )
+    Napi::Value Goperator_plus( const Napi::CallbackInfo& info );
+    // inline LinearExpr operator-( const LinearExpr& lhs, const LinearExpr& rhs )
+    Napi::Value Goperator_minus( const Napi::CallbackInfo& info );
+    // inline LinearExpr operator*( LinearExpr expr, int64_t factor )
+    // inline LinearExpr operator*( int64_t factor, LinearExpr expr )
+    Napi::Value Goperator_times( const Napi::CallbackInfo& info );
+    // CpSolverResponse Solve( const CpModelProto& model_proto );
+    Napi::Value GSolve( const Napi::CallbackInfo& info );
+    // int64_t SolutionIntegerValue( const CpSolverResponse& r, const LinearExpr& expr );
+    Napi::Value GSolutionIntegerValue( const Napi::CallbackInfo& info );
 
     class GCpModelProto : public Napi::ObjectWrap< GCpModelProto >
     {
@@ -895,8 +963,8 @@ namespace sat
         }
 
         // operations_research::sat::CpSolverStatus status() const;
-        Napi::Value status( const Napi::CallbackInfo& info );  
-   
+        Napi::Value status( const Napi::CallbackInfo& info );
+
         // double objective_value() const;
         Napi::Value objective_value( const Napi::CallbackInfo& info );
     };
@@ -905,7 +973,7 @@ namespace sat
 
     //  bool SolutionBooleanValue( const CpSolverResponse& r, const BoolVar& x );
     Napi::Value GSolutionBooleanValue( const Napi::CallbackInfo& info );
-    
+
 };  // namespace sat
 
 };  // namespace operations_research
@@ -930,6 +998,7 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research_sat_exports.Set( "operator_times", Napi::Function::New( env, operations_research::sat::Goperator_times ) );
     operations_research_sat_exports.Set( "Solve", Napi::Function::New( env, operations_research::sat::GSolve ) );
     operations_research_sat_exports.Set( "SolutionBooleanValue", Napi::Function::New( env, operations_research::sat::GSolutionBooleanValue ) );
+    operations_research_sat_exports.Set( "SolutionIntegerValue", Napi::Function::New( env, operations_research::sat::GSolutionIntegerValue ) );
 
     auto operations_research_sat_cp_solver_status = Napi::Object::New( env );
     operations_research_sat_cp_solver_status.Set( "UNKNOWN", Napi::Number::New( env, operations_research::sat::CpSolverStatus::UNKNOWN ) );
@@ -949,6 +1018,7 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research::GMPObjective::Init( env, operations_research_exports );
     operations_research::GSimpleLinearSumAssignment::Init( env, operations_research_exports );
     operations_research::GSimpleMinCostFlow::Init( env, operations_research_exports );
+    operations_research::GDomain::Init( env, operations_research_exports );
 
     operations_research_exports.Set( "operator_less_equals", Napi::Function::New( env, operations_research::operator_less_equals ) );
     operations_research_exports.Set( "operator_equals", Napi::Function::New( env, operations_research::operator_equals ) );
