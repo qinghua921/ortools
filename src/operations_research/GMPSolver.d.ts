@@ -489,7 +489,7 @@ export class MPSolver
     //                                 // `interrupt` is non-const because the internal
     //                                 // solver may set it to true itself, in some cases.
     //                                 std::atomic< bool >* interrupt = nullptr );
-    // TODO: static SolveWithProto(model_request: MPModelRequest, response: MPSolutionResponse, interrupt: boolean): void;
+    static SolveWithProto(model_request: MPModelRequest): MPSolutionResponse;
 
     //     static bool SolverTypeSupportsInterruption(
     //         const MPModelRequest::SolverType solver )
@@ -504,7 +504,7 @@ export class MPSolver
 
     //     /// Exports model to protocol buffer.
     //     void ExportModelToProto( MPModelProto* output_model ) const;
-    ExportModelToProto(output_model: MPModelProto): void;
+    ExportModelToProto(): MPModelProto;
 
     //     /**
     //      * Load a solution encoded in a protocol buffer onto this solver for easy
@@ -542,7 +542,7 @@ export class MPSolver
     //     absl::Status LoadSolutionFromProto(
     //         const MPSolutionResponse& response,
     //         double                    tolerance = std::numeric_limits< double >::infinity() );
-    LoadSolutionFromProto(response: MPSolutionResponse, tolerance: number): MPSolver.ResultStatus;
+    LoadSolutionFromProto(tolerance: number): { status: MPSolver.ResultStatus, response: MPSolutionResponse };
 
     //     /**
     //      * Resets values of out of bound variables to the corresponding bound and
