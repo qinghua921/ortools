@@ -267,22 +267,22 @@ export class MPSolver
     //     void MakeVarArray( int nb, double lb, double ub, bool integer,
     //                        const std::string&          name_prefix,
     //                        std::vector< MPVariable* >* vars );
-    MakeVarArray(nb: number, lb: number, ub: number, integer: boolean, name_prefix: string, vars: MPVariable[]): void;
+    MakeVarArray(nb: number, lb: number, ub: number, integer: boolean, name_prefix: string,): MPVariable[];
 
     //     /// Creates an array of continuous variables.
     //     void MakeNumVarArray( int nb, double lb, double ub, const std::string& name,
     //                           std::vector< MPVariable* >* vars );
-    MakeNumVarArray(nb: number, lb: number, ub: number, name: string, vars: MPVariable[]): void;
+    MakeNumVarArray(nb: number, lb: number, ub: number, name: string): MPVariable[];
 
     //     ///  Creates an array of integer variables.
     //     void MakeIntVarArray( int nb, double lb, double ub, const std::string& name,
     //                           std::vector< MPVariable* >* vars );
-    MakeIntVarArray(nb: number, lb: number, ub: number, name: string, vars: MPVariable[]): void;
+    MakeIntVarArray(nb: number, lb: number, ub: number, name: string): MPVariable[];
 
     //     /// Creates an array of boolean variables.
     //     void MakeBoolVarArray( int nb, const std::string& name,
     //                            std::vector< MPVariable* >* vars );
-    MakeBoolVarArray(nb: number, name: string, vars: MPVariable[]): void;
+    MakeBoolVarArray(nb: number, name: string): MPVariable[];
 
     //     /// Returns the number of constraints.
     //     int NumConstraints() const
@@ -452,7 +452,7 @@ export class MPSolver
     //      */
     //     MPSolverResponseStatus LoadModelFromProto( const MPModelProto& input_model,
     //                                                std::string*        error_message );
-    LoadModelFromProto(input_model: MPModelProto, error_message: string): MPSolverResponseStatus;
+    LoadModelFromProto(input_model: MPModelProto): { status: MPSolverResponseStatus, error_message: string };
 
     //     /**
     //      * Loads model from protocol buffer.
@@ -463,7 +463,7 @@ export class MPSolver
     //      */
     //     MPSolverResponseStatus LoadModelFromProtoWithUniqueNamesOrDie(
     //         const MPModelProto& input_model, std::string* error_message );
-    LoadModelFromProtoWithUniqueNamesOrDie(input_model: MPModelProto, error_message: string): MPSolverResponseStatus;
+    LoadModelFromProtoWithUniqueNamesOrDie(input_model: MPModelProto): { status: MPSolverResponseStatus, error_message: string };
 
     //     /// Encodes the current solution in a solution response protocol buffer.
     //     void FillSolutionResponseProto( MPSolutionResponse* response ) const;
@@ -489,7 +489,7 @@ export class MPSolver
     //                                 // `interrupt` is non-const because the internal
     //                                 // solver may set it to true itself, in some cases.
     //                                 std::atomic< bool >* interrupt = nullptr );
-    static SolveWithProto(model_request: MPModelRequest, response: MPSolutionResponse, interrupt: boolean): void;
+    // TODO: static SolveWithProto(model_request: MPModelRequest, response: MPSolutionResponse, interrupt: boolean): void;
 
     //     static bool SolverTypeSupportsInterruption(
     //         const MPModelRequest::SolverType solver )
