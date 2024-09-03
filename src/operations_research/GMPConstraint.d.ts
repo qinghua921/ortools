@@ -1,3 +1,5 @@
+import { MPVariable } from "./GMPVariable";
+
 /**
  * The class for constraints of a Mathematical Programming (MP) model.
  *
@@ -22,6 +24,7 @@ export class MPConstraint
     //      * or crashes in non-opt mode.
     //      */
     //     void SetCoefficient( const MPVariable* const var, double coeff );
+    SetCoefficient(var_: MPVariable, coeff: number): void;
 
     //     /**
     //      * Gets the coefficient of a given variable on the constraint (which is 0 if

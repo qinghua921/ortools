@@ -18,6 +18,8 @@ public:
     ~GMPSolver();
     static Napi::Object Init( Napi::Env env, Napi::Object exports );
 
+    Napi::Value        Solve( const Napi::CallbackInfo& info );
+    Napi::Value        MutableObjective( const Napi::CallbackInfo& info );
     Napi::Value        MakeRowConstraint( const Napi::CallbackInfo& info );
     Napi::Value        MakeBoolVar( const Napi::CallbackInfo& info );
     static Napi::Value CreateSolver( const Napi::CallbackInfo& info );
@@ -47,17 +49,62 @@ inline operations_research::GMPSolver::~GMPSolver()
 inline Napi::Object operations_research::GMPSolver::Init( Napi::Env env, Napi::Object exports )
 {
     Napi::HandleScope scope( env );
-    Napi::Function    func = DefineClass(
+
+    Napi::Object ResultStatus = Napi::Object::New( env );
+    ResultStatus.Set( Napi::String::New( env, "OPTIMAL" ), Napi::Number::New( env, static_cast< int >( MPSolver::OPTIMAL ) ) );
+    ResultStatus.Set( Napi::String::New( env, "FEASIBLE" ), Napi::Number::New( env, static_cast< int >( MPSolver::FEASIBLE ) ) );
+    ResultStatus.Set( Napi::String::New( env, "INFEASIBLE" ), Napi::Number::New( env, static_cast< int >( MPSolver::INFEASIBLE ) ) );
+    ResultStatus.Set( Napi::String::New( env, "UNBOUNDED" ), Napi::Number::New( env, static_cast< int >( MPSolver::UNBOUNDED ) ) );
+    ResultStatus.Set( Napi::String::New( env, "ABNORMAL" ), Napi::Number::New( env, static_cast< int >( MPSolver::ABNORMAL ) ) );
+    ResultStatus.Set( Napi::String::New( env, "MODEL_INVALID" ), Napi::Number::New( env, static_cast< int >( MPSolver::MODEL_INVALID ) ) );
+    ResultStatus.Set( Napi::String::New( env, "NOT_SOLVED" ), Napi::Number::New( env, static_cast< int >( MPSolver::NOT_SOLVED ) ) );
+
+    Napi::Function func = DefineClass(
         env, "MPSolver",
         {
+            InstanceMethod( "Solve", &GMPSolver::Solve ),
+            InstanceMethod( "MutableObjective", &GMPSolver::MutableObjective ),
             InstanceMethod( "MakeRowConstraint", &GMPSolver::MakeRowConstraint ),
             InstanceMethod( "MakeBoolVar", &GMPSolver::MakeBoolVar ),
             StaticMethod( "CreateSolver", &GMPSolver::CreateSolver ),
+            StaticValue( "ResultStatus", ResultStatus ),
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "MPSolver" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::GMPSolver::Solve( const Napi::CallbackInfo& info )
+{
+    //     ResultStatus Solve();
+    if ( info.Length() == 0 )
+    {
+        auto status = pMPSolver->Solve();
+        return Napi::Number::New( info.Env(), status );
+    }
+
+    ThrowJsError( operations_research::GMPSolver::Solve : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::GMPSolver::MutableObjective( const Napi::CallbackInfo& info )
+{
+    //     MPObjective* MutableObjective()
+    if ( info.Length() == 0 )
+    {
+        MPObjective* pObjective = pMPSolver->MutableObjective();
+        if ( pObjective != nullptr )
+        {
+            auto external = Napi::External< MPObjective >::New( info.Env(), pObjective );
+            return GMPObjective::constructor.New( { external } );
+        }
+        ThrowJsError( operations_research::GMPSolver::MutableObjective : Failed to create objective );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPSolver::MutableObjective : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::GMPSolver::MakeRowConstraint( const Napi::CallbackInfo& info )
@@ -122,7 +169,8 @@ inline Napi::Value operations_research::GMPSolver::MakeRowConstraint( const Napi
     }
 
     //     MPConstraint* MakeRowConstraint( const LinearRange& range );
-    if ( info.Length() == 1 && info[ 0 ].IsObject() && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearRange::constructor.Value() ) )
+    if ( info.Length() == 1 && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearRange::constructor.Value() ) )
     {
         auto          range       = GLinearRange::Unwrap( info[ 0 ].As< Napi::Object >() );
         MPConstraint* pConstraint = pMPSolver->MakeRowConstraint( *range->pLinearRange );
@@ -137,7 +185,8 @@ inline Napi::Value operations_research::GMPSolver::MakeRowConstraint( const Napi
 
     //     MPConstraint* MakeRowConstraint( const LinearRange& range,
     //                                      const std::string& name );
-    if ( info.Length() == 2 && info[ 0 ].IsObject() && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearRange::constructor.Value() ) && info[ 1 ].IsString() )
+    if ( info.Length() == 2 && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearRange::constructor.Value() ) && info[ 1 ].IsString() )
     {
         auto          range       = GLinearRange::Unwrap( info[ 0 ].As< Napi::Object >() );
         std::string   name        = info[ 1 ].As< Napi::String >().Utf8Value();

@@ -52,7 +52,7 @@ Napi::Value operations_research::operator_equals( const Napi::CallbackInfo& info
 
     auto pRange = new LinearRange( lhs == rhs );
 
-    return GLinearExpr::constructor.New( { Napi::External< LinearRange >::New( info.Env(), pRange ) } );
+    return GLinearRange::constructor.New( { Napi::External< LinearRange >::New( info.Env(), pRange ) } );
 }
 
 Napi::Value operations_research::operator_greater_equals( const Napi::CallbackInfo& info )
@@ -80,7 +80,7 @@ Napi::Value operations_research::operator_greater_equals( const Napi::CallbackIn
 
     auto pRange = new LinearRange( lhs >= rhs );
 
-    return GLinearExpr::constructor.New( { Napi::External< LinearRange >::New( info.Env(), pRange ) } );
+    return GLinearRange::constructor.New( { Napi::External< LinearRange >::New( info.Env(), pRange ) } );
 }
 
 inline Napi::Value operations_research::operator_less_equals( const Napi::CallbackInfo& info )
@@ -108,5 +108,5 @@ inline Napi::Value operations_research::operator_less_equals( const Napi::Callba
 
     auto pRange = new LinearRange( lhs <= rhs );
 
-    return GLinearExpr::constructor.New( { Napi::External< LinearRange >::New( info.Env(), pRange ) } );
+    return GLinearRange::constructor.New( { Napi::External< LinearRange >::New( info.Env(), pRange ) } );
 }

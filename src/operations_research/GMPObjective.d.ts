@@ -1,3 +1,4 @@
+import { MPVariable } from "./GMPVariable";
 
 /// A class to express a linear objective.
 export class MPObjective
@@ -16,6 +17,7 @@ export class MPObjective
     //      * or crashes in non-opt mode.
     //      */
     //     void SetCoefficient( const MPVariable* const var, double coeff );
+    SetCoefficient(var_: MPVariable, coeff: number): void;
 
     //     /**
     //      *  Gets the coefficient of a given variable in the objective
@@ -71,6 +73,7 @@ export class MPObjective
     //     {
     //         SetOptimizationDirection( false );
     //     }
+    SetMinimization(): void;
 
     //     /// Sets the optimization direction to maximize.
     //     void SetMaximization()

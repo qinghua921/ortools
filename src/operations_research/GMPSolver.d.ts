@@ -1,6 +1,34 @@
 import { MPVariable } from "./GMPVariable";
 import { MPConstraint } from "./GMPConstraint";
 import { LinearRange } from "./GLinearRange";
+import { MPObjective } from "./GMPObjective";
+
+export namespace MPSolver
+{
+    /**
+     * The status of solving the problem. The straightforward translation to
+     * homonymous enum values of MPSolverResponseStatus (see
+     * ./linear_solver.proto) is guaranteed by ./enum_consistency_test.cc, you may
+     * rely on it.
+     */
+    enum ResultStatus
+    {
+        /// optimal.
+        OPTIMAL,
+        /// feasible, or stopped by limit.
+        FEASIBLE,
+        /// proven infeasible.
+        INFEASIBLE,
+        /// proven unbounded.
+        UNBOUNDED,
+        /// abnormal, i.e., error of some kind.
+        ABNORMAL,
+        /// the model is trivially invalid (NaN coefficients, etc).
+        MODEL_INVALID,
+        /// not been solved yet.
+        NOT_SOLVED = 6
+    }
+}
 
 /**
  * This mathematical programming (MP) solver class is the main class
@@ -315,33 +343,11 @@ export class MPSolver
     //     {
     //         return objective_.get();
     //     }
-
-    //     /**
-    //      * The status of solving the problem. The straightforward translation to
-    //      * homonymous enum values of MPSolverResponseStatus (see
-    //      * ./linear_solver.proto) is guaranteed by ./enum_consistency_test.cc, you may
-    //      * rely on it.
-    //      */
-    //     enum ResultStatus
-    //     {
-    //         /// optimal.
-    //         OPTIMAL,
-    //         /// feasible, or stopped by limit.
-    //         FEASIBLE,
-    //         /// proven infeasible.
-    //         INFEASIBLE,
-    //         /// proven unbounded.
-    //         UNBOUNDED,
-    //         /// abnormal, i.e., error of some kind.
-    //         ABNORMAL,
-    //         /// the model is trivially invalid (NaN coefficients, etc).
-    //         MODEL_INVALID,
-    //         /// not been solved yet.
-    //         NOT_SOLVED = 6
-    //     };
+    MutableObjective(): MPObjective;
 
     //     /// Solves the problem using the default parameter values.
     //     ResultStatus Solve();
+    Solve(): MPSolver.ResultStatus;
 
     //     /// Solves the problem using the specified parameter values.
     //     ResultStatus Solve( const MPSolverParameters& param );
