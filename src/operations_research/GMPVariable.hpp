@@ -14,6 +14,8 @@ public:
     GMPVariable( const Napi::CallbackInfo& info );
     ~GMPVariable();
     static Napi::Object Init( Napi::Env env, Napi::Object exports );
+
+    Napi::Value solution_value( const Napi::CallbackInfo& info ) ;
 };
 };  // namespace operations_research
 
@@ -42,9 +44,23 @@ inline Napi::Object operations_research::GMPVariable::Init( Napi::Env env, Napi:
     Napi::HandleScope scope( env );
     Napi::Function    func = DefineClass(
         env, "MPVariable",
-        {} );
+        {
+            InstanceMethod( "solution_value", &GMPVariable::solution_value ),
+        } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "MPVariable" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::GMPVariable::solution_value( const Napi::CallbackInfo& info )
+{
+    //     double solution_value() const;
+    if(info.Length() == 0)
+    {
+        return Napi::Number::New( info.Env(), pMPVariable->solution_value() );
+    }
+
+    ThrowJsError( operations_research::GMPVariable::solution_value : Invalid argument );
+    return info.Env().Undefined();
 }

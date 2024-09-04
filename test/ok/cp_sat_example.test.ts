@@ -41,13 +41,5 @@ test('cp_sat_example', () =>
   let response = operations_research.sat.Solve(cp_model.Build());
   expect(response.status()).toBe(operations_research.sat.CpSolverStatus.OPTIMAL);
   operations_research.sat.SolutionIntegerValue(response, x)
-  console.log(response.objective_value());
-  console.log(operations_research.sat.CpSolverResponseStats(response));
 
-
-  // // Statistics.
-  // // [START statistics]
-  // LOG(INFO) << "Statistics";
-  // LOG(INFO) << CpSolverResponseStats(response);
-  // // [END statistics]
 })

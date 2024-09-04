@@ -18,6 +18,7 @@ public:
 
     Napi::Value SetMinimization( const Napi::CallbackInfo& info );
     Napi::Value SetCoefficient( const Napi::CallbackInfo& info );
+    Napi::Value Value( const Napi::CallbackInfo& info );
 };
 };  // namespace operations_research
 
@@ -49,11 +50,24 @@ inline Napi::Object operations_research::GMPObjective::Init( Napi::Env env, Napi
         {
             InstanceMethod( "SetMinimization", &GMPObjective::SetMinimization ),
             InstanceMethod( "SetCoefficient", &GMPObjective::SetCoefficient ),
+            InstanceMethod( "Value", &GMPObjective::Value ),
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "MPObjective" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::GMPObjective::Value( const Napi::CallbackInfo& info )
+{
+    //     double Value() const;
+    if ( info.Length() == 0 )
+    {
+        return Napi::Number::New( info.Env(), pMPObjective->Value() );
+    }
+
+    ThrowJsError( operations_research::GMPObjective::Value : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::GMPObjective::SetMinimization( const Napi::CallbackInfo& info )

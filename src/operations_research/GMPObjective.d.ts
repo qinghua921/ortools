@@ -99,6 +99,7 @@ export class MPObjective
     //      * your solution.
     //      */
     //     double Value() const;
+    Value(): number;
 
     //     /**
     //      * Returns the best objective bound.

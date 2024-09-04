@@ -25,6 +25,7 @@ export class MPVariable
     //      * automatically rounds it to the nearest integer; see: man 3 round).
     //      */
     //     double solution_value() const;
+    solution_value(): number;
 
     //     /// Returns the index of the variable in the MPSolver::variables_.
     //     int index() const
