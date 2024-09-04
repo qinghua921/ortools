@@ -8,11 +8,11 @@ The code is still being written, and if you have any questions, you can submit a
 
 ## How to use
 
-Please refer to the C++ usage method and examples in cmake\or-tools_x64\examples
+Please refer to the C++ usage method and examples in cmake/or-tools_x64/examples
 
 ## How to build
 
-Unzip or-tools_x64_VisualStudio2019_cpp_v9.6.2534.zip to cmake/or-tools_x64
+Unzip or-tools_x64_VisualStudio2019_cpp_v9.6.2534.zip to cmake/or-tools_x64 and run `npm run cppbuild`.
 
 ## Progress
 
