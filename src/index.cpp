@@ -13,6 +13,9 @@
 #include "./operations_research/GMPSolver.hpp"
 #include "./operations_research/GMPSolverParameters.hpp"
 #include "./operations_research/GMPVariable.hpp"
+#include "./operations_research/GSimpleLinearSumAssignment.hpp"
+#include "./operations_research/GSimpleMinCostFlow.hpp"
+
 
 #include "./operations_research/sat/GCpModelBuilder.hpp"
 #include "./operations_research/sat/GBoolVar.hpp"
@@ -22,6 +25,7 @@
 #include "./operations_research/sat/GTableConstraint.hpp"
 #include "./operations_research/sat/GFunc.hpp"
 #include "./operations_research/sat/GEnum.hpp"
+#include "./operations_research/sat/GCpModelProto.hpp"
 
 Napi::Object Init( Napi::Env env, Napi::Object exports )
 {
@@ -40,6 +44,8 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research::GMPSolver::Init( env, operations_research_exports );
     operations_research::GMPSolverParameters::Init( env, operations_research_exports );
     operations_research::GMPVariable::Init( env, operations_research_exports );
+    operations_research::GSimpleLinearSumAssignment::Init( env, operations_research_exports );
+    operations_research::GSimpleMinCostFlow::Init( env, operations_research_exports );
 
     auto operations_research_sat_exports = Napi::Object::New( env );
     operations_research::sat::GEnumInit( env, operations_research_sat_exports );
@@ -50,6 +56,7 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research::sat::GIntVar::Init( env, operations_research_sat_exports );
     operations_research::sat::GLinearExpr::Init( env, operations_research_sat_exports );
     operations_research::sat::GTableConstraint::Init( env, operations_research_sat_exports );
+    operations_research::sat::GCpModelProto::Init( env, operations_research_sat_exports );
 
     operations_research_exports.Set( "sat", operations_research_sat_exports );
 

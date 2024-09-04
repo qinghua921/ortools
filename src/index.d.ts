@@ -1,5 +1,7 @@
 ﻿import { MPSolver } from './operations_research/GMPSolver'
 import { LinearExpr } from './operations_research/GLinearExpr'
+import { SimpleLinearSumAssignment } from './operations_research/GSimpleLinearSumAssignment'
+import { SimpleMinCostFlow } from './operations_research/GSimpleMinCostFlow'
 import { operator_equals, operator_greater_equals, operator_less_equals } from './operations_research/GFunc'
 
 import { CpModelBuilder } from './operations_research/sat/GCpModelBuilder'
@@ -17,7 +19,9 @@ export namespace operations_research
     {
         operator_equals, operator_greater_equals, operator_less_equals,
         MPSolver,
-        LinearExpr
+        LinearExpr,
+        SimpleLinearSumAssignment,
+        SimpleMinCostFlow,
     }
 
     export namespace sat
