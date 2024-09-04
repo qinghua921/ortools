@@ -25,7 +25,8 @@ import
     operator_times,
     Solve,
     SolutionIntegerValue,
-    CpSolverResponseStats
+    CpSolverResponseStats,
+    SolutionBooleanValue,
 } from './operations_research/sat/GFunc'
 import { CpSolverStatus } from './operations_research/sat/GEnum'
 
@@ -59,7 +60,8 @@ export namespace operations_research
             Solve,
             SolutionIntegerValue,
             CpSolverStatus,
-            CpSolverResponseStats
+            CpSolverResponseStats,
+            SolutionBooleanValue
         }
     }
 }

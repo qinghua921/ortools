@@ -1,3 +1,4 @@
+import { BoolVar } from './GBoolVar';
 import { CpModelProto } from './GCpModelProto';
 import { CpSolverResponse } from './GCpSolverResponse';
 import { CanAsLinearExpr, LinearExpr } from './GLinearExpr';
@@ -31,6 +32,10 @@ export function Solve(model_proto: CpModelProto): CpSolverResponse;
 // int64_t SolutionIntegerValue( const CpSolverResponse& r, const LinearExpr& expr );
 export function SolutionIntegerValue(r: CpSolverResponse, expr: CanAsLinearExpr): number;
 
+/// Evaluates the value of a Boolean literal in a solver response.
+// bool SolutionBooleanValue( const CpSolverResponse& r, BoolVar x );
+export function SolutionBooleanValue(r: CpSolverResponse, x: BoolVar): boolean;
+
 //    /** Returns a string with some statistics on the solver response.
 //      *
 //      * If the second argument is false, we will just display NA for the objective
@@ -39,4 +44,4 @@ export function SolutionIntegerValue(r: CpSolverResponse, expr: CanAsLinearExpr)
 //      */
 //    std::string CpSolverResponseStats( const CpSolverResponse& response,
 //     bool                    has_objective = true );
-export function CpSolverResponseStats(response: CpSolverResponse, has_objective: boolean=true): string;
+export function CpSolverResponseStats(response: CpSolverResponse, has_objective: boolean = true): string;

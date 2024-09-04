@@ -20,7 +20,7 @@ namespace sat
     Napi::Value Goperator_plus( const Napi::CallbackInfo& info );
     Napi::Value Goperator_minus( const Napi::CallbackInfo& info );
     Napi::Value Goperator_times( const Napi::CallbackInfo& info );
-
+    Napi::Value GSolutionBooleanValue( const Napi::CallbackInfo& info );
 };  // namespace sat
 };  // namespace operations_research
 
@@ -35,8 +35,28 @@ inline Napi::Object operations_research::sat::GFuncInit( Napi::Env env, Napi::Ob
     exports.Set( Napi::String::New( env, "operator_times" ), Napi::Function::New( env, Goperator_times ) );
     exports.Set( Napi::String::New( env, "SolutionIntegerValue" ), Napi::Function::New( env, GSolutionIntegerValue ) );
     exports.Set( Napi::String::New( env, "CpSolverResponseStats" ), Napi::Function::New( env, GCpSolverResponseStats ) );
+    exports.Set( Napi::String::New( env, "SolutionBooleanValue" ), Napi::Function::New( env, GSolutionBooleanValue ) );
+
     return exports;
 }
+
+inline Napi::Value operations_research::sat::GSolutionBooleanValue( const Napi::CallbackInfo& info )
+{
+    // bool SolutionBooleanValue( const CpSolverResponse& r, BoolVar x );
+    if ( info.Length() == 2
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GCpSolverResponse::constructor.Value() )
+         && info[ 1 ].IsObject()
+         && info[ 1 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+    {
+        auto solver_response = GCpSolverResponse::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto model_proto     = GBoolVar::Unwrap( info[ 1 ].As< Napi::Object >() );
+        return Napi::Boolean::New( info.Env(), SolutionBooleanValue( *solver_response->pCpSolverResponse, *model_proto->pBoolVar ) );
+    }
+
+    ThrowJsError( operations_research::sat::GSolutionBooleanValue : Invalid arguments );
+    return info.Env().Undefined();
+};
 
 Napi::Value operations_research::sat::GCpSolverResponseStats( const Napi::CallbackInfo& info )
 {
@@ -60,7 +80,7 @@ Napi::Value operations_research::sat::GCpSolverResponseStats( const Napi::Callba
         return Napi::String::New( info.Env(), CpSolverResponseStats( *solver_response->pCpSolverResponse, has_objective ) );
     }
 
-    ThrowJsError( operations_research::sat::CpSolverResponseStats : Invalid arguments );
+    ThrowJsError( operations_research::sat::GCpSolverResponseStats : Invalid arguments );
     return info.Env().Undefined();
 }
 
@@ -77,7 +97,7 @@ Napi::Value operations_research::sat::GSolutionIntegerValue( const Napi::Callbac
         return Napi::Number::New( info.Env(), SolutionIntegerValue( *solver_response->pCpSolverResponse, expr ) );
     }
 
-    ThrowJsError( operations_research::sat::SolutionIntegerValue : Invalid arguments );
+    ThrowJsError( operations_research::sat::GSolutionIntegerValue : Invalid arguments );
     return info.Env().Undefined();
 }
 
@@ -172,20 +192,4 @@ Napi::Value operations_research::sat::Goperator_times( const Napi::CallbackInfo&
 
     ThrowJsError( operations_research::sat::Goperator_times : Invalid arguments );
     return info.Env().Undefined();
-};
-
-// inline DoubleLinearExpr operator-( DoubleLinearExpr expr )
-// inline DoubleLinearExpr operator+( const DoubleLinearExpr& lhs, const DoubleLinearExpr& rhs )
-// inline DoubleLinearExpr operator+( DoubleLinearExpr&&      lhs, const DoubleLinearExpr& rhs )
-// inline DoubleLinearExpr operator+( const DoubleLinearExpr& lhs, DoubleLinearExpr&&      rhs )
-// inline DoubleLinearExpr operator+( DoubleLinearExpr&& lhs, DoubleLinearExpr&& rhs )
-// inline DoubleLinearExpr operator+( DoubleLinearExpr expr, double rhs )
-// inline DoubleLinearExpr operator+( double lhs, DoubleLinearExpr expr )
-// inline DoubleLinearExpr operator-( const DoubleLinearExpr& lhs, const DoubleLinearExpr& rhs )
-// inline DoubleLinearExpr operator-( DoubleLinearExpr&&      lhs, const DoubleLinearExpr& rhs )
-// inline DoubleLinearExpr operator-( const DoubleLinearExpr& lhs, DoubleLinearExpr&&      rhs )
-// inline DoubleLinearExpr operator-( DoubleLinearExpr&& lhs, DoubleLinearExpr&& rhs )
-// inline DoubleLinearExpr operator-( DoubleLinearExpr epxr, double rhs )
-// inline DoubleLinearExpr operator-( double lhs, DoubleLinearExpr expr )
-// inline DoubleLinearExpr operator*( DoubleLinearExpr expr, double factor )
-// inline DoubleLinearExpr operator*( double factor, DoubleLinearExpr expr )
+}
