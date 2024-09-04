@@ -6,7 +6,7 @@ import { Constraint } from "./GConstraint";
  * This constraint allows adding tuples to the allowed/forbidden assignment
  * constraint incrementally.
  */
-export class TableConstraint extends Constraint
+export class TableConstraint  
 {
     //     /// Adds a tuple of possible values to the constraint.
     //     void AddTuple( absl::Span< const int64_t > tuple );

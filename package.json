@@ -9,7 +9,8 @@
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "scripts": {
-    "cppbuild": "cmake-js compile"
+    "cppbuild": "cmake-js compile",
+    "jest": "jest"
   },
   "devDependencies": {
     "cmake-js": "^7.2.1",

@@ -7,6 +7,7 @@
 #include "GConstraint.hpp"
 #include "GLinearExpr.hpp"
 #include "GCpModelProto.hpp"
+#include "GTableConstraint.hpp"
 
 namespace operations_research
 {
@@ -64,6 +65,7 @@ inline Napi::Object operations_research::sat::GCpModelBuilder::Init( Napi::Env e
     Napi::Function    func = DefineClass(
         env, "CpModelBuilder",
         {
+            InstanceMethod( "Build", &GCpModelBuilder::Build ),
             InstanceMethod( "AddAtMostOne", &GCpModelBuilder::AddAtMostOne ),
             InstanceMethod( "Minimize", &GCpModelBuilder::Minimize ),
             InstanceMethod( "AddAllowedAssignments", &GCpModelBuilder::AddAllowedAssignments ),
@@ -153,7 +155,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddAllowedAssignme
 
         auto constraint = pCpModelBuilder->AddAllowedAssignments( vars );
         auto external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
-        return GConstraint::constructor.New( { external } );
+        return GTableConstraint::constructor.New( { external } );
     }
 
     ThrowJsError( operations_research::sat::GCpModelBuilder::AddAllowedAssignments : Invalid argument );

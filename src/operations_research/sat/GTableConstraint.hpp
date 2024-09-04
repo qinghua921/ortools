@@ -68,12 +68,11 @@ inline Napi::Value operations_research::sat::GTableConstraint::AddTuple( const N
             if ( jsTuple.Get( i ).IsNumber() )
             {
                 tuple[ i ] = jsTuple.Get( i ).As< Napi::Number >().Int64Value();
+                continue;
             }
-            else
-            {
-                ThrowJsError( operations_research::GTableConstraint::AddTuple : Invalid argument );
-                return info.Env().Undefined();
-            }
+            
+            ThrowJsError( operations_research::GTableConstraint::AddTuple : Invalid argument );
+            return info.Env().Undefined();
         }
 
         pTableConstraint->AddTuple( tuple );

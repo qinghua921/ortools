@@ -106,25 +106,20 @@ Napi::Value operations_research::sat::operator_minus( const Napi::CallbackInfo& 
 Napi::Value operations_research::sat::operator_times( const Napi::CallbackInfo& info )
 {
     // inline LinearExpr operator*( LinearExpr expr, int64_t factor )
-    if ( info.Length() == 2 && info[ 0 ].IsObject()
-         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() )
-         && info[ 1 ].IsNumber() )
+    LinearExpr expr;
+    if ( info.Length() == 2 && GLinearExpr::ToLinearExpr( info[ 0 ], expr ) && info[ 1 ].IsNumber() )
     {
-        GLinearExpr* expr     = GLinearExpr::Unwrap( info[ 0 ].As< Napi::Object >() );
         int64_t      factor   = info[ 1 ].As< Napi::Number >().Int64Value();
-        auto         result   = *expr->pLinearExpr * factor;
+        auto         result   = expr * factor;
         auto         exterior = Napi::External< LinearExpr >::New( info.Env(), new LinearExpr( result ) );
         return GLinearExpr::constructor.New( { exterior } );
     }
 
     // inline LinearExpr operator*( int64_t factor, LinearExpr expr )
-    if ( info.Length() == 2 && info[ 1 ].IsObject()
-         && info[ 1 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() )
-         && info[ 0 ].IsNumber() )
+    if ( info.Length() == 2 && GLinearExpr::ToLinearExpr( info[ 1 ], expr ) && info[ 0 ].IsNumber() )
     {
-        GLinearExpr* expr     = GLinearExpr::Unwrap( info[ 1 ].As< Napi::Object >() );
         int64_t      factor   = info[ 0 ].As< Napi::Number >().Int64Value();
-        auto         result   = *expr->pLinearExpr * factor;
+        auto         result   = expr * factor;
         auto         exterior = Napi::External< LinearExpr >::New( info.Env(), new LinearExpr( result ) );
         return GLinearExpr::constructor.New( { exterior } );
     }
