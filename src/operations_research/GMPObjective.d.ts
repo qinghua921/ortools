@@ -108,5 +108,6 @@ export class MPObjective
     //      * optimal integer solution. Only available for discrete problems.
     //      */
     //     double BestBound() const;
+    BestBound(): number;
 
 }
