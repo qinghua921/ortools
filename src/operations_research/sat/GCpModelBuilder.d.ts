@@ -1,3 +1,4 @@
+import { Domain } from "../GDomain";
 import { BoolVar } from "./GBoolVar";
 import { Constraint } from "./GConstraint";
 import { CpModelProto } from "./GCpModelProto";
@@ -21,6 +22,7 @@ export class CpModelBuilder
 
     //     /// Creates an integer variable with the given domain.
     //     IntVar NewIntVar( const Domain& domain );
+    NewIntVar(domain: Domain): IntVar;
 
     //     /// Creates a Boolean variable.
     //     BoolVar NewBoolVar();
@@ -115,6 +117,7 @@ export class CpModelBuilder
 
     //     /// Adds left <= right.
     //     Constraint AddLessOrEqual( const LinearExpr& left, const LinearExpr& right );
+    AddLessOrEqual(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
     //     /// Adds left < right.
     //     Constraint AddLessThan( const LinearExpr& left, const LinearExpr& right );
@@ -344,6 +347,7 @@ export class CpModelBuilder
 
     //     /// Adds a linear maximization objective.
     //     void Maximize( const LinearExpr& expr );
+    Maximize(expr: LinearExpr): void;
 
     //     /// Adds a linear floating point maximization objective.
     //     /// Note that the coefficients will be internally scaled to integer.

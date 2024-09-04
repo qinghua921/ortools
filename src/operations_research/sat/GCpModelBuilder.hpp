@@ -8,6 +8,7 @@
 #include "GLinearExpr.hpp"
 #include "GCpModelProto.hpp"
 #include "GTableConstraint.hpp"
+#include "../GDomain.hpp"
 
 namespace operations_research
 {
@@ -22,6 +23,9 @@ namespace sat
         ~GCpModelBuilder();
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
 
+        Napi::Value Maximize( const Napi::CallbackInfo& info );
+        Napi::Value AddLessOrEqual( const Napi::CallbackInfo& info );
+        Napi::Value NewIntVar( const Napi::CallbackInfo& info );
         Napi::Value AddAtMostOne( const Napi::CallbackInfo& info );
         Napi::Value Build( const Napi::CallbackInfo& info );
         Napi::Value Minimize( const Napi::CallbackInfo& info );
@@ -65,6 +69,8 @@ inline Napi::Object operations_research::sat::GCpModelBuilder::Init( Napi::Env e
     Napi::Function    func = DefineClass(
         env, "CpModelBuilder",
         {
+            InstanceMethod( "AddLessOrEqual", &GCpModelBuilder::AddLessOrEqual ),
+            InstanceMethod( "NewIntVar", &GCpModelBuilder::NewIntVar ),
             InstanceMethod( "Build", &GCpModelBuilder::Build ),
             InstanceMethod( "AddAtMostOne", &GCpModelBuilder::AddAtMostOne ),
             InstanceMethod( "Minimize", &GCpModelBuilder::Minimize ),
@@ -72,11 +78,59 @@ inline Napi::Object operations_research::sat::GCpModelBuilder::Init( Napi::Env e
             InstanceMethod( "AddEquality", &GCpModelBuilder::AddEquality ),
             InstanceMethod( "AddExactlyOne", &GCpModelBuilder::AddExactlyOne ),
             InstanceMethod( "NewBoolVar", &GCpModelBuilder::NewBoolVar ),
+            InstanceMethod( "Maximize", &GCpModelBuilder::Maximize ),
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "CpModelBuilder" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::Maximize( const Napi::CallbackInfo& info )
+{
+    //     void Maximize( const LinearExpr& expr );
+    if ( info.Length() == 1 && info[ 0 ].IsObject() && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    {
+        auto glinearexpr = GLinearExpr::Unwrap( info[ 0 ].As< Napi::Object >() );
+        pCpModelBuilder->Maximize( *glinearexpr->pLinearExpr );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::Maximize : Invalid argument );
+    return info.Env().Undefined();
+}
+
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::AddLessOrEqual( const Napi::CallbackInfo& info )
+{
+    //     Constraint AddLessOrEqual( const LinearExpr& left, const LinearExpr& right );
+    LinearExpr left, right;
+    if ( info.Length() == 2 && GLinearExpr::ToLinearExpr( info[ 0 ], left ) && GLinearExpr::ToLinearExpr( info[ 1 ], right ) )
+    {
+        auto constraint = pCpModelBuilder->AddLessOrEqual( left, right );
+        auto external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
+        return GConstraint::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::AddLessOrEqual : Invalid argument );
+    return info.Env().Undefined();
+}
+
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::NewIntVar( const Napi::CallbackInfo& info )
+{
+    //     IntVar NewIntVar( const Domain& domain );
+    if ( info.Length() == 1 && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GDomain::constructor.Value() ) )
+    {
+        auto gdomain  = GDomain::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto expr     = pCpModelBuilder->NewIntVar( *gdomain->pDomain );
+        auto external = Napi::External< IntVar >::New( info.Env(), new IntVar( expr ) );
+        return GIntVar::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::NewIntVar : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::sat::GCpModelBuilder::AddAtMostOne( const Napi::CallbackInfo& info )

@@ -34,6 +34,7 @@ export class IntVar
 
     //     /// Sets the name of the variable.
     //     IntVar WithName( const std::string& name );
+    WithName(name: string): IntVar;
 
     //     /// Returns the name of the variable (or the empty string if not set).
     //     std::string Name() const;

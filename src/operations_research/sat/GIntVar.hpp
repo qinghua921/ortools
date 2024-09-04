@@ -17,6 +17,8 @@ namespace sat
         GIntVar( const Napi::CallbackInfo& info );
         ~GIntVar();
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
+
+        Napi::Value WithName( const Napi::CallbackInfo& info );
     };
 };  // namespace sat
 };  // namespace operations_research
@@ -63,9 +65,25 @@ inline Napi::Object operations_research::sat::GIntVar::Init( Napi::Env env, Napi
     Napi::HandleScope scope( env );
     Napi::Function    func = DefineClass(
         env, "IntVar",
-        {} );
+        {
+            InstanceMethod( "WithName", &GIntVar::WithName ),
+        } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "IntVar" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::sat::GIntVar::WithName( const Napi::CallbackInfo& info )
+{
+    //     IntVar WithName( const std::string& name );
+    if ( info.Length() == 1 && info[ 0 ].IsString() )
+    {
+        std::string name = info[ 0 ].As< Napi::String >().Utf8Value();
+        pIntVar->WithName( name );
+        return this->Value();
+    }
+
+    ThrowJsError( operations_research::GIntVar::WithName : Invalid argument );
+    return info.Env().Undefined();
 }

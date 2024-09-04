@@ -224,6 +224,7 @@ export class MPSolver
 
     //     /// Creates an integer variable.
     //     MPVariable* MakeIntVar( double lb, double ub, const std::string& name );
+    MakeIntVar(lb: number, ub: number, name: string): MPVariable;
 
     //     /// Creates a boolean variable.
     //     MPVariable* MakeBoolVar( const std::string& name );

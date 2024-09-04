@@ -1,4 +1,4 @@
-import { operations_research } from 'ts-ortools';
+import { operations_research } from "../../src";
 
 test('assignment_mip', () =>
 {
