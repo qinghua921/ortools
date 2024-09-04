@@ -1,3 +1,18 @@
+
+export namespace SimpleMinCostFlow
+{
+    export enum Status
+    {
+        NOT_SOLVED,
+        OPTIMAL,
+        FEASIBLE,
+        INFEASIBLE,
+        UNBALANCED,
+        BAD_RESULT,
+        BAD_COST_RANGE
+    };
+}
+
 // A simple and efficient min-cost flow interface. This is as fast as
 // GenericMinCostFlow<ReverseArcStaticGraph>, which is the fastest, but is uses
 // more memory in order to hide the somewhat involved construction of the
@@ -28,20 +43,20 @@ export class SimpleMinCostFlow
     //     ArcIndex AddArcWithCapacityAndUnitCost( NodeIndex tail, NodeIndex head,
     //                                             FlowQuantity capacity,
     //                                             CostValue    unit_cost );
+    AddArcWithCapacityAndUnitCost(tail: number, head: number, capacity: number, unit_cost: number): number;
 
     //     // Sets the supply of the given node. The node index must be non-negative (>=
     //     // 0). Nodes implicitly created will have a default supply set to 0. A demand
     //     // is modeled as a negative supply.
     //     void SetNodeSupply( NodeIndex node, FlowQuantity supply );
+    SetNodeSupply(node: number, supply: number): void;
 
     //     // Solves the problem, and returns the problem status. This function
     //     // requires that the sum of all node supply minus node demand is zero and
     //     // that the graph has enough capacity to send all supplies and serve all
     //     // demands. Otherwise, it will return INFEASIBLE.
     //     Status Solve()
-    //     {
-    //         return SolveWithPossibleAdjustment( SupplyAdjustment::DONT_ADJUST );
-    //     }
+    Solve(): SimpleMinCostFlow.Status;
 
     //     // Same as Solve(), but does not have the restriction that the supply
     //     // must match the demand or that the graph has enough capacity to serve
@@ -56,6 +71,7 @@ export class SimpleMinCostFlow
     //     // Returns the cost of the minimum-cost flow found by the algorithm when
     //     // the returned Status is OPTIMAL.
     //     CostValue OptimalCost() const;
+    OptimalCost(): number;
 
     //     // Returns the total flow of the minimum-cost flow found by the algorithm
     //     // when the returned Status is OPTIMAL.
@@ -72,11 +88,18 @@ export class SimpleMinCostFlow
     //     // Accessors for the user given data. The implementation will crash if "arc"
     //     // is not in [0, NumArcs()) or "node" is not in [0, NumNodes()).
     //     NodeIndex    NumNodes() const;
+    NumNodes(): number;
     //     ArcIndex     NumArcs() const;
+    NumArcs(): number;
     //     NodeIndex    Tail( ArcIndex arc ) const;
+    Tail(arc: number): number;
     //     NodeIndex    Head( ArcIndex arc ) const;
+    Head(arc: number): number;
     //     FlowQuantity Capacity( ArcIndex arc ) const;
+    Capacity(arc: number): number;
     //     FlowQuantity Supply( NodeIndex node ) const;
+    Supply(node: number): number;
     //     CostValue    UnitCost( ArcIndex arc ) const;
+    UnitCost(arc: number): number;
 
 }

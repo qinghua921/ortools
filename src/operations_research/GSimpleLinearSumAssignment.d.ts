@@ -5,7 +5,7 @@ export namespace SimpleLinearSumAssignment
         OPTIMAL,            // The algorithm found a minimum-cost perfect matching.
         INFEASIBLE,         // The given problem admits no perfect matching.
         POSSIBLE_OVERFLOW,  // Some cost magnitude is too large.
-    };
+    }
 }
 
 export class SimpleLinearSumAssignment
