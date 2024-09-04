@@ -4,6 +4,7 @@ import { SimpleLinearSumAssignment } from './operations_research/GSimpleLinearSu
 import { SimpleMinCostFlow } from './operations_research/GSimpleMinCostFlow'
 import { operator_equals, operator_greater_equals, operator_less_equals } from './operations_research/GFunc'
 import { Domain } from './operations_research/GDomain'
+import { MPVariable } from './operations_research/GMPVariable'
 
 import { CpModelBuilder } from './operations_research/sat/GCpModelBuilder'
 import { BoolVar } from './operations_research/sat/GBoolVar'
@@ -24,6 +25,7 @@ export namespace operations_research
         SimpleLinearSumAssignment,
         SimpleMinCostFlow,
         Domain,
+        MPVariable,
     }
 
     export namespace sat
