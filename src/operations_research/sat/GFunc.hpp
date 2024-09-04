@@ -2,6 +2,8 @@
 
 #include <napi.h>
 #include "GLinearExpr.hpp"
+#include "GCpModelProto.hpp"
+#include "GCpSolverResponse.hpp"
 #include "../../commonheader.hpp"
 
 namespace operations_research
@@ -11,6 +13,7 @@ namespace sat
 
     static Napi::Object GFuncInit( Napi::Env env, Napi::Object exports );
 
+    Napi::Value GSolve( const Napi::CallbackInfo& info );
     Napi::Value operator_negate( const Napi::CallbackInfo& info );
     Napi::Value operator_plus( const Napi::CallbackInfo& info );
     Napi::Value operator_minus( const Napi::CallbackInfo& info );
@@ -23,12 +26,30 @@ inline Napi::Object operations_research::sat::GFuncInit( Napi::Env env, Napi::Ob
 {
     Napi::HandleScope scope( env );
 
+    exports.Set( Napi::String::New( env, "Solve" ), Napi::Function::New( env, GSolve ) );
     exports.Set( Napi::String::New( env, "operator_negate" ), Napi::Function::New( env, operator_negate ) );
     exports.Set( Napi::String::New( env, "operator_plus" ), Napi::Function::New( env, operator_plus ) );
     exports.Set( Napi::String::New( env, "operator_minus" ), Napi::Function::New( env, operator_minus ) );
     exports.Set( Napi::String::New( env, "operator_times" ), Napi::Function::New( env, operator_times ) );
 
     return exports;
+}
+
+Napi::Value operations_research::sat::GSolve( const Napi::CallbackInfo& info )
+{
+    // CpSolverResponse Solve( const CpModelProto& model_proto );
+    if ( info.Length() == 1
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GCpModelProto::constructor.Value() ) )
+    {
+        auto model_proto      = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto cpSolverResponse = Solve( *model_proto->pCpModelProto );
+        auto exterior         = Napi::External< CpSolverResponse >::New( info.Env(), new CpSolverResponse( cpSolverResponse ) );
+        return GCpSolverResponse::constructor.New( { exterior } );
+    }
+
+    ThrowJsError( operations_research::sat::GSolve : Invalid arguments );
+    return info.Env().Undefined();
 }
 
 Napi::Value operations_research::sat::operator_negate( const Napi::CallbackInfo& info )

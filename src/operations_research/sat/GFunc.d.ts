@@ -1,3 +1,5 @@
+import { CpModelProto } from './GCpModelProto';
+import { CpSolverResponse } from './GCpSolverResponse';
 import { CanAsLinearExpr, LinearExpr } from './GLinearExpr';
 
 // inline LinearExpr operator-( LinearExpr expr )
@@ -20,3 +22,7 @@ export function operator_times(expr: CanAsLinearExpr, factor: number): LinearExp
 
 // inline LinearExpr operator*( int64_t factor, LinearExpr expr )
 export function operator_times(factor: number, expr: CanAsLinearExpr): LinearExpr;
+
+/// Solves the given CpModelProto and returns an instance of CpSolverResponse.
+// CpSolverResponse Solve( const CpModelProto& model_proto );
+export function Solve(model_proto: CpModelProto): CpSolverResponse;

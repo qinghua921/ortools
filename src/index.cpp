@@ -21,6 +21,7 @@
 #include "./operations_research/sat/GLinearExpr.hpp"
 #include "./operations_research/sat/GTableConstraint.hpp"
 #include "./operations_research/sat/GFunc.hpp"
+#include "./operations_research/sat/GEnum.hpp"
 
 Napi::Object Init( Napi::Env env, Napi::Object exports )
 {
@@ -41,6 +42,7 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research::GMPVariable::Init( env, operations_research_exports );
 
     auto operations_research_sat_exports = Napi::Object::New( env );
+    operations_research::sat::GEnumInit( env, operations_research_sat_exports );
     operations_research::sat::GFuncInit( env, operations_research_sat_exports );
     operations_research::sat::GCpModelBuilder::Init( env, operations_research_sat_exports );
     operations_research::sat::GBoolVar::Init( env, operations_research_sat_exports );

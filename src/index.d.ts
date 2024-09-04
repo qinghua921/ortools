@@ -7,7 +7,9 @@ import { BoolVar } from './operations_research/sat/GBoolVar'
 import { IntVar } from './operations_research/sat/GIntVar'
 import { LinearExpr as satLinearExpr } from './operations_research/sat/GLinearExpr'
 import { TableConstraint } from './operations_research/sat/GTableConstraint'
-import { operator_minus, operator_negate, operator_plus, operator_times } from './operations_research/sat/GFunc'
+import { CpSolverResponse } from './operations_research/sat/GCpSolverResponse'
+import { operator_minus, operator_negate, operator_plus, operator_times, Solve } from './operations_research/sat/GFunc'
+import { CpSolverStatus } from './operations_research/sat/GEnum'
 
 export namespace operations_research
 {
@@ -22,12 +24,14 @@ export namespace operations_research
     {
         export
         {
+            CpSolverResponse,
             CpModelBuilder,
             BoolVar,
             IntVar,
             satLinearExpr as LinearExpr,
             TableConstraint,
-            operator_minus, operator_negate, operator_plus, operator_times
+            operator_minus, operator_negate, operator_plus, operator_times, Solve,
+            CpSolverStatus
         }
     }
 }

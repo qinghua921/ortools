@@ -6,6 +6,7 @@
 #include "GBoolVar.hpp"
 #include "GConstraint.hpp"
 #include "GLinearExpr.hpp"
+#include "GCpModelProto.hpp"
 
 namespace operations_research
 {
@@ -20,6 +21,8 @@ namespace sat
         ~GCpModelBuilder();
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
 
+        Napi::Value AddAtMostOne( const Napi::CallbackInfo& info );
+        Napi::Value Build( const Napi::CallbackInfo& info );
         Napi::Value Minimize( const Napi::CallbackInfo& info );
         Napi::Value AddAllowedAssignments( const Napi::CallbackInfo& info );
         Napi::Value AddEquality( const Napi::CallbackInfo& info );
@@ -61,6 +64,7 @@ inline Napi::Object operations_research::sat::GCpModelBuilder::Init( Napi::Env e
     Napi::Function    func = DefineClass(
         env, "CpModelBuilder",
         {
+            InstanceMethod( "AddAtMostOne", &GCpModelBuilder::AddAtMostOne ),
             InstanceMethod( "Minimize", &GCpModelBuilder::Minimize ),
             InstanceMethod( "AddAllowedAssignments", &GCpModelBuilder::AddAllowedAssignments ),
             InstanceMethod( "AddEquality", &GCpModelBuilder::AddEquality ),
@@ -71,6 +75,45 @@ inline Napi::Object operations_research::sat::GCpModelBuilder::Init( Napi::Env e
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "CpModelBuilder" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::AddAtMostOne( const Napi::CallbackInfo& info )
+{
+    //     Constraint AddAtMostOne( absl::Span< const BoolVar > literals );
+    if ( info.Length() == 1 && info[ 0 ].IsArray() )
+    {
+        auto                   arr = info[ 0 ].As< Napi::Array >();
+        std::vector< BoolVar > literals;
+        for ( int i = 0; i < arr.Length(); i++ )
+        {
+            if ( arr.Get( i ).IsObject()
+                 && arr.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+            {
+                auto gboolvar = GBoolVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
+                literals.push_back( *gboolvar->pBoolVar );
+            }
+        }
+        auto constraint = pCpModelBuilder->AddAtMostOne( literals );
+        auto external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
+        return GConstraint::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::AddAtMostOne : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::Build( const Napi::CallbackInfo& info )
+{
+    //     const CpModelProto& Build() const
+    if ( info.Length() == 0 )
+    {
+        auto model    = pCpModelBuilder->Build();
+        auto external = Napi::External< CpModelProto >::New( info.Env(), new CpModelProto( model ) );
+        return GCpModelProto::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::GCpModelBuilder::Build : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::sat::GCpModelBuilder::Minimize( const Napi::CallbackInfo& info )
@@ -101,9 +144,10 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddAllowedAssignme
             {
                 auto gintvar = GIntVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
                 vars.push_back( *gintvar->pIntVar );
+                continue;
             }
 
-            ThrowJsError( operations_research::sat::GCpModelBuilder::AddAllowedAssignments : Invalid argument );
+            ThrowJsError( operations_research::sat::GCpModelBuilder::AddAllowedAssignments : Invalid argument111 );
             return info.Env().Undefined();
         }
 
@@ -147,12 +191,12 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddExactlyOne( con
                 literals.push_back( *gboolvar->pBoolVar );
             }
         }
-        auto constraint = pCpModelBuilder->AddAtMostOne( literals );
+        auto constraint = pCpModelBuilder->AddExactlyOne( literals );
         auto external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
         return GConstraint::constructor.New( { external } );
     }
 
-    ThrowJsError( operations_research::sat::GCpModelBuilder::AddAtMostOne : Invalid argument );
+    ThrowJsError( operations_research::sat::GCpModelBuilder::AddExactlyOne : Invalid argument );
     return info.Env().Undefined();
 }
 

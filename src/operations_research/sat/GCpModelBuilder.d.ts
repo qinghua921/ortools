@@ -1,5 +1,6 @@
 import { BoolVar } from "./GBoolVar";
 import { Constraint } from "./GConstraint";
+import { CpModelProto } from "./GCpModelProto";
 import { IntVar } from "./GIntVar";
 import { CanAsLinearExpr, LinearExpr } from "./GLinearExpr";
 import { TableConstraint } from "./GTableConstraint";
@@ -385,9 +386,8 @@ export class CpModelBuilder
     //     void ClearAssumptions();
 
     //     const CpModelProto& Build() const
-    //     {
-    //         return cp_model_;
-    //     };
+    Build(): CpModelProto;
+
     //     const CpModelProto& Proto() const
     //     {
     //         return cp_model_;

@@ -40,6 +40,14 @@ inline operations_research::sat::GLinearExpr::GLinearExpr( const Napi::CallbackI
         if ( pLinearExpr != nullptr ) return;
     }
 
+    //       LinearExpr() = default;
+    if ( info.Length() == 0 )
+    {
+        pLinearExpr = new LinearExpr();
+        return;
+    }
+
+
     ThrowJsError( operations_research::sat::GLinearExpr::GLinearExpr : Invalid argument );
 }
 
