@@ -26,3 +26,17 @@ export function operator_times(factor: number, expr: CanAsLinearExpr): LinearExp
 /// Solves the given CpModelProto and returns an instance of CpSolverResponse.
 // CpSolverResponse Solve( const CpModelProto& model_proto );
 export function Solve(model_proto: CpModelProto): CpSolverResponse;
+
+/// Evaluates the value of an linear expression in a solver response.
+// int64_t SolutionIntegerValue( const CpSolverResponse& r, const LinearExpr& expr );
+export function SolutionIntegerValue(r: CpSolverResponse, expr: CanAsLinearExpr): number;
+
+//    /** Returns a string with some statistics on the solver response.
+//      *
+//      * If the second argument is false, we will just display NA for the objective
+//      * value instead of zero. It is not really needed but it makes things a bit
+//      * clearer to see that there is no objective.
+//      */
+//    std::string CpSolverResponseStats( const CpSolverResponse& response,
+//     bool                    has_objective = true );
+export function CpSolverResponseStats(response: CpSolverResponse, has_objective: boolean=true): string;

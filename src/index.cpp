@@ -47,6 +47,7 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research::GMPVariable::Init( env, operations_research_exports );
     operations_research::GSimpleLinearSumAssignment::Init( env, operations_research_exports );
     operations_research::GSimpleMinCostFlow::Init( env, operations_research_exports );
+    operations_research::GDomain::Init( env, operations_research_exports );
 
     auto operations_research_sat_exports = Napi::Object::New( env );
     operations_research::sat::GEnumInit( env, operations_research_sat_exports );

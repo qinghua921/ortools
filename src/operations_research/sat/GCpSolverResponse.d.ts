@@ -278,6 +278,7 @@ export class CpSolverResponse
     //     // double objective_value = 3;
     //     void   clear_objective_value();
     //     double objective_value() const;
+    objective_value(): double;
     //     void   set_objective_value( double value );
 
     // private:

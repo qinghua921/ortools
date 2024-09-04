@@ -1,4 +1,4 @@
-import { operations_research } from "../src";
+import { operations_research } from "../../src";
 
 test('cp_sat_example', () =>
 {
@@ -41,19 +41,9 @@ test('cp_sat_example', () =>
   let response = operations_research.sat.Solve(cp_model.Build());
   expect(response.status()).toBe(operations_research.sat.CpSolverStatus.OPTIMAL);
   operations_research.sat.SolutionIntegerValue(response, x)
-  // // [START print_solution]
-  // if (response.status() == CpSolverStatus::OPTIMAL ||
-  //     response.status() == CpSolverStatus::FEASIBLE) {
-  //   // Get the value of x in the solution.
-  //   LOG(INFO) << "Maximum of objective function: "
-  //             << response.objective_value();
-  //   LOG(INFO) << "x = " << SolutionIntegerValue(response, x);
-  //   LOG(INFO) << "y = " << SolutionIntegerValue(response, y);
-  //   LOG(INFO) << "z = " << SolutionIntegerValue(response, z);
-  // } else {
-  //   LOG(INFO) << "No solution found.";
-  // }
-  // // [END print_solution]
+  console.log(response.objective_value());
+  console.log(operations_research.sat.CpSolverResponseStats(response));
+
 
   // // Statistics.
   // // [START statistics]

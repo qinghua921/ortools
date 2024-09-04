@@ -2,7 +2,12 @@
 import { LinearExpr } from './operations_research/GLinearExpr'
 import { SimpleLinearSumAssignment } from './operations_research/GSimpleLinearSumAssignment'
 import { SimpleMinCostFlow } from './operations_research/GSimpleMinCostFlow'
-import { operator_equals, operator_greater_equals, operator_less_equals } from './operations_research/GFunc'
+import
+{
+    operator_equals,
+    operator_greater_equals,
+    operator_less_equals
+} from './operations_research/GFunc'
 import { Domain } from './operations_research/GDomain'
 import { MPVariable } from './operations_research/GMPVariable'
 
@@ -12,7 +17,16 @@ import { IntVar } from './operations_research/sat/GIntVar'
 import { LinearExpr as satLinearExpr } from './operations_research/sat/GLinearExpr'
 import { TableConstraint } from './operations_research/sat/GTableConstraint'
 import { CpSolverResponse } from './operations_research/sat/GCpSolverResponse'
-import { operator_minus, operator_negate, operator_plus, operator_times, Solve } from './operations_research/sat/GFunc'
+import
+{
+    operator_minus,
+    operator_negate,
+    operator_plus,
+    operator_times,
+    Solve,
+    SolutionIntegerValue,
+    CpSolverResponseStats
+} from './operations_research/sat/GFunc'
 import { CpSolverStatus } from './operations_research/sat/GEnum'
 
 export namespace operations_research
@@ -38,8 +52,14 @@ export namespace operations_research
             IntVar,
             satLinearExpr as LinearExpr,
             TableConstraint,
-            operator_minus, operator_negate, operator_plus, operator_times, Solve,
-            CpSolverStatus
+            operator_minus,
+            operator_negate,
+            operator_plus,
+            operator_times,
+            Solve,
+            SolutionIntegerValue,
+            CpSolverStatus,
+            CpSolverResponseStats
         }
     }
 }
