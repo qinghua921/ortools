@@ -14,6 +14,20 @@ Please refer to the C++ usage method and examples in cmake/or-tools_x64/examples
 
 Unzip or-tools_x64_VisualStudio2019_cpp_v9.6.2534.zip to cmake/or-tools_x64 and run `npm run cppbuild`.
 
+## How to contribute
+
+Some C++ classes are not implemented yet, some classes are not defined. The code is organized according to the namespace of the C++ class, so if you need, you can organize it according to this.
+
+I have added a template (`Demo.hpp`, `Demo.d.ts`),
+
+I did it like this (e.g. to add a Foo class),
+
+- Copy `Demo.hpp`, `Demo.d.ts`
+- Rename as `Foo.hpp`, `Foo.d.ts`
+- Find and replace `Demo` with `Foo` in `Foo.hpp`
+- Assign the C++ code of `Foo` to `Foo.d.ts` and comment out (to avoid missing methods)
+- Add the declaration of `Foo` in `index.d.ts`, `index.cpp`
+
 ## Progress
 
 The code is quite large, and the priority is to implement the code in the examples directory.
