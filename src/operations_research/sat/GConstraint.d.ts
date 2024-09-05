@@ -29,9 +29,11 @@ export class Constraint
     //      * - other: no support (but can be added on a per-demand basis).
     //      */
     //     Constraint OnlyEnforceIf( absl::Span< const BoolVar > literals );
+    OnlyEnforceIf(literals: BoolVar[]): Constraint;
 
     //     /// See OnlyEnforceIf(absl::Span<const BoolVar> literals).
     //     Constraint OnlyEnforceIf( BoolVar literal );
+    OnlyEnforceIf(literals: BoolVar): Constraint;
 
     //     /// Sets the name of the constraint.
     //     Constraint WithName( const std::string& name );

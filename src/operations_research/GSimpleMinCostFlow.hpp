@@ -26,6 +26,7 @@ public:
     Napi::Value Solve( const Napi::CallbackInfo& info );
     Napi::Value SetNodeSupply( const Napi::CallbackInfo& info );
     Napi::Value AddArcWithCapacityAndUnitCost( const Napi::CallbackInfo& info );
+    Napi::Value Flow( const Napi::CallbackInfo& info );
 };
 };  // namespace operations_research
 
@@ -71,6 +72,8 @@ inline Napi::Object operations_research::GSimpleMinCostFlow::Init( Napi::Env env
     Napi::Function func = DefineClass(
         env, "SimpleMinCostFlow",
         {
+            StaticValue( "Status", status_obj ),
+
             InstanceMethod( "NumNodes", &GSimpleMinCostFlow::NumNodes ),
             InstanceMethod( "NumArcs", &GSimpleMinCostFlow::NumArcs ),
             InstanceMethod( "Tail", &GSimpleMinCostFlow::Tail ),
@@ -82,12 +85,26 @@ inline Napi::Object operations_research::GSimpleMinCostFlow::Init( Napi::Env env
             InstanceMethod( "Solve", &GSimpleMinCostFlow::Solve ),
             InstanceMethod( "SetNodeSupply", &GSimpleMinCostFlow::SetNodeSupply ),
             InstanceMethod( "AddArcWithCapacityAndUnitCost", &GSimpleMinCostFlow::AddArcWithCapacityAndUnitCost ),
-            StaticValue( "Status", status_obj ),
+            InstanceMethod( "Flow", &GSimpleMinCostFlow::Flow ),
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "SimpleMinCostFlow" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::GSimpleMinCostFlow::Flow( const Napi::CallbackInfo& info )
+{
+    //     FlowQuantity Flow( ArcIndex arc ) const;
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        auto arc  = info[ 0 ].As< Napi::Number >().Int64Value();
+        auto flow = pSimpleMinCostFlow->Flow( arc );
+        return Napi::Number::New( info.Env(), flow );
+    }
+
+    ThrowJsError( operations_research::GSimpleMinCostFlow::Flow : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::GSimpleMinCostFlow::NumNodes( const Napi::CallbackInfo& info )

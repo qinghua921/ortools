@@ -84,6 +84,7 @@ export class SimpleMinCostFlow
     //     // a given problem. However, there is no guarantee of this from one code
     //     // version to the next (but the code does not change often).
     //     FlowQuantity Flow( ArcIndex arc ) const;
+    Flow(arc: number): number;
 
     //     // Accessors for the user given data. The implementation will crash if "arc"
     //     // is not in [0, NumArcs()) or "node" is not in [0, NumNodes()).

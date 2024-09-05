@@ -196,13 +196,16 @@ export class CpSolverResponse
     // public:
     //     void clear_sufficient_assumptions_for_infeasibility();
 
-
-    // public:
     //     int32_t sufficient_assumptions_for_infeasibility( int index ) const;
+    sufficient_assumptions_for_infeasibility(index: number): number;
+
     //     void    set_sufficient_assumptions_for_infeasibility( int index, int32_t value );
     //     void    add_sufficient_assumptions_for_infeasibility( int32_t value );
+    
     //     const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
     //     sufficient_assumptions_for_infeasibility() const;
+    sufficient_assumptions_for_infeasibility(): number[];
+
     //     ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
     //     mutable_sufficient_assumptions_for_infeasibility();
 
@@ -232,11 +235,6 @@ export class CpSolverResponse
     //     PROTOBUF_NODISCARD std::string* release_solution_info();
     //     void                            set_allocated_solution_info( std::string* solution_info );
 
-    // private:
-    //     const std::string&                 _internal_solution_info() const;
-    //     inline PROTOBUF_ALWAYS_INLINE void _internal_set_solution_info( const std::string& value );
-    //     std::string*                       _internal_mutable_solution_info();
-
     // public:
     //     // string solve_log = 26;
     //     void               clear_solve_log();
@@ -247,17 +245,9 @@ export class CpSolverResponse
     //     PROTOBUF_NODISCARD std::string* release_solve_log();
     //     void                            set_allocated_solve_log( std::string* solve_log );
 
-    // private:
-    //     const std::string&                 _internal_solve_log() const;
-    //     inline PROTOBUF_ALWAYS_INLINE void _internal_set_solve_log( const std::string& value );
-    //     std::string*                       _internal_mutable_solve_log();
-
     // public:
     //     // .operations_research.sat.CpObjectiveProto integer_objective = 28;
     //     bool has_integer_objective() const;
-
-    // private:
-    //     bool _internal_has_integer_objective() const;
 
     // public:
     //     void                                                             clear_integer_objective();
@@ -265,10 +255,6 @@ export class CpSolverResponse
     //     PROTOBUF_NODISCARD ::operations_research::sat::CpObjectiveProto* release_integer_objective();
     //     ::operations_research::sat::CpObjectiveProto*                    mutable_integer_objective();
     //     void                                                             set_allocated_integer_objective( ::operations_research::sat::CpObjectiveProto* integer_objective );
-
-    // private:
-    //     const ::operations_research::sat::CpObjectiveProto& _internal_integer_objective() const;
-    //     ::operations_research::sat::CpObjectiveProto*       _internal_mutable_integer_objective();
 
     // public:
     //     void unsafe_arena_set_allocated_integer_objective(
@@ -428,6 +414,6 @@ export class CpSolverResponse
 
     //     ::operations_research::sat::CpSolverStatus status() const;
     status(): CpSolverStatus;
-    
+
     //     void                                       set_status( ::operations_research::sat::CpSolverStatus value );
 }

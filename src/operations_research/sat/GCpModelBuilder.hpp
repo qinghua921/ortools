@@ -33,6 +33,8 @@ namespace sat
         Napi::Value AddEquality( const Napi::CallbackInfo& info );
         Napi::Value AddExactlyOne( const Napi::CallbackInfo& info );
         Napi::Value NewBoolVar( const Napi::CallbackInfo& info );
+        Napi::Value AddGreaterThan( const Napi::CallbackInfo& info );
+        Napi::Value AddAssumptions( const Napi::CallbackInfo& info );
     };
 };  // namespace sat
 };  // namespace operations_research
@@ -79,11 +81,58 @@ inline Napi::Object operations_research::sat::GCpModelBuilder::Init( Napi::Env e
             InstanceMethod( "AddExactlyOne", &GCpModelBuilder::AddExactlyOne ),
             InstanceMethod( "NewBoolVar", &GCpModelBuilder::NewBoolVar ),
             InstanceMethod( "Maximize", &GCpModelBuilder::Maximize ),
+            InstanceMethod( "AddGreaterThan", &GCpModelBuilder::AddGreaterThan ),
+            InstanceMethod( "AddAssumptions", &GCpModelBuilder::AddAssumptions ),
+
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "CpModelBuilder" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::AddAssumptions( const Napi::CallbackInfo& info )
+{
+    //     void AddAssumptions( absl::Span< const BoolVar > literals );
+    if ( info.Length() == 1 && info[ 0 ].IsArray() )
+    {
+        auto                   arr = info[ 0 ].As< Napi::Array >();
+        std::vector< BoolVar > literals;
+        for ( int i = 0; i < arr.Length(); i++ )
+        {
+            if ( arr.Get( i ).IsObject()
+                 && arr.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+            {
+                auto gboolvar = GBoolVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
+                literals.push_back( *gboolvar->pBoolVar );
+                continue;
+            }
+
+            ThrowJsError( operations_research::sat::GCpModelBuilder::AddAssumptions : Invalid argument );
+            return info.Env().Undefined();
+        }
+
+        pCpModelBuilder->AddAssumptions( literals );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::AddAssumptions : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::AddGreaterThan( const Napi::CallbackInfo& info )
+{
+    //     Constraint AddGreaterThan( const LinearExpr& left, const LinearExpr& right );
+    LinearExpr left, right;
+    if ( info.Length() == 2 && GLinearExpr::ToLinearExpr( info[ 0 ], left ) && GLinearExpr::ToLinearExpr( info[ 1 ], right ) )
+    {
+        auto constraint = pCpModelBuilder->AddGreaterThan( left, right );
+        auto external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
+        return GConstraint::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::AddGreaterThan : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::sat::GCpModelBuilder::Maximize( const Napi::CallbackInfo& info )
@@ -100,7 +149,6 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::Maximize( const Na
     return info.Env().Undefined();
 }
 
-
 inline Napi::Value operations_research::sat::GCpModelBuilder::AddLessOrEqual( const Napi::CallbackInfo& info )
 {
     //     Constraint AddLessOrEqual( const LinearExpr& left, const LinearExpr& right );
@@ -115,7 +163,6 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddLessOrEqual( co
     ThrowJsError( operations_research::sat::GCpModelBuilder::AddLessOrEqual : Invalid argument );
     return info.Env().Undefined();
 }
-
 
 inline Napi::Value operations_research::sat::GCpModelBuilder::NewIntVar( const Napi::CallbackInfo& info )
 {
