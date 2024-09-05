@@ -181,9 +181,7 @@ export class MPSolver
 
     //     /// Returns the number of variables.
     //     int NumVariables() const
-    //     {
-    //         return variables_.size();
-    //     }
+    NumVariables(): number;
 
     //     /**
     //      * Returns the array of variables handled by the MPSolver. (They are listed in
@@ -221,6 +219,7 @@ export class MPSolver
 
     //     /// Creates a continuous variable.
     //     MPVariable* MakeNumVar( double lb, double ub, const std::string& name );
+    MakeNumVar(lb: number, ub: number, name: string): MPVariable;
 
     //     /// Creates an integer variable.
     //     MPVariable* MakeIntVar( double lb, double ub, const std::string& name );
@@ -262,9 +261,7 @@ export class MPSolver
 
     //     /// Returns the number of constraints.
     //     int NumConstraints() const
-    //     {
-    //         return constraints_.size();
-    //     }
+    NumConstraints(): number;
 
     //     /**
     //      * Returns the array of constraints handled by the MPSolver.

@@ -24,6 +24,9 @@ public:
     Napi::Value        MakeRowConstraint( const Napi::CallbackInfo& info );
     Napi::Value        MakeBoolVar( const Napi::CallbackInfo& info );
     static Napi::Value CreateSolver( const Napi::CallbackInfo& info );
+    Napi::Value        MakeNumVar( const Napi::CallbackInfo& info );
+    Napi::Value        NumVariables( const Napi::CallbackInfo& info );
+    Napi::Value        NumConstraints( const Napi::CallbackInfo& info );
 };
 };  // namespace operations_research
 
@@ -70,11 +73,58 @@ inline Napi::Object operations_research::GMPSolver::Init( Napi::Env env, Napi::O
             InstanceMethod( "MakeBoolVar", &GMPSolver::MakeBoolVar ),
             StaticMethod( "CreateSolver", &GMPSolver::CreateSolver ),
             StaticValue( "ResultStatus", ResultStatus ),
+            InstanceMethod( "MakeNumVar", &GMPSolver::MakeNumVar ),
+            InstanceMethod( "NumVariables", &GMPSolver::NumVariables ),
+            InstanceMethod( "NumConstraints", &GMPSolver::NumConstraints ),
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "MPSolver" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::GMPSolver::NumConstraints( const Napi::CallbackInfo& info )
+{
+    //     int NumConstraints() const
+    if ( info.Length() == 0 )
+    {
+        return Napi::Number::New( info.Env(), pMPSolver->NumConstraints() );
+    }
+
+    ThrowJsError( operations_research::GMPSolver::NumConstraints : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::GMPSolver::NumVariables( const Napi::CallbackInfo& info )
+{
+    //     int NumVariables() const
+    if ( info.Length() == 0 )
+    {
+        return Napi::Number::New( info.Env(), pMPSolver->NumVariables() );
+    }
+
+    ThrowJsError( operations_research::GMPSolver::NumVariables : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::GMPSolver::MakeNumVar( const Napi::CallbackInfo& info )
+{
+    //     MPVariable* MakeNumVar( double lb, double ub, const std::string& name );
+    if ( info.Length() == 3 && info[ 0 ].IsNumber() && info[ 1 ].IsNumber() && info[ 2 ].IsString() )
+    {
+        double      lb   = info[ 0 ].As< Napi::Number >().DoubleValue();
+        double      ub   = info[ 1 ].As< Napi::Number >().DoubleValue();
+        std::string name = info[ 2 ].As< Napi::String >().Utf8Value();
+        MPVariable* pVar = pMPSolver->MakeNumVar( lb, ub, name );
+        if ( pVar != nullptr )
+        {
+            auto external = Napi::External< MPVariable >::New( info.Env(), pVar );
+            return GMPVariable::constructor.New( { external } );
+        }
+    }
+
+    ThrowJsError( operations_research::GMPSolver::MakeNumVar : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::GMPSolver::MakeIntVar( const Napi::CallbackInfo& info )

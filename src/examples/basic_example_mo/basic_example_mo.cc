@@ -24,7 +24,8 @@
 #include "ortools/base/status_macros.h"
 #include "ortools/math_opt/cpp/math_opt.h"
 
-namespace {
+namespace
+{
 
 namespace math_opt = ::operations_research::math_opt;
 
@@ -34,38 +35,42 @@ namespace math_opt = ::operations_research::math_opt;
 //            x in {0.0, 1.0}
 //            y in [0.0, 2.5]
 //
-absl::Status Main() {
-  math_opt::Model model("my_model");
-  const math_opt::Variable x = model.AddBinaryVariable("x");
-  const math_opt::Variable y = model.AddContinuousVariable(0.0, 2.5, "y");
-  // We can directly use linear combinations of variables ...
-  model.AddLinearConstraint(x + y <= 1.5, "c");
-  // ... or build them incrementally.
-  math_opt::LinearExpression objective_expression;
-  objective_expression += 2 * x;
-  objective_expression += y;
-  model.Maximize(objective_expression);
-  ASSIGN_OR_RETURN(const math_opt::SolveResult result,
-                   Solve(model, math_opt::SolverType::kGscip));
-  switch (result.termination.reason) {
+absl::Status Main()
+{
+    math_opt::Model          model( "my_model" );
+    const math_opt::Variable x = model.AddBinaryVariable( "x" );
+    const math_opt::Variable y = model.AddContinuousVariable( 0.0, 2.5, "y" );
+    // We can directly use linear combinations of variables ...
+    model.AddLinearConstraint( x + y <= 1.5, "c" );
+    // ... or build them incrementally.
+    math_opt::LinearExpression objective_expression;
+    objective_expression += 2 * x;
+    objective_expression += y;
+    model.Maximize( objective_expression );
+    ASSIGN_OR_RETURN( const math_opt::SolveResult result,
+                      Solve( model, math_opt::SolverType::kGscip ) );
+    switch ( result.termination.reason )
+    {
     case math_opt::TerminationReason::kOptimal:
     case math_opt::TerminationReason::kFeasible:
-      std::cout << "Objective value: " << result.objective_value() << std::endl
-                << "Value for variable x: " << result.variable_values().at(x)
-                << std::endl;
-      return absl::OkStatus();
+        std::cout << "Objective value: " << result.objective_value() << std::endl
+                  << "Value for variable x: " << result.variable_values().at( x )
+                  << std::endl;
+        return absl::OkStatus();
     default:
-      return util::InternalErrorBuilder()
-             << "model failed to solve: " << result.termination;
-  }
+        return util::InternalErrorBuilder()
+               << "model failed to solve: " << result.termination;
+    }
 }
 }  // namespace
 
-int main(int argc, char** argv) {
-  InitGoogle(argv[0], &argc, &argv, true);
-  const absl::Status status = Main();
-  if (!status.ok()) {
-    LOG(QFATAL) << status;
-  }
-  return 0;
+int main( int argc, char** argv )
+{
+    InitGoogle( argv[ 0 ], &argc, &argv, true );
+    const absl::Status status = Main();
+    if ( !status.ok() )
+    {
+        LOG( QFATAL ) << status;
+    }
+    return 0;
 }

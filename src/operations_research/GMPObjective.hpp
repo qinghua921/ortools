@@ -20,6 +20,7 @@ public:
     Napi::Value SetCoefficient( const Napi::CallbackInfo& info );
     Napi::Value Value( const Napi::CallbackInfo& info );
     Napi::Value BestBound( const Napi::CallbackInfo& info );
+    Napi::Value SetMaximization( const Napi::CallbackInfo& info );
 };
 };  // namespace operations_research
 
@@ -53,11 +54,25 @@ inline Napi::Object operations_research::GMPObjective::Init( Napi::Env env, Napi
             InstanceMethod( "SetCoefficient", &GMPObjective::SetCoefficient ),
             InstanceMethod( "Value", &GMPObjective::Value ),
             InstanceMethod( "BestBound", &GMPObjective::BestBound ),
+            InstanceMethod( "SetMaximization", &GMPObjective::SetMaximization ),
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "MPObjective" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::GMPObjective::SetMaximization( const Napi::CallbackInfo& info )
+{
+    //     void SetMaximization()
+    if ( info.Length() == 0 )
+    {
+        pMPObjective->SetMaximization();
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPObjective::SetMaximization : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::GMPObjective::BestBound( const Napi::CallbackInfo& info )

@@ -44,7 +44,7 @@ The code is quite large, and the priority is to implement the code in the exampl
 - assignment_teams_sat - 🆗
 - assumptions_sample_sat - 🆗
 - balance_min_flow - 🆗
-- basic_example
+- basic_example - 🆗
 - basic_example_mo
 - bin_packing_mip
 - binpacking_2d_sat
