@@ -6,6 +6,11 @@ This is a TypeScript wrapper for the Google OR-Tools library. The corresponding 
 
 The code is still being written, and if you have any questions, you can submit an issue.
 
+## Note
+
+The code is written on Windows, other platforms may not work.
+You'd better build the library by yourself.
+
 ## How to use
 
 Please refer to the C++ usage method and examples in cmake/or-tools_x64/examples
