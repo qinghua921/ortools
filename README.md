@@ -2,43 +2,45 @@
 
 > Google Or-Tools for TS
 
-This is a TypeScript wrapper for the Google OR-Tools library. The corresponding version is or-tools_x64_VisualStudio2019_cpp_v9.6.2534.zip.
+This is a TypeScript wrapper for the [Google OR-Tools](https://github.com/google/or-tools) library.
+The corresponding version is [v9.6](https://github.com/google/or-tools/releases/tag/v9.6).
 
 The code is still being written, and if you have any questions, you can submit an issue.
 
 ## Note
 
-The code is written on Windows, other platforms may not work.
-You'd better build the library by yourself.
+The code is written on Windows; other platforms **may not work**.
+You should build the library yourself.
 
 ## How to use
 
-Please refer to the C++ usage method and examples in cmake/or-tools_x64/examples
+Please refer to the C++ usage and examples in `cmake/or-tools_x64_VisualStudio2019_cpp_v9.6.2534/examples`.
+
+I have made its usage similar to C++ style with a few changes to C++ operators.
 
 ## How to build
 
-- Download [or-tools_x64_VisualStudio2019_cpp_v9.6.2534.zip](https://github.com/google/or-tools/releases/download/v9.6/or-tools_x64_VisualStudio2019_cpp_v9.6.2534.zip) and
-  Unzip to ./cmake
-- Download [protoc-21.12-win64.zip](https://github.com/protocolbuffers/protobuf/releases/download/v21.12/protoc-21.12-win64.zip) and Unzip to ./cmake/protoc-21.12-win64
-- run `npm run cppbuild`.
+- Download [or-tools_x64_VisualStudio2019_cpp_v9.6.2534.zip](https://github.com/google/or-tools/releases/download/v9.6/or-tools_x64_VisualStudio2019_cpp_v9.6.2534.zip) and unzip it to `./cmake`.
+- Download [protoc-21.12-win64.zip](https://github.com/protocolbuffers/protobuf/releases/download/v21.12/protoc-21.12-win64.zip) and [v9.6.zip](https://github.com/google/or-tools/archive/refs/tags/v9.6.zip) (for transforming protobuf files if needed).
+- Run `npm run cppbuild`.
 
 ## How to contribute
 
-Some C++ classes are not implemented yet, some classes are not defined. The code is organized according to the namespace of the C++ class, so if you need, you can organize it according to this.
+Some C++ classes are not yet implemented, and some classes are not defined. The code is organized according to the namespace of the C++ class. If needed, you can reorganize it accordingly.
 
-I have added a template (`Demo.hpp`, `Demo.d.ts`),
+I have added a template (`Demo.hpp`, `Demo.d.ts`):
 
-I did it like this (e.g. to add a Foo class),
+To add a new class (e.g., `Foo`):
 
-- Copy `Demo.hpp`, `Demo.d.ts`
-- Rename as `Foo.hpp`, `Foo.d.ts`
-- Find and replace `Demo` with `Foo` in `Foo.hpp`
-- Assign the C++ code of `Foo` to `Foo.d.ts` and comment out (to avoid missing methods)
-- Add the declaration of `Foo` in `index.d.ts`, `index.cpp`
+- Copy `Demo.hpp` and `Demo.d.ts`.
+- Rename them to `Foo.hpp` and `Foo.d.ts`.
+- Replace occurrences of `Demo` with `Foo` in `Foo.hpp`.
+- Add the C++ code for `Foo` to `Foo.d.ts` and comment out any missing methods.
+- Add the declaration of `Foo` in `index.d.ts` and `index.cpp`.
 
 ## Progress
 
-The code is quite large, and the priority is to implement the code in the examples directory.
+The codebase is large, and the priority is to implement the code in the examples directory.
 
 - assignment_groups_mip - 🆗
 - assignment_groups_sat - 🆗
