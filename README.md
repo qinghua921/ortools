@@ -17,7 +17,10 @@ Please refer to the C++ usage method and examples in cmake/or-tools_x64/examples
 
 ## How to build
 
-Unzip or-tools_x64_VisualStudio2019_cpp_v9.6.2534.zip to cmake/or-tools_x64 and run `npm run cppbuild`.
+- Download [or-tools_x64_VisualStudio2019_cpp_v9.6.2534.zip](https://github.com/google/or-tools/releases/download/v9.6/or-tools_x64_VisualStudio2019_cpp_v9.6.2534.zip) and
+  Unzip to ./cmake
+- Download [protoc-21.12-win64.zip](https://github.com/protocolbuffers/protobuf/releases/download/v21.12/protoc-21.12-win64.zip) and Unzip to ./cmake/protoc-21.12-win64
+- run `npm run cppbuild`.
 
 ## How to contribute
 
