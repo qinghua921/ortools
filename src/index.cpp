@@ -29,6 +29,8 @@
 #include "./operations_research/sat/GCpSolverResponse.hpp"
 
 #include "./operations_research/math_opt/GModel.hpp"
+#include "./operations_research/math_opt/GLinearConstraint.hpp"
+#include "./operations_research/math_opt/GVariable.hpp"
 
 Napi::Object Init( Napi::Env env, Napi::Object exports )
 {
@@ -67,6 +69,8 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
 
     auto operations_research_math_opt_exports = Napi::Object::New( env );
     operations_research::math_opt::GModel::Init( env, operations_research_math_opt_exports );
+    operations_research::math_opt::GLinearConstraint::Init( env, operations_research_math_opt_exports );
+    operations_research::math_opt::GVariable::Init( env, operations_research_math_opt_exports );
 
     operations_research_exports.Set( "math_opt", operations_research_math_opt_exports );
 

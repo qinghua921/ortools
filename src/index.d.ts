@@ -30,6 +30,10 @@ import
 } from './operations_research/sat/GFunc'
 import { CpSolverStatus } from './operations_research/sat/GEnum'
 
+import { Model } from './operations_research/math_opt/GModel'
+import { GVariable } from './operations_research/math_opt/GVariable'
+import { GLinearConstraint } from './operations_research/math_opt/GLinearConstraint'
+
 export namespace operations_research
 {
     export
@@ -41,6 +45,16 @@ export namespace operations_research
         SimpleMinCostFlow,
         Domain,
         MPVariable,
+    }
+
+    export namespace math_opt
+    {
+        export
+        {
+            Model,
+            GVariable,
+            GLinearConstraint
+        }
     }
 
     export namespace sat
