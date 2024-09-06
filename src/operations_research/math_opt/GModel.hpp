@@ -8,39 +8,39 @@ namespace operations_research
 {
 namespace math_opt
 {
-    class GDemo : public Napi::ObjectWrap< GDemo >
+    class GModel : public Napi::ObjectWrap< GModel >
     {
     public:
         static Napi::FunctionReference constructor;
-        Model*                         pDemo = nullptr;
-        GDemo( const Napi::CallbackInfo& info );
-        ~GDemo();
+        Model*                         pModel = nullptr;
+        GModel( const Napi::CallbackInfo& info );
+        ~GModel();
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
     };
 };  // namespace math_opt
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::math_opt::GDemo::constructor;
+Napi::FunctionReference operations_research::math_opt::GModel::constructor;
 
-inline operations_research::math_opt::GDemo::GDemo( const Napi::CallbackInfo& info )
-    : Napi::ObjectWrap< GDemo >( info )
+inline operations_research::math_opt::GModel::GModel( const Napi::CallbackInfo& info )
+    : Napi::ObjectWrap< GModel >( info )
 {
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
         auto external = info[ 0 ].As< Napi::External< Model > >();
-        pDemo         = dynamic_cast< Model* >( external.Data() );
-        if ( pDemo != nullptr ) return;
+        pModel        = dynamic_cast< Model* >( external.Data() );
+        if ( pModel != nullptr ) return;
     }
 
-    ThrowJsError( operations_research::GDemo::GDemo : Invalid argument );
+    ThrowJsError( operations_research::GModel::GModel : Invalid argument );
 }
 
-inline operations_research::math_opt::GDemo::~GDemo()
+inline operations_research::math_opt::GModel::~GModel()
 {
-    delete pDemo;
+    delete pModel;
 }
 
-inline Napi::Object operations_research::math_opt::GDemo::Init( Napi::Env env, Napi::Object exports )
+inline Napi::Object operations_research::math_opt::GModel::Init( Napi::Env env, Napi::Object exports )
 {
     Napi::HandleScope scope( env );
     Napi::Function    func = DefineClass(

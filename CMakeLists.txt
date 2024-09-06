@@ -5,45 +5,18 @@ cmake_policy(SET CMP0042 NEW)
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 20)
 
-# Find protoc
-find_program(PROTOC protoc "./cmake/protoc-21.12-win64/bin")
-
-if(NOT PROTOC)
-  message(FATAL_ERROR "protoc not found")
-endif()
-
-# Find all .proto files 
+# Find all .proto files
 file(GLOB_RECURSE PROTO_FILES "cmake/or-tools-9.6/ortools/*.proto")
+string(REPLACE "D:" " D:" PROTO_FILES_LIST "${PROTO_FILES}")
+message(STATUS "Found .proto files:\n${PROTO_FILES_LIST}")
 
-# Set output directory for generated files
-set(PROTO_OUT_DIR "${CMAKE_BINARY_DIR}/generated")
-
-# Create the output directory if it does not exist
-file(MAKE_DIRECTORY ${PROTO_OUT_DIR})
-
-# Add custom commands to generate C++ files from .proto files
-foreach(PROTO_FILE ${PROTO_FILES})
-  get_filename_component(PROTO_NAME ${PROTO_FILE} NAME_WE)
-  set(PROTO_SRCS "${PROTO_OUT_DIR}/${PROTO_NAME}.pb.cc")
-  set(PROTO_HDRS "${PROTO_OUT_DIR}/${PROTO_NAME}.pb.h")
-
-  add_custom_command(
-    OUTPUT ${PROTO_SRCS} ${PROTO_HDRS}
-    COMMAND ${PROTOC}
-    ARGS --cpp_out=${PROTO_OUT_DIR} ${PROTO_FILE}
-    DEPENDS ${PROTO_FILE}
-    COMMENT "Generating ${PROTO_SRCS} from ${PROTO_FILE}"
-  )
-
-  list(APPEND PROTO_SRCS_LIST ${PROTO_SRCS})
-  list(APPEND PROTO_HDRS_LIST ${PROTO_HDRS})
-endforeach()
+# protoc.exe --proto_path= --cpp_out=D:/code/tsortools/build/generated/ortools/sat
 
 # Define the project
 project(ortools_binding LANGUAGES CXX)
 
 # Add library target
-add_library(${PROJECT_NAME} SHARED ./src/index.cpp ${CMAKE_JS_SRC} ${PROTO_SRCS_LIST})
+add_library(${PROJECT_NAME} SHARED ./src/index.cpp ${CMAKE_JS_SRC})
 
 # Set compile definitions
 target_compile_definitions(
@@ -63,7 +36,7 @@ target_include_directories(
   ${PROJECT_SOURCE_DIR}/node_modules/node-addon-api
   ${PROJECT_SOURCE_DIR}/node_modules/node-api-headers/include
   ${PROJECT_SOURCE_DIR}/cmake/or-tools_x64_VisualStudio2019_cpp_v9.6.2534/include
-  ${PROTO_OUT_DIR}
+  ${PROJECT_SOURCE_DIR}/src/ortools_proto
 )
 
 # Set target properties
