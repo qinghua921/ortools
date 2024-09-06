@@ -1,9 +1,8 @@
-cmake_minimum_required(VERSION 3.20)
+cmake_minimum_required(VERSION 3.15)
 cmake_policy(SET CMP0091 NEW)
 cmake_policy(SET CMP0042 NEW)
 
 set(CMAKE_CXX_STANDARD 20)
-set(ORTOOLS_ROOT ${CMAKE_SOURCE_DIR}/cmake/or-tools_x64/)
 
 project(ortools_binding LANGUAGES CXX)
 
@@ -14,29 +13,22 @@ add_definitions(
   -DGDEBUG
 )
 
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake")
-set(CMAKE_PREFIX_PATH ${CMAKE_PREFIX_PATH} ${ORTOOLS_ROOT})
-find_package(ortools REQUIRED)
-
-include_directories(${ORTOOLS_INCLUDE_DIRS})
-
-aux_source_directory(src src)
-aux_source_directory(src/operations_research cppsrc_operations_research)
-
-add_library(${PROJECT_NAME} SHARED
-  ${src}
-  ${cppsrc_operations_research}
-  ${CMAKE_JS_SRC}
-)
-target_include_directories(${PROJECT_NAME}
-  PUBLIC
+include_directories(
   ${CMAKE_JS_INC}
   ${PROJECT_SOURCE_DIR}/node_modules/node-addon-api
   ${PROJECT_SOURCE_DIR}/node_modules/node-api-headers/include
+  ${PROJECT_SOURCE_DIR}/cmake/or-tools_x64_VisualStudio2019_cpp_v9.6.2534/include
 )
+
+add_library(${PROJECT_NAME} SHARED ./src/index.cpp ${CMAKE_JS_SRC})
+
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 
-target_link_libraries(${PROJECT_NAME} ${ORTOOLS_LIBRARIES} ${CMAKE_JS_LIB})
+target_link_libraries(
+  ${PROJECT_NAME}
+  ${CMAKE_JS_LIB}
+  ${PROJECT_SOURCE_DIR}/cmake/or-tools_x64_VisualStudio2019_cpp_v9.6.2534/lib/ortools_full.lib
+)
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>DLL")
 
