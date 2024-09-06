@@ -2,9 +2,9 @@
 
 #include <napi.h>
 #include "../../commonheader.hpp"
-#include "ortools/math_opt/cpp/math_opt.h"
 #include "GVariable.hpp"
 #include "GLinearConstraint.hpp"
+#include "ortools/math_opt/cpp/math_opt.h"
 
 namespace operations_research
 {
@@ -102,7 +102,6 @@ inline Napi::Value operations_research::math_opt::GModel::AddContinuousVariable(
 {
     //     inline Variable AddContinuousVariable( double lower_bound, double upper_bound,
     //                                            absl::string_view name = "" );
-
     if ( info.Length() == 3 && info[ 0 ].IsNumber() && info[ 1 ].IsNumber() && info[ 2 ].IsString() )
     {
         double      lower_bound = info[ 0 ].As< Napi::Number >().DoubleValue();
