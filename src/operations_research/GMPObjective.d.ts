@@ -56,11 +56,10 @@ export class MPObjective
     //     {
     //         OptimizeLinearExpr( linear_expr, true );
     //     }
+
     //     /// Resets the current objective to minimize linear_expr.
     //     void MinimizeLinearExpr( const LinearExpr& linear_expr )
-    //     {
-    //         OptimizeLinearExpr( linear_expr, false );
-    //     }
+    MinimizeLinearExpr(linear_expr: LinearExpr): void;
 
     //     /// Adds linear_expr to the current objective, does not change the direction.
     //     void AddLinearExpr( const LinearExpr& linear_expr );

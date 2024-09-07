@@ -21,6 +21,7 @@ public:
     Napi::Value Value( const Napi::CallbackInfo& info );
     Napi::Value BestBound( const Napi::CallbackInfo& info );
     Napi::Value SetMaximization( const Napi::CallbackInfo& info );
+    Napi::Value MinimizeLinearExpr( const Napi::CallbackInfo& info );
 };
 };  // namespace operations_research
 
@@ -55,11 +56,27 @@ inline Napi::Object operations_research::GMPObjective::Init( Napi::Env env, Napi
             InstanceMethod( "Value", &GMPObjective::Value ),
             InstanceMethod( "BestBound", &GMPObjective::BestBound ),
             InstanceMethod( "SetMaximization", &GMPObjective::SetMaximization ),
+            InstanceMethod( "MinimizeLinearExpr", &GMPObjective::MinimizeLinearExpr ),
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "MPObjective" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::GMPObjective::MinimizeLinearExpr( const Napi::CallbackInfo& info )
+{
+    //     void MinimizeLinearExpr( const LinearExpr& linear_expr )
+    if ( info.Length() == 1 && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    {
+        auto linear_expr = GLinearExpr::Unwrap( info[ 0 ].As< Napi::Object >() );
+        pMPObjective->MinimizeLinearExpr( *linear_expr->pLinearExpr );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GMPObjective::MinimizeLinearExpr : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::GMPObjective::SetMaximization( const Napi::CallbackInfo& info )

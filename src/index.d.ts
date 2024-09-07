@@ -6,7 +6,11 @@ import
 {
     operator_equals,
     operator_greater_equals,
-    operator_less_equals
+    operator_less_equals,
+    operator_divide,
+    operator_plus,
+    operator_minus,
+    operator_times,
 } from './operations_research/GFunc'
 import { Domain } from './operations_research/GDomain'
 import { MPVariable } from './operations_research/GMPVariable'
@@ -39,6 +43,7 @@ export namespace operations_research
     export
     {
         operator_equals, operator_greater_equals, operator_less_equals,
+        operator_divide, operator_plus, operator_minus, operator_times,
         MPSolver,
         LinearExpr,
         SimpleLinearSumAssignment,
@@ -51,9 +56,10 @@ export namespace operations_research
     {
         export
         {
-            Model,
-            GVariable,
-            GLinearConstraint
+            // TODO  math_opt
+            // Model,
+            // GVariable,
+            // GLinearConstraint
         }
     }
 

@@ -1,5 +1,7 @@
 import { MPVariable } from "./GMPVariable";
 
+export type CanAsLinearExpr = LinearExpr | number | MPVariable
+
 /**
  * LinearExpr models a quantity that is linear in the decision variables
  * (MPVariable) of an optimization problem, i.e.
@@ -51,7 +53,7 @@ export class LinearExpr
     //     static LinearExpr NotVar( LinearExpr var );
 
     //     LinearExpr& operator+=( const LinearExpr& rhs );
-    operator_plus_equals(rhs: LinearExpr | number | MPVariable): LinearExpr;
+    operator_plus_equals(rhs: CanAsLinearExpr): LinearExpr;
 
     //     LinearExpr& operator-=( const LinearExpr& rhs );
     operator_minus_equals(rhs: LinearExpr): LinearExpr;

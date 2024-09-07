@@ -55,8 +55,8 @@ The codebase is large, and the priority is to implement the code in the examples
 - assumptions_sample_sat - 🆗
 - balance_min_flow - 🆗
 - basic_example - 🆗
-- basic_example_mo
-- bin_packing_mip
+- basic_example_mo - ❌ ( math_opt compiliertor error )
+- bin_packing_mip - 🆗
 - binpacking_2d_sat
 - binpacking_problem_sat
 - bool_or_sample_sat
