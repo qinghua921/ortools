@@ -1,3 +1,4 @@
+import { RepeatedPtrField, RepeatedPtrField_MultipleDimensionsBinPackingItem } from "../../google/protobuf/GRepeatedPtrField";
 import { MultipleDimensionsBinPackingItem } from "./GMultipleDimensionsBinPackingItem";
 import { MultipleDimensionsBinPackingShape } from "./GMultipleDimensionsBinPackingShape";
 
@@ -169,10 +170,10 @@ export class MultipleDimensionsBinPackingProblem
     items(index: number): MultipleDimensionsBinPackingItem;
 
     //     ::operations_research::packing::MultipleDimensionsBinPackingItem*       add_items();
-    
+
     //     const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::packing::MultipleDimensionsBinPackingItem >&
     //     items() const;
-    items(): RepeatedPtrField<MultipleDimensionsBinPackingItem>;
+    items(): RepeatedPtrField_MultipleDimensionsBinPackingItem;
 
     //     // .operations_research.packing.MultipleDimensionsBinPackingShape box_shape = 1;
     //     bool has_box_shape() const;
