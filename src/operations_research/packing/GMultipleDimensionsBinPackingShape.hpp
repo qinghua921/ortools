@@ -3,6 +3,7 @@
 #include <napi.h>
 #include "../../commonheader.hpp"
 #include "ortools/packing/binpacking_2d_parser.h"
+#include "google/protobuf/GRepeatedField.hpp"
 
 namespace operations_research
 {
@@ -16,6 +17,8 @@ namespace packing
         GMultipleDimensionsBinPackingShape( const Napi::CallbackInfo& info );
         ~GMultipleDimensionsBinPackingShape();
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
+
+        Napi::Value dimensions( const Napi::CallbackInfo& info );
     };
 };  // namespace packing
 };  // namespace operations_research
@@ -45,9 +48,26 @@ inline Napi::Object operations_research::packing::GMultipleDimensionsBinPackingS
     Napi::HandleScope scope( env );
     Napi::Function    func = DefineClass(
         env, "MultipleDimensionsBinPackingShape",
-        {} );
+        {
+            InstanceMethod( "dimensions", &GMultipleDimensionsBinPackingShape::dimensions ),
+        } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "MultipleDimensionsBinPackingShape" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::packing::GMultipleDimensionsBinPackingShape::dimensions( const Napi::CallbackInfo& info )
+{
+    //     const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int64_t >&
+    //     dimensions() const;
+    if ( info.Length() == 0 )
+    {
+        auto dimensions = pMultipleDimensionsBinPackingShape->dimensions();
+        auto external   = Napi::External< google::protobuf::RepeatedField< int64_t > >::New( info.Env(), new google::protobuf::RepeatedField< int64_t >( dimensions ) );
+        return google::protobuf::GRepeatedField< int64_t >::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::GMultipleDimensionsBinPackingShape::dimensions : Invalid argument );
+    return info.Env().Undefined();
 }

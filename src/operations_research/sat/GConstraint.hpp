@@ -75,7 +75,7 @@ inline Napi::Value operations_research::sat::GConstraint::OnlyEnforceIf( const N
     {
         auto                   array = info[ 0 ].As< Napi::Array >();
         std::vector< BoolVar > literals;
-        for ( auto i = 0; i < info[ 0 ].As< Napi::Array >().Length(); i++ )
+        for ( auto i = 0; i < array.Length(); i++ )
         {
             auto arrayElement = array.Get( i );
             if ( arrayElement.IsObject() && arrayElement.As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )

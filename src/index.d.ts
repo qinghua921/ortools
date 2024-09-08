@@ -41,6 +41,8 @@ import
     SolutionBooleanValue,
 } from './operations_research/sat/GFunc'
 import { CpSolverStatus } from './operations_research/sat/GEnum'
+import { IntervalVar } from './operations_research/sat/GIntervalVar'
+import { NoOverlap2DConstraint } from './operations_research/sat/GNoOverlap2DConstraint'
 
 /***********************************************************************************
  * ./operations_research/math_opt
@@ -57,6 +59,8 @@ import { GLinearConstraint } from './operations_research/math_opt/GLinearConstra
 import { BinPacking2dParser } from './operations_research/packing/GBinPacking2dParser'
 import { MultipleDimensionsBinPackingProblem } from './operations_research/packing/GMultipleDimensionsBinPackingProblem'
 import { MultipleDimensionsBinPackingShape } from './operations_research/packing/GMultipleDimensionsBinPackingShape'
+import { MultipleDimensionsBinPackingItem } from './operations_research/packing/GMultipleDimensionsBinPackingItem'
+
 
 export namespace operations_research
 {
@@ -90,6 +94,7 @@ export namespace operations_research
             BinPacking2dParser,
             MultipleDimensionsBinPackingProblem,
             MultipleDimensionsBinPackingShape,
+            MultipleDimensionsBinPackingItem
         }
     }
 
@@ -111,7 +116,9 @@ export namespace operations_research
             SolutionIntegerValue,
             CpSolverStatus,
             CpSolverResponseStats,
-            SolutionBooleanValue
+            SolutionBooleanValue,
+            IntervalVar,
+            NoOverlap2DConstraint
         }
     }
 }
@@ -120,7 +127,7 @@ export namespace operations_research
  *  ./google/protobuf
  ***********************************************************************************/
 
-import { RepeatedField } from './google/protobuf/GRepeatedField'
+import { RepeatedField_Int64 } from './google/protobuf/GRepeatedField'
 
 export namespace google
 {
@@ -128,7 +135,7 @@ export namespace google
     {
         export
         {
-            RepeatedField,
+            RepeatedField_Int64,
         }
     }
 }

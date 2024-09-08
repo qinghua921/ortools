@@ -1,3 +1,5 @@
+import { RepeatedField_Int64 } from "../../google/protobuf/GRepeatedField";
+
 export class MultipleDimensionsBinPackingShape 
 {
     // public:
@@ -149,6 +151,7 @@ export class MultipleDimensionsBinPackingShape
     //     void    add_dimensions( int64_t value );
     //     const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int64_t >&
     //     dimensions() const;
+    dimensions(): RepeatedField_Int64;
     //     ::PROTOBUF_NAMESPACE_ID::RepeatedField< int64_t >*
     //     mutable_dimensions();
 

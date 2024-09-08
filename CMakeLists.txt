@@ -30,7 +30,7 @@ target_include_directories(
   ${PROJECT_SOURCE_DIR}/node_modules/node-addon-api
   ${PROJECT_SOURCE_DIR}/node_modules/node-api-headers/include
   ${PROJECT_SOURCE_DIR}/cmake/or-tools_x64_VisualStudio2019_cpp_v9.6.2534/include
-  ${PROJECT_SOURCE_DIR}/src/ortools_proto
+  ${PROJECT_SOURCE_DIR}/src
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")

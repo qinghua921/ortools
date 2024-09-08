@@ -1,3 +1,4 @@
+import { MultipleDimensionsBinPackingItem } from "./GMultipleDimensionsBinPackingItem";
 import { MultipleDimensionsBinPackingShape } from "./GMultipleDimensionsBinPackingShape";
 
 export class MultipleDimensionsBinPackingProblem 
@@ -164,12 +165,10 @@ export class MultipleDimensionsBinPackingProblem
     //     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::packing::MultipleDimensionsBinPackingItem >*
     //     mutable_items();
 
-    // private:
-    //     const ::operations_research::packing::MultipleDimensionsBinPackingItem& _internal_items( int index ) const;
-    //     ::operations_research::packing::MultipleDimensionsBinPackingItem*       _internal_add_items();
 
     // public:
     //     const ::operations_research::packing::MultipleDimensionsBinPackingItem& items( int index ) const;
+    items(index: number): MultipleDimensionsBinPackingItem;
     //     ::operations_research::packing::MultipleDimensionsBinPackingItem*       add_items();
     //     const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::packing::MultipleDimensionsBinPackingItem >&
     //     items() const;

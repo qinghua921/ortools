@@ -1,63 +1,4 @@
 
-// #include <algorithm>
-// #include <cstdint>
-// #include <limits>
-// #include <string>
-// #include <vector>
-
-// #include "absl/flags/flag.h"
-// #include "google/protobuf/text_format.h"
-// #include "ortools/base/commandlineflags.h"
-// #include "ortools/base/init_google.h"
-// #include "ortools/base/logging.h"
-// #include "ortools/packing/binpacking_2d_parser.h"
-// #include "ortools/packing/multiple_dimensions_bin_packing.pb.h"
-// #include "ortools/sat/cp_model.h"
-
-// ABSL_FLAG(std::string, input, "", "Input file.");
-// ABSL_FLAG(int, instance, -1, "Instance number if the file.");
-// ABSL_FLAG(std::string, params, "", "Sat parameters in text proto format.");
-// ABSL_FLAG(int, max_bins, 0,
-//           "Maximum number of bins. The 0 default value implies the code will "
-//           "use some heuristics to compute this number.");
-// ABSL_FLAG(bool, symmetry_breaking, true, "Use symmetry breaking constraints");
-// ABSL_FLAG(bool, global_area_constraint, false,
-//           "Redundant constraint to link the global area covered");
-// ABSL_FLAG(bool, alternate_model, true,
-//           "A different way to express the objective");
-
-// namespace operations_research {
-// namespace sat {
-
-// // Load a 2D binpacking problem and solve it.
-// void LoadAndSolve(const std::string& file_name, int instance) {
-//   packing::BinPacking2dParser parser;
-//   if (!parser.Load2BPFile(file_name, instance)) {
-//     LOG(FATAL) << "Cannot read instance " << instance << " from file '"
-//                << file_name << "'";
-//   }
-//   packing::MultipleDimensionsBinPackingProblem problem = parser.problem();
-//   LOG(INFO) << "Successfully loaded instance " << instance << " from file '"
-//             << file_name << "'";
-//   LOG(INFO) << "Instance has " << problem.items_size() << " items";
-
-//   const auto box_dimensions = problem.box_shape().dimensions();
-//   const int num_dimensions = box_dimensions.size();
-//   const int num_items = problem.items_size();
-
-//   const int64_t area_of_one_bin = box_dimensions[0] * box_dimensions[1];
-//   int64_t sum_of_items_area = 0;
-//   for (const auto& item : problem.items()) {
-//     CHECK_EQ(1, item.shapes_size());
-//     const auto& shape = item.shapes(0);
-//     CHECK_EQ(2, shape.dimensions_size());
-//     sum_of_items_area += shape.dimensions(0) * shape.dimensions(1);
-//   }
-
-//   // Take the ceil of the ratio.
-//   const int64_t trivial_lb =
-//       (sum_of_items_area + area_of_one_bin - 1) / area_of_one_bin;
-
 //   LOG(INFO) << "Trivial lower bound of the number of bins = " << trivial_lb;
 //   const int max_bins = absl::GetFlag(FLAGS_max_bins) == 0
 //                            ? trivial_lb * 2
@@ -233,5 +174,103 @@ test('assignment_groups_mip', () =>
   console.log("Instance has " + problem.items_size() + " items");
 
   const box_dimensions = problem.box_shape().dimensions();
+  const num_dimensions = box_dimensions.size();
+  const num_items = problem.items_size();
+
+  const area_of_one_bin = box_dimensions.operator_get(0) * box_dimensions.operator_get(1);
+  let sum_of_items_area = 0;
+  for (let i = 0; i < num_items; ++i)
+  {
+    const item = problem.items(i);
+    const shape = item.shapes(0);
+    const dimensions = shape.dimensions();
+    sum_of_items_area += dimensions.operator_get(0) * dimensions.operator_get(1);
+  }
+
+  // Take the ceil of the ratio.
+  const trivial_lb = (sum_of_items_area + area_of_one_bin - 1) / area_of_one_bin;
+
+  console.log("Trivial lower bound of the number of bins = " + trivial_lb);
+  const max_bins = Math.ceil(2 * trivial_lb);
+  console.log("Setting max_bins to " + max_bins);
+
+  let cp_model = new operations_research.sat.CpModelBuilder();
+
+  // We do not support multiple shapes per item.
+  for (let item = 0; item < num_items; ++item)
+  {
+    const num_shapes = problem.items(item).shapes_size();
+    if (num_shapes != 1)
+    {
+      console.log("Error: We do not support multiple shapes per item.");
+      return;
+    }
+  }
+
+  // Create one Boolean variable per item and per bin.
+  let item_to_bin = new Array(num_items);
+  for (let item = 0; item < num_items; ++item)
+  {
+    item_to_bin[item] = new Array(max_bins);
+    for (let b = 0; b < max_bins; ++b)
+    {
+      item_to_bin[item][b] = cp_model.NewBoolVar();
+    }
+  }
+
+  // Exactly one bin is selected for each item.
+  for (let item = 0; item < num_items; ++item)
+  {
+    cp_model.AddEquality(operations_research.sat.LinearExpr.Sum(item_to_bin[item]), 1);
+  }
+
+  // Manages positions and sizes for each item.
+  let interval_by_item_bin_dimension = new Array(num_items);
+  for (let item = 0; item < num_items; ++item)
+  {
+    interval_by_item_bin_dimension[item] = new Array(max_bins);
+    for (let b = 0; b < max_bins; ++b)
+    {
+      interval_by_item_bin_dimension[item][b] = new Array(2);
+      for (let dim = 0; dim < num_dimensions; ++dim)
+      {
+        const dimension = box_dimensions.operator_get(dim);
+        const size = problem.items(item).shapes(0).dimensions().operator_get(dim);
+        const start = cp_model.NewIntVar(new operations_research.Domain(0, dimension - size));
+        interval_by_item_bin_dimension[item][b][dim] =
+          cp_model.NewOptionalFixedSizeIntervalVar(start, size, item_to_bin[item][b]);
+      }
+    }
+  }
+
+  if (num_dimensions == 1)
+  {
+    console.log("One dimension is not supported.");
+    return;
+  }
+  else if (num_dimensions == 2)
+  {
+    console.log("Box size: " + box_dimensions.operator_get(0) + "*" + box_dimensions.operator_get(1));
+    for (let b = 0; b < max_bins; ++b)
+    {
+      console.log("Bin 8888888888888888888888" + b);
+      
+      let no_overlap_2d = cp_model.AddNoOverlap2D();
+      for (let item = 0; item < num_items; ++item)
+      {
+        // no_overlap_2d.AddRectangle(interval_by_item_bin_dimension[item][b][0],
+        //   interval_by_item_bin_dimension[item][b][1]);
+      }
+    }
+  }
+  else
+  {
+    console.log(num_dimensions + " dimensions not supported.");
+    return;
+  }
+
+
+
+
 
 });

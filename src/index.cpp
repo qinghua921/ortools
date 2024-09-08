@@ -35,6 +35,8 @@
 #include "./operations_research/sat/GEnum.hpp"
 #include "./operations_research/sat/GCpModelProto.hpp"
 #include "./operations_research/sat/GCpSolverResponse.hpp"
+#include "./operations_research/sat/GIntervalVar.hpp"
+#include "./operations_research/sat/GNoOverlap2DConstraint.hpp"
 
 /***********************************************************************************
  * ./operations_research/math_opt
@@ -51,6 +53,7 @@
 #include "./operations_research/packing/GBinPacking2dParser.hpp"
 #include "./operations_research/packing/GMultipleDimensionsBinPackingProblem.hpp"
 #include "./operations_research/packing/GMultipleDimensionsBinPackingShape.hpp"
+#include "./operations_research/packing/GMultipleDimensionsBinPackingItem.hpp"
 
 /***********************************************************************************
  * ./google/protobuf
@@ -96,6 +99,8 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research::sat::GTableConstraint::Init( env, operations_research_sat_exports );
     operations_research::sat::GCpModelProto::Init( env, operations_research_sat_exports );
     operations_research::sat::GCpSolverResponse::Init( env, operations_research_sat_exports );
+    operations_research::sat::GIntervalVar::Init( env, operations_research_sat_exports );
+    operations_research::sat::GNoOverlap2DConstraint::Init( env, operations_research_sat_exports );
 
     operations_research_exports.Set( "sat", operations_research_sat_exports );
 
@@ -116,6 +121,7 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research::packing::GBinPacking2dParser::Init( env, operations_research_packing_exports );
     operations_research::packing::GMultipleDimensionsBinPackingProblem::Init( env, operations_research_packing_exports );
     operations_research::packing::GMultipleDimensionsBinPackingShape::Init( env, operations_research_packing_exports );
+    operations_research::packing::GMultipleDimensionsBinPackingItem::Init( env, operations_research_packing_exports );
 
     operations_research_exports.Set( "packing", operations_research_packing_exports );
 
@@ -131,7 +137,7 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
 
     google_exports.Set( "protobuf", google_protobuf_exports );
 
-    google::protobuf::GRepeatedField::Init( env, google_protobuf_exports );
+    google::protobuf::GRepeatedField< int64_t >::Init( env, google_protobuf_exports );
 
     exports.Set( "google", google_exports );
 

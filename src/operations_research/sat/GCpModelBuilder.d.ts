@@ -2,8 +2,10 @@ import { Domain } from "../GDomain";
 import { BoolVar } from "./GBoolVar";
 import { Constraint } from "./GConstraint";
 import { CpModelProto } from "./GCpModelProto";
+import { IntervalVar } from "./GIntervalVar";
 import { IntVar } from "./GIntVar";
 import { CanAsLinearExpr, LinearExpr } from "./GLinearExpr";
+import { NoOverlap2DConstraint } from "./GNoOverlap2DConstraint";
 import { TableConstraint } from "./GTableConstraint";
 
 /**
@@ -59,6 +61,7 @@ export class CpModelBuilder
     //     /// Creates an optional interval variable with a fixed size.
     //     IntervalVar NewOptionalFixedSizeIntervalVar( const LinearExpr& start,
     //                                                  int64_t size, BoolVar presence );
+    NewOptionalFixedSizeIntervalVar(start: CanAsLinearExpr, size: number, presence: BoolVar): IntervalVar;
 
     //     /// It is sometime convenient when building a model to create a bunch of
     //     /// variables that will later be fixed. Instead of doing AddEquality(var,
@@ -329,6 +332,7 @@ export class CpModelBuilder
     //      * The no_overlap_2d constraint prevents a set of boxes from overlapping.
     //      */
     //     NoOverlap2DConstraint AddNoOverlap2D();
+    AddNoOverlap2D(): NoOverlap2DConstraint;
 
     //     /**
     //      * The cumulative constraint

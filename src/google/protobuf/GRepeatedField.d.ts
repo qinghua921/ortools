@@ -2,7 +2,10 @@
 // other words, everything except strings and nested Messages).  Most users will
 // not ever use a RepeatedField directly; they will use the get-by-index,
 // set-by-index, and add accessors that are generated for all repeated fields.
-export class RepeatedField<Element>
+
+export class RepeatedField_Int64 extends RepeatedField<number> { };
+
+class RepeatedField<Element>
 {
     //   static_assert(
     //       alignof(Arena) >= alignof(Element),
@@ -28,11 +31,14 @@ export class RepeatedField<Element>
 
     //   bool empty() const;
     //   int size() const;
+    size(): number;
 
     //   const Element& Get(int index) const;
     //   Element* Mutable(int index);
 
     //   const Element& operator[](int index) const { return Get(index); }
+    operator_get(index: number): Element;
+
     //   Element& operator[](int index) { return *Mutable(index); }
 
     //   const Element& at(int index) const;

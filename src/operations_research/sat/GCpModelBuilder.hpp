@@ -9,6 +9,8 @@
 #include "GCpModelProto.hpp"
 #include "GTableConstraint.hpp"
 #include "../GDomain.hpp"
+#include "GIntervalVar.hpp"
+#include "GNoOverlap2DConstraint.hpp"
 
 namespace operations_research
 {
@@ -35,6 +37,8 @@ namespace sat
         Napi::Value NewBoolVar( const Napi::CallbackInfo& info );
         Napi::Value AddGreaterThan( const Napi::CallbackInfo& info );
         Napi::Value AddAssumptions( const Napi::CallbackInfo& info );
+        Napi::Value NewOptionalFixedSizeIntervalVar( const Napi::CallbackInfo& info );
+        Napi::Value AddNoOverlap2D( const Napi::CallbackInfo& info );
     };
 };  // namespace sat
 };  // namespace operations_research
@@ -83,12 +87,50 @@ inline Napi::Object operations_research::sat::GCpModelBuilder::Init( Napi::Env e
             InstanceMethod( "Maximize", &GCpModelBuilder::Maximize ),
             InstanceMethod( "AddGreaterThan", &GCpModelBuilder::AddGreaterThan ),
             InstanceMethod( "AddAssumptions", &GCpModelBuilder::AddAssumptions ),
+            InstanceMethod( "NewOptionalFixedSizeIntervalVar", &GCpModelBuilder::NewOptionalFixedSizeIntervalVar ),
+            InstanceMethod( "AddNoOverlap2D", &GCpModelBuilder::AddNoOverlap2D ),
 
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "CpModelBuilder" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::AddNoOverlap2D( const Napi::CallbackInfo& info )
+{
+    //     NoOverlap2DConstraint AddNoOverlap2D();
+    if ( info.Length() == 0 )
+    {
+        auto constraint = pCpModelBuilder->AddNoOverlap2D();
+        auto external   = Napi::External< NoOverlap2DConstraint >::New( info.Env(), new NoOverlap2DConstraint( constraint ) );
+        return GNoOverlap2DConstraint::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::AddNoOverlap2D : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::NewOptionalFixedSizeIntervalVar( const Napi::CallbackInfo& info )
+{
+    //     IntervalVar NewOptionalFixedSizeIntervalVar( const LinearExpr& start,
+    //                                                  int64_t size, BoolVar presence );
+    LinearExpr start;
+    if ( info.Length() == 3
+         && GLinearExpr::ToLinearExpr( info[ 0 ], start )
+         && info[ 1 ].IsNumber()
+         && info[ 2 ].IsObject()
+         && info[ 2 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+    {
+        auto size     = info[ 1 ].As< Napi::Number >().Int64Value();
+        auto gboolvar = GBoolVar::Unwrap( info[ 2 ].As< Napi::Object >() );
+        auto expr     = pCpModelBuilder->NewOptionalFixedSizeIntervalVar( start, size, *gboolvar->pBoolVar );
+        auto external = Napi::External< IntervalVar >::New( info.Env(), new IntervalVar( expr ) );
+        return GIntervalVar::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::NewOptionalFixedSizeIntervalVar : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::sat::GCpModelBuilder::AddAssumptions( const Napi::CallbackInfo& info )

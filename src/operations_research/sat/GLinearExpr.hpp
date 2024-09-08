@@ -19,9 +19,10 @@ namespace sat
         ~GLinearExpr();
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
 
-        Napi::Value operator_plus_equals( const Napi::CallbackInfo& info );
-        Napi::Value operator_minus_equals( const Napi::CallbackInfo& info );
-        Napi::Value operator_times_equals( const Napi::CallbackInfo& info );
+        Napi::Value        operator_plus_equals( const Napi::CallbackInfo& info );
+        Napi::Value        operator_minus_equals( const Napi::CallbackInfo& info );
+        Napi::Value        operator_times_equals( const Napi::CallbackInfo& info );
+        static Napi::Value Sum( const Napi::CallbackInfo& info );
 
         static bool ToLinearExpr( const Napi::Value& value, LinearExpr& expr );
     };
@@ -47,7 +48,6 @@ inline operations_research::sat::GLinearExpr::GLinearExpr( const Napi::CallbackI
         return;
     }
 
-
     ThrowJsError( operations_research::sat::GLinearExpr::GLinearExpr : Invalid argument );
 }
 
@@ -65,11 +65,66 @@ inline Napi::Object operations_research::sat::GLinearExpr::Init( Napi::Env env, 
             InstanceMethod( "operator_plus_equals", &GLinearExpr::operator_plus_equals ),
             InstanceMethod( "operator_minus_equals", &GLinearExpr::operator_minus_equals ),
             InstanceMethod( "operator_times_equals", &GLinearExpr::operator_times_equals ),
+            StaticMethod( "Sum", &GLinearExpr::Sum ),
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "LinearExpr" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::sat::GLinearExpr::Sum( const Napi::CallbackInfo& info )
+{
+    if ( info.Length() == 1 && info[ 0 ].IsArray() )
+    {
+        auto arr = info[ 0 ].As< Napi::Array >();
+
+        //       static LinearExpr Sum( absl::Span< const IntVar > vars );
+        if ( arr.Length() > 0 && arr.Get( static_cast< uint32_t >( 0 ) ).IsObject() && arr.Get( static_cast< uint32_t >( 0 ) ).As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
+        {
+            std::vector< IntVar > vars;
+            for ( int i = 0; i < arr.Length(); i++ )
+            {
+                if ( arr.Get( static_cast< uint32_t >( i ) ).IsObject() && arr.Get( static_cast< uint32_t >( i ) ).As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
+                {
+                    auto var = GIntVar::Unwrap( arr.Get( static_cast< uint32_t >( i ) ).As< Napi::Object >() );
+                    vars.push_back( *var->pIntVar );
+                    continue;
+                }
+
+                ThrowJsError( operations_research::sat::GLinearExpr::Sum : Invalid argument );
+                return info.Env().Undefined();
+            }
+            auto sum = LinearExpr::Sum( vars );
+            return GLinearExpr::constructor.New( { Napi::External< LinearExpr >::New( info.Env(), &sum ) } );
+        }
+
+        //       static LinearExpr Sum( absl::Span< const BoolVar > vars );
+        if ( arr.Length() > 0 && arr.Get( static_cast< uint32_t >( 0 ) ).IsObject() && arr.Get( static_cast< uint32_t >( 0 ) ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+        {
+            std::vector< BoolVar > vars;
+            for ( int i = 0; i < arr.Length(); i++ )
+            {
+                if ( arr.Get( static_cast< uint32_t >( i ) ).IsObject() && arr.Get( static_cast< uint32_t >( i ) ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+                {
+                    auto var = GBoolVar::Unwrap( arr.Get( static_cast< uint32_t >( i ) ).As< Napi::Object >() );
+                    vars.push_back( *var->pBoolVar );
+                    continue;
+                }
+
+                ThrowJsError( operations_research::sat::GLinearExpr::Sum : Invalid argument );
+                return info.Env().Undefined();
+            }
+            auto sum = LinearExpr::Sum( vars );
+            return GLinearExpr::constructor.New( { Napi::External< LinearExpr >::New( info.Env(), &sum ) } );
+        }
+
+        ThrowJsError( operations_research::sat::GLinearExpr::Sum : Invalid argument );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::sat::GLinearExpr::Sum : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::sat::GLinearExpr::operator_plus_equals( const Napi::CallbackInfo& info )

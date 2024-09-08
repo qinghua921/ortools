@@ -4,6 +4,7 @@
 #include "../../commonheader.hpp"
 #include "ortools/packing/binpacking_2d_parser.h"
 #include "GMultipleDimensionsBinPackingShape.hpp"
+#include "GMultipleDimensionsBinPackingItem.hpp"
 
 namespace operations_research
 {
@@ -20,6 +21,8 @@ namespace packing
 
         Napi::Value items_size( const Napi::CallbackInfo& info );
         Napi::Value box_shape( const Napi::CallbackInfo& info );
+        Napi::Value items( const Napi::CallbackInfo& info );
+
     };
 };  // namespace packing
 };  // namespace operations_research
@@ -51,11 +54,28 @@ inline Napi::Object operations_research::packing::GMultipleDimensionsBinPackingP
         env, "MultipleDimensionsBinPackingProblem",
         {
             InstanceMethod( "items_size", &GMultipleDimensionsBinPackingProblem::items_size ),
+            InstanceMethod( "box_shape", &GMultipleDimensionsBinPackingProblem::box_shape ),
+            InstanceMethod( "items", &GMultipleDimensionsBinPackingProblem::items ),
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "MultipleDimensionsBinPackingProblem" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::packing::GMultipleDimensionsBinPackingProblem::items( const Napi::CallbackInfo& info )
+{
+    //     const ::operations_research::packing::MultipleDimensionsBinPackingItem& items( int index ) const;
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        int index = info[ 0 ].As< Napi::Number >().Int32Value();
+        auto item  = pMultipleDimensionsBinPackingProblem->items( index );
+        auto external = Napi::External< MultipleDimensionsBinPackingItem >::New( info.Env(), new MultipleDimensionsBinPackingItem( item ) );
+        return GMultipleDimensionsBinPackingItem::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::GMultipleDimensionsBinPackingProblem::items : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::packing::GMultipleDimensionsBinPackingProblem::box_shape( const Napi::CallbackInfo& info )

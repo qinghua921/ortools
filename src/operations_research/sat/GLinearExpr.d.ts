@@ -59,9 +59,11 @@ export class LinearExpr
 
   //       /// Constructs the sum of a list of variables.
   //       static LinearExpr Sum( absl::Span< const IntVar > vars );
+  static Sum(vars: IntVar[]): LinearExpr;
 
   //       /// Constructs the sum of a list of Boolean variables.
   //       static LinearExpr Sum( absl::Span< const BoolVar > vars );
+  static Sum(vars: BoolVar[]): LinearExpr;
 
   //       /// Constructs the scalar product of variables and coefficients.
   //       static LinearExpr WeightedSum( absl::Span< const IntVar >  vars,
