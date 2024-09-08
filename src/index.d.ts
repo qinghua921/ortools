@@ -1,4 +1,8 @@
-﻿import { MPSolver } from './operations_research/GMPSolver'
+﻿/***********************************************************************************
+ * ./operations_research
+ ***********************************************************************************/
+
+import { MPSolver } from './operations_research/GMPSolver'
 import { LinearExpr } from './operations_research/GLinearExpr'
 import { SimpleLinearSumAssignment } from './operations_research/GSimpleLinearSumAssignment'
 import { SimpleMinCostFlow } from './operations_research/GSimpleMinCostFlow'
@@ -14,6 +18,10 @@ import
 } from './operations_research/GFunc'
 import { Domain } from './operations_research/GDomain'
 import { MPVariable } from './operations_research/GMPVariable'
+
+/***********************************************************************************
+ * ./operations_research/sat
+ ***********************************************************************************/
 
 import { CpModelBuilder } from './operations_research/sat/GCpModelBuilder'
 import { BoolVar } from './operations_research/sat/GBoolVar'
@@ -34,9 +42,19 @@ import
 } from './operations_research/sat/GFunc'
 import { CpSolverStatus } from './operations_research/sat/GEnum'
 
+/***********************************************************************************
+ * ./operations_research/math_opt
+ ***********************************************************************************/
+
 import { Model } from './operations_research/math_opt/GModel'
 import { GVariable } from './operations_research/math_opt/GVariable'
 import { GLinearConstraint } from './operations_research/math_opt/GLinearConstraint'
+
+/***********************************************************************************
+ * ./operations_research/packing
+ ***********************************************************************************/
+
+import { BinPacking2dParser } from './operations_research/packing/GBinPacking2dParser'
 
 export namespace operations_research
 {
@@ -60,6 +78,14 @@ export namespace operations_research
             // Model,
             // GVariable,
             // GLinearConstraint
+        }
+    }
+
+    export namespace packing
+    {
+        export
+        {
+            BinPacking2dParser
         }
     }
 

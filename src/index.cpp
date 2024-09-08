@@ -1,5 +1,9 @@
 ﻿#include <napi.h>
 
+/***********************************************************************************
+ * ./operations_research
+ ***********************************************************************************/
+
 #include "./operations_research/GEnum.hpp"
 #include "./operations_research/GFunc.hpp"
 #include "./operations_research/GLinearExpr.hpp"
@@ -17,6 +21,10 @@
 #include "./operations_research/GSimpleMinCostFlow.hpp"
 #include "./operations_research/GDomain.hpp"
 
+/***********************************************************************************
+ * ./operations_research/sat
+ ***********************************************************************************/
+
 #include "./operations_research/sat/GCpModelBuilder.hpp"
 #include "./operations_research/sat/GBoolVar.hpp"
 #include "./operations_research/sat/GConstraint.hpp"
@@ -28,16 +36,28 @@
 #include "./operations_research/sat/GCpModelProto.hpp"
 #include "./operations_research/sat/GCpSolverResponse.hpp"
 
-// TODO  math_opt 
+/***********************************************************************************
+ * ./operations_research/math_opt
+ ***********************************************************************************/
+// TODO  math_opt
 // #include "./operations_research/math_opt/GModel.hpp"
 // #include "./operations_research/math_opt/GLinearConstraint.hpp"
 // #include "./operations_research/math_opt/GVariable.hpp"
+
+/***********************************************************************************
+ * ./operations_research/packing
+ ***********************************************************************************/
+
+#include "./operations_research/packing/GBinPacking2dParser.hpp"
 
 Napi::Object Init( Napi::Env env, Napi::Object exports )
 {
     Napi::HandleScope scope( env );
 
+    // ./operations_research
+
     auto operations_research_exports = Napi::Object::New( env );
+
     operations_research::GFuncInit( env, operations_research_exports );
     operations_research::GLinearExpr::Init( env, operations_research_exports );
     operations_research::GLinearRange::Init( env, operations_research_exports );
@@ -54,7 +74,10 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research::GSimpleMinCostFlow::Init( env, operations_research_exports );
     operations_research::GDomain::Init( env, operations_research_exports );
 
+    // ./operations_research/sat
+
     auto operations_research_sat_exports = Napi::Object::New( env );
+
     operations_research::sat::GEnumInit( env, operations_research_sat_exports );
     operations_research::sat::GFuncInit( env, operations_research_sat_exports );
     operations_research::sat::GCpModelBuilder::Init( env, operations_research_sat_exports );
@@ -68,16 +91,25 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
 
     operations_research_exports.Set( "sat", operations_research_sat_exports );
 
+    // ./operations_research/math_opt
+
     auto operations_research_math_opt_exports = Napi::Object::New( env );
-    // TODO  math_opt 
+    // TODO  math_opt
     // operations_research::math_opt::GModel::Init( env, operations_research_math_opt_exports );
     // operations_research::math_opt::GLinearConstraint::Init( env, operations_research_math_opt_exports );
     // operations_research::math_opt::GVariable::Init( env, operations_research_math_opt_exports );
 
     operations_research_exports.Set( "math_opt", operations_research_math_opt_exports );
 
-    exports.Set( "operations_research", operations_research_exports );
+    // ./operations_research/packing
 
+    auto operations_research_packing_exports = Napi::Object::New( env );
+
+    operations_research::packing::GBinPacking2dParser::Init( env, operations_research_packing_exports );
+
+    operations_research_exports.Set( "packing", operations_research_packing_exports );
+
+    exports.Set( "operations_research", operations_research_exports );
     return exports;
 }
 
