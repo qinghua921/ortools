@@ -28,8 +28,10 @@ class RepeatedPtrField<Element> extends RepeatedField<Element>
 
     //         bool empty() const;
     //         int  size() const;
+    size(): number;
 
     //         const Element& Get( int index ) const;
+    Get(index: number): Element;
     //         Element*       Mutable( int index );
 
     //         // Unlike std::vector, adding an element to a RepeatedPtrField doesn't always
@@ -297,26 +299,4 @@ class RepeatedPtrField<Element> extends RepeatedField<Element>
     //             internal::RepeatedPtrFieldBase::InternalSwap( other );
     //         }
 
-    //     private:
-    //         // Note:  RepeatedPtrField SHOULD NOT be subclassed by users.
-    //         class TypeHandler;
-
-    //         // Internal version of GetArena().
-    //         inline Arena* GetOwningArena() const;
-
-    //         // Implementations for ExtractSubrange(). The copying behavior must be
-    //         // included only if the type supports the necessary operations (e.g.,
-    //         // MergeFrom()), so we must resolve this at compile time. ExtractSubrange()
-    //         // uses SFINAE to choose one of the below implementations.
-    //         void ExtractSubrangeInternal( int start, int num, Element** elements,
-    //                                       std::true_type );
-    //         void ExtractSubrangeInternal( int start, int num, Element** elements,
-    //                                       std::false_type );
-
-    //         friend class Arena;
-
-    //         template < typename T >
-    //         friend struct WeakRepeatedPtrField;
-
-    //         typedef void InternalArenaConstructable_;
 };

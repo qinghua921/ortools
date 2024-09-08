@@ -61,6 +61,7 @@
  ***********************************************************************************/
 
 #include "./google/protobuf/GRepeatedField.hpp"
+#include "./google/protobuf/GRepeatedPtrField.hpp"
 
 Napi::Object Init( Napi::Env env, Napi::Object exports )
 {
@@ -140,6 +141,7 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     google_exports.Set( "protobuf", google_protobuf_exports );
 
     google::protobuf::GRepeatedField< int64_t >::Init( env, google_protobuf_exports );
+    google::protobuf::GRepeatedPtrField< operations_research::packing::GMultipleDimensionsBinPackingItem >::Init( env, google_protobuf_exports );
 
     exports.Set( "google", google_exports );
 

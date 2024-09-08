@@ -19,6 +19,7 @@ namespace packing
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
 
         Napi::Value dimensions( const Napi::CallbackInfo& info );
+        Napi::Value dimensions_size( const Napi::CallbackInfo& info );
     };
 };  // namespace packing
 };  // namespace operations_research
@@ -50,11 +51,24 @@ inline Napi::Object operations_research::packing::GMultipleDimensionsBinPackingS
         env, "MultipleDimensionsBinPackingShape",
         {
             InstanceMethod( "dimensions", &GMultipleDimensionsBinPackingShape::dimensions ),
+            InstanceMethod( "dimensions_size", &GMultipleDimensionsBinPackingShape::dimensions_size ),
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "MultipleDimensionsBinPackingShape" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::packing::GMultipleDimensionsBinPackingShape::dimensions_size( const Napi::CallbackInfo& info )
+{
+    //     int dimensions_size() const;
+    if ( info.Length() == 0 )
+    {
+        return Napi::Number::New( info.Env(), pMultipleDimensionsBinPackingShape->dimensions_size() );
+    }
+
+    ThrowJsError( operations_research::GMultipleDimensionsBinPackingShape::dimensions_size : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::packing::GMultipleDimensionsBinPackingShape::dimensions( const Napi::CallbackInfo& info )

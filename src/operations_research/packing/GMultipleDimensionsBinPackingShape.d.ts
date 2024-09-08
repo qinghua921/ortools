@@ -137,8 +137,10 @@ export class MultipleDimensionsBinPackingShape
     //     {
     //         kDimensionsFieldNumber = 1,
     //     };
+
     //     // repeated int64 dimensions = 1;
     //     int dimensions_size() const;
+    dimensions_size(): number;
 
 
     // public:

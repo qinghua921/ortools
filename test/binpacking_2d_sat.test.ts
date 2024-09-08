@@ -32,8 +32,9 @@ test('assignment_groups_mip', () =>
   const area_of_one_bin = box_dimensions.operator_get(0) * box_dimensions.operator_get(1);
   let sum_of_items_area = 0;
 
-  for (const item of problem.items())
+  for (let i = 0; i < problem.items().size(); ++i)
   {
+    let item = problem.items(i);
     expect(item.shapes_size()).toBe(1);
     const shape = item.shapes(0);
     expect(shape.dimensions_size()).toBe(2);
@@ -187,7 +188,7 @@ test('assignment_groups_mip', () =>
     cp_model.Minimize(operations_research.sat.LinearExpr.Sum(bin_is_used));
   }
 
-  let  parameters = new operations_research.sat.SatParameters();
+  let parameters = new operations_research.sat.SatParameters();
 
 
 
