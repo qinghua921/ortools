@@ -3,6 +3,7 @@
 #include <napi.h>
 #include "../../commonheader.hpp"
 #include "ortools/packing/binpacking_2d_parser.h"
+#include "GMultipleDimensionsBinPackingProblem.hpp"
 
 namespace operations_research
 {
@@ -18,6 +19,7 @@ namespace packing
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
 
         Napi::Value Load2BPFile( const Napi::CallbackInfo& info );
+        Napi::Value problem( const Napi::CallbackInfo& info );
     };
 };  // namespace packing
 };  // namespace operations_research
@@ -56,11 +58,26 @@ inline Napi::Object operations_research::packing::GBinPacking2dParser::Init( Nap
         env, "BinPacking2dParser",
         {
             InstanceMethod( "Load2BPFile", &GBinPacking2dParser::Load2BPFile ),
+            InstanceMethod( "problem", &GBinPacking2dParser::problem ),
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "BinPacking2dParser" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::packing::GBinPacking2dParser::problem( const Napi::CallbackInfo& info )
+{
+    //  MultipleDimensionsBinPackingProblem problem() const { return problem_; }
+    if ( info.Length() == 0 )
+    {
+        auto problem  = pBinPacking2dParser->problem();
+        auto external = Napi::External< MultipleDimensionsBinPackingProblem >::New( info.Env(), new MultipleDimensionsBinPackingProblem( problem ) );
+        return GMultipleDimensionsBinPackingProblem::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::GBinPacking2dParser::problem : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::packing::GBinPacking2dParser::Load2BPFile( const Napi::CallbackInfo& info )
@@ -75,5 +92,5 @@ inline Napi::Value operations_research::packing::GBinPacking2dParser::Load2BPFil
     }
 
     ThrowJsError( operations_research::GBinPacking2dParser::Load2BPFile : Invalid argument );
-    return Napi::Boolean::New( info.Env(), false );
+    return info.Env().Undefined();
 }

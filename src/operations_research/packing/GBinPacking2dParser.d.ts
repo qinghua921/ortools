@@ -17,6 +17,9 @@
 // The objective of the problem is to fit as many items as possible in the box
 // while maximizing the sum of values of selected items. For each item, you need
 // to select the shape and the position of the item in the box.
+
+import { MultipleDimensionsBinPackingProblem } from "./GMultipleDimensionsBinPackingProblem";
+
 // Each item must not overlap (in n dimensions) with any other item.
 export class BinPacking2dParser
 {
@@ -31,6 +34,7 @@ export class BinPacking2dParser
     Load2BPFile(name: string, instance: number): boolean;
 
     //  MultipleDimensionsBinPackingProblem problem() const { return problem_; }
+    problem(): MultipleDimensionsBinPackingProblem;
 
     // private:
     //  enum LoadStatus { NOT_STARTED = 0, INSTANCE_FOUND = 1, PARSING_FINISHED = 2 };

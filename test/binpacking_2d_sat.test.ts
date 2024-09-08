@@ -222,7 +222,16 @@ import { operations_research } from "../src";
 
 test('assignment_groups_mip', () =>
 {
-
   let parse = new operations_research.packing.BinPacking2dParser();
-  parse.Load2BPFile("test/data/assignment_groups_mip.txt", 0);
+  if (!parse.Load2BPFile("D:\\code\\tsortools\\test\\binpacking_2d_sat.test.txt", 1))
+  {
+    console.log("Cannot read instance 1 from file 'D:\\code\\tsortools\\test\\binpacking_2d_sat.test.txt'");
+  }
+
+  let problem = parse.problem();
+  console.log("Successfully loaded instance 1 from file 'D:\\code\\tsortools\\test\\binpacking_2d_sat.test.txt'");
+  console.log("Instance has " + problem.items_size() + " items");
+
+  const box_dimensions = problem.box_shape().dimensions();
+
 });
