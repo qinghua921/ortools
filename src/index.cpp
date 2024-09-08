@@ -37,6 +37,7 @@
 #include "./operations_research/sat/GCpSolverResponse.hpp"
 #include "./operations_research/sat/GIntervalVar.hpp"
 #include "./operations_research/sat/GNoOverlap2DConstraint.hpp"
+#include "./operations_research/sat/GSatParameters.hpp"
 
 /***********************************************************************************
  * ./operations_research/math_opt
@@ -101,6 +102,7 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research::sat::GCpSolverResponse::Init( env, operations_research_sat_exports );
     operations_research::sat::GIntervalVar::Init( env, operations_research_sat_exports );
     operations_research::sat::GNoOverlap2DConstraint::Init( env, operations_research_sat_exports );
+    operations_research::sat::GSatParameters::Init( env, operations_research_sat_exports );
 
     operations_research_exports.Set( "sat", operations_research_sat_exports );
 

@@ -147,11 +147,15 @@ export class MultipleDimensionsBinPackingShape
 
     // public:
     //     int64_t dimensions( int index ) const;
+    dimensions(index: number): number;
+    
     //     void    set_dimensions( int index, int64_t value );
     //     void    add_dimensions( int64_t value );
+
     //     const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int64_t >&
     //     dimensions() const;
     dimensions(): RepeatedField_Int64;
+
     //     ::PROTOBUF_NAMESPACE_ID::RepeatedField< int64_t >*
     //     mutable_dimensions();
 

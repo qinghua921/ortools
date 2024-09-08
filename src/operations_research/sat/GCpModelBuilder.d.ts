@@ -77,6 +77,7 @@ export class CpModelBuilder
 
     //     /// Adds the constraint that at least one of the literals must be true.
     //     Constraint AddBoolOr( absl::Span< const BoolVar > literals );
+    AddBoolOr(literals: BoolVar[]): Constraint;
 
     //     /// Same as AddBoolOr(). Sum literals >= 1.
     //     Constraint AddAtLeastOne( absl::Span< const BoolVar > literals );
@@ -97,16 +98,12 @@ export class CpModelBuilder
 
     //     /// Adds a => b.
     //     Constraint AddImplication( BoolVar a, BoolVar b )
-    //     {
-    //         return AddBoolOr( { a.Not(), b } );
-    //     }
+    AddImplication(a: BoolVar, b: BoolVar): Constraint;
 
     //     /// Adds implication: if all lhs vars are true then all rhs vars must be true.
     //     Constraint AddImplication( absl::Span< const BoolVar > lhs,
     //                                absl::Span< const BoolVar > rhs )
-    //     {
-    //         return AddBoolAnd( rhs ).OnlyEnforceIf( lhs );
-    //     }
+    AddImplication(lhs: BoolVar[], rhs: BoolVar[]): Constraint;
 
     //     /// Adds left == right.
     //     Constraint AddEquality( const LinearExpr& left, const LinearExpr& right );
@@ -114,6 +111,7 @@ export class CpModelBuilder
 
     //     /// Adds left >= right.
     //     Constraint AddGreaterOrEqual( const LinearExpr& left, const LinearExpr& right );
+    AddGreaterOrEqual(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
     //     /// Adds left > right.
     //     Constraint AddGreaterThan( const LinearExpr& left, const LinearExpr& right );
@@ -344,7 +342,7 @@ export class CpModelBuilder
 
     //     /// Adds a linear minimization objective.
     //     void Minimize( const LinearExpr& expr );
-    Minimize(expr: LinearExpr): void;
+    Minimize(expr: CanAsLinearExpr): void;
 
     //     /// Adds a linear floating point minimization objective.
     //     /// Note that the coefficients will be internally scaled to integer.

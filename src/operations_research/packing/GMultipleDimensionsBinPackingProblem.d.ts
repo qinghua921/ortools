@@ -165,19 +165,18 @@ export class MultipleDimensionsBinPackingProblem
     //     ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::packing::MultipleDimensionsBinPackingItem >*
     //     mutable_items();
 
-
-    // public:
     //     const ::operations_research::packing::MultipleDimensionsBinPackingItem& items( int index ) const;
     items(index: number): MultipleDimensionsBinPackingItem;
+
     //     ::operations_research::packing::MultipleDimensionsBinPackingItem*       add_items();
+    
     //     const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::packing::MultipleDimensionsBinPackingItem >&
     //     items() const;
+    items(): RepeatedPtrField<MultipleDimensionsBinPackingItem>;
 
     //     // .operations_research.packing.MultipleDimensionsBinPackingShape box_shape = 1;
     //     bool has_box_shape() const;
 
-    // private:
-    //     bool _internal_has_box_shape() const;
 
     // public:
     //     void                                                                                  clear_box_shape();

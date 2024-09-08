@@ -68,6 +68,13 @@ inline Napi::Value operations_research::packing::GMultipleDimensionsBinPackingSh
         return google::protobuf::GRepeatedField< int64_t >::constructor.New( { external } );
     }
 
+    //     int64_t dimensions( int index ) const;
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        auto index = info[ 0 ].As< Napi::Number >().Int64Value();
+        return Napi::Number::New( info.Env(), pMultipleDimensionsBinPackingShape->dimensions( index ) );
+    }
+
     ThrowJsError( operations_research::GMultipleDimensionsBinPackingShape::dimensions : Invalid argument );
     return info.Env().Undefined();
 }

@@ -39,6 +39,9 @@ namespace sat
         Napi::Value AddAssumptions( const Napi::CallbackInfo& info );
         Napi::Value NewOptionalFixedSizeIntervalVar( const Napi::CallbackInfo& info );
         Napi::Value AddNoOverlap2D( const Napi::CallbackInfo& info );
+        Napi::Value AddGreaterOrEqual( const Napi::CallbackInfo& info );
+        Napi::Value AddImplication( const Napi::CallbackInfo& info );
+        Napi::Value AddBoolOr( const Napi::CallbackInfo& info );
     };
 };  // namespace sat
 };  // namespace operations_research
@@ -89,12 +92,119 @@ inline Napi::Object operations_research::sat::GCpModelBuilder::Init( Napi::Env e
             InstanceMethod( "AddAssumptions", &GCpModelBuilder::AddAssumptions ),
             InstanceMethod( "NewOptionalFixedSizeIntervalVar", &GCpModelBuilder::NewOptionalFixedSizeIntervalVar ),
             InstanceMethod( "AddNoOverlap2D", &GCpModelBuilder::AddNoOverlap2D ),
+            InstanceMethod( "AddGreaterOrEqual", &GCpModelBuilder::AddGreaterOrEqual ),
+            InstanceMethod( "AddImplication", &GCpModelBuilder::AddImplication ),
+            InstanceMethod( "AddBoolOr", &GCpModelBuilder::AddBoolOr ),
 
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "CpModelBuilder" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::AddBoolOr( const Napi::CallbackInfo& info )
+{
+    //     Constraint AddBoolOr( absl::Span< const BoolVar > literals );
+    if ( info.Length() == 1 && info[ 0 ].IsArray() )
+    {
+        auto                   arr = info[ 0 ].As< Napi::Array >();
+        std::vector< BoolVar > literals;
+        for ( int i = 0; i < arr.Length(); i++ )
+        {
+            if ( arr.Get( i ).IsObject()
+                 && arr.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+            {
+                auto gboolvar = GBoolVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
+                literals.push_back( *gboolvar->pBoolVar );
+                continue;
+            }
+
+            ThrowJsError( operations_research::sat::GCpModelBuilder::AddBoolOr : Invalid argument );
+            return info.Env().Undefined();
+        }
+
+        auto constraint = pCpModelBuilder->AddBoolOr( literals );
+        auto external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
+        return GConstraint::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::AddBoolOr : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::AddImplication( const Napi::CallbackInfo& info )
+{
+    //     Constraint AddImplication( BoolVar a, BoolVar b )
+    if ( info.Length() == 2 && info[ 0 ].IsObject() && info[ 1 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() )
+         && info[ 1 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+    {
+        auto gboolvar_a = GBoolVar::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto gboolvar_b = GBoolVar::Unwrap( info[ 1 ].As< Napi::Object >() );
+        auto constraint = pCpModelBuilder->AddImplication( *gboolvar_a->pBoolVar, *gboolvar_b->pBoolVar );
+        auto external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
+        return GConstraint::constructor.New( { external } );
+    }
+
+    //     Constraint AddImplication( absl::Span< const BoolVar > lhs,
+    //                                absl::Span< const BoolVar > rhs )
+    if ( info.Length() == 2 && info[ 0 ].IsArray() && info[ 1 ].IsArray() )
+    {
+        auto                   arr_lhs = info[ 0 ].As< Napi::Array >();
+        std::vector< BoolVar > lhs;
+        for ( int i = 0; i < arr_lhs.Length(); i++ )
+        {
+            if ( arr_lhs.Get( i ).IsObject()
+                 && arr_lhs.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+            {
+                auto gboolvar = GBoolVar::Unwrap( arr_lhs.Get( i ).As< Napi::Object >() );
+                lhs.push_back( *gboolvar->pBoolVar );
+                continue;
+            }
+
+            ThrowJsError( operations_research::sat::GCpModelBuilder::AddImplication : Invalid argument );
+            return info.Env().Undefined();
+        }
+
+        auto                   arr_rhs = info[ 1 ].As< Napi::Array >();
+        std::vector< BoolVar > rhs;
+        for ( int i = 0; i < arr_rhs.Length(); i++ )
+        {
+            if ( arr_rhs.Get( i ).IsObject()
+                 && arr_rhs.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+            {
+                auto gboolvar = GBoolVar::Unwrap( arr_rhs.Get( i ).As< Napi::Object >() );
+                rhs.push_back( *gboolvar->pBoolVar );
+                continue;
+            }
+
+            ThrowJsError( operations_research::sat::GCpModelBuilder::AddImplication : Invalid argument );
+            return info.Env().Undefined();
+        }
+
+        auto constraint = pCpModelBuilder->AddImplication( lhs, rhs );
+        auto external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
+        return GConstraint::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::AddImplication : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::AddGreaterOrEqual( const Napi::CallbackInfo& info )
+{
+    //     Constraint AddGreaterOrEqual( const LinearExpr& left, const LinearExpr& right );
+    LinearExpr left, right;
+    if ( info.Length() == 2 && GLinearExpr::ToLinearExpr( info[ 0 ], left ) && GLinearExpr::ToLinearExpr( info[ 1 ], right ) )
+    {
+        auto constraint = pCpModelBuilder->AddGreaterOrEqual( left, right );
+        auto external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
+        return GConstraint::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::AddGreaterOrEqual : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::sat::GCpModelBuilder::AddNoOverlap2D( const Napi::CallbackInfo& info )
@@ -264,10 +374,10 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::Build( const Napi:
 inline Napi::Value operations_research::sat::GCpModelBuilder::Minimize( const Napi::CallbackInfo& info )
 {
     //     void Minimize( const LinearExpr& expr );
-    if ( info.Length() == 1 && info[ 0 ].IsObject() && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    LinearExpr linearExpr;
+    if ( info.Length() == 1 && GLinearExpr::ToLinearExpr( info[ 0 ], linearExpr ) )
     {
-        auto glinearexpr = GLinearExpr::Unwrap( info[ 0 ].As< Napi::Object >() );
-        pCpModelBuilder->Minimize( *glinearexpr->pLinearExpr );
+        pCpModelBuilder->Minimize( linearExpr );
         return info.Env().Undefined();
     }
 

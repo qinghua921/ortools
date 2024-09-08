@@ -22,7 +22,6 @@ namespace packing
         Napi::Value items_size( const Napi::CallbackInfo& info );
         Napi::Value box_shape( const Napi::CallbackInfo& info );
         Napi::Value items( const Napi::CallbackInfo& info );
-
     };
 };  // namespace packing
 };  // namespace operations_research
@@ -68,10 +67,25 @@ inline Napi::Value operations_research::packing::GMultipleDimensionsBinPackingPr
     //     const ::operations_research::packing::MultipleDimensionsBinPackingItem& items( int index ) const;
     if ( info.Length() == 1 && info[ 0 ].IsNumber() )
     {
-        int index = info[ 0 ].As< Napi::Number >().Int32Value();
-        auto item  = pMultipleDimensionsBinPackingProblem->items( index );
+        int  index    = info[ 0 ].As< Napi::Number >().Int32Value();
+        auto item     = pMultipleDimensionsBinPackingProblem->items( index );
         auto external = Napi::External< MultipleDimensionsBinPackingItem >::New( info.Env(), new MultipleDimensionsBinPackingItem( item ) );
         return GMultipleDimensionsBinPackingItem::constructor.New( { external } );
+    }
+
+    //     const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::packing::MultipleDimensionsBinPackingItem >&
+    //     items() const;
+    if ( info.Length() == 0 )
+    {
+        auto        items  = pMultipleDimensionsBinPackingProblem->items();
+        Napi::Array result = Napi::Array::New( info.Env(), items.size() );
+        for ( int i = 0; i < items.size(); i++ )
+        {
+            auto item     = items.Get( i );
+            auto external = Napi::External< MultipleDimensionsBinPackingItem >::New( info.Env(), new MultipleDimensionsBinPackingItem( item ) );
+            result.Set( i, GMultipleDimensionsBinPackingItem::constructor.New( { external } ) );
+        }
+        return result;
     }
 
     ThrowJsError( operations_research::GMultipleDimensionsBinPackingProblem::items : Invalid argument );

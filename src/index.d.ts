@@ -2,78 +2,84 @@
  * ./operations_research
  ***********************************************************************************/
 
-import { MPSolver } from './operations_research/GMPSolver'
-import { LinearExpr } from './operations_research/GLinearExpr'
-import { SimpleLinearSumAssignment } from './operations_research/GSimpleLinearSumAssignment'
-import { SimpleMinCostFlow } from './operations_research/GSimpleMinCostFlow'
+import { MPSolver as operations_research_MPSolver } from './operations_research/GMPSolver'
+import { LinearExpr as operations_research_LinearExpr } from './operations_research/GLinearExpr'
+import { SimpleLinearSumAssignment as operations_research_SimpleLinearSumAssignment } from './operations_research/GSimpleLinearSumAssignment'
+import { SimpleMinCostFlow as operations_research_SimpleMinCostFlow } from './operations_research/GSimpleMinCostFlow'
 import
 {
-    operator_equals,
-    operator_greater_equals,
-    operator_less_equals,
-    operator_divide,
-    operator_plus,
-    operator_minus,
-    operator_times,
+    operator_equals as operations_research_operator_equals,
+    operator_greater_equals as operations_research_operator_greater_equals,
+    operator_less_equals as operations_research_operator_less_equals,
+    operator_divide as operations_research_operator_divide,
+    operator_plus as operations_research_operator_plus,
+    operator_minus as operations_research_operator_minus,
+    operator_times as operations_research_operator_times,
 } from './operations_research/GFunc'
-import { Domain } from './operations_research/GDomain'
-import { MPVariable } from './operations_research/GMPVariable'
+import { Domain as operations_research_Domain } from './operations_research/GDomain'
+import { MPVariable as operations_research_MPVariable } from './operations_research/GMPVariable'
 
 /***********************************************************************************
  * ./operations_research/sat
  ***********************************************************************************/
 
-import { CpModelBuilder } from './operations_research/sat/GCpModelBuilder'
-import { BoolVar } from './operations_research/sat/GBoolVar'
-import { IntVar } from './operations_research/sat/GIntVar'
-import { LinearExpr as satLinearExpr } from './operations_research/sat/GLinearExpr'
-import { TableConstraint } from './operations_research/sat/GTableConstraint'
-import { CpSolverResponse } from './operations_research/sat/GCpSolverResponse'
+import { CpModelBuilder as operations_research_sat_CpModelBuilder } from './operations_research/sat/GCpModelBuilder'
+import { BoolVar as operations_research_sat_BoolVar } from './operations_research/sat/GBoolVar'
+import { IntVar as operations_research_sat_IntVar } from './operations_research/sat/GIntVar'
+import { LinearExpr as operations_research_sat_LinearExpr } from './operations_research/sat/GLinearExpr'
+import { TableConstraint as operations_research_sat_TableConstraint } from './operations_research/sat/GTableConstraint'
+import { CpSolverResponse as operations_research_sat_CpSolverResponse } from './operations_research/sat/GCpSolverResponse'
 import
 {
-    operator_minus,
-    operator_negate,
-    operator_plus,
-    operator_times,
-    Solve,
-    SolutionIntegerValue,
-    CpSolverResponseStats,
-    SolutionBooleanValue,
+    operator_minus as operations_research_sat_operator_minus,
+    operator_negate as operations_research_sat_operator_negate,
+    operator_plus as operations_research_sat_operator_plus,
+    operator_times as operations_research_sat_operator_times,
+    Solve as operations_research_sat_Solve,
+    SolutionIntegerValue as operations_research_sat_SolutionIntegerValue,
+    CpSolverResponseStats as operations_research_sat_CpSolverResponseStats,
+    SolutionBooleanValue as operations_research_sat_SolutionBooleanValue,
 } from './operations_research/sat/GFunc'
-import { CpSolverStatus } from './operations_research/sat/GEnum'
-import { IntervalVar } from './operations_research/sat/GIntervalVar'
-import { NoOverlap2DConstraint } from './operations_research/sat/GNoOverlap2DConstraint'
+import { CpSolverStatus as operations_research_sat_CpSolverStatus } from './operations_research/sat/GEnum'
+import { IntervalVar as operations_research_sat_IntervalVar } from './operations_research/sat/GIntervalVar'
+import { NoOverlap2DConstraint as operations_research_sat_NoOverlap2DConstraint } from './operations_research/sat/GNoOverlap2DConstraint'
+import { SatParameters as operations_research_sat_SatParameters } from './operations_research/sat/GSatParameters'
 
 /***********************************************************************************
  * ./operations_research/math_opt
  ***********************************************************************************/
 
-import { Model } from './operations_research/math_opt/GModel'
-import { GVariable } from './operations_research/math_opt/GVariable'
-import { GLinearConstraint } from './operations_research/math_opt/GLinearConstraint'
+import { Model as operations_research_math_opt_Model } from './operations_research/math_opt/GModel'
+import { GVariable as operations_research_math_opt_GVariable } from './operations_research/math_opt/GVariable'
+import { GLinearConstraint as operations_research_math_opt_GLinearConstraint } from './operations_research/math_opt/GLinearConstraint'
 
 /***********************************************************************************
  * ./operations_research/packing
  ***********************************************************************************/
 
-import { BinPacking2dParser } from './operations_research/packing/GBinPacking2dParser'
-import { MultipleDimensionsBinPackingProblem } from './operations_research/packing/GMultipleDimensionsBinPackingProblem'
-import { MultipleDimensionsBinPackingShape } from './operations_research/packing/GMultipleDimensionsBinPackingShape'
-import { MultipleDimensionsBinPackingItem } from './operations_research/packing/GMultipleDimensionsBinPackingItem'
+import { BinPacking2dParser as operations_research_packing_BinPacking2dParser } from './operations_research/packing/GBinPacking2dParser'
+import { MultipleDimensionsBinPackingProblem as operations_research_packing_MultipleDimensionsBinPackingProblem } from './operations_research/packing/GMultipleDimensionsBinPackingProblem'
+import { MultipleDimensionsBinPackingShape as operations_research_packing_MultipleDimensionsBinPackingShape } from './operations_research/packing/GMultipleDimensionsBinPackingShape'
+import { MultipleDimensionsBinPackingItem as operations_research_packing_MultipleDimensionsBinPackingItem } from './operations_research/packing/GMultipleDimensionsBinPackingItem'
 
 
 export namespace operations_research
 {
     export
     {
-        operator_equals, operator_greater_equals, operator_less_equals,
-        operator_divide, operator_plus, operator_minus, operator_times,
-        MPSolver,
-        LinearExpr,
-        SimpleLinearSumAssignment,
-        SimpleMinCostFlow,
-        Domain,
-        MPVariable,
+        operations_research_MPSolver as MPSolver,
+        operations_research_LinearExpr as LinearExpr,
+        operations_research_SimpleLinearSumAssignment as SimpleLinearSumAssignment,
+        operations_research_SimpleMinCostFlow as SimpleMinCostFlow,
+        operations_research_operator_equals as operator_equals,
+        operations_research_operator_greater_equals as operator_greater_equals,
+        operations_research_operator_less_equals as operator_less_equals,
+        operations_research_operator_divide as operator_divide,
+        operations_research_operator_plus as operator_plus,
+        operations_research_operator_minus as operator_minus,
+        operations_research_operator_times as operator_times,
+        operations_research_Domain as Domain,
+        operations_research_MPVariable as MPVariable,
     }
 
     export namespace math_opt
@@ -81,9 +87,9 @@ export namespace operations_research
         export
         {
             // TODO  math_opt
-            // Model,
-            // GVariable,
-            // GLinearConstraint
+            // operations_research_math_opt_Model as Model,
+            // operations_research_math_opt_GVariable as GVariable,
+            // operations_research_math_opt_GLinearConstraint as GLinearConstraint,
         }
     }
 
@@ -91,10 +97,10 @@ export namespace operations_research
     {
         export
         {
-            BinPacking2dParser,
-            MultipleDimensionsBinPackingProblem,
-            MultipleDimensionsBinPackingShape,
-            MultipleDimensionsBinPackingItem
+            operations_research_packing_BinPacking2dParser as BinPacking2dParser,
+            operations_research_packing_MultipleDimensionsBinPackingProblem as MultipleDimensionsBinPackingProblem,
+            operations_research_packing_MultipleDimensionsBinPackingShape as MultipleDimensionsBinPackingShape,
+            operations_research_packing_MultipleDimensionsBinPackingItem as MultipleDimensionsBinPackingItem,
         }
     }
 
@@ -102,23 +108,24 @@ export namespace operations_research
     {
         export
         {
-            CpSolverResponse,
-            CpModelBuilder,
-            BoolVar,
-            IntVar,
-            satLinearExpr as LinearExpr,
-            TableConstraint,
-            operator_minus,
-            operator_negate,
-            operator_plus,
-            operator_times,
-            Solve,
-            SolutionIntegerValue,
-            CpSolverStatus,
-            CpSolverResponseStats,
-            SolutionBooleanValue,
-            IntervalVar,
-            NoOverlap2DConstraint
+            operations_research_sat_CpModelBuilder as CpModelBuilder,
+            operations_research_sat_BoolVar as BoolVar,
+            operations_research_sat_IntVar as IntVar,
+            operations_research_sat_LinearExpr as LinearExpr,
+            operations_research_sat_TableConstraint as TableConstraint,
+            operations_research_sat_CpSolverResponse as CpSolverResponse,
+            operations_research_sat_operator_minus as operator_minus,
+            operations_research_sat_operator_negate as operator_negate,
+            operations_research_sat_operator_plus as operator_plus,
+            operations_research_sat_operator_times as operator_times,
+            operations_research_sat_Solve as Solve,
+            operations_research_sat_SolutionIntegerValue as SolutionIntegerValue,
+            operations_research_sat_CpSolverResponseStats as CpSolverResponseStats,
+            operations_research_sat_SolutionBooleanValue as SolutionBooleanValue,
+            operations_research_sat_CpSolverStatus as CpSolverStatus,
+            operations_research_sat_IntervalVar as IntervalVar,
+            operations_research_sat_NoOverlap2DConstraint as NoOverlap2DConstraint,
+            operations_research_sat_GSatParameters as SatParameters,
         }
     }
 }
@@ -127,7 +134,7 @@ export namespace operations_research
  *  ./google/protobuf
  ***********************************************************************************/
 
-import { RepeatedField_Int64 } from './google/protobuf/GRepeatedField'
+import { RepeatedField_Int64 as google_protobuf_RepeatedField_Int64 } from './google/protobuf/GRepeatedField'
 
 export namespace google
 {
@@ -135,7 +142,7 @@ export namespace google
     {
         export
         {
-            RepeatedField_Int64,
+            google_protobuf_RepeatedField_Int64 as RepeatedField_Int64,
         }
     }
 }
