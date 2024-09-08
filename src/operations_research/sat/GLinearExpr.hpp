@@ -78,7 +78,6 @@ inline Napi::Value operations_research::sat::GLinearExpr::Sum( const Napi::Callb
     if ( info.Length() == 1 && info[ 0 ].IsArray() )
     {
         auto arr = info[ 0 ].As< Napi::Array >();
-
         //       static LinearExpr Sum( absl::Span< const IntVar > vars );
         if ( arr.Length() > 0 && arr.Get( static_cast< uint32_t >( 0 ) ).IsObject() && arr.Get( static_cast< uint32_t >( 0 ) ).As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
         {
@@ -116,7 +115,7 @@ inline Napi::Value operations_research::sat::GLinearExpr::Sum( const Napi::Callb
                 return info.Env().Undefined();
             }
             auto sum = LinearExpr::Sum( vars );
-            return GLinearExpr::constructor.New( { Napi::External< LinearExpr >::New( info.Env(), &sum ) } );
+            return GLinearExpr::constructor.New( { Napi::External< LinearExpr >::New( info.Env(), new LinearExpr( sum ) ) } );
         }
 
         ThrowJsError( operations_research::sat::GLinearExpr::Sum : Invalid argument );

@@ -160,6 +160,7 @@
 // }
 
 import { operations_research } from "../src";
+import { BoolVar } from "../src/operations_research/sat/GBoolVar";
 
 test('assignment_groups_mip', () =>
 {
@@ -208,7 +209,7 @@ test('assignment_groups_mip', () =>
   }
 
   // Create one Boolean variable per item and per bin.
-  let item_to_bin = new Array(num_items);
+  let item_to_bin: BoolVar[][] = new Array(num_items);
   for (let item = 0; item < num_items; ++item)
   {
     item_to_bin[item] = new Array(max_bins);
@@ -243,6 +244,7 @@ test('assignment_groups_mip', () =>
     }
   }
 
+
   if (num_dimensions == 1)
   {
     console.log("One dimension is not supported.");
@@ -253,24 +255,18 @@ test('assignment_groups_mip', () =>
     console.log("Box size: " + box_dimensions.operator_get(0) + "*" + box_dimensions.operator_get(1));
     for (let b = 0; b < max_bins; ++b)
     {
-      console.log("Bin 8888888888888888888888" + b);
-      
       let no_overlap_2d = cp_model.AddNoOverlap2D();
       for (let item = 0; item < num_items; ++item)
       {
-        // no_overlap_2d.AddRectangle(interval_by_item_bin_dimension[item][b][0],
-        //   interval_by_item_bin_dimension[item][b][1]);
+        no_overlap_2d.AddRectangle(interval_by_item_bin_dimension[item][b][0],
+          interval_by_item_bin_dimension[item][b][1]);
       }
     }
   }
   else
   {
     console.log(num_dimensions + " dimensions not supported.");
-    return;
   }
-
-
-
 
 
 });

@@ -8,7 +8,7 @@
 #include "GLinearExpr.hpp"
 #include "GCpModelProto.hpp"
 #include "GTableConstraint.hpp"
-#include "../GDomain.hpp"
+#include "operations_research/GDomain.hpp"
 #include "GIntervalVar.hpp"
 #include "GNoOverlap2DConstraint.hpp"
 
