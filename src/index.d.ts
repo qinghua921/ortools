@@ -56,6 +56,7 @@ import { GLinearConstraint } from './operations_research/math_opt/GLinearConstra
 
 import { BinPacking2dParser } from './operations_research/packing/GBinPacking2dParser'
 import { MultipleDimensionsBinPackingProblem } from './operations_research/packing/GMultipleDimensionsBinPackingProblem'
+import { MultipleDimensionsBinPackingShape } from './operations_research/packing/GMultipleDimensionsBinPackingShape'
 
 export namespace operations_research
 {
@@ -87,7 +88,8 @@ export namespace operations_research
         export
         {
             BinPacking2dParser,
-            MultipleDimensionsBinPackingProblem
+            MultipleDimensionsBinPackingProblem,
+            MultipleDimensionsBinPackingShape,
         }
     }
 

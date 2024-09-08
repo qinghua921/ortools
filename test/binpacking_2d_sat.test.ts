@@ -228,7 +228,7 @@ test('assignment_groups_mip', () =>
     console.log("Cannot read instance 1 from file 'D:\\code\\tsortools\\test\\binpacking_2d_sat.test.txt'");
   }
 
-  let problem = parse.problem();
+  let problem: operations_research.packing.MultipleDimensionsBinPackingProblem = parse.problem();
   console.log("Successfully loaded instance 1 from file 'D:\\code\\tsortools\\test\\binpacking_2d_sat.test.txt'");
   console.log("Instance has " + problem.items_size() + " items");
 

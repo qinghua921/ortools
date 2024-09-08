@@ -3,6 +3,7 @@
 #include <napi.h>
 #include "../../commonheader.hpp"
 #include "ortools/packing/binpacking_2d_parser.h"
+#include "GMultipleDimensionsBinPackingShape.hpp"
 
 namespace operations_research
 {
@@ -18,6 +19,7 @@ namespace packing
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
 
         Napi::Value items_size( const Napi::CallbackInfo& info );
+        Napi::Value box_shape( const Napi::CallbackInfo& info );
     };
 };  // namespace packing
 };  // namespace operations_research
@@ -54,6 +56,20 @@ inline Napi::Object operations_research::packing::GMultipleDimensionsBinPackingP
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "MultipleDimensionsBinPackingProblem" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::packing::GMultipleDimensionsBinPackingProblem::box_shape( const Napi::CallbackInfo& info )
+{
+    //     const ::operations_research::packing::MultipleDimensionsBinPackingShape&              box_shape() const;
+    if ( info.Length() == 0 )
+    {
+        auto box_shape = pMultipleDimensionsBinPackingProblem->box_shape();
+        auto external  = Napi::External< MultipleDimensionsBinPackingShape >::New( info.Env(), new MultipleDimensionsBinPackingShape( box_shape ) );
+        return GMultipleDimensionsBinPackingShape::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::GMultipleDimensionsBinPackingProblem::box_shape : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::packing::GMultipleDimensionsBinPackingProblem::items_size( const Napi::CallbackInfo& info )

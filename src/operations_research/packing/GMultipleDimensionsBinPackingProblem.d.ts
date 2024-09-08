@@ -1,3 +1,4 @@
+import { MultipleDimensionsBinPackingShape } from "./GMultipleDimensionsBinPackingShape";
 
 export class MultipleDimensionsBinPackingProblem 
 {
@@ -182,7 +183,8 @@ export class MultipleDimensionsBinPackingProblem
     // public:
     //     void                                                                                  clear_box_shape();
     //     const ::operations_research::packing::MultipleDimensionsBinPackingShape&              box_shape() const;
-    
+    box_shape(): MultipleDimensionsBinPackingShape;
+
     //     PROTOBUF_NODISCARD ::operations_research::packing::MultipleDimensionsBinPackingShape* release_box_shape();
     //     ::operations_research::packing::MultipleDimensionsBinPackingShape*                    mutable_box_shape();
     //     void                                                                                  set_allocated_box_shape( ::operations_research::packing::MultipleDimensionsBinPackingShape* box_shape );
