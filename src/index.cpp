@@ -52,6 +52,11 @@
 #include "./operations_research/packing/GMultipleDimensionsBinPackingProblem.hpp"
 #include "./operations_research/packing/GMultipleDimensionsBinPackingShape.hpp"
 
+/***********************************************************************************
+ * ./google/protobuf
+ ***********************************************************************************/
+
+#include "./google/protobuf/GRepeatedField.hpp"
 
 Napi::Object Init( Napi::Env env, Napi::Object exports )
 {
@@ -115,6 +120,21 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research_exports.Set( "packing", operations_research_packing_exports );
 
     exports.Set( "operations_research", operations_research_exports );
+
+    // ./google
+
+    auto google_exports = Napi::Object::New( env );
+
+    // ./google/protobuf
+
+    auto google_protobuf_exports = Napi::Object::New( env );
+
+    google_exports.Set( "protobuf", google_protobuf_exports );
+
+    google::protobuf::GRepeatedField::Init( env, google_protobuf_exports );
+
+    exports.Set( "google", google_exports );
+
     return exports;
 }
 

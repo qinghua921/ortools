@@ -115,3 +115,20 @@ export namespace operations_research
         }
     }
 }
+
+/***********************************************************************************
+ *  ./google/protobuf
+ ***********************************************************************************/
+
+import { RepeatedField } from './google/protobuf/GRepeatedField'
+
+export namespace google
+{
+    export namespace protobuf
+    {
+        export
+        {
+            RepeatedField,
+        }
+    }
+}
