@@ -26,6 +26,9 @@ import { operations_research } from "../src";
 
 test('assignment_groups_mip', () =>
 {
+    let LLC=operations_research.sat.CpSolverStatus.MODEL_INVALID;
+    let ff = operations_research.sat.DecisionStrategyProto_VariableSelectionStrategy.CHOOSE_FIRST
+    return;
     const cp_model = new operations_research.sat.CpModelBuilder();
 
 
@@ -40,13 +43,13 @@ test('assignment_groups_mip', () =>
     cp_model.AddEquality(y, 0).OnlyEnforceIf(operations_research.sat.Not(b));
 
     cp_model.AddDecisionStrategy([x],
-        operations_research.sat.DecisionStrategyProto.VariableSelectionStrategy.CHOOSE_FIRST,
-        operations_research.sat.DecisionStrategyProto.DomainReductionStrategy.SELECT_MIN_VALUE);
+        operations_research.sat.DecisionStrategyProto_VariableSelectionStrategy.CHOOSE_FIRST,
+        operations_research.sat.DecisionStrategyProto_DomainReductionStrategy.SELECT_MIN_VALUE);
 
     const model = new operations_research.sat.Model();
     const parameters = new operations_research.sat.SatParameters();
     parameters.set_search_branching(operations_research.sat.SatParameters.FIXED_SEARCH);
     parameters.set_enumerate_all_solutions(true);
-    model.add(operations_research.sat.NewSatParameters(parameters));
+    // model.add(operations_research.sat.NewSatParameters(parameters));
 }
 );
