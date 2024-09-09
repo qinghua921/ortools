@@ -195,48 +195,4 @@ test('assignment_groups_mip', () =>
 
   let response = operations_research.sat.SolveWithParameters(cp_model.Build(), parameters);
 
-
-
-
-  //         // Setup parameters.
-  //         SatParameters parameters;
-  //         parameters.set_log_search_progress( true );
-  //         parameters.set_use_timetabling_in_no_overlap_2d( true );
-  //         parameters.set_use_energetic_reasoning_in_no_overlap_2d( true );
-
-  //         // Parse the --params flag.
-  //         if ( !absl::GetFlag( FLAGS_params ).empty() )
-  //         {
-  //             CHECK( google::protobuf::TextFormat::MergeFromString(
-  //                 absl::GetFlag( FLAGS_params ), &parameters ) )
-  //                 << absl::GetFlag( FLAGS_params );
-  //         }
-  //         // We rely on the solver default logging to log the number of bins.
-  //         const CpSolverResponse response =
-  //             SolveWithParameters( cp_model.Build(), parameters );
-  //     }
-
-  // }  // namespace sat
-  // }  // namespace operations_research
-
-  // int main( int argc, char** argv )
-  // {
-  //     absl::SetFlag( &FLAGS_stderrthreshold, 0 );
-  //     InitGoogle( argv[ 0 ], &argc, &argv, true );
-  //     if ( absl::GetFlag( FLAGS_input ).empty() )
-  //     {
-  //         LOG( FATAL ) << "Please supply a data file with --input=";
-  //     }
-  //     if ( absl::GetFlag( FLAGS_instance ) == -1 )
-  //     {
-  //         LOG( FATAL ) << "Please supply a valid instance number with --instance=";
-  //     }
-
-  //     operations_research::sat::LoadAndSolve( absl::GetFlag( FLAGS_input ),
-  //                                             absl::GetFlag( FLAGS_instance ) );
-  //     return EXIT_SUCCESS;
-  // }
-
-
-
 });
