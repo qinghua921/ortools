@@ -54,6 +54,7 @@ export class LinearExpr
 
   //       /// Constructs a constant linear expression.
   //       LinearExpr( int64_t constant );
+  constructor(constant: number);
 
   //       // NOLINTEND(google-explicit-constructor)
 

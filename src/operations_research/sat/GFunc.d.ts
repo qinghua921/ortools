@@ -52,3 +52,10 @@ export function CpSolverResponseStats(response: CpSolverResponse, has_objective:
 // CpSolverResponse SolveWithParameters(const CpModelProto& model_proto,
 //     const SatParameters& params);
 export function SolveWithParameters(model_proto: CpModelProto, params: SatParameters): CpSolverResponse;
+
+/**
+ * A convenient wrapper so we can write Not(x) instead of x.Not() which is
+ * sometimes clearer.
+ */
+// BoolVar Not(BoolVar x);
+export function Not(x: BoolVar): BoolVar;

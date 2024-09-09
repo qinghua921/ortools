@@ -48,6 +48,14 @@ inline operations_research::sat::GLinearExpr::GLinearExpr( const Napi::CallbackI
         return;
     }
 
+    //       LinearExpr( int64_t constant );
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        int64_t constant = info[ 0 ].As< Napi::Number >().Int64Value();
+        pLinearExpr      = new LinearExpr( constant );
+        return;
+    }
+
     ThrowJsError( operations_research::sat::GLinearExpr::GLinearExpr : Invalid argument );
 }
 
@@ -95,7 +103,7 @@ inline Napi::Value operations_research::sat::GLinearExpr::Sum( const Napi::Callb
                 return info.Env().Undefined();
             }
             auto sum = LinearExpr::Sum( vars );
-            return GLinearExpr::constructor.New( { Napi::External< LinearExpr >::New( info.Env(), &sum ) } );
+            return GLinearExpr::constructor.New( { Napi::External< LinearExpr >::New( info.Env(), new LinearExpr( sum ) ) } );
         }
 
         //       static LinearExpr Sum( absl::Span< const BoolVar > vars );
@@ -173,7 +181,7 @@ bool operations_research::sat::GLinearExpr::ToLinearExpr( const Napi::Value& val
     if ( value.IsObject() && value.As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
         expr = *GLinearExpr::Unwrap( value.As< Napi::Object >() )->pLinearExpr;
     else if ( value.IsNumber() )
-        expr = value.As< Napi::Number >().DoubleValue();
+        expr = value.As< Napi::Number >().Int64Value();
     else if ( value.IsObject() && value.As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
         expr = *GBoolVar::Unwrap( value.As< Napi::Object >() )->pBoolVar;
     else if ( value.IsObject() && value.As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )

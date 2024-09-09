@@ -40,6 +40,7 @@ import
     CpSolverResponseStats as operations_research_sat_CpSolverResponseStats,
     SolutionBooleanValue as operations_research_sat_SolutionBooleanValue,
     SolveWithParameters as operations_research_sat_SolveWithParameters,
+    Not as operations_research_sat_Not,
 } from './operations_research/sat/GFunc'
 import { CpSolverStatus as operations_research_sat_CpSolverStatus } from './operations_research/sat/GEnum'
 import { IntervalVar as operations_research_sat_IntervalVar } from './operations_research/sat/GIntervalVar'
@@ -124,6 +125,7 @@ export namespace operations_research
             operations_research_sat_CpSolverResponseStats as CpSolverResponseStats,
             operations_research_sat_SolutionBooleanValue as SolutionBooleanValue,
             operations_research_sat_SolveWithParameters as SolveWithParameters,
+            operations_research_sat_Not as Not,
             operations_research_sat_CpSolverStatus as CpSolverStatus,
             operations_research_sat_IntervalVar as IntervalVar,
             operations_research_sat_NoOverlap2DConstraint as NoOverlap2DConstraint,

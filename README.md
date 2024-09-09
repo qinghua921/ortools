@@ -58,7 +58,7 @@ The codebase is large, and the priority is to implement the code in the examples
 - basic_example_mo - ❌ ( math_opt compiliertor error )
 - bin_packing_mip - 🆗
 - binpacking_2d_sat - 🆗
-- binpacking_problem_sat
+- binpacking_problem_sat - 🆗
 - bool_or_sample_sat
 - channeling_sample_sat
 - cocktail_hour_mo

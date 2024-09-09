@@ -23,6 +23,8 @@ namespace sat
     Napi::Value Goperator_times( const Napi::CallbackInfo& info );
     Napi::Value GSolutionBooleanValue( const Napi::CallbackInfo& info );
     Napi::Value GSolveWithParameters( const Napi::CallbackInfo& info );
+    Napi::Value GNot( const Napi::CallbackInfo& info );
+
 };  // namespace sat
 };  // namespace operations_research
 
@@ -39,8 +41,25 @@ inline Napi::Object operations_research::sat::GFuncInit( Napi::Env env, Napi::Ob
     exports.Set( Napi::String::New( env, "CpSolverResponseStats" ), Napi::Function::New( env, GCpSolverResponseStats ) );
     exports.Set( Napi::String::New( env, "SolutionBooleanValue" ), Napi::Function::New( env, GSolutionBooleanValue ) );
     exports.Set( Napi::String::New( env, "SolveWithParameters" ), Napi::Function::New( env, GSolveWithParameters ) );
+    exports.Set( Napi::String::New( env, "Not" ), Napi::Function::New( env, GNot ) );
 
     return exports;
+}
+
+inline Napi::Value operations_research::sat::GNot( const Napi::CallbackInfo& info )
+{
+    // BoolVar Not(BoolVar x);
+    if ( info.Length() == 1 && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+    {
+        auto bool_var = GBoolVar::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto not_     = Not( *bool_var->pBoolVar );
+        auto exterior = Napi::External< BoolVar >::New( info.Env(), new BoolVar( not_ ) );
+        return GBoolVar::constructor.New( { exterior } );
+    }
+
+    ThrowJsError( operations_research::sat::GNot : Invalid arguments );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::sat::GSolveWithParameters( const Napi::CallbackInfo& info )
