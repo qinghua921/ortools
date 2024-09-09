@@ -1,3 +1,18 @@
+export namespace SatParameters
+{
+    export enum SearchBranching
+    {
+        AUTOMATIC_SEARCH = 0,
+        FIXED_SEARCH = 1,
+        PORTFOLIO_SEARCH = 2,
+        LP_SEARCH = 3,
+        PSEUDO_COST_SEARCH = 4,
+        PORTFOLIO_WITH_QUICK_RESTART_SEARCH = 5,
+        HINT_SEARCH = 6,
+        PARTIAL_FIXED_SEARCH = 7
+    };
+}
+
 export class SatParameters 
 {
     // public:

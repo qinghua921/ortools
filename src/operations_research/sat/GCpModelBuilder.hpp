@@ -42,6 +42,8 @@ namespace sat
         Napi::Value AddGreaterOrEqual( const Napi::CallbackInfo& info );
         Napi::Value AddImplication( const Napi::CallbackInfo& info );
         Napi::Value AddBoolOr( const Napi::CallbackInfo& info );
+        Napi::Value AddLessThan( const Napi::CallbackInfo& info );
+        Napi::Value AddDecisionStrategy( const Napi::CallbackInfo& info );
     };
 };  // namespace sat
 };  // namespace operations_research
@@ -95,12 +97,97 @@ inline Napi::Object operations_research::sat::GCpModelBuilder::Init( Napi::Env e
             InstanceMethod( "AddGreaterOrEqual", &GCpModelBuilder::AddGreaterOrEqual ),
             InstanceMethod( "AddImplication", &GCpModelBuilder::AddImplication ),
             InstanceMethod( "AddBoolOr", &GCpModelBuilder::AddBoolOr ),
+            InstanceMethod( "AddLessThan", &GCpModelBuilder::AddLessThan ),
+            InstanceMethod( "AddDecisionStrategy", &GCpModelBuilder::AddDecisionStrategy ),
 
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "CpModelBuilder" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::AddDecisionStrategy( const Napi::CallbackInfo& info )
+{
+    //     void AddDecisionStrategy(
+    //         absl::Span< const IntVar >                       variables,
+    //         DecisionStrategyProto::VariableSelectionStrategy var_strategy,
+    //         DecisionStrategyProto::DomainReductionStrategy   domain_strategy );
+    if ( info.Length() == 3 && info[ 0 ].IsArray() && info[ 1 ].IsNumber() && info[ 2 ].IsNumber()
+         && info[ 0 ].As< Napi::Array >().Length() > 0
+         && info[ 0 ].As< Napi::Array >().Get( static_cast< uint32_t >( 0 ) ).IsObject()
+         && info[ 0 ].As< Napi::Array >().Get( static_cast< uint32_t >( 0 ) ).As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
+    {
+        auto                  arr = info[ 0 ].As< Napi::Array >();
+        std::vector< IntVar > variables;
+        for ( int i = 0; i < arr.Length(); i++ )
+        {
+            if ( arr.Get( i ).IsObject()
+                 && arr.Get( i ).As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
+            {
+                auto gintvar = GIntVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
+                variables.push_back( *gintvar->pIntVar );
+                continue;
+            }
+
+            ThrowJsError( operations_research::sat::GCpModelBuilder::AddDecisionStrategy : Invalid argument );
+            return info.Env().Undefined();
+        }
+
+        auto var_strategy    = static_cast< DecisionStrategyProto::VariableSelectionStrategy >( info[ 1 ].As< Napi::Number >().Int32Value() );
+        auto domain_strategy = static_cast< DecisionStrategyProto::DomainReductionStrategy >( info[ 2 ].As< Napi::Number >().Int32Value() );
+        pCpModelBuilder->AddDecisionStrategy( variables, var_strategy, domain_strategy );
+        return info.Env().Undefined();
+    }
+
+    //     void AddDecisionStrategy(
+    //         absl::Span< const BoolVar >                      variables,
+    //         DecisionStrategyProto::VariableSelectionStrategy var_strategy,
+    //         DecisionStrategyProto::DomainReductionStrategy   domain_strategy );
+    if ( info.Length() == 3 && info[ 0 ].IsArray() && info[ 1 ].IsNumber() && info[ 2 ].IsNumber()
+         && info[ 0 ].As< Napi::Array >().Length() > 0
+         && info[ 0 ].As< Napi::Array >().Get( static_cast< uint32_t >( 0 ) ).IsObject()
+         && info[ 0 ].As< Napi::Array >().Get( static_cast< uint32_t >( 0 ) ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+    {
+        auto                   arr = info[ 0 ].As< Napi::Array >();
+        std::vector< BoolVar > variables;
+        for ( int i = 0; i < arr.Length(); i++ )
+        {
+            if ( arr.Get( i ).IsObject()
+                 && arr.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+            {
+                auto gboolvar = GBoolVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
+                variables.push_back( *gboolvar->pBoolVar );
+                continue;
+            }
+
+            ThrowJsError( operations_research::sat::GCpModelBuilder::AddDecisionStrategy : Invalid argument );
+            return info.Env().Undefined();
+        }
+
+        auto var_strategy    = static_cast< DecisionStrategyProto::VariableSelectionStrategy >( info[ 1 ].As< Napi::Number >().Int32Value() );
+        auto domain_strategy = static_cast< DecisionStrategyProto::DomainReductionStrategy >( info[ 2 ].As< Napi::Number >().Int32Value() );
+        pCpModelBuilder->AddDecisionStrategy( variables, var_strategy, domain_strategy );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::AddDecisionStrategy : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::AddLessThan( const Napi::CallbackInfo& info )
+{
+    //     Constraint AddLessThan( const LinearExpr& left, const LinearExpr& right );
+    LinearExpr left, right;
+    if ( info.Length() == 2 && GLinearExpr::ToLinearExpr( info[ 0 ], left ) && GLinearExpr::ToLinearExpr( info[ 1 ], right ) )
+    {
+        auto constraint = pCpModelBuilder->AddLessThan( left, right );
+        auto external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
+        return GConstraint::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::AddLessThan : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::sat::GCpModelBuilder::AddBoolOr( const Napi::CallbackInfo& info )

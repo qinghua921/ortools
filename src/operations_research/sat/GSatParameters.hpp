@@ -55,9 +55,22 @@ inline operations_research::sat::GSatParameters::~GSatParameters()
 inline Napi::Object operations_research::sat::GSatParameters::Init( Napi::Env env, Napi::Object exports )
 {
     Napi::HandleScope scope( env );
-    Napi::Function    func = DefineClass(
+
+    // export enum SearchBranching
+    auto search_branching_enum = Napi::Object::New( env );
+    search_branching_enum.Set( Napi::String::New( env, "AUTOMATIC_SEARCH" ), Napi::Number::New( env, 0 ) );
+    search_branching_enum.Set( Napi::String::New( env, "FIXED_SEARCH" ), Napi::Number::New( env, 1 ) );
+    search_branching_enum.Set( Napi::String::New( env, "PORTFOLIO_SEARCH" ), Napi::Number::New( env, 2 ) );
+    search_branching_enum.Set( Napi::String::New( env, "LP_SEARCH" ), Napi::Number::New( env, 3 ) );
+    search_branching_enum.Set( Napi::String::New( env, "PSEUDO_COST_SEARCH" ), Napi::Number::New( env, 4 ) );
+    search_branching_enum.Set( Napi::String::New( env, "PORTFOLIO_WITH_QUICK_RESTART_SEARCH" ), Napi::Number::New( env, 5 ) );
+    search_branching_enum.Set( Napi::String::New( env, "HINT_SEARCH" ), Napi::Number::New( env, 6 ) );
+    search_branching_enum.Set( Napi::String::New( env, "PARTIAL_FIXED_SEARCH" ), Napi::Number::New( env, 7 ) );
+
+    Napi::Function func = DefineClass(
         env, "SatParameters",
         {
+            StaticValue( "SearchBranching", search_branching_enum ),
             InstanceMethod( "set_log_search_progress", &GSatParameters::set_log_search_progress ),
             InstanceMethod( "set_use_timetabling_in_no_overlap_2d", &GSatParameters::set_use_timetabling_in_no_overlap_2d ),
             InstanceMethod( "set_use_energetic_reasoning_in_no_overlap_2d", &GSatParameters::set_use_energetic_reasoning_in_no_overlap_2d ),

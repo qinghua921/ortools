@@ -21,6 +21,28 @@ namespace sat
         cpSolverStatus.Set( "OPTIMAL", Napi::Number::New( env, CpSolverStatus::OPTIMAL ) );
         exports.Set( "CpSolverStatus", cpSolverStatus );
 
+        // export namespace DecisionStrategyProto
+        auto decisionStrategyProto = Napi::Object::New( env );
+
+        auto variableSelectionStrategy = Napi::Object::New( env );
+        variableSelectionStrategy.Set( "CHOOSE_FIRST", Napi::Number::New( env, DecisionStrategyProto::CHOOSE_FIRST ) );
+        variableSelectionStrategy.Set( "CHOOSE_LOWEST_MIN", Napi::Number::New( env, DecisionStrategyProto::CHOOSE_LOWEST_MIN ) );
+        variableSelectionStrategy.Set( "CHOOSE_HIGHEST_MAX", Napi::Number::New( env, DecisionStrategyProto::CHOOSE_HIGHEST_MAX ) );
+        variableSelectionStrategy.Set( "CHOOSE_MIN_DOMAIN_SIZE", Napi::Number::New( env, DecisionStrategyProto::CHOOSE_MIN_DOMAIN_SIZE ) );
+        variableSelectionStrategy.Set( "CHOOSE_MAX_DOMAIN_SIZE", Napi::Number::New( env, DecisionStrategyProto::CHOOSE_MAX_DOMAIN_SIZE ) );
+        decisionStrategyProto.Set( "VariableSelectionStrategy", variableSelectionStrategy );
+
+        auto domainReductionStrategy = Napi::Object::New( env );
+        domainReductionStrategy.Set( "SELECT_MIN_VALUE", Napi::Number::New( env, DecisionStrategyProto::SELECT_MIN_VALUE ) );
+        domainReductionStrategy.Set( "SELECT_MAX_VALUE", Napi::Number::New( env, DecisionStrategyProto::SELECT_MAX_VALUE ) );
+        domainReductionStrategy.Set( "SELECT_LOWER_HALF", Napi::Number::New( env, DecisionStrategyProto::SELECT_LOWER_HALF ) );
+        domainReductionStrategy.Set( "SELECT_UPPER_HALF", Napi::Number::New( env, DecisionStrategyProto::SELECT_UPPER_HALF ) );
+        domainReductionStrategy.Set( "SELECT_MEDIAN_VALUE", Napi::Number::New( env, DecisionStrategyProto::SELECT_MEDIAN_VALUE ) );
+        decisionStrategyProto.Set( "DomainReductionStrategy", domainReductionStrategy );
+
+        exports.Set( "DecisionStrategyProto", decisionStrategyProto );
+
+
         return exports;
     };
 

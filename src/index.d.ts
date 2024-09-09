@@ -42,10 +42,15 @@ import
     SolveWithParameters as operations_research_sat_SolveWithParameters,
     Not as operations_research_sat_Not,
 } from './operations_research/sat/GFunc'
-import { CpSolverStatus as operations_research_sat_CpSolverStatus } from './operations_research/sat/GEnum'
+import
+{
+    CpSolverStatus as operations_research_sat_CpSolverStatus,
+    DecisionStrategyProto as operations_research_sat_DecisionStrategyProto,
+} from './operations_research/sat/GEnum'
 import { IntervalVar as operations_research_sat_IntervalVar } from './operations_research/sat/GIntervalVar'
 import { NoOverlap2DConstraint as operations_research_sat_NoOverlap2DConstraint } from './operations_research/sat/GNoOverlap2DConstraint'
 import { SatParameters as operations_research_sat_SatParameters } from './operations_research/sat/GSatParameters'
+import { Model as operations_research_sat_Model } from './operations_research/sat/GModel'
 
 /***********************************************************************************
  * ./operations_research/math_opt
@@ -130,7 +135,10 @@ export namespace operations_research
             operations_research_sat_IntervalVar as IntervalVar,
             operations_research_sat_NoOverlap2DConstraint as NoOverlap2DConstraint,
             operations_research_sat_GSatParameters as SatParameters,
+            operations_research_sat_DecisionStrategyProto as DecisionStrategyProto,
+            operations_research_sat_Model as Model,
         }
+
     }
 }
 

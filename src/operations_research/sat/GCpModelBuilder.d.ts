@@ -123,6 +123,7 @@ export class CpModelBuilder
 
     //     /// Adds left < right.
     //     Constraint AddLessThan( const LinearExpr& left, const LinearExpr& right );
+    AddLessThan(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
     //     /// Adds expr in domain.
     //     Constraint AddLinearConstraint( const LinearExpr& expr, const Domain& domain );
@@ -367,12 +368,15 @@ export class CpModelBuilder
     //         absl::Span< const IntVar >                       variables,
     //         DecisionStrategyProto::VariableSelectionStrategy var_strategy,
     //         DecisionStrategyProto::DomainReductionStrategy   domain_strategy );
+    AddDecisionStrategy(variables: IntVar[], var_strategy: DecisionStrategyProto.VariableSelectionStrategy, domain_strategy: DecisionStrategyProto.DomainReductionStrategy): void;
 
     //     /// Adds a decision strategy on a list of boolean variables.
     //     void AddDecisionStrategy(
     //         absl::Span< const BoolVar >                      variables,
     //         DecisionStrategyProto::VariableSelectionStrategy var_strategy,
     //         DecisionStrategyProto::DomainReductionStrategy   domain_strategy );
+    AddDecisionStrategy(variables: BoolVar[], var_strategy: DecisionStrategyProto.VariableSelectionStrategy, domain_strategy: DecisionStrategyProto.DomainReductionStrategy): void;
+
 
     //     /// Adds hinting to a variable.
     //     void AddHint( IntVar var, int64_t value );
