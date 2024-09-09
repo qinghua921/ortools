@@ -60,10 +60,13 @@ template < typename Element >
 inline Napi::Object google::protobuf::GRepeatedPtrField< Element >::Init( Napi::Env env, Napi::Object exports )
 {
     auto get_name = []() {
-        if ( std::is_same< Element, operations_research::packing::MultipleDimensionsBinPackingItem >::value )
+        if ( std::is_same< Element, operations_research::packing::GMultipleDimensionsBinPackingItem >::value )
             return "RepeatedPtrField_MultipleDimensionsBinPackingItem";
         else
+        {
+            std::cerr << "google::protobuf::GRepeatedPtrField::Init : Invalid Typename Element" << std::endl;
             throw std::runtime_error( "google::protobuf::GRepeatedPtrField::Init : Invalid Typename Element" );
+        }
     };
 
     Napi::HandleScope scope( env );
@@ -105,7 +108,7 @@ inline Napi::Value google::protobuf::GRepeatedPtrField< Element >::Add( const Na
          && info[ 0 ].As< Napi::Object >().InstanceOf( Element::constructor.Value() ) )
     {
         auto element = Element::Unwrap( info[ 0 ].As< Napi::Object >() );
-        pRepeatedPtrField->Add( *element );
+        pRepeatedPtrField->AddAllocated( element );
         return info.Env().Undefined();
     }
 
