@@ -20,7 +20,6 @@ namespace packing
 
         Napi::Value shapes( const Napi::CallbackInfo& info );
         Napi::Value shapes_size( const Napi::CallbackInfo& info );
-
     };
 };  // namespace packing
 };  // namespace operations_research

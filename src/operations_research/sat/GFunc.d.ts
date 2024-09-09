@@ -2,6 +2,7 @@ import { BoolVar } from './GBoolVar';
 import { CpModelProto } from './GCpModelProto';
 import { CpSolverResponse } from './GCpSolverResponse';
 import { CanAsLinearExpr, LinearExpr } from './GLinearExpr';
+import { SatParameters } from './GSatParameters';
 
 // inline LinearExpr operator-( LinearExpr expr )
 export function operator_negate(expr: CanAsLinearExpr): LinearExpr;
@@ -45,3 +46,9 @@ export function SolutionBooleanValue(r: CpSolverResponse, x: BoolVar): boolean;
 //    std::string CpSolverResponseStats( const CpSolverResponse& response,
 //     bool                    has_objective = true );
 export function CpSolverResponseStats(response: CpSolverResponse, has_objective: boolean = true): string;
+
+
+// /// Solves the given CpModelProto with the given parameters.
+// CpSolverResponse SolveWithParameters(const CpModelProto& model_proto,
+//     const SatParameters& params);
+export function SolveWithParameters(model_proto: CpModelProto, params: SatParameters): CpSolverResponse;

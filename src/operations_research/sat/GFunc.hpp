@@ -4,6 +4,7 @@
 #include "GLinearExpr.hpp"
 #include "GCpModelProto.hpp"
 #include "GCpSolverResponse.hpp"
+#include "GSatParameters.hpp"
 #include "../../commonheader.hpp"
 
 namespace operations_research
@@ -21,6 +22,7 @@ namespace sat
     Napi::Value Goperator_minus( const Napi::CallbackInfo& info );
     Napi::Value Goperator_times( const Napi::CallbackInfo& info );
     Napi::Value GSolutionBooleanValue( const Napi::CallbackInfo& info );
+    Napi::Value GSolveWithParameters( const Napi::CallbackInfo& info );
 };  // namespace sat
 };  // namespace operations_research
 
@@ -36,8 +38,30 @@ inline Napi::Object operations_research::sat::GFuncInit( Napi::Env env, Napi::Ob
     exports.Set( Napi::String::New( env, "SolutionIntegerValue" ), Napi::Function::New( env, GSolutionIntegerValue ) );
     exports.Set( Napi::String::New( env, "CpSolverResponseStats" ), Napi::Function::New( env, GCpSolverResponseStats ) );
     exports.Set( Napi::String::New( env, "SolutionBooleanValue" ), Napi::Function::New( env, GSolutionBooleanValue ) );
+    exports.Set( Napi::String::New( env, "SolveWithParameters" ), Napi::Function::New( env, GSolveWithParameters ) );
 
     return exports;
+}
+
+inline Napi::Value operations_research::sat::GSolveWithParameters( const Napi::CallbackInfo& info )
+{
+    // CpSolverResponse SolveWithParameters(const CpModelProto& model_proto,
+    //     const SatParameters& params);
+    if ( info.Length() == 2
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GCpModelProto::constructor.Value() )
+         && info[ 1 ].IsObject()
+         && info[ 1 ].As< Napi::Object >().InstanceOf( GSatParameters::constructor.Value() ) )
+    {
+        auto model_proto      = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto sat_parameters   = GSatParameters::Unwrap( info[ 1 ].As< Napi::Object >() );
+        auto cpSolverResponse = SolveWithParameters( *model_proto->pCpModelProto, *sat_parameters->pSatParameters );
+        auto exterior         = Napi::External< CpSolverResponse >::New( info.Env(), new CpSolverResponse( cpSolverResponse ) );
+        return GCpSolverResponse::constructor.New( { exterior } );
+    }
+
+    ThrowJsError( operations_research::sat::GSolveWithParameters : Invalid arguments );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::sat::GSolutionBooleanValue( const Napi::CallbackInfo& info )

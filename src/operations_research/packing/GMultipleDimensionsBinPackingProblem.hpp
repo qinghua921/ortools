@@ -5,6 +5,7 @@
 #include "ortools/packing/binpacking_2d_parser.h"
 #include "GMultipleDimensionsBinPackingShape.hpp"
 #include "GMultipleDimensionsBinPackingItem.hpp"
+#include "google/protobuf/GRepeatedPtrField.hpp"
 
 namespace operations_research
 {
@@ -77,15 +78,18 @@ inline Napi::Value operations_research::packing::GMultipleDimensionsBinPackingPr
     //     items() const;
     if ( info.Length() == 0 )
     {
-        auto        items  = pMultipleDimensionsBinPackingProblem->items();
-        Napi::Array result = Napi::Array::New( info.Env(), items.size() );
+        auto items   = pMultipleDimensionsBinPackingProblem->items();
+        auto g_items = new google::protobuf::RepeatedPtrField< GMultipleDimensionsBinPackingItem >();
         for ( int i = 0; i < items.size(); i++ )
         {
             auto item     = items.Get( i );
             auto external = Napi::External< MultipleDimensionsBinPackingItem >::New( info.Env(), new MultipleDimensionsBinPackingItem( item ) );
-            result.Set( i, GMultipleDimensionsBinPackingItem::constructor.New( { external } ) );
+            auto g_item   = GMultipleDimensionsBinPackingItem::constructor.New( { external } );
+            g_items->AddAllocated( GMultipleDimensionsBinPackingItem::Unwrap( g_item ) );
         }
-        return result;
+
+        auto external = Napi::External< google::protobuf::RepeatedPtrField< GMultipleDimensionsBinPackingItem > >::New( info.Env(), g_items );
+        return google::protobuf::GRepeatedPtrField< GMultipleDimensionsBinPackingItem >::constructor.New( { external } );
     }
 
     ThrowJsError( operations_research::GMultipleDimensionsBinPackingProblem::items : Invalid argument );

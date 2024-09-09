@@ -189,6 +189,11 @@ test('assignment_groups_mip', () =>
   }
 
   let parameters = new operations_research.sat.SatParameters();
+  parameters.set_log_search_progress(true);
+  parameters.set_use_timetabling_in_no_overlap_2d(true);
+  parameters.set_use_energetic_reasoning_in_no_overlap_2d(true);
+
+  let response = operations_research.sat.SolveWithParameters(cp_model.Build(), parameters);
 
 
 

@@ -3,7 +3,8 @@ export class SatParameters
     // public:
     //     inline SatParameters()
     //         : SatParameters( nullptr ) {}
-    //     ~SatParameters() override;
+    constructor();
+
     //     explicit PROTOBUF_CONSTEXPR SatParameters( ::PROTOBUF_NAMESPACE_ID::internal::ConstantInitialized );
 
     //     SatParameters( const SatParameters& from );
@@ -111,8 +112,6 @@ export class SatParameters
     //         SatParameters::MergeImpl( *this, from );
     //     }
 
-    // private:
-    //     static void MergeImpl( ::PROTOBUF_NAMESPACE_ID::Message& to_msg, const ::PROTOBUF_NAMESPACE_ID::Message& from_msg );
 
     // public:
     //     PROTOBUF_ATTRIBUTE_REINITIALIZES void Clear() final;
@@ -1620,10 +1619,8 @@ export class SatParameters
     //     void clear_log_search_progress();
     //     bool log_search_progress() const;
     //     void set_log_search_progress( bool value );
+    set_log_search_progress(value: boolean): void;
 
-    // private:
-    //     bool _internal_log_search_progress() const;
-    //     void _internal_set_log_search_progress( bool value );
 
     // public:
     //     // optional bool log_to_response = 187 [default = false];
@@ -1956,10 +1953,8 @@ export class SatParameters
     //     void clear_use_timetabling_in_no_overlap_2d();
     //     bool use_timetabling_in_no_overlap_2d() const;
     //     void set_use_timetabling_in_no_overlap_2d( bool value );
+    set_use_timetabling_in_no_overlap_2d(value: boolean): void;
 
-    // private:
-    //     bool _internal_use_timetabling_in_no_overlap_2d() const;
-    //     void _internal_set_use_timetabling_in_no_overlap_2d( bool value );
 
     // public:
     //     // optional bool use_energetic_reasoning_in_no_overlap_2d = 213 [default = false];
@@ -1973,9 +1968,6 @@ export class SatParameters
     //     bool use_energetic_reasoning_in_no_overlap_2d() const;
     //     void set_use_energetic_reasoning_in_no_overlap_2d( bool value );
 
-    // private:
-    //     bool _internal_use_energetic_reasoning_in_no_overlap_2d() const;
-    //     void _internal_set_use_energetic_reasoning_in_no_overlap_2d( bool value );
 
     // public:
     //     // optional bool only_add_cuts_at_level_zero = 92 [default = false];
