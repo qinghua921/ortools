@@ -20,6 +20,8 @@ namespace protobuf
 
         Napi::Value size( const Napi::CallbackInfo& info );
         Napi::Value Get( const Napi::CallbackInfo& info );
+        Napi::Value Add( const Napi::CallbackInfo& info );
+        Napi::Value AddAllocated( const Napi::CallbackInfo& info );
     };
 };  // namespace protobuf
 };  // namespace google
@@ -38,6 +40,13 @@ inline google::protobuf::GRepeatedPtrField< Element >::GRepeatedPtrField( const 
         if ( pRepeatedPtrField != nullptr ) return;
     }
 
+    //         constexpr RepeatedPtrField();
+    if ( info.Length() == 0 )
+    {
+        pRepeatedPtrField = new RepeatedPtrField< Element >();
+        return;
+    }
+
     ThrowJsError( google::protobuf::GRepeatedPtrField::GRepeatedPtrField : Invalid argument );
 }
 
@@ -51,7 +60,7 @@ template < typename Element >
 inline Napi::Object google::protobuf::GRepeatedPtrField< Element >::Init( Napi::Env env, Napi::Object exports )
 {
     auto get_name = []() {
-        if ( std::is_same< Element, operations_research::packing::GMultipleDimensionsBinPackingItem >::value )
+        if ( std::is_same< Element, operations_research::packing::MultipleDimensionsBinPackingItem >::value )
             return "RepeatedPtrField_MultipleDimensionsBinPackingItem";
         else
             throw std::runtime_error( "google::protobuf::GRepeatedPtrField::Init : Invalid Typename Element" );
@@ -63,11 +72,45 @@ inline Napi::Object google::protobuf::GRepeatedPtrField< Element >::Init( Napi::
         {
             GRepeatedPtrField< Element >::InstanceMethod( "size", &GRepeatedPtrField< Element >::size ),
             GRepeatedPtrField< Element >::InstanceMethod( "Get", &GRepeatedPtrField< Element >::Get ),
+            GRepeatedPtrField< Element >::InstanceMethod( "Add", &GRepeatedPtrField< Element >::Add ),
+            GRepeatedPtrField< Element >::InstanceMethod( "AddAllocated", &GRepeatedPtrField< Element >::AddAllocated ),
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, get_name() ), func );
     return exports;
+}
+
+template < typename Element >
+inline Napi::Value google::protobuf::GRepeatedPtrField< Element >::AddAllocated( const Napi::CallbackInfo& info )
+{
+    //         void AddAllocated( Element* value );
+    if ( info.Length() == 1 && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( Element::constructor.Value() ) )
+    {
+        auto element = Element::Unwrap( info[ 0 ].As< Napi::Object >() );
+        pRepeatedPtrField->AddAllocated( element );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( google::protobuf::GRepeatedPtrField::AddAllocated : Invalid argument );
+    return info.Env().Undefined();
+}
+
+template < typename Element >
+inline Napi::Value google::protobuf::GRepeatedPtrField< Element >::Add( const Napi::CallbackInfo& info )
+{
+    //         void Add( Element&& value );
+    if ( info.Length() == 1 && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( Element::constructor.Value() ) )
+    {
+        auto element = Element::Unwrap( info[ 0 ].As< Napi::Object >() );
+        pRepeatedPtrField->Add( *element );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( google::protobuf::GRepeatedPtrField::Add : Invalid argument );
+    return info.Env().Undefined();
 }
 
 template < typename Element >

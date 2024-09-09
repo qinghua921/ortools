@@ -10,6 +10,7 @@ class RepeatedPtrField<Element> extends RepeatedField<Element>
 
     //     public:
     //         constexpr RepeatedPtrField();
+    constructor();
     //         explicit RepeatedPtrField( Arena* arena );
 
     //         RepeatedPtrField( const RepeatedPtrField& other );
@@ -46,6 +47,7 @@ class RepeatedPtrField<Element> extends RepeatedField<Element>
     //         // this operation is very slow if this RepeatedPtrField is not on the
     //         // same Arena, if any, as `value`.
     //         void Add( Element&& value );
+    Add(value: Element): void;
 
     //         // Copying to the end of this RepeatedPtrField is slowest of all; it can't
     //         // reliably copy-construct to the last element of this RepeatedPtrField, for
@@ -193,6 +195,7 @@ class RepeatedPtrField<Element> extends RepeatedField<Element>
     //         //   heap-allocated, not arena-allocated. There is no way to dynamically check
     //         //   this at runtime, so User Beware.
     //         void AddAllocated( Element* value );
+    AddAllocated(value: Element): void;
 
     //         // Removes and returns the last element, passing ownership to the caller.
     //         // Requires:  size() > 0
