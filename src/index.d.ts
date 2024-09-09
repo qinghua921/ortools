@@ -44,9 +44,9 @@ import
 } from './operations_research/sat/GFunc'
 import
 {
-    CpSolverStatus as operations_research_sat_CpSolverStatus,
     DecisionStrategyProto_DomainReductionStrategy as operations_research_sat_DecisionStrategyProto_DomainReductionStrategy,
-    DecisionStrategyProto_VariableSelectionStrategy as operations_research_sat_DecisionStrategyProto_VariableSelectionStrategy
+    DecisionStrategyProto_VariableSelectionStrategy as operations_research_sat_DecisionStrategyProto_VariableSelectionStrategy,
+    CpSolverStatus as operations_research_sat_CpSolverStatus,
 } from './operations_research/sat/GEnum'
 import { IntervalVar as operations_research_sat_IntervalVar } from './operations_research/sat/GIntervalVar'
 import { NoOverlap2DConstraint as operations_research_sat_NoOverlap2DConstraint } from './operations_research/sat/GNoOverlap2DConstraint'

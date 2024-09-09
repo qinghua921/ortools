@@ -1,11 +1,3 @@
-export enum CpSolverStatus  
-{
-    UNKNOWN = 0,
-    MODEL_INVALID = 1,
-    FEASIBLE = 2,
-    INFEASIBLE = 3,
-    OPTIMAL = 4,
-}
 
 export enum DecisionStrategyProto_VariableSelectionStrategy
 {
@@ -25,4 +17,13 @@ export enum DecisionStrategyProto_DomainReductionStrategy
     SELECT_LOWER_HALF = 2,
     SELECT_UPPER_HALF = 3,
     SELECT_MEDIAN_VALUE = 4,
+}
+
+export enum CpSolverStatus  
+{
+    UNKNOWN = 0,
+    MODEL_INVALID = 1,
+    FEASIBLE = 2,
+    INFEASIBLE = 3,
+    OPTIMAL = 4,
 }

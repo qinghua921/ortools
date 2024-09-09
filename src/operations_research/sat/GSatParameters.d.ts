@@ -1139,9 +1139,6 @@ export class SatParameters
     //     ::operations_research::sat::SatParameters_SearchBranching search_branching() const;
     //     void                                                      set_search_branching( ::operations_research::sat::SatParameters_SearchBranching value );
 
-    // private:
-    //     ::operations_research::sat::SatParameters_SearchBranching _internal_search_branching() const;
-    //     void                                                      _internal_set_search_branching( ::operations_research::sat::SatParameters_SearchBranching value );
 
     // public:
     //     // optional bool use_erwa_heuristic = 75 [default = false];

@@ -26,9 +26,6 @@ import { operations_research } from "../src";
 
 test('assignment_groups_mip', () =>
 {
-    let LLC=operations_research.sat.CpSolverStatus.MODEL_INVALID;
-    let ff = operations_research.sat.DecisionStrategyProto_VariableSelectionStrategy.CHOOSE_FIRST
-    return;
     const cp_model = new operations_research.sat.CpModelBuilder();
 
 
