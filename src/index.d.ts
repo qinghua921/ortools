@@ -97,7 +97,7 @@ export namespace operations_research
     {
         export
         {
-            // TODO  math_opt
+            // FIXME  math_opt
             // operations_research_math_opt_Model as Model,
             // operations_research_math_opt_GVariable as GVariable,
             // operations_research_math_opt_GLinearConstraint as GLinearConstraint,
