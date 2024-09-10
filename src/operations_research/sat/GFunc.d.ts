@@ -63,3 +63,41 @@ export function Not(x: BoolVar): BoolVar;
 
 // std::function<SatParameters(Model*)> NewSatParameters( const SatParameters& parameters);
 export function NewSatParameters(parameters: SatParameters): (model: Model) => SatParameters;
+
+/**
+ * Solves the given CpModelProto.
+ *
+ * This advanced API accept a Model* which allows to access more adavanced
+ * features by configuring some classes in the Model before solve.
+ *
+ * For instance:
+ * - model->Add(NewSatParameters(parameters_as_string_or_proto));
+ * - model->GetOrCreate<TimeLimit>()->RegisterExternalBooleanAsLimit(&stop);
+ * - model->Add(NewFeasibleSolutionObserver(observer));
+ */
+// CpSolverResponse SolveCpModel(const CpModelProto& model_proto, Model* model);
+export function SolveCpModel(model_proto: CpModelProto, model: Model): CpSolverResponse;
+
+
+/**
+ * Creates a solution observer with the model with
+ *   model.Add(NewFeasibleSolutionObserver([](response){...}));
+ *
+ * The given function will be called on each improving feasible solution found
+ * during the search. For a non-optimization problem, if the option to find all
+ * solution was set, then this will be called on each new solution.
+ *
+ * WARNING: Except when enumerate_all_solution() is true, one shouldn't rely on
+ * this to get a set of "diverse" solutions since any future change to the
+ * solver might completely kill any diversity in the set of solutions observed.
+ *
+ * Valid usage of this includes implementing features like:
+ *  - Enumerating all solution via enumerate_all_solution(). If only n solutions
+ *    are needed, this can also be used to abort when this number is reached.
+ *  - Aborting early if a good enough solution is found.
+ *  - Displaying log progress.
+ *  - etc...
+ */
+// std::function<void(Model*)> NewFeasibleSolutionObserver(
+//     const std::function<void(const CpSolverResponse& response)>& observer);
+export function NewFeasibleSolutionObserver(observer: (response: CpSolverResponse) => void): (model: Model) => void;

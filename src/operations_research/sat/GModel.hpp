@@ -65,8 +65,8 @@ inline Napi::Object operations_research::sat::GModel::Init( Napi::Env env, Napi:
 
 inline Napi::Value operations_research::sat::GModel::Add( const Napi::CallbackInfo& info )
 {
-    //     template < typename T >
-    //     T Add( std::function< T( Model* ) > f )
+    // template < typename T >
+    // T Add( std::function< T( Model* ) > f )
     if ( info.Length() == 1 && info[ 0 ].IsFunction() )
     {
         auto f = info[ 0 ].As< Napi::Function >();

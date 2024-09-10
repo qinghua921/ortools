@@ -42,6 +42,8 @@ import
     SolveWithParameters as operations_research_sat_SolveWithParameters,
     Not as operations_research_sat_Not,
     NewSatParameters as operations_research_sat_NewSatParameters,
+    SolveCpModel as operations_research_sat_SolveCpModel,
+    NewFeasibleSolutionObserver as operations_research_sat_NewFeasibleSolutionObserver,
 } from './operations_research/sat/GFunc'
 import
 {
@@ -134,6 +136,8 @@ export namespace operations_research
             operations_research_sat_SolveWithParameters as SolveWithParameters,
             operations_research_sat_Not as Not,
             operations_research_sat_NewSatParameters as NewSatParameters,
+            operations_research_sat_SolveCpModel as SolveCpModel,
+            operations_research_sat_NewFeasibleSolutionObserver as NewFeasibleSolutionObserver,
             operations_research_sat_CpSolverStatus as CpSolverStatus,
             operations_research_sat_DecisionStrategyProto_DomainReductionStrategy as DecisionStrategyProto_DomainReductionStrategy,
             operations_research_sat_DecisionStrategyProto_VariableSelectionStrategy as DecisionStrategyProto_VariableSelectionStrategy,

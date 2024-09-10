@@ -1,9 +1,3 @@
-
-//         // Create a solver and solve with a fixed search.
-//         Model         model;
-//         SatParameters parameters;
-//         parameters.set_search_branching( SatParameters::FIXED_SEARCH );
-//         parameters.set_enumerate_all_solutions( true );
 //         model.Add( NewSatParameters( parameters ) );
 //         model.Add( NewFeasibleSolutionObserver( [ & ]( const CpSolverResponse& r ) {
 //             LOG( INFO ) << "x=" << SolutionIntegerValue( r, x )
@@ -48,5 +42,17 @@ test('assignment_groups_mip', () =>
     parameters.set_search_branching(operations_research.sat.SatParameters.SearchBranching.FIXED_SEARCH);
     parameters.set_enumerate_all_solutions(true);
     model.Add(operations_research.sat.NewSatParameters(parameters));
+
+    // model.Add(operations_research.sat.NewFeasibleSolutionObserver(
+    //     (response: operations_research.sat.CpSolverResponse) =>
+    //     {
+    //         console.log(`x=${operations_research.sat.SolutionIntegerValue(response, x)} ` +
+    //                     `y=${operations_research.sat.SolutionIntegerValue(response, y)} ` +     
+                        
+    //                     `b=${operations_research.sat.SolutionBooleanValue(response, b)}`);
+    //     }
+    // ));
+
+    operations_research.sat.SolveCpModel(cp_model.Build(), model);
 }
 );

@@ -26,6 +26,8 @@ namespace sat
     Napi::Value GSolveWithParameters( const Napi::CallbackInfo& info );
     Napi::Value GNot( const Napi::CallbackInfo& info );
     Napi::Value GNewSatParameters( const Napi::CallbackInfo& info );
+    Napi::Value GSolveCpModel( const Napi::CallbackInfo& info );
+    Napi::Value GNewFeasibleSolutionObserver( const Napi::CallbackInfo& info );
 
 };  // namespace sat
 };  // namespace operations_research
@@ -45,8 +47,65 @@ inline Napi::Object operations_research::sat::GFuncInit( Napi::Env env, Napi::Ob
     exports.Set( Napi::String::New( env, "SolveWithParameters" ), Napi::Function::New( env, GSolveWithParameters ) );
     exports.Set( Napi::String::New( env, "Not" ), Napi::Function::New( env, GNot ) );
     exports.Set( Napi::String::New( env, "NewSatParameters" ), Napi::Function::New( env, GNewSatParameters ) );
+    exports.Set( Napi::String::New( env, "SolveCpModel" ), Napi::Function::New( env, GSolveCpModel ) );
+    exports.Set( Napi::String::New( env, "NewFeasibleSolutionObserver" ), Napi::Function::New( env, GNewFeasibleSolutionObserver ) );
 
     return exports;
+}
+
+inline Napi::Value operations_research::sat::GNewFeasibleSolutionObserver( const Napi::CallbackInfo& info )
+{
+    // std::function<void(Model*)> NewFeasibleSolutionObserver(
+    //     const std::function<void(const CpSolverResponse& response)>& observer);
+    if ( info.Length() == 1 && info[ 0 ].IsFunction() )
+    {
+        // TODO  
+        // auto observer = info[ 0 ].As< Napi::Function >();
+        // auto ret_func = NewFeasibleSolutionObserver(
+        //     [ observer ]( Model* model )  //
+        //     {
+        //         auto response = CpSolverResponse( model->solver() );
+        //         observer.Call( { Napi::External< CpSolverResponse >::New( info.Env(), new CpSolverResponse( response ) ) } );
+        //     } );
+
+        // return Napi::Function::New(
+        //     info.Env(), [ ret_func ]( const Napi::CallbackInfo& info ) -> Napi::Value  //
+        //     {
+        //         if ( info.Length() == 1 && info[ 0 ].IsObject()
+        //              && info[ 0 ].As< Napi::Object >().InstanceOf( GModel::constructor.Value() ) )
+        //         {
+        //             auto model = GModel::Unwrap( info[ 0 ].As< Napi::Object >() );
+        //             ret_func( model->pModel );
+        //             return info.Env().Undefined();
+        //         }
+
+        //         ThrowJsError( operations_research::sat::GNewFeasibleSolutionObserver : Invalid arguments );
+        //         return info.Env().Undefined();
+        //     } );
+    }
+
+    ThrowJsError( operations_research::sat::GNewFeasibleSolutionObserver : Invalid arguments );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::sat::GSolveCpModel( const Napi::CallbackInfo& info )
+{
+    // CpSolverResponse SolveCpModel(const CpModelProto& model_proto, Model* model);
+    if ( info.Length() == 2
+         && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GCpModelProto::constructor.Value() )
+         && info[ 1 ].IsObject()
+         && info[ 1 ].As< Napi::Object >().InstanceOf( GModel::constructor.Value() ) )
+    {
+        auto model_proto      = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto model            = GModel::Unwrap( info[ 1 ].As< Napi::Object >() );
+        auto cpSolverResponse = SolveCpModel( *model_proto->pCpModelProto, model->pModel );
+        auto exterior         = Napi::External< CpSolverResponse >::New( info.Env(), new CpSolverResponse( cpSolverResponse ) );
+        return GCpSolverResponse::constructor.New( { exterior } );
+    }
+
+    ThrowJsError( operations_research::sat::GSolve : Invalid arguments );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::sat::GNewSatParameters( const Napi::CallbackInfo& info )
