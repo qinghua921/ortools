@@ -6,6 +6,7 @@
 #include "GCpSolverResponse.hpp"
 #include "GSatParameters.hpp"
 #include "../../commonheader.hpp"
+#include "GModel.hpp"
 
 namespace operations_research
 {
@@ -24,6 +25,7 @@ namespace sat
     Napi::Value GSolutionBooleanValue( const Napi::CallbackInfo& info );
     Napi::Value GSolveWithParameters( const Napi::CallbackInfo& info );
     Napi::Value GNot( const Napi::CallbackInfo& info );
+    Napi::Value GNewSatParameters( const Napi::CallbackInfo& info );
 
 };  // namespace sat
 };  // namespace operations_research
@@ -42,8 +44,38 @@ inline Napi::Object operations_research::sat::GFuncInit( Napi::Env env, Napi::Ob
     exports.Set( Napi::String::New( env, "SolutionBooleanValue" ), Napi::Function::New( env, GSolutionBooleanValue ) );
     exports.Set( Napi::String::New( env, "SolveWithParameters" ), Napi::Function::New( env, GSolveWithParameters ) );
     exports.Set( Napi::String::New( env, "Not" ), Napi::Function::New( env, GNot ) );
+    exports.Set( Napi::String::New( env, "NewSatParameters" ), Napi::Function::New( env, GNewSatParameters ) );
 
     return exports;
+}
+
+inline Napi::Value operations_research::sat::GNewSatParameters( const Napi::CallbackInfo& info )
+{
+    // std::function<SatParameters(Model*)> NewSatParameters( const SatParameters& parameters);
+    if ( info.Length() == 1 && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GSatParameters::constructor.Value() ) )
+    {
+        auto sat_parameters = GSatParameters::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto ret_func       = NewSatParameters( *sat_parameters->pSatParameters );
+        auto ret_js_func    = Napi::Function::New(
+            info.Env(), [ ret_func ]( const Napi::CallbackInfo& info ) -> Napi::Value  //
+            {
+                if ( info.Length() == 1 && info[ 0 ].IsObject()
+                     && info[ 0 ].As< Napi::Object >().InstanceOf( GModel::constructor.Value() ) )
+                {
+                    auto model = GModel::Unwrap( info[ 0 ].As< Napi::Object >() );
+                    auto ret   = ret_func( model->pModel );
+                    return GSatParameters::constructor.New( { Napi::External< SatParameters >::New( info.Env(), new SatParameters( ret ) ) } );
+                }
+
+                ThrowJsError( operations_research::sat::GNewSatParameters std::function< SatParameters( Model* ) > : Invalid arguments );
+                return info.Env().Undefined();
+            } );
+        return ret_js_func;
+    }
+
+    ThrowJsError( operations_research::sat::GNewSatParameters : Invalid arguments );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::sat::GNot( const Napi::CallbackInfo& info )

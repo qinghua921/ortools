@@ -20,6 +20,8 @@ namespace sat
         Napi::Value set_log_search_progress( const Napi::CallbackInfo& info );
         Napi::Value set_use_timetabling_in_no_overlap_2d( const Napi::CallbackInfo& info );
         Napi::Value set_use_energetic_reasoning_in_no_overlap_2d( const Napi::CallbackInfo& info );
+        Napi::Value set_search_branching( const Napi::CallbackInfo& info );
+        Napi::Value set_enumerate_all_solutions( const Napi::CallbackInfo& info );
     };
 };  // namespace sat
 };  // namespace operations_research
@@ -74,11 +76,39 @@ inline Napi::Object operations_research::sat::GSatParameters::Init( Napi::Env en
             InstanceMethod( "set_log_search_progress", &GSatParameters::set_log_search_progress ),
             InstanceMethod( "set_use_timetabling_in_no_overlap_2d", &GSatParameters::set_use_timetabling_in_no_overlap_2d ),
             InstanceMethod( "set_use_energetic_reasoning_in_no_overlap_2d", &GSatParameters::set_use_energetic_reasoning_in_no_overlap_2d ),
+            InstanceMethod( "set_search_branching", &GSatParameters::set_search_branching ),
+            InstanceMethod( "set_enumerate_all_solutions", &GSatParameters::set_enumerate_all_solutions ),
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "SatParameters" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::sat::GSatParameters::set_enumerate_all_solutions( const Napi::CallbackInfo& info )
+{
+    //     void set_enumerate_all_solutions( bool value );
+    if ( info.Length() == 1 && info[ 0 ].IsBoolean() )
+    {
+        pSatParameters->set_enumerate_all_solutions( info[ 0 ].As< Napi::Boolean >().Value() );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GSatParameters::set_enumerate_all_solutions : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::sat::GSatParameters::set_search_branching( const Napi::CallbackInfo& info )
+{
+    //     void  set_search_branching( ::operations_research::sat::SatParameters_SearchBranching value );
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        pSatParameters->set_search_branching( static_cast< SatParameters::SearchBranching >( info[ 0 ].As< Napi::Number >().Int32Value() ) );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GSatParameters::set_search_branching : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::sat::GSatParameters::set_use_energetic_reasoning_in_no_overlap_2d( const Napi::CallbackInfo& info )

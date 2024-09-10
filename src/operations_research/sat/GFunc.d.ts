@@ -2,6 +2,7 @@ import { BoolVar } from './GBoolVar';
 import { CpModelProto } from './GCpModelProto';
 import { CpSolverResponse } from './GCpSolverResponse';
 import { CanAsLinearExpr, LinearExpr } from './GLinearExpr';
+import { Model } from './GModel';
 import { SatParameters } from './GSatParameters';
 
 // inline LinearExpr operator-( LinearExpr expr )
@@ -59,3 +60,6 @@ export function SolveWithParameters(model_proto: CpModelProto, params: SatParame
  */
 // BoolVar Not(BoolVar x);
 export function Not(x: BoolVar): BoolVar;
+
+// std::function<SatParameters(Model*)> NewSatParameters( const SatParameters& parameters);
+export function NewSatParameters(parameters: SatParameters): (model: Model) => SatParameters;

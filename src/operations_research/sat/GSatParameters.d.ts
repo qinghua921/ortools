@@ -1137,8 +1137,8 @@ export class SatParameters
     // public:
     //     void                                                      clear_search_branching();
     //     ::operations_research::sat::SatParameters_SearchBranching search_branching() const;
-    //     void                                                      set_search_branching( ::operations_research::sat::SatParameters_SearchBranching value );
-
+    //     void  set_search_branching( ::operations_research::sat::SatParameters_SearchBranching value );
+    set_search_branching(value: SatParameters.SearchBranching): void;
 
     // public:
     //     // optional bool use_erwa_heuristic = 75 [default = false];
@@ -1392,32 +1392,23 @@ export class SatParameters
     //     bool optimize_with_max_hs() const;
     //     void set_optimize_with_max_hs( bool value );
 
-    // private:
-    //     bool _internal_optimize_with_max_hs() const;
-    //     void _internal_set_optimize_with_max_hs( bool value );
 
     // public:
     //     // optional bool enumerate_all_solutions = 87 [default = false];
     //     bool has_enumerate_all_solutions() const;
 
-    // private:
-    //     bool _internal_has_enumerate_all_solutions() const;
 
     // public:
     //     void clear_enumerate_all_solutions();
     //     bool enumerate_all_solutions() const;
     //     void set_enumerate_all_solutions( bool value );
+    set_enumerate_all_solutions(value: boolean): void;
 
-    // private:
-    //     bool _internal_enumerate_all_solutions() const;
-    //     void _internal_set_enumerate_all_solutions( bool value );
 
     // public:
     //     // optional bool keep_all_feasible_solutions_in_presolve = 173 [default = false];
     //     bool has_keep_all_feasible_solutions_in_presolve() const;
 
-    // private:
-    //     bool _internal_has_keep_all_feasible_solutions_in_presolve() const;
 
     // public:
     //     void clear_keep_all_feasible_solutions_in_presolve();

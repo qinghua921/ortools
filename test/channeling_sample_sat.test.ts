@@ -45,8 +45,8 @@ test('assignment_groups_mip', () =>
 
     const model = new operations_research.sat.Model();
     const parameters = new operations_research.sat.SatParameters();
-    parameters.set_search_branching(operations_research.sat.SatParameters.FIXED_SEARCH);
+    parameters.set_search_branching(operations_research.sat.SatParameters.SearchBranching.FIXED_SEARCH);
     parameters.set_enumerate_all_solutions(true);
-    // model.add(operations_research.sat.NewSatParameters(parameters));
+    model.Add(operations_research.sat.NewSatParameters(parameters));
 }
 );
