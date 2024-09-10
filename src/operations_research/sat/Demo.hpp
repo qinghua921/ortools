@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "commonheader.hpp"
 
 namespace operations_research
@@ -11,9 +10,8 @@ namespace sat
     {
     public:
         static Napi::FunctionReference constructor;
-        Demo*                          pDemo = nullptr;
+        std::shared_ptr< Demo >        pDemo;
         GDemo( const Napi::CallbackInfo& info );
-        ~GDemo();
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
     };
 };  // namespace sat
@@ -26,17 +24,12 @@ inline operations_research::sat::GDemo::GDemo( const Napi::CallbackInfo& info )
 {
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
-        auto external = info[ 0 ].As< Napi::External< Demo > >();
-        pDemo         = dynamic_cast< Demo* >( external.Data() );
-        if ( pDemo != nullptr ) return;
+        auto external = info[ 0 ].As< Napi::External< std::shared_ptr< Demo > > >();
+        pDemo         = *external.Data();
+        return;
     }
 
     ThrowJsError( operations_research::GDemo::GDemo : Invalid argument );
-}
-
-inline operations_research::sat::GDemo::~GDemo()
-{
-    delete pDemo;
 }
 
 inline Napi::Object operations_research::sat::GDemo::Init( Napi::Env env, Napi::Object exports )

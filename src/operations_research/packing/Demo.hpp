@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "commonheader.hpp"
 
 namespace operations_research
@@ -11,9 +10,8 @@ namespace packing
     {
     public:
         static Napi::FunctionReference constructor;
-        Demo*                          pDemo = nullptr;
+        std::shared_ptr< Demo >        pDemo;
         GDemo( const Napi::CallbackInfo& info );
-        ~GDemo();
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
     };
 };  // namespace packing
@@ -27,16 +25,11 @@ inline operations_research::packing::GDemo::GDemo( const Napi::CallbackInfo& inf
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
         auto external = info[ 0 ].As< Napi::External< Demo > >();
-        pDemo         = dynamic_cast< Demo* >( external.Data() );
-        if ( pDemo != nullptr ) return;
+        pDemo         = *external.Data();
+        return;
     }
 
     ThrowJsError( operations_research::GDemo::GDemo : Invalid argument );
-}
-
-inline operations_research::packing::GDemo::~GDemo()
-{
-    delete pDemo;
 }
 
 inline Napi::Object operations_research::packing::GDemo::Init( Napi::Env env, Napi::Object exports )

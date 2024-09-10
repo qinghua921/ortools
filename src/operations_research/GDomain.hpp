@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "commonheader.hpp"
 #include "ortools/sat/cp_model.h"
 
@@ -10,9 +9,8 @@ class GDomain : public Napi::ObjectWrap< GDomain >
 {
 public:
     static Napi::FunctionReference constructor;
-    Domain*                        pDomain = nullptr;
+    std::shared_ptr< Domain >      pDomain;
     GDomain( const Napi::CallbackInfo& info );
-    ~GDomain();
     static Napi::Object Init( Napi::Env env, Napi::Object exports );
 };
 };  // namespace operations_research
@@ -25,14 +23,14 @@ inline operations_research::GDomain::GDomain( const Napi::CallbackInfo& info )
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
         auto external = info[ 0 ].As< Napi::External< Domain > >();
-        pDomain       = dynamic_cast< Domain* >( external.Data() );
-        if ( pDomain != nullptr ) return;
+        pDomain       = std::shared_ptr< Domain >( external.Data() );
+        return;
     }
 
     //      Domain() {}
     if ( info.Length() == 0 )
     {
-        pDomain = new Domain();
+        pDomain = std::make_shared< Domain >();
         return;
     }
 
@@ -41,16 +39,11 @@ inline operations_research::GDomain::GDomain( const Napi::CallbackInfo& info )
     {
         int64_t left  = info[ 0 ].As< Napi::Number >().Int64Value();
         int64_t right = info[ 1 ].As< Napi::Number >().Int64Value();
-        pDomain       = new Domain( left, right );
+        pDomain       = std::make_shared< Domain >( left, right );
         return;
     }
 
     ThrowJsError( operations_research::GDomain::GDomain : Invalid argument );
-}
-
-inline operations_research::GDomain::~GDomain()
-{
-    delete pDomain;
 }
 
 inline Napi::Object operations_research::GDomain::Init( Napi::Env env, Napi::Object exports )

@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "commonheader.hpp"
 
 namespace absl
@@ -9,9 +8,8 @@ class GDemo : public Napi::ObjectWrap< GDemo >
 {
 public:
     static Napi::FunctionReference constructor;
-    Demo*                          pDemo = nullptr;
+    std::shared_ptr< Demo >        pDemo;
     GDemo( const Napi::CallbackInfo& info );
-    ~GDemo();
     static Napi::Object Init( Napi::Env env, Napi::Object exports );
 };
 };  // namespace absl
@@ -23,17 +21,12 @@ inline absl::GDemo::GDemo( const Napi::CallbackInfo& info )
 {
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
-        auto external = info[ 0 ].As< Napi::External< Demo > >();
-        pDemo         = dynamic_cast< Demo* >( external.Data() );
-        if ( pDemo != nullptr ) return;
+        auto external = info[ 0 ].As< Napi::External< std::shared_ptr< Demo > > >();
+        pDemo         = *external.Data();
+        return;
     }
 
     ThrowJsError( absl::GDemo::GDemo : Invalid argument );
-}
-
-inline absl::GDemo::~GDemo()
-{
-    delete pDemo;
 }
 
 inline Napi::Object absl::GDemo::Init( Napi::Env env, Napi::Object exports )
