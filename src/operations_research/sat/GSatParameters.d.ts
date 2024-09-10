@@ -1970,6 +1970,7 @@ export class SatParameters
     //     void clear_use_energetic_reasoning_in_no_overlap_2d();
     //     bool use_energetic_reasoning_in_no_overlap_2d() const;
     //     void set_use_energetic_reasoning_in_no_overlap_2d( bool value );
+    set_use_energetic_reasoning_in_no_overlap_2d(value: boolean): void;
 
 
     // public:
