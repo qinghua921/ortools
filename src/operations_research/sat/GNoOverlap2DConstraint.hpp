@@ -1,6 +1,6 @@
 #pragma once
 
-#include <napi.h>
+
 #include "commonheader.hpp"
 #include "ortools/sat/cp_model.h"
 #include "GIntervalVar.hpp"

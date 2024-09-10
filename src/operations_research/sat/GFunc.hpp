@@ -1,6 +1,6 @@
 #pragma once
 
-#include <napi.h>
+
 #include "GLinearExpr.hpp"
 #include "GCpModelProto.hpp"
 #include "GCpSolverResponse.hpp"

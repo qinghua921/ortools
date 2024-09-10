@@ -1,6 +1,6 @@
 #pragma once
 
-#include <napi.h>
+
 #include "commonheader.hpp"
 #include "ortools/linear_solver/linear_solver.h"
 #include "GMPVariable.hpp"
