@@ -1,7 +1,7 @@
 #pragma once
 
 #include <napi.h>
-#include "../../commonheader.hpp"
+#include "commonheader.hpp"
 #include "ortools/sat/model.h"
 
 namespace operations_research

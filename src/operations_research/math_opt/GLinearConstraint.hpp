@@ -1,7 +1,7 @@
 #pragma once
 
-#include <napi.h>
-#include "../../commonheader.hpp"
+
+#include "commonheader.hpp"
 #include "ortools/math_opt/cpp/math_opt.h"
 
 namespace operations_research

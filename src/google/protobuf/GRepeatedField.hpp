@@ -1,7 +1,7 @@
 #pragma once
 
-#include <napi.h>
-#include "../../commonheader.hpp"
+
+#include "commonheader.hpp"
 #include "google/protobuf/repeated_field.h"
 
 namespace google

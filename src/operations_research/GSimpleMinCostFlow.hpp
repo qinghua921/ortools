@@ -1,7 +1,7 @@
 #pragma once
 
 #include <napi.h>
-#include "../commonheader.hpp"
+#include "commonheader.hpp"
 #include "ortools/graph/min_cost_flow.h"
 
 namespace operations_research

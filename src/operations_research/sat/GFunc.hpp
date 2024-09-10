@@ -5,7 +5,7 @@
 #include "GCpModelProto.hpp"
 #include "GCpSolverResponse.hpp"
 #include "GSatParameters.hpp"
-#include "../../commonheader.hpp"
+#include "commonheader.hpp"
 #include "GModel.hpp"
 
 namespace operations_research

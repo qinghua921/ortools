@@ -1,7 +1,7 @@
 #pragma once
 
 #include <napi.h>
-#include "../../commonheader.hpp"
+#include "commonheader.hpp"
 #include "ortools/packing/binpacking_2d_parser.h"
 #include "GMultipleDimensionsBinPackingShape.hpp"
 

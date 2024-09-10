@@ -1,7 +1,7 @@
 #pragma once
 
 #include <napi.h>
-#include "../../commonheader.hpp"
+#include "commonheader.hpp"
 #include "GConstraint.hpp"
 
 namespace operations_research
