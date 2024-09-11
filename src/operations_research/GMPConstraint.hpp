@@ -10,7 +10,7 @@ namespace operations_research
 class GMPConstraint : public Napi::ObjectWrap< GMPConstraint >
 {
 public:
-    static Napi::FunctionReference constructor;
+    static inline Napi::FunctionReference constructor;
     MPConstraint*                  pMPConstraint = nullptr;
     GMPConstraint( const Napi::CallbackInfo& info );
     ~GMPConstraint();
@@ -20,7 +20,7 @@ public:
 };
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::GMPConstraint::constructor;
+
 
 inline operations_research::GMPConstraint::GMPConstraint( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GMPConstraint >( info )

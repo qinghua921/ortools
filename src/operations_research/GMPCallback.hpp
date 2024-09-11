@@ -9,7 +9,7 @@ namespace operations_research
 class GMPCallback : public Napi::ObjectWrap< GMPCallback >
 {
 public:
-    static Napi::FunctionReference constructor;
+    static inline Napi::FunctionReference constructor;
     MPCallback*                          pMPCallback = nullptr;
     GMPCallback( const Napi::CallbackInfo& info );
     ~GMPCallback();
@@ -17,7 +17,7 @@ public:
 };
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::GMPCallback::constructor;
+
 
 inline operations_research::GMPCallback::GMPCallback( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GMPCallback >( info )

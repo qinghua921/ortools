@@ -12,7 +12,7 @@ namespace protobuf
     class GRepeatedPtrField : public Napi::ObjectWrap< GRepeatedPtrField< Element > >
     {
     public:
-        static Napi::FunctionReference constructor;
+        static inline Napi::FunctionReference constructor;
         RepeatedPtrField< Element >*   pRepeatedPtrField = nullptr;
         GRepeatedPtrField( const Napi::CallbackInfo& info );
         ~GRepeatedPtrField();
@@ -26,8 +26,6 @@ namespace protobuf
 };  // namespace protobuf
 };  // namespace google
 
-template < typename Element >
-Napi::FunctionReference google::protobuf::GRepeatedPtrField< Element >::constructor;
 
 template < typename Element >
 inline google::protobuf::GRepeatedPtrField< Element >::GRepeatedPtrField( const Napi::CallbackInfo& info )

@@ -11,7 +11,7 @@ namespace math_opt
     class GVariable : public Napi::ObjectWrap< GVariable >
     {
     public:
-        static Napi::FunctionReference constructor;
+        static inline Napi::FunctionReference constructor;
         Variable*                      pVariable = nullptr;
         GVariable( const Napi::CallbackInfo& info );
         ~GVariable();
@@ -20,7 +20,7 @@ namespace math_opt
 };  // namespace math_opt
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::math_opt::GVariable::constructor;
+
 
 inline operations_research::math_opt::GVariable::GVariable( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GVariable >( info )

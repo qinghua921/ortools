@@ -11,7 +11,7 @@ namespace sat
     class GDecisionStrategyProto : public Napi::ObjectWrap< GDecisionStrategyProto >
     {
     public:
-        static Napi::FunctionReference constructor;
+        static inline Napi::FunctionReference constructor;
         DecisionStrategyProto*                          pDecisionStrategyProto = nullptr;
         GDecisionStrategyProto( const Napi::CallbackInfo& info );
         ~GDecisionStrategyProto();
@@ -20,7 +20,7 @@ namespace sat
 };  // namespace sat
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::sat::GDecisionStrategyProto::constructor;
+
 
 inline operations_research::sat::GDecisionStrategyProto::GDecisionStrategyProto( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GDecisionStrategyProto >( info )

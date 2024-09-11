@@ -11,7 +11,7 @@ namespace sat
     class GSatParameters : public Napi::ObjectWrap< GSatParameters >
     {
     public:
-        static Napi::FunctionReference constructor;
+        static inline Napi::FunctionReference constructor;
         SatParameters*                 pSatParameters = nullptr;
         GSatParameters( const Napi::CallbackInfo& info );
         ~GSatParameters();
@@ -26,7 +26,7 @@ namespace sat
 };  // namespace sat
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::sat::GSatParameters::constructor;
+
 
 inline operations_research::sat::GSatParameters::GSatParameters( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GSatParameters >( info )

@@ -13,7 +13,7 @@ namespace sat
     class GLinearExpr : public Napi::ObjectWrap< GLinearExpr >
     {
     public:
-        static Napi::FunctionReference constructor;
+        static inline Napi::FunctionReference constructor;
         LinearExpr*                    pLinearExpr = nullptr;
         GLinearExpr( const Napi::CallbackInfo& info );
         ~GLinearExpr();
@@ -29,7 +29,7 @@ namespace sat
 };  // namespace sat
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::sat::GLinearExpr::constructor;
+
 
 inline operations_research::sat::GLinearExpr::GLinearExpr( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GLinearExpr >( info )

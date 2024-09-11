@@ -12,7 +12,7 @@ namespace sat
     class GIntVar : public Napi::ObjectWrap< GIntVar >
     {
     public:
-        static Napi::FunctionReference constructor;
+        static inline Napi::FunctionReference constructor;
         IntVar*                        pIntVar = nullptr;
         GIntVar( const Napi::CallbackInfo& info );
         ~GIntVar();
@@ -23,7 +23,7 @@ namespace sat
 };  // namespace sat
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::sat::GIntVar::constructor;
+
 
 inline operations_research::sat::GIntVar::GIntVar( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GIntVar >( info )

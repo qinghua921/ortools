@@ -9,7 +9,7 @@ namespace operations_research
 class GMPModelProto : public Napi::ObjectWrap< GMPModelProto >
 {
 public:
-    static Napi::FunctionReference constructor;
+    static inline Napi::FunctionReference constructor;
     MPModelProto*                          pMPModelProto = nullptr;
     GMPModelProto( const Napi::CallbackInfo& info );
     ~GMPModelProto();
@@ -17,7 +17,7 @@ public:
 };
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::GMPModelProto::constructor;
+
 
 inline operations_research::GMPModelProto::GMPModelProto( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GMPModelProto >( info )

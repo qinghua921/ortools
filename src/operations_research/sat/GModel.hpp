@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "commonheader.hpp"
 #include "ortools/sat/model.h"
 
@@ -11,10 +10,9 @@ namespace sat
     class GModel : public Napi::ObjectWrap< GModel >
     {
     public:
-        static Napi::FunctionReference constructor;
-        Model*                         pModel = nullptr;
+        static inline Napi::FunctionReference constructor;
+        std::shared_ptr< Model >              shared_ptr;
         GModel( const Napi::CallbackInfo& info );
-        ~GModel();
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
 
         Napi::Value Add( const Napi::CallbackInfo& info );
@@ -22,31 +20,24 @@ namespace sat
 };  // namespace sat
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::sat::GModel::constructor;
-
 inline operations_research::sat::GModel::GModel( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GModel >( info )
 {
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
-        auto external = info[ 0 ].As< Napi::External< Model > >();
-        pModel        = dynamic_cast< Model* >( external.Data() );
-        if ( pModel != nullptr ) return;
+        auto external = info[ 0 ].As< Napi::External< std::shared_ptr< Model > > >();
+        shared_ptr    = *external.Data();
+        return;
     }
 
     //     Model() {}
     if ( info.Length() == 0 )
     {
-        pModel = new Model();
+        shared_ptr = std::make_shared< Model >();
         return;
     }
 
     ThrowJsError( operations_research::GModel::GModel : Invalid argument );
-}
-
-inline operations_research::sat::GModel::~GModel()
-{
-    delete pModel;
 }
 
 inline Napi::Object operations_research::sat::GModel::Init( Napi::Env env, Napi::Object exports )

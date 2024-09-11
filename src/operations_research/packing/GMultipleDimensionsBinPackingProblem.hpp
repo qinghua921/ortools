@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "commonheader.hpp"
 #include "ortools/packing/binpacking_2d_parser.h"
 #include "GMultipleDimensionsBinPackingShape.hpp"
@@ -14,10 +13,9 @@ namespace packing
     class GMultipleDimensionsBinPackingProblem : public Napi::ObjectWrap< GMultipleDimensionsBinPackingProblem >
     {
     public:
-        static Napi::FunctionReference       constructor;
-        MultipleDimensionsBinPackingProblem* pMultipleDimensionsBinPackingProblem = nullptr;
+        static inline Napi::FunctionReference                  constructor;
+        std::shared_ptr< MultipleDimensionsBinPackingProblem > shared_ptr;
         GMultipleDimensionsBinPackingProblem( const Napi::CallbackInfo& info );
-        ~GMultipleDimensionsBinPackingProblem();
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
 
         Napi::Value items_size( const Napi::CallbackInfo& info );
@@ -27,24 +25,17 @@ namespace packing
 };  // namespace packing
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::packing::GMultipleDimensionsBinPackingProblem::constructor;
-
 inline operations_research::packing::GMultipleDimensionsBinPackingProblem::GMultipleDimensionsBinPackingProblem( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GMultipleDimensionsBinPackingProblem >( info )
 {
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
-        auto external                        = info[ 0 ].As< Napi::External< MultipleDimensionsBinPackingProblem > >();
-        pMultipleDimensionsBinPackingProblem = dynamic_cast< MultipleDimensionsBinPackingProblem* >( external.Data() );
-        if ( pMultipleDimensionsBinPackingProblem != nullptr ) return;
+        auto external = info[ 0 ].As< Napi::External< std::shared_ptr< MultipleDimensionsBinPackingProblem > > >();
+        shared_ptr    = *external.Data();
+        return;
     }
 
     ThrowJsError( operations_research::GMultipleDimensionsBinPackingProblem::GMultipleDimensionsBinPackingProblem : Invalid argument );
-}
-
-inline operations_research::packing::GMultipleDimensionsBinPackingProblem::~GMultipleDimensionsBinPackingProblem()
-{
-    delete pMultipleDimensionsBinPackingProblem;
 }
 
 inline Napi::Object operations_research::packing::GMultipleDimensionsBinPackingProblem::Init( Napi::Env env, Napi::Object exports )
@@ -69,7 +60,7 @@ inline Napi::Value operations_research::packing::GMultipleDimensionsBinPackingPr
     if ( info.Length() == 1 && info[ 0 ].IsNumber() )
     {
         int  index    = info[ 0 ].As< Napi::Number >().Int32Value();
-        auto item     = pMultipleDimensionsBinPackingProblem->items( index );
+        auto item     = shared_ptr->items( index );
         auto external = Napi::External< MultipleDimensionsBinPackingItem >::New( info.Env(), new MultipleDimensionsBinPackingItem( item ) );
         return GMultipleDimensionsBinPackingItem::constructor.New( { external } );
     }
@@ -78,7 +69,7 @@ inline Napi::Value operations_research::packing::GMultipleDimensionsBinPackingPr
     //     items() const;
     if ( info.Length() == 0 )
     {
-        auto items   = pMultipleDimensionsBinPackingProblem->items();
+        auto items   = shared_ptr->items();
         auto g_items = new google::protobuf::RepeatedPtrField< GMultipleDimensionsBinPackingItem >();
         for ( int i = 0; i < items.size(); i++ )
         {
@@ -101,7 +92,7 @@ inline Napi::Value operations_research::packing::GMultipleDimensionsBinPackingPr
     //     const ::operations_research::packing::MultipleDimensionsBinPackingShape&              box_shape() const;
     if ( info.Length() == 0 )
     {
-        auto box_shape = pMultipleDimensionsBinPackingProblem->box_shape();
+        auto box_shape = shared_ptr->box_shape();
         auto external  = Napi::External< MultipleDimensionsBinPackingShape >::New( info.Env(), new MultipleDimensionsBinPackingShape( box_shape ) );
         return GMultipleDimensionsBinPackingShape::constructor.New( { external } );
     }
@@ -115,7 +106,7 @@ inline Napi::Value operations_research::packing::GMultipleDimensionsBinPackingPr
     //     int items_size() const;
     if ( info.Length() == 0 )
     {
-        return Napi::Number::New( info.Env(), pMultipleDimensionsBinPackingProblem->items_size() );
+        return Napi::Number::New( info.Env(), shared_ptr->items_size() );
     }
 
     ThrowJsError( operations_research::GMultipleDimensionsBinPackingProblem::items_size : Invalid argument );

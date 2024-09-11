@@ -9,7 +9,7 @@ namespace operations_research
 class GMPSolutionResponse : public Napi::ObjectWrap< GMPSolutionResponse >
 {
 public:
-    static Napi::FunctionReference constructor;
+    static inline Napi::FunctionReference constructor;
     MPSolutionResponse*            pMPSolutionResponse = nullptr;
     GMPSolutionResponse( const Napi::CallbackInfo& info );
     ~GMPSolutionResponse();
@@ -17,7 +17,7 @@ public:
 };
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::GMPSolutionResponse::constructor;
+
 
 inline operations_research::GMPSolutionResponse::GMPSolutionResponse( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GMPSolutionResponse >( info )

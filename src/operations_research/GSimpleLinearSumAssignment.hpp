@@ -9,7 +9,7 @@ namespace operations_research
 class GSimpleLinearSumAssignment : public Napi::ObjectWrap< GSimpleLinearSumAssignment >
 {
 public:
-    static Napi::FunctionReference constructor;
+    static inline Napi::FunctionReference constructor;
     SimpleLinearSumAssignment*     pSimpleLinearSumAssignment = nullptr;
     GSimpleLinearSumAssignment( const Napi::CallbackInfo& info );
     ~GSimpleLinearSumAssignment();
@@ -20,7 +20,7 @@ public:
 };
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::GSimpleLinearSumAssignment::constructor;
+
 
 inline operations_research::GSimpleLinearSumAssignment::GSimpleLinearSumAssignment( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GSimpleLinearSumAssignment >( info )

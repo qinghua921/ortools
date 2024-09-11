@@ -9,7 +9,7 @@ namespace operations_research
 class GMPVariable : public Napi::ObjectWrap< GMPVariable >
 {
 public:
-    static Napi::FunctionReference constructor;
+    static inline Napi::FunctionReference constructor;
     MPVariable*                    pMPVariable = nullptr;
     GMPVariable( const Napi::CallbackInfo& info );
     ~GMPVariable();
@@ -19,7 +19,7 @@ public:
 };
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::GMPVariable::constructor;
+
 
 inline operations_research::GMPVariable::GMPVariable( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GMPVariable >( info )

@@ -11,7 +11,7 @@ namespace sat
     class GIntervalVar : public Napi::ObjectWrap< GIntervalVar >
     {
     public:
-        static Napi::FunctionReference constructor;
+        static inline Napi::FunctionReference constructor;
         IntervalVar*                   pIntervalVar = nullptr;
         GIntervalVar( const Napi::CallbackInfo& info );
         ~GIntervalVar();
@@ -20,7 +20,7 @@ namespace sat
 };  // namespace sat
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::sat::GIntervalVar::constructor;
+
 
 inline operations_research::sat::GIntervalVar::GIntervalVar( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GIntervalVar >( info )

@@ -9,7 +9,7 @@ namespace absl
 class GStatus : public Napi::ObjectWrap< GStatus >
 {
 public:
-    static Napi::FunctionReference constructor;
+    static inline Napi::FunctionReference constructor;
     Status*                        pStatus = nullptr;
     GStatus( const Napi::CallbackInfo& info );
     ~GStatus();
@@ -17,7 +17,7 @@ public:
 };
 };  // namespace absl
 
-Napi::FunctionReference absl::GStatus::constructor;
+
 
 inline absl::GStatus::GStatus( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GStatus >( info )

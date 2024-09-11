@@ -11,7 +11,7 @@ namespace sat
     class GTableConstraint : public Napi::ObjectWrap< GTableConstraint >
     {
     public:
-        static Napi::FunctionReference constructor;
+        static inline Napi::FunctionReference constructor;
         TableConstraint*               pTableConstraint = nullptr;
         GTableConstraint( const Napi::CallbackInfo& info );
         ~GTableConstraint();
@@ -22,7 +22,7 @@ namespace sat
 };  // namespace sat
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::sat::GTableConstraint::constructor;
+
 
 inline operations_research::sat::GTableConstraint::GTableConstraint( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GTableConstraint >( info )

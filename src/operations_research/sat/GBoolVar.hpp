@@ -11,7 +11,7 @@ namespace sat
     class GBoolVar : public Napi::ObjectWrap< GBoolVar >
     {
     public:
-        static Napi::FunctionReference constructor;
+        static inline Napi::FunctionReference constructor;
         BoolVar*                       pBoolVar = nullptr;
         GBoolVar( const Napi::CallbackInfo& info );
         ~GBoolVar();
@@ -22,7 +22,7 @@ namespace sat
 };  // namespace sat
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::sat::GBoolVar::constructor;
+
 
 inline operations_research::sat::GBoolVar::GBoolVar( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GBoolVar >( info )

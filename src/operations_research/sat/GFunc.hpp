@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "GLinearExpr.hpp"
 #include "GCpModelProto.hpp"
 #include "GCpSolverResponse.hpp"
@@ -59,7 +58,7 @@ inline Napi::Value operations_research::sat::GNewFeasibleSolutionObserver( const
     //     const std::function<void(const CpSolverResponse& response)>& observer);
     if ( info.Length() == 1 && info[ 0 ].IsFunction() )
     {
-        // TODO  
+        // TODO
         // auto observer = info[ 0 ].As< Napi::Function >();
         // auto ret_func = NewFeasibleSolutionObserver(
         //     [ observer ]( Model* model )  //
@@ -99,7 +98,7 @@ inline Napi::Value operations_research::sat::GSolveCpModel( const Napi::Callback
     {
         auto model_proto      = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
         auto model            = GModel::Unwrap( info[ 1 ].As< Napi::Object >() );
-        auto cpSolverResponse = SolveCpModel( *model_proto->pCpModelProto, model->pModel );
+        auto cpSolverResponse = SolveCpModel( *model_proto->pCpModelProto, model->shared_ptr.get() );
         auto exterior         = Napi::External< CpSolverResponse >::New( info.Env(), new CpSolverResponse( cpSolverResponse ) );
         return GCpSolverResponse::constructor.New( { exterior } );
     }
@@ -123,7 +122,7 @@ inline Napi::Value operations_research::sat::GNewSatParameters( const Napi::Call
                      && info[ 0 ].As< Napi::Object >().InstanceOf( GModel::constructor.Value() ) )
                 {
                     auto model = GModel::Unwrap( info[ 0 ].As< Napi::Object >() );
-                    auto ret   = ret_func( model->pModel );
+                    auto ret   = ret_func( model->shared_ptr.get() );
                     return GSatParameters::constructor.New( { Napi::External< SatParameters >::New( info.Env(), new SatParameters( ret ) ) } );
                 }
 

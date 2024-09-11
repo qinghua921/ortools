@@ -9,7 +9,7 @@ namespace operations_research
 class GMPObjective : public Napi::ObjectWrap< GMPObjective >
 {
 public:
-    static Napi::FunctionReference constructor;
+    static inline Napi::FunctionReference constructor;
     std::shared_ptr< MPObjective > pMPObjective;
     GMPObjective( const Napi::CallbackInfo& info );
     static Napi::Object Init( Napi::Env env, Napi::Object exports );
@@ -23,7 +23,7 @@ public:
 };
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::GMPObjective::constructor;
+
 
 inline operations_research::GMPObjective::GMPObjective( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GMPObjective >( info )

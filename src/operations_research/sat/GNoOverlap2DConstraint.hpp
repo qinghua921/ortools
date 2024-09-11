@@ -12,7 +12,7 @@ namespace sat
     class GNoOverlap2DConstraint : public Napi::ObjectWrap< GNoOverlap2DConstraint >
     {
     public:
-        static Napi::FunctionReference constructor;
+        static inline Napi::FunctionReference constructor;
         NoOverlap2DConstraint*         pNoOverlap2DConstraint = nullptr;
         GNoOverlap2DConstraint( const Napi::CallbackInfo& info );
         ~GNoOverlap2DConstraint();
@@ -23,7 +23,7 @@ namespace sat
 };  // namespace sat
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::sat::GNoOverlap2DConstraint::constructor;
+
 
 inline operations_research::sat::GNoOverlap2DConstraint::GNoOverlap2DConstraint( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GNoOverlap2DConstraint >( info )
