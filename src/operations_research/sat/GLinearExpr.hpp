@@ -115,7 +115,7 @@ inline Napi::Value operations_research::sat::GLinearExpr::Sum( const Napi::Callb
                 if ( arr.Get( static_cast< uint32_t >( i ) ).IsObject() && arr.Get( static_cast< uint32_t >( i ) ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
                 {
                     auto var = GBoolVar::Unwrap( arr.Get( static_cast< uint32_t >( i ) ).As< Napi::Object >() );
-                    vars.push_back( *var->shared_ptr );
+                    vars.push_back( *var->pBoolVar );
                     continue;
                 }
 
@@ -183,7 +183,7 @@ bool operations_research::sat::GLinearExpr::ToLinearExpr( const Napi::Value& val
     else if ( value.IsNumber() )
         expr = value.As< Napi::Number >().Int64Value();
     else if ( value.IsObject() && value.As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
-        expr = *GBoolVar::Unwrap( value.As< Napi::Object >() )->shared_ptr;
+        expr = *GBoolVar::Unwrap( value.As< Napi::Object >() )->pBoolVar;
     else if ( value.IsObject() && value.As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
         expr = *GIntVar::Unwrap( value.As< Napi::Object >() )->pIntVar;
     else
