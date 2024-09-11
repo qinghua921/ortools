@@ -48,5 +48,4 @@ operations_research.sat.SolveCpModel(cp_model.Build(), model).then((response) =>
 
 setTimeout(() => {
     console.log(process._getActiveHandles());
-  }, 1000);
-  
+}, 1000);
