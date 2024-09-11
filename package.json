@@ -10,7 +10,7 @@
   "types": "src/index.d.ts",
   "scripts": {
     "cppbuild": "cmake-js compile",
-    "jest": "jest"
+    "jest": "jest --detectOpenHandles"
   },
   "devDependencies": {
     "cmake-js": "7.3.0",

@@ -25,8 +25,8 @@ inline operations_research::sat::GModel::GModel( const Napi::CallbackInfo& info 
 {
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
-        auto external = info[ 0 ].As< Napi::External< std::shared_ptr< Model > > >();
-        spModel       = *external.Data();
+        auto external = info[ 0 ].As< Napi::External< Model > >();
+        spModel       = std::shared_ptr< Model >( external.Data() );
         return;
     }
 
@@ -60,15 +60,16 @@ inline Napi::Value operations_research::sat::GModel::Add( const Napi::CallbackIn
     // T Add( std::function< T( Model* ) > f )
     if ( info.Length() == 1 && info[ 0 ].IsFunction() )
     {
-        auto f = info[ 0 ].As< Napi::Function >();
-        return f.Call( { this->Value() } );
-        // TODO: return the result need to be wrapped in a Napi::Value
-        // auto result = pModel->Add(
-        //     [ &f, this ]( Model* model_ ) -> Napi::Value {
-        //         return f.Call( { this->Value() } );
-        //     } );
+        auto env  = info.Env();
+        auto jsin = info[ 0 ].As< Napi::Function >();
 
-        // return result;
+        auto ret = this->spModel->Add< Napi::Value >( [ env, jsin ]( Model* model ) -> Napi::Value {
+            auto asExternalVar = Napi::External< Model >::New( env, model );
+            auto vGModel       = GModel::constructor.New( { asExternalVar } );
+            return jsin.Call( { vGModel } );
+        } );
+
+        return ret;
     }
 
     ThrowJsError( operations_research::GModel::Add : Invalid argument );

@@ -54,36 +54,40 @@ inline Napi::Object operations_research::sat::GFuncInit( Napi::Env env, Napi::Ob
 
 inline Napi::Value operations_research::sat::GNewFeasibleSolutionObserver( const Napi::CallbackInfo& info )
 {
-    // std::function<void(Model*)> NewFeasibleSolutionObserver(
-    //     const std::function<void(const CpSolverResponse& response)>& observer);
     if ( info.Length() == 1 && info[ 0 ].IsFunction() )
     {
-        auto              env = info.Env();
-        Napi::HandleScope scope( env );
-        auto              observer = info[ 0 ].As< Napi::Function >();
-        auto              ret_func = NewFeasibleSolutionObserver(
-            [ &observer, &info ]( const CpSolverResponse& response )  //
-            {
-                auto              env = info.Env();
-                Napi::HandleScope scope( env );
-                auto              exterior = Napi::External< CpSolverResponse >::New( env, new CpSolverResponse( response ) );
-                observer.Call( { exterior } );
+        auto outerEnv             = info.Env();
+        auto jsCpSolverResponse   = info[ 0 ].As< Napi::Function >();
+        auto fnThreadSafeFunction = Napi::ThreadSafeFunction::New( outerEnv, jsCpSolverResponse, "GNewFeasibleSolutionObserver ThreadSafeFunction", 0, 1 );
+        auto cppModel             = NewFeasibleSolutionObserver( [ fnThreadSafeFunction ]( const CpSolverResponse& response ) {
+            fnThreadSafeFunction.Acquire();
+            auto newResponse = new CpSolverResponse( response );
+            fnThreadSafeFunction.BlockingCall( newResponse, []( Napi::Env env, Napi::Function jsCallback, CpSolverResponse* value ) {
+                auto asExternalVar      = Napi::External< CpSolverResponse >::New( env, value );
+                auto vGCpSolverResponse = GCpSolverResponse::constructor.New( { asExternalVar, Napi::Boolean::New( env, true ) } );
+                jsCallback.Call( { vGCpSolverResponse } );
             } );
+            fnThreadSafeFunction.Release();
+        } );
 
-        return Napi::Function::New(
-            env, [ ret_func ]( const Napi::CallbackInfo& info ) -> Napi::Value  //
-            {
-                if ( info.Length() == 1 && info[ 0 ].IsObject()
-                     && info[ 0 ].As< Napi::Object >().InstanceOf( GModel::constructor.Value() ) )
+        return Napi::Function::New  //
+            (
+                outerEnv,
+                [ cppModel ]( const Napi::CallbackInfo& innerInfo )  //
                 {
-                    auto model = GModel::Unwrap( info[ 0 ].As< Napi::Object >() );
-                    ret_func( model->spModel.get() );
-                    return info.Env().Undefined();
-                }
+                    if ( innerInfo.Length() == 1 && innerInfo[ 0 ].IsObject() )
+                    {
+                        auto pGModel = GModel::Unwrap( innerInfo[ 0 ].As< Napi::Object >() );
+                        if ( typeid( *pGModel ) == typeid( GModel ) )
+                        {
+                            cppModel( pGModel->spModel.get() );
+                            return;
+                        }
+                    }
 
-                ThrowJsError( operations_research::sat::GNewFeasibleSolutionObserver : Invalid arguments );
-                return info.Env().Undefined();
-            } );
+                    Napi::Error::New( innerInfo.Env(), ( char* )u8"GNewFeasibleSolutionObserver func_return ERROR" ).ThrowAsJavaScriptException();
+                }  //
+            );
     }
 
     ThrowJsError( operations_research::sat::GNewFeasibleSolutionObserver : Invalid arguments );
@@ -103,10 +107,11 @@ inline Napi::Value operations_research::sat::GSolveCpModel( const Napi::Callback
         auto model            = GModel::Unwrap( info[ 1 ].As< Napi::Object >() );
         auto cpSolverResponse = SolveCpModel( *model_proto->pCpModelProto, model->spModel.get() );
         auto exterior         = Napi::External< CpSolverResponse >::New( info.Env(), new CpSolverResponse( cpSolverResponse ) );
+        std::cout << "SolveCpModel" << std::endl;
         return GCpSolverResponse::constructor.New( { exterior } );
     }
 
-    ThrowJsError( operations_research::sat::GSolve : Invalid arguments );
+    ThrowJsError( operations_research::sat::GSolveCpModel : Invalid arguments );
     return info.Env().Undefined();
 }
 
@@ -205,6 +210,7 @@ Napi::Value operations_research::sat::GCpSolverResponseStats( const Napi::Callba
         auto solver_response = GCpSolverResponse::Unwrap( info[ 0 ].As< Napi::Object >() );
         return Napi::String::New( info.Env(), CpSolverResponseStats( *solver_response->pCpSolverResponse ) );
     }
+
 
     if ( info.Length() == 2
          && info[ 0 ].IsObject()
