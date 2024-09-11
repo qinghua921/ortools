@@ -11,7 +11,7 @@ namespace sat
     class GCpSolverResponse : public Napi::ObjectWrap< GCpSolverResponse >
     {
     public:
-        static Napi::FunctionReference constructor;
+        static inline Napi::FunctionReference constructor;
         CpSolverResponse*              pCpSolverResponse = nullptr;
         GCpSolverResponse( const Napi::CallbackInfo& info );
         ~GCpSolverResponse();
@@ -24,7 +24,7 @@ namespace sat
 };  // namespace sat
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::sat::GCpSolverResponse::constructor;
+
 
 inline operations_research::sat::GCpSolverResponse::GCpSolverResponse( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GCpSolverResponse >( info )

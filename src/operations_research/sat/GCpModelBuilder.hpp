@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "commonheader.hpp"
 #include "ortools/sat/cp_model.h"
 #include "GBoolVar.hpp"
@@ -19,8 +18,8 @@ namespace sat
     class GCpModelBuilder : public Napi::ObjectWrap< GCpModelBuilder >
     {
     public:
-        static Napi::FunctionReference constructor;
-        CpModelBuilder*                pCpModelBuilder = nullptr;
+        static inline Napi::FunctionReference constructor;
+        CpModelBuilder*                       pCpModelBuilder = nullptr;
         GCpModelBuilder( const Napi::CallbackInfo& info );
         ~GCpModelBuilder();
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
@@ -47,8 +46,6 @@ namespace sat
     };
 };  // namespace sat
 };  // namespace operations_research
-
-Napi::FunctionReference operations_research::sat::GCpModelBuilder::constructor;
 
 inline operations_research::sat::GCpModelBuilder::GCpModelBuilder( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GCpModelBuilder >( info )

@@ -12,7 +12,7 @@ namespace operations_research
 class GMPSolver : public Napi::ObjectWrap< GMPSolver >
 {
 public:
-    static Napi::FunctionReference constructor;
+    static inline Napi::FunctionReference constructor;
     MPSolver*                      pMPSolver = nullptr;
     GMPSolver( const Napi::CallbackInfo& info );
     ~GMPSolver();
@@ -30,7 +30,7 @@ public:
 };
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::GMPSolver::constructor;
+
 
 inline operations_research::GMPSolver::GMPSolver( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GMPSolver >( info )

@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "commonheader.hpp"
 #include "ortools/packing/binpacking_2d_parser.h"
 #include "GMultipleDimensionsBinPackingProblem.hpp"
@@ -12,8 +11,8 @@ namespace packing
     class GBinPacking2dParser : public Napi::ObjectWrap< GBinPacking2dParser >
     {
     public:
-        static Napi::FunctionReference constructor;
-        BinPacking2dParser*            pBinPacking2dParser = nullptr;
+        static inline Napi::FunctionReference constructor;
+        BinPacking2dParser*                   pBinPacking2dParser = nullptr;
         GBinPacking2dParser( const Napi::CallbackInfo& info );
         ~GBinPacking2dParser();
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
@@ -23,8 +22,6 @@ namespace packing
     };
 };  // namespace packing
 };  // namespace operations_research
-
-Napi::FunctionReference operations_research::packing::GBinPacking2dParser::constructor;
 
 inline operations_research::packing::GBinPacking2dParser::GBinPacking2dParser( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GBinPacking2dParser >( info )

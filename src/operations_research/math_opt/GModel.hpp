@@ -13,7 +13,7 @@ namespace math_opt
     class GModel : public Napi::ObjectWrap< GModel >
     {
     public:
-        static Napi::FunctionReference constructor;
+        static inline Napi::FunctionReference constructor;
         Model*                         pModel = nullptr;
         GModel( const Napi::CallbackInfo& info );
         ~GModel();
@@ -26,7 +26,7 @@ namespace math_opt
 };  // namespace math_opt
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::math_opt::GModel::constructor;
+
 
 inline operations_research::math_opt::GModel::GModel( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GModel >( info )

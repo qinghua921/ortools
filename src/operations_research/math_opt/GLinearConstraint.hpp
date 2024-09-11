@@ -11,7 +11,7 @@ namespace math_opt
     class GLinearConstraint : public Napi::ObjectWrap< GLinearConstraint >
     {
     public:
-        static Napi::FunctionReference constructor;
+        static inline Napi::FunctionReference constructor;
         LinearConstraint*              pLinearConstraint = nullptr;
         GLinearConstraint( const Napi::CallbackInfo& info );
         ~GLinearConstraint();
@@ -20,7 +20,7 @@ namespace math_opt
 };  // namespace math_opt
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::math_opt::GLinearConstraint::constructor;
+
 
 inline operations_research::math_opt::GLinearConstraint::GLinearConstraint( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GLinearConstraint >( info )

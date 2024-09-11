@@ -8,7 +8,7 @@ namespace absl
 class GDuration : public Napi::ObjectWrap< GDuration >
 {
 public:
-    static Napi::FunctionReference constructor;
+    static inline Napi::FunctionReference constructor;
     Duration*                      pDuration = nullptr;
     GDuration( const Napi::CallbackInfo& info );
     ~GDuration();
@@ -16,7 +16,7 @@ public:
 };
 };  // namespace absl
 
-Napi::FunctionReference absl::GDuration::constructor;
+
 
 inline absl::GDuration::GDuration( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GDuration >( info )

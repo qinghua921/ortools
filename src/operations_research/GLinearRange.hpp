@@ -9,7 +9,7 @@ namespace operations_research
 class GLinearRange : public Napi::ObjectWrap< GLinearRange >
 {
 public:
-    static Napi::FunctionReference constructor;
+    static inline Napi::FunctionReference constructor;
     LinearRange*                   pLinearRange = nullptr;
     GLinearRange( const Napi::CallbackInfo& info );
     ~GLinearRange();
@@ -17,7 +17,7 @@ public:
 };
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::GLinearRange::constructor;
+
 
 inline operations_research::GLinearRange::GLinearRange( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GLinearRange >( info )

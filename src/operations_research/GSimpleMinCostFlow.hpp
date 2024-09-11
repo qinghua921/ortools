@@ -9,7 +9,7 @@ namespace operations_research
 class GSimpleMinCostFlow : public Napi::ObjectWrap< GSimpleMinCostFlow >
 {
 public:
-    static Napi::FunctionReference constructor;
+    static inline Napi::FunctionReference constructor;
     SimpleMinCostFlow*             pSimpleMinCostFlow = nullptr;
     GSimpleMinCostFlow( const Napi::CallbackInfo& info );
     ~GSimpleMinCostFlow();
@@ -30,7 +30,7 @@ public:
 };
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::GSimpleMinCostFlow::constructor;
+
 
 inline operations_research::GSimpleMinCostFlow::GSimpleMinCostFlow( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GSimpleMinCostFlow >( info )

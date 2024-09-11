@@ -11,7 +11,7 @@ namespace sat
     class GCpModelProto : public Napi::ObjectWrap< GCpModelProto >
     {
     public:
-        static Napi::FunctionReference constructor;
+        static inline Napi::FunctionReference constructor;
         CpModelProto*                  pCpModelProto = nullptr;
         GCpModelProto( const Napi::CallbackInfo& info );
         ~GCpModelProto();
@@ -20,7 +20,7 @@ namespace sat
 };  // namespace sat
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::sat::GCpModelProto::constructor;
+
 
 inline operations_research::sat::GCpModelProto::GCpModelProto( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GCpModelProto >( info )

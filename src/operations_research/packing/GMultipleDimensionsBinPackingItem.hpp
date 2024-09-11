@@ -12,7 +12,7 @@ namespace packing
     class GMultipleDimensionsBinPackingItem : public Napi::ObjectWrap< GMultipleDimensionsBinPackingItem >
     {
     public:
-        static Napi::FunctionReference    constructor;
+        static inline Napi::FunctionReference    constructor;
         MultipleDimensionsBinPackingItem* pMultipleDimensionsBinPackingItem = nullptr;
         GMultipleDimensionsBinPackingItem( const Napi::CallbackInfo& info );
         ~GMultipleDimensionsBinPackingItem();
@@ -24,7 +24,7 @@ namespace packing
 };  // namespace packing
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::packing::GMultipleDimensionsBinPackingItem::constructor;
+
 
 inline operations_research::packing::GMultipleDimensionsBinPackingItem::GMultipleDimensionsBinPackingItem( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GMultipleDimensionsBinPackingItem >( info )

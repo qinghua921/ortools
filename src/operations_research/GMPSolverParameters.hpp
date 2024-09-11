@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "commonheader.hpp"
 #include "ortools/linear_solver/linear_solver.h"
 
@@ -9,15 +8,13 @@ namespace operations_research
 class GMPSolverParameters : public Napi::ObjectWrap< GMPSolverParameters >
 {
 public:
-    static Napi::FunctionReference constructor;
-    MPSolverParameters*            pMPSolverParameters = nullptr;
+    static inline Napi::FunctionReference constructor;
+    MPSolverParameters*                   pMPSolverParameters = nullptr;
     GMPSolverParameters( const Napi::CallbackInfo& info );
     ~GMPSolverParameters();
     static Napi::Object Init( Napi::Env env, Napi::Object exports );
 };
 };  // namespace operations_research
-
-Napi::FunctionReference operations_research::GMPSolverParameters::constructor;
 
 inline operations_research::GMPSolverParameters::GMPSolverParameters( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GMPSolverParameters >( info )

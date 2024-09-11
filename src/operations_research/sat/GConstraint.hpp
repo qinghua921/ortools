@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "commonheader.hpp"
 #include "ortools/sat/cp_model.h"
 #include "GBoolVar.hpp"
@@ -13,10 +12,9 @@ namespace sat
     class GConstraint : public Napi::ObjectWrap< GConstraint >
     {
     public:
-        static Napi::FunctionReference constructor;
-        Constraint*                    pConstraint = nullptr;
+        static inline Napi::FunctionReference constructor;
+        std::shared_ptr< Constraint >         pConstraint;
         GConstraint( const Napi::CallbackInfo& info );
-        ~GConstraint();
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
 
         Napi::Value OnlyEnforceIf( const Napi::CallbackInfo& info );
@@ -24,24 +22,17 @@ namespace sat
 };  // namespace sat
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::sat::GConstraint::constructor;
-
 inline operations_research::sat::GConstraint::GConstraint( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GConstraint >( info )
 {
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
         auto external = info[ 0 ].As< Napi::External< Constraint > >();
-        pConstraint   = dynamic_cast< Constraint* >( external.Data() );
-        if ( pConstraint != nullptr ) return;
+        pConstraint   = std::shared_ptr< Constraint >( external.Data() );
+        return;
     }
 
     ThrowJsError( operations_research::GConstraint::GConstraint : Invalid argument );
-}
-
-inline operations_research::sat::GConstraint::~GConstraint()
-{
-    delete pConstraint;
 }
 
 inline Napi::Object operations_research::sat::GConstraint::Init( Napi::Env env, Napi::Object exports )

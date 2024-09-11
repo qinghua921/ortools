@@ -10,7 +10,7 @@ namespace operations_research
 class GLinearExpr : public Napi::ObjectWrap< GLinearExpr >
 {
 public:
-    static Napi::FunctionReference constructor;
+    static inline Napi::FunctionReference constructor;
     LinearExpr*                    pLinearExpr = nullptr;
     GLinearExpr( const Napi::CallbackInfo& info );
     ~GLinearExpr();
@@ -26,7 +26,7 @@ public:
 };
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::GLinearExpr::constructor;
+
 
 inline operations_research::GLinearExpr::GLinearExpr( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GLinearExpr >( info )

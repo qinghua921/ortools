@@ -9,15 +9,13 @@ namespace packing
     class GDemo : public Napi::ObjectWrap< GDemo >
     {
     public:
-        static Napi::FunctionReference constructor;
-        std::shared_ptr< Demo >        pDemo;
+        static inline Napi::FunctionReference constructor;
+        std::shared_ptr< Demo >        shared_ptr;
         GDemo( const Napi::CallbackInfo& info );
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
     };
 };  // namespace packing
 };  // namespace operations_research
-
-Napi::FunctionReference operations_research::packing::GDemo::constructor;
 
 inline operations_research::packing::GDemo::GDemo( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GDemo >( info )
@@ -25,7 +23,7 @@ inline operations_research::packing::GDemo::GDemo( const Napi::CallbackInfo& inf
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
         auto external = info[ 0 ].As< Napi::External< std::shared_ptr< Demo > > >();
-        pDemo         = *external.Data();
+        shared_ptr         = *external.Data();
         return;
     }
 

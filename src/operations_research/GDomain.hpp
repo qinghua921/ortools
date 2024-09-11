@@ -8,14 +8,14 @@ namespace operations_research
 class GDomain : public Napi::ObjectWrap< GDomain >
 {
 public:
-    static Napi::FunctionReference constructor;
+    static inline Napi::FunctionReference constructor;
     std::shared_ptr< Domain >      pDomain;
     GDomain( const Napi::CallbackInfo& info );
     static Napi::Object Init( Napi::Env env, Napi::Object exports );
 };
 };  // namespace operations_research
 
-Napi::FunctionReference operations_research::GDomain::constructor;
+
 
 inline operations_research::GDomain::GDomain( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GDomain >( info )
