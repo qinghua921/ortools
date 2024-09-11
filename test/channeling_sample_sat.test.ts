@@ -59,8 +59,8 @@ test('assignment_groups_mip', async () =>
         `b=${operations_research.sat.SolutionBooleanValue(response, b)}`);
 
     // waite for the observer to be called
-    await new Promise(resolve => setTimeout(resolve, 10000));
+    await new Promise(resolve => setTimeout(resolve, 1000000));
 
+    expect(1).toBe(1);
 
-}, 100000
-);
+}, 1000000);

@@ -59,18 +59,18 @@ inline Napi::Value operations_research::sat::GNewFeasibleSolutionObserver( const
     if ( info.Length() == 1 && info[ 0 ].IsFunction() )
     {
         auto observer             = info[ 0 ].As< Napi::Function >();
-        auto fnThreadSafeFunction = Napi::ThreadSafeFunction::New( observer.Env(), observer, "GNewFeasibleSolutionObserver ThreadSafeFunction", 0, 1 );
+        auto observer_thread_safe = Napi::ThreadSafeFunction::New( info.Env(), observer, "GNewFeasibleSolutionObserver ThreadSafeFunction", 0, 1 );
         auto ret_func             = NewFeasibleSolutionObserver(
-            [ fnThreadSafeFunction ]( const CpSolverResponse& response ) -> void  //
+            [ observer_thread_safe ]( const CpSolverResponse& response ) -> void  //
             {
-                fnThreadSafeFunction.Acquire();
+                observer_thread_safe.Acquire();
                 auto newResponse = new CpSolverResponse( response );
-                fnThreadSafeFunction.BlockingCall( newResponse, []( Napi::Env env, Napi::Function jsCallback, CpSolverResponse* value ) {
-                    auto asExternalVar      = Napi::External< CpSolverResponse >::New( env, value );
-                    auto vGCpSolverResponse = GCpSolverResponse::constructor.New( { asExternalVar } );
+                observer_thread_safe.BlockingCall( newResponse, []( Napi::Env env, Napi::Function jsCallback, CpSolverResponse* value ) {
+                    auto external           = Napi::External< CpSolverResponse >::New( env, value );
+                    auto vGCpSolverResponse = GCpSolverResponse::constructor.New( { external } );
                     jsCallback.Call( { vGCpSolverResponse } );
                 } );
-                fnThreadSafeFunction.Release();
+                observer_thread_safe.Release();
             } );
 
         return Napi::Function::New(
