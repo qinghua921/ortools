@@ -52,12 +52,12 @@ inline Napi::Object operations_research::sat::GFuncInit( Napi::Env env, Napi::Ob
     return exports;
 }
 
-inline Napi::Value operations_research::sat::GNewFeasibleSolutionObserver( const Napi::CallbackInfo& info )
+inline Napi::Value operations_research::sat::GNewFeasibleSolutionObserver( const Napi::CallbackInfo& outerInfo )
 {
-    if ( info.Length() == 1 && info[ 0 ].IsFunction() )
+    if ( outerInfo.Length() == 1 && outerInfo[ 0 ].IsFunction() )
     {
-        auto outerEnv             = info.Env();
-        auto jsCpSolverResponse   = info[ 0 ].As< Napi::Function >();
+        auto outerEnv             = outerInfo.Env();
+        auto jsCpSolverResponse   = outerInfo[ 0 ].As< Napi::Function >();
         auto fnThreadSafeFunction = Napi::ThreadSafeFunction::New( outerEnv, jsCpSolverResponse, "GNewFeasibleSolutionObserver ThreadSafeFunction", 0, 1 );
         auto cppModel             = NewFeasibleSolutionObserver( [ fnThreadSafeFunction ]( const CpSolverResponse& response ) {
             fnThreadSafeFunction.Acquire();
@@ -90,8 +90,8 @@ inline Napi::Value operations_research::sat::GNewFeasibleSolutionObserver( const
             );
     }
 
-    ThrowJsError( operations_research::sat::GNewFeasibleSolutionObserver : Invalid arguments );
-    return info.Env().Undefined();
+    Napi::Error::New( outerInfo.Env(), ( char* )u8"GNewFeasibleSolutionObserver ERROR" ).ThrowAsJavaScriptException();
+    return outerInfo.Env().Undefined();
 }
 
 inline Napi::Value operations_research::sat::GSolveCpModel( const Napi::CallbackInfo& info )
@@ -210,7 +210,6 @@ Napi::Value operations_research::sat::GCpSolverResponseStats( const Napi::Callba
         auto solver_response = GCpSolverResponse::Unwrap( info[ 0 ].As< Napi::Object >() );
         return Napi::String::New( info.Env(), CpSolverResponseStats( *solver_response->pCpSolverResponse ) );
     }
-
 
     if ( info.Length() == 2
          && info[ 0 ].IsObject()

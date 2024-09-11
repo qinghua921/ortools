@@ -41,7 +41,6 @@ test('assignment_groups_mip', async () =>
     const parameters = new operations_research.sat.SatParameters();
     parameters.set_search_branching(operations_research.sat.SatParameters.SearchBranching.FIXED_SEARCH);
     parameters.set_enumerate_all_solutions(true);
-    model.Add(operations_research.sat.NewSatParameters(parameters));
 
 
     const newLocal = (response: operations_research.sat.CpSolverResponse) =>
@@ -54,6 +53,7 @@ test('assignment_groups_mip', async () =>
     model.Add(operations_research.sat.NewFeasibleSolutionObserver(
         newLocal
     ));
+    model.Add(operations_research.sat.NewSatParameters(parameters));
 
     let response = operations_research.sat.SolveCpModel(cp_model.Build(), model);
     expect(response.status()).toBe(operations_research.sat.CpSolverStatus.OPTIMAL)
