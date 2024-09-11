@@ -28,7 +28,7 @@ export function operator_times(factor: number, expr: CanAsLinearExpr): LinearExp
 
 /// Solves the given CpModelProto and returns an instance of CpSolverResponse.
 // CpSolverResponse Solve( const CpModelProto& model_proto );
-export function Solve(model_proto: CpModelProto): CpSolverResponse;
+export function Solve(model_proto: CpModelProto): Promise<CpSolverResponse>;
 
 /// Evaluates the value of an linear expression in a solver response.
 // int64_t SolutionIntegerValue( const CpSolverResponse& r, const LinearExpr& expr );
@@ -76,7 +76,7 @@ export function NewSatParameters(parameters: SatParameters): (model: Model) => S
  * - model->Add(NewFeasibleSolutionObserver(observer));
  */
 // CpSolverResponse SolveCpModel(const CpModelProto& model_proto, Model* model);
-export function SolveCpModel(model_proto: CpModelProto, model: Model): CpSolverResponse;
+export function SolveCpModel(model_proto: CpModelProto, model: Model): Promise<CpSolverResponse>;
 
 
 /**

@@ -95,6 +95,45 @@ inline Napi::Value operations_research::sat::GNewFeasibleSolutionObserver( const
 
 inline Napi::Value operations_research::sat::GSolveCpModel( const Napi::CallbackInfo& info )
 {
+    class Worker : public Napi::AsyncWorker
+    {
+    public:
+        Napi::Env               env;
+        Napi::Promise::Deferred deferred;
+        GCpModelProto*          pGCpModelProto;
+        GModel*                 pGModel;
+        CpSolverResponse        vCpSolverResponse;
+
+        Worker( Napi::Env env, GCpModelProto* pGCpModelProto, GModel* pGModel )
+            : Napi::AsyncWorker( env ),
+              env( env ),
+              deferred( Napi::Promise::Deferred::New( env ) ),
+              pGCpModelProto( pGCpModelProto ),
+              pGModel( pGModel ) {};
+
+        void Execute() override
+        {
+            this->vCpSolverResponse = SolveCpModel( *pGCpModelProto->pCpModelProto, pGModel->spModel.get() );
+        }
+
+        void OnOK() override
+        {
+            auto vExternal = Napi::External< CpSolverResponse >::New( this->env, new CpSolverResponse( this->vCpSolverResponse ) );
+            auto ret       = GCpSolverResponse::constructor.New( { vExternal, Napi::Boolean::New( env, true ) } );
+            this->deferred.Resolve( ret );
+        }
+
+        void OnError( const Napi::Error& e ) override
+        {
+            this->deferred.Reject( e.Value() );
+        }
+
+        ~Worker()
+        {
+            std::cout << "Worker destructor" << std::endl;
+        }
+    };
+
     // CpSolverResponse SolveCpModel(const CpModelProto& model_proto, Model* model);
     if ( info.Length() == 2
          && info[ 0 ].IsObject()
@@ -102,11 +141,11 @@ inline Napi::Value operations_research::sat::GSolveCpModel( const Napi::Callback
          && info[ 1 ].IsObject()
          && info[ 1 ].As< Napi::Object >().InstanceOf( GModel::constructor.Value() ) )
     {
-        auto model_proto      = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
-        auto model            = GModel::Unwrap( info[ 1 ].As< Napi::Object >() );
-        auto cpSolverResponse = SolveCpModel( *model_proto->pCpModelProto, model->spModel.get() );
-        auto exterior         = Napi::External< CpSolverResponse >::New( info.Env(), new CpSolverResponse( cpSolverResponse ) );
-        return GCpSolverResponse::constructor.New( { exterior } );
+        auto model_proto = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto model       = GModel::Unwrap( info[ 1 ].As< Napi::Object >() );
+        auto worker      = new Worker( info.Env(), model_proto, model );
+        worker->Queue();
+        return worker->deferred.Promise();
     }
 
     ThrowJsError( operations_research::sat::GSolveCpModel - Invalid arguments );
@@ -242,15 +281,51 @@ Napi::Value operations_research::sat::GSolutionIntegerValue( const Napi::Callbac
 
 Napi::Value operations_research::sat::GSolve( const Napi::CallbackInfo& info )
 {
+    class Worker : public Napi::AsyncWorker
+    {
+    public:
+        Napi::Env               env;
+        Napi::Promise::Deferred deferred;
+        GCpModelProto*          pGCpModelProto;
+        CpSolverResponse        vCpSolverResponse;
+
+        Worker( Napi::Env env, GCpModelProto* pGCpModelProto )
+            : Napi::AsyncWorker( env ), pGCpModelProto( pGCpModelProto ), env( env ), deferred( Napi::Promise::Deferred::New( env ) )
+        {
+        }
+
+        void Execute() override
+        {
+            this->vCpSolverResponse = Solve( *pGCpModelProto->pCpModelProto );
+        }
+
+        void OnOK() override
+        {
+            auto vExternal = Napi::External< CpSolverResponse >::New( this->env, new CpSolverResponse( this->vCpSolverResponse ) );
+            auto ret       = GCpSolverResponse::constructor.New( { vExternal, Napi::Boolean::New( env, true ) } );
+            this->deferred.Resolve( ret );
+        }
+
+        void OnError( const Napi::Error& e ) override
+        {
+            this->deferred.Reject( e.Value() );
+        }
+        ~Worker()
+        {
+            std::cout << "Worker destructor" << std::endl;
+        }
+    };
+
     // CpSolverResponse Solve( const CpModelProto& model_proto );
     if ( info.Length() == 1
          && info[ 0 ].IsObject()
          && info[ 0 ].As< Napi::Object >().InstanceOf( GCpModelProto::constructor.Value() ) )
     {
-        auto model_proto      = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
-        auto cpSolverResponse = Solve( *model_proto->pCpModelProto );
-        auto exterior         = Napi::External< CpSolverResponse >::New( info.Env(), new CpSolverResponse( cpSolverResponse ) );
-        return GCpSolverResponse::constructor.New( { exterior } );
+
+        auto model_proto = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto worker      = new Worker( info.Env(), model_proto );
+        worker->Queue();
+        return worker->deferred.Promise();
     }
 
     ThrowJsError( operations_research::sat::GSolve : Invalid arguments );
