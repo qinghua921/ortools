@@ -27,8 +27,8 @@ inline operations_research::sat::GConstraint::GConstraint( const Napi::CallbackI
 {
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
-        auto external = info[ 0 ].As< Napi::External< std::shared_ptr< Constraint > > >();
-        shared_ptr    = *external.Data();
+        auto external = info[ 0 ].As< Napi::External< Constraint > >();
+        shared_ptr    = std::shared_ptr< Constraint >( external.Data());
         return;
     }
 
@@ -57,7 +57,7 @@ inline Napi::Value operations_research::sat::GConstraint::OnlyEnforceIf( const N
     {
         GBoolVar*  pLiteral   = Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 0 ].As< Napi::Object >() );
         Constraint constraint = shared_ptr->OnlyEnforceIf( *pLiteral->pBoolVar );
-        auto       external   = Napi::External< Constraint >::New( info.Env(), std::make_shared< Constraint >( constraint ) );
+        auto       external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
         return GConstraint::constructor.New( { external } );
     }
 
@@ -81,7 +81,7 @@ inline Napi::Value operations_research::sat::GConstraint::OnlyEnforceIf( const N
         }
 
         auto constraint = shared_ptr->OnlyEnforceIf( literals );
-        auto external   = Napi::External< Constraint >::New( info.Env(), std::make_shared< Constraint >( constraint ) );
+        auto external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
         return GConstraint::constructor.New( { external } );
     }
 
