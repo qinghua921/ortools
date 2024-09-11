@@ -65,8 +65,13 @@
 #include "./google/protobuf/GRepeatedField.hpp"
 #include "./google/protobuf/GRepeatedPtrField.hpp"
 
+#include "ortools/base/init_google.h"
+
 Napi::Object Init( Napi::Env env, Napi::Object exports )
 {
+    google::InitGoogleLogging( "ortools_binding" );
+    absl::SetFlag( &FLAGS_stderrthreshold, 3 );
+
     Napi::HandleScope scope( env );
 
     // ./operations_research

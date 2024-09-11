@@ -297,10 +297,6 @@ export class CpSolverResponse
     //     int64_t num_conflicts() const;
     //     void    set_num_conflicts( int64_t value );
 
-    // private:
-    //     int64_t _internal_num_conflicts() const;
-    //     void    _internal_set_num_conflicts( int64_t value );
-
     // public:
     //     // int64 num_branches = 12;
     //     void    clear_num_branches();

@@ -4,7 +4,7 @@
  * This class is actually a fully generic wrapper that can hold any type of
  * constraints, watchers, solvers and provide a mechanism to wire them together.
  */
-export class Model<Add_T>
+export class Model
 {
     // public:
     //     Model() {}
@@ -44,7 +44,7 @@ export class Model<Add_T>
     //      */
     //     template < typename T >
     //     T Add( std::function< T( Model* ) > f )
-    Add(f: (model: Model) => Add_T): Add_T;
+    Add<T>(f: (model: Model) => T): T
 
     //     /// Similar to Add() but this is const.
     //     template < typename T >

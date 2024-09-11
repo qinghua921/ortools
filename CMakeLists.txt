@@ -19,6 +19,7 @@ target_compile_definitions(
   PRIVATE
   NAPI_VERSION=8
   NODE_ADDON_API_ENABLE_TYPE_CHECK_ON_AS
+  NAPI_DISABLE_CPP_EXCEPTIONS
 )
 
 target_include_directories(

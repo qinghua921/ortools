@@ -61,7 +61,7 @@ The codebase is large, and the priority is to implement the code in the examples
 - binpacking_2d_sat - 🆗
 - binpacking_problem_sat - 🆗
 - bool_or_sample_sat - 🆗
-- channeling_sample_sat
+- channeling_sample_sat - 🆗
 - cocktail_hour_mo
 - constraint_programming_cp
 - copy_model_sample_sat
