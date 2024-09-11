@@ -21,7 +21,7 @@ inline operations_research::GDemo::GDemo( const Napi::CallbackInfo& info )
 {
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
-        auto external = info[ 0 ].As< Napi::External< Demo > >();
+        auto external = info[ 0 ].As< Napi::External< std::shared_ptr< Demo > > >();
         pDemo         = *external.Data();
         return;
     }
