@@ -130,7 +130,7 @@ inline Napi::Value operations_research::sat::GSolveCpModel( const Napi::Callback
 
         ~Worker()
         {
-            std::cout << "Worker destructor" << std::endl;
+            LOG( INFO ) << __func__ << " : Worker destructor";
         }
     };
 
@@ -314,7 +314,7 @@ Napi::Value operations_research::sat::GSolve( const Napi::CallbackInfo& info )
         }
         ~Worker()
         {
-            std::cout << "Worker destructor" << std::endl;
+            LOG( INFO ) << __func__ << " : Worker destructor";
         }
     };
 

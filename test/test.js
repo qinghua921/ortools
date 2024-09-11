@@ -41,8 +41,12 @@ model.Add(operations_research.sat.NewFeasibleSolutionObserver(
 model.Add(operations_research.sat.NewSatParameters(parameters));
 
 operations_research.sat.SolveCpModel(cp_model.Build(), model).then((response) => {
-    console.log(`x=${operations_research.sat.SolutionIntegerValue(response, x)} ` +
+    console.log(`Solution found: x=${operations_research.sat.SolutionIntegerValue(response, x)} ` +
         `y=${operations_research.sat.SolutionIntegerValue(response, y)} ` +
-        `b=${operations_research.sat.SolutionBooleanValue(response, b)} 000000000000000`);
+        `b=${operations_research.sat.SolutionBooleanValue(response, b)} `);
 });
 
+setTimeout(() => {
+    console.log(process._getActiveHandles());
+  }, 1000);
+  
