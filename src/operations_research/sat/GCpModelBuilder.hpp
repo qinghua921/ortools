@@ -179,8 +179,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddLessThan( const
     if ( info.Length() == 2 && GLinearExpr::ToLinearExpr( info[ 0 ], left ) && GLinearExpr::ToLinearExpr( info[ 1 ], right ) )
     {
         auto constraint = pCpModelBuilder->AddLessThan( left, right );
-        auto external   = Napi::External< Constraint >::New( info.Env(), std::make_shared< Constraint >( constraint ) );
-        return GConstraint::constructor.New( { external } );
+        return GConstraint::FromExternal( new Constraint( constraint ) );
     }
 
     ThrowJsError( operations_research::sat::GCpModelBuilder::AddLessThan : Invalid argument );
@@ -209,8 +208,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddBoolOr( const N
         }
 
         auto constraint = pCpModelBuilder->AddBoolOr( literals );
-        auto external   = Napi::External< Constraint >::New( info.Env(), std::make_shared< Constraint >( constraint ) );
-        return GConstraint::constructor.New( { external } );
+        return GConstraint::FromExternal( new Constraint( constraint ) );
     }
 
     ThrowJsError( operations_research::sat::GCpModelBuilder::AddBoolOr : Invalid argument );
@@ -227,8 +225,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddImplication( co
         auto gboolvar_a = GBoolVar::Unwrap( info[ 0 ].As< Napi::Object >() );
         auto gboolvar_b = GBoolVar::Unwrap( info[ 1 ].As< Napi::Object >() );
         auto constraint = pCpModelBuilder->AddImplication( *gboolvar_a->pBoolVar, *gboolvar_b->pBoolVar );
-        auto external   = Napi::External< Constraint >::New( info.Env(), std::make_shared< Constraint >( constraint ) );
-        return GConstraint::constructor.New( { external } );
+        return GConstraint::FromExternal( new Constraint( constraint ) );
     }
 
     //     Constraint AddImplication( absl::Span< const BoolVar > lhs,
@@ -268,8 +265,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddImplication( co
         }
 
         auto constraint = pCpModelBuilder->AddImplication( lhs, rhs );
-        auto external   = Napi::External< Constraint >::New( info.Env(), std::make_shared< Constraint >( constraint ) );
-        return GConstraint::constructor.New( { external } );
+        return GConstraint::FromExternal( new Constraint( constraint ) );
     }
 
     ThrowJsError( operations_research::sat::GCpModelBuilder::AddImplication : Invalid argument );
@@ -283,8 +279,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddGreaterOrEqual(
     if ( info.Length() == 2 && GLinearExpr::ToLinearExpr( info[ 0 ], left ) && GLinearExpr::ToLinearExpr( info[ 1 ], right ) )
     {
         auto constraint = pCpModelBuilder->AddGreaterOrEqual( left, right );
-        auto external   = Napi::External< Constraint >::New( info.Env(), std::make_shared< Constraint >( constraint ) );
-        return GConstraint::constructor.New( { external } );
+        return GConstraint::FromExternal( new Constraint( constraint ) );
     }
 
     ThrowJsError( operations_research::sat::GCpModelBuilder::AddGreaterOrEqual : Invalid argument );
@@ -363,8 +358,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddGreaterThan( co
     if ( info.Length() == 2 && GLinearExpr::ToLinearExpr( info[ 0 ], left ) && GLinearExpr::ToLinearExpr( info[ 1 ], right ) )
     {
         auto constraint = pCpModelBuilder->AddGreaterThan( left, right );
-        auto external   = Napi::External< Constraint >::New( info.Env(), std::make_shared< Constraint >( constraint ) );
-        return GConstraint::constructor.New( { external } );
+        return GConstraint::FromExternal( new Constraint( constraint ) );
     }
 
     ThrowJsError( operations_research::sat::GCpModelBuilder::AddGreaterThan : Invalid argument );
@@ -392,8 +386,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddLessOrEqual( co
     if ( info.Length() == 2 && GLinearExpr::ToLinearExpr( info[ 0 ], left ) && GLinearExpr::ToLinearExpr( info[ 1 ], right ) )
     {
         auto constraint = pCpModelBuilder->AddLessOrEqual( left, right );
-        auto external   = Napi::External< Constraint >::New( info.Env(), std::make_shared< Constraint >( constraint ) );
-        return GConstraint::constructor.New( { external } );
+        return GConstraint::FromExternal( new Constraint( constraint ) );
     }
 
     ThrowJsError( operations_research::sat::GCpModelBuilder::AddLessOrEqual : Invalid argument );
@@ -433,8 +426,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddAtMostOne( cons
             }
         }
         auto constraint = pCpModelBuilder->AddAtMostOne( literals );
-        auto external   = Napi::External< Constraint >::New( info.Env(), std::make_shared< Constraint >( constraint ) );
-        return GConstraint::constructor.New( { external } );
+        return GConstraint::FromExternal( new Constraint( constraint ) );
     }
 
     ThrowJsError( operations_research::sat::GCpModelBuilder::AddAtMostOne : Invalid argument );
@@ -491,8 +483,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddAllowedAssignme
         }
 
         auto constraint = pCpModelBuilder->AddAllowedAssignments( vars );
-        auto external   = Napi::External< Constraint >::New( info.Env(), &std::make_shared< Constraint >( constraint ) );
-        return GTableConstraint::constructor.New( { external } );
+        return GConstraint::FromExternal( new Constraint( constraint ) );
     }
 
     ThrowJsError( operations_research::sat::GCpModelBuilder::AddAllowedAssignments : Invalid argument );
@@ -506,8 +497,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddEquality( const
     if ( info.Length() == 2 && GLinearExpr::ToLinearExpr( info[ 0 ], left ) && GLinearExpr::ToLinearExpr( info[ 1 ], right ) )
     {
         auto constraint = pCpModelBuilder->AddEquality( left, right );
-        auto external   = Napi::External< Constraint >::New( info.Env(), std::make_shared< Constraint >( constraint ) );
-        return GConstraint::constructor.New( { external } );
+        return GConstraint::FromExternal( new Constraint( constraint ) );
     }
 
     ThrowJsError( operations_research::sat::GCpModelBuilder::AddEquality : Invalid argument );
@@ -531,8 +521,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddExactlyOne( con
             }
         }
         auto constraint = pCpModelBuilder->AddExactlyOne( literals );
-        auto external   = Napi::External< Constraint >::New( info.Env(), std::make_shared< Constraint >( constraint ) );
-        return GConstraint::constructor.New( { external } );
+        return GConstraint::FromExternal( new Constraint( constraint ) );
     }
 
     ThrowJsError( operations_research::sat::GCpModelBuilder::AddExactlyOne : Invalid argument );

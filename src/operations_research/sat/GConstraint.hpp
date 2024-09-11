@@ -9,16 +9,9 @@ namespace operations_research
 {
 namespace sat
 {
-    class GConstraint : public Napi::ObjectWrap< GConstraint >
-    {
-    public:
-        static inline Napi::FunctionReference constructor;
-        std::shared_ptr< Constraint >         shared_ptr;
-        GConstraint( const Napi::CallbackInfo& info );
-        static Napi::Object Init( Napi::Env env, Napi::Object exports );
-
-        Napi::Value OnlyEnforceIf( const Napi::CallbackInfo& info );
-    };
+    WrapOrToolsClass(
+        Constraint,
+        WrapOrToolsMethod( OnlyEnforceIf ); );
 };  // namespace sat
 };  // namespace operations_research
 
@@ -27,15 +20,15 @@ inline operations_research::sat::GConstraint::GConstraint( const Napi::CallbackI
 {
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
-        auto external = info[ 0 ].As< Napi::External< std::shared_ptr< Constraint > > >();
-        shared_ptr    = *external.Data();
+        auto external = info[ 0 ].As< Napi::External< Constraint > >();
+        shared_ptr    = std::shared_ptr< Constraint >( external.Data() );
         return;
     }
 
     ThrowJsError( operations_research::GConstraint::GConstraint : Invalid argument );
 }
 
-inline Napi::Object operations_research::sat::GConstraint::Init( Napi::Env env, Napi::Object exports )
+inline void operations_research::sat::GConstraint::Init( Napi::Env env, Napi::Object exports )
 {
     Napi::HandleScope scope( env );
     Napi::Function    func = DefineClass(
@@ -46,7 +39,6 @@ inline Napi::Object operations_research::sat::GConstraint::Init( Napi::Env env, 
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "Constraint" ), func );
-    return exports;
 }
 
 inline Napi::Value operations_research::sat::GConstraint::OnlyEnforceIf( const Napi::CallbackInfo& info )
@@ -57,8 +49,7 @@ inline Napi::Value operations_research::sat::GConstraint::OnlyEnforceIf( const N
     {
         GBoolVar*  pLiteral   = Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 0 ].As< Napi::Object >() );
         Constraint constraint = shared_ptr->OnlyEnforceIf( *pLiteral->pBoolVar );
-        auto       external   = Napi::External< Constraint >::New( info.Env(), std::make_shared< Constraint >( constraint ) );
-        return GConstraint::constructor.New( { external } );
+        return GConstraint::FromExternal( new Constraint( constraint ) );
     }
 
     //     Constraint OnlyEnforceIf( absl::Span< const BoolVar > literals );
@@ -81,8 +72,7 @@ inline Napi::Value operations_research::sat::GConstraint::OnlyEnforceIf( const N
         }
 
         auto constraint = shared_ptr->OnlyEnforceIf( literals );
-        auto external   = Napi::External< Constraint >::New( info.Env(), std::make_shared< Constraint >( constraint ) );
-        return GConstraint::constructor.New( { external } );
+        return GConstraint::FromExternal( new Constraint( constraint ) );
     }
 
     ThrowJsError( operations_research::GConstraint::OnlyEnforceIf : Invalid argument );

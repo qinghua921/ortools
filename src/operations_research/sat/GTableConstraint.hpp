@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "commonheader.hpp"
 #include "GConstraint.hpp"
 
@@ -8,41 +7,26 @@ namespace operations_research
 {
 namespace sat
 {
-    class GTableConstraint : public Napi::ObjectWrap< GTableConstraint >
-    {
-    public:
-        static inline Napi::FunctionReference constructor;
-        TableConstraint*               pTableConstraint = nullptr;
-        GTableConstraint( const Napi::CallbackInfo& info );
-        ~GTableConstraint();
-        static Napi::Object Init( Napi::Env env, Napi::Object exports );
-
-        Napi::Value AddTuple( const Napi::CallbackInfo& info );
-    };
+    WrapOrToolsClass(
+        TableConstraint,
+        WrapOrToolsMethod( AddTuple ); );
 };  // namespace sat
 };  // namespace operations_research
-
-
 
 inline operations_research::sat::GTableConstraint::GTableConstraint( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GTableConstraint >( info )
 {
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
-        auto external    = info[ 0 ].As< Napi::External< TableConstraint > >();
-        pTableConstraint = dynamic_cast< TableConstraint* >( external.Data() );
-        if ( pTableConstraint != nullptr ) return;
+        auto external = info[ 0 ].As< Napi::External< TableConstraint > >();
+        shared_ptr    = std::shared_ptr< TableConstraint >( external.Data() );
+        return;
     }
 
     ThrowJsError( operations_research::GTableConstraint::GTableConstraint : Invalid argument );
 }
 
-inline operations_research::sat::GTableConstraint::~GTableConstraint()
-{
-    delete pTableConstraint;
-}
-
-inline Napi::Object operations_research::sat::GTableConstraint::Init( Napi::Env env, Napi::Object exports )
+inline void operations_research::sat::GTableConstraint::Init( Napi::Env env, Napi::Object exports )
 {
     Napi::HandleScope scope( env );
     Napi::Function    func = DefineClass(
@@ -53,7 +37,6 @@ inline Napi::Object operations_research::sat::GTableConstraint::Init( Napi::Env 
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "TableConstraint" ), func );
-    return exports;
 }
 
 inline Napi::Value operations_research::sat::GTableConstraint::AddTuple( const Napi::CallbackInfo& info )
@@ -70,12 +53,12 @@ inline Napi::Value operations_research::sat::GTableConstraint::AddTuple( const N
                 tuple[ i ] = jsTuple.Get( i ).As< Napi::Number >().Int64Value();
                 continue;
             }
-            
+
             ThrowJsError( operations_research::GTableConstraint::AddTuple : Invalid argument );
             return info.Env().Undefined();
         }
 
-        pTableConstraint->AddTuple( tuple );
+        shared_ptr->AddTuple( tuple );
         return info.Env().Undefined();
     }
 
