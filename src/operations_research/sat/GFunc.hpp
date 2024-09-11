@@ -98,7 +98,7 @@ inline Napi::Value operations_research::sat::GSolveCpModel( const Napi::Callback
     {
         auto model_proto      = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
         auto model            = GModel::Unwrap( info[ 1 ].As< Napi::Object >() );
-        auto cpSolverResponse = SolveCpModel( *model_proto->shared_ptr, model->shared_ptr.get() );
+        auto cpSolverResponse = SolveCpModel( *model_proto->pCpModelProto, model->shared_ptr.get() );
         auto exterior         = Napi::External< CpSolverResponse >::New( info.Env(), new CpSolverResponse( cpSolverResponse ) );
         return GCpSolverResponse::constructor.New( { exterior } );
     }
@@ -164,7 +164,7 @@ inline Napi::Value operations_research::sat::GSolveWithParameters( const Napi::C
     {
         auto model_proto      = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
         auto sat_parameters   = GSatParameters::Unwrap( info[ 1 ].As< Napi::Object >() );
-        auto cpSolverResponse = SolveWithParameters( *model_proto->shared_ptr, *sat_parameters->pSatParameters );
+        auto cpSolverResponse = SolveWithParameters( *model_proto->pCpModelProto, *sat_parameters->pSatParameters );
         auto exterior         = Napi::External< CpSolverResponse >::New( info.Env(), new CpSolverResponse( cpSolverResponse ) );
         return GCpSolverResponse::constructor.New( { exterior } );
     }
@@ -242,7 +242,7 @@ Napi::Value operations_research::sat::GSolve( const Napi::CallbackInfo& info )
          && info[ 0 ].As< Napi::Object >().InstanceOf( GCpModelProto::constructor.Value() ) )
     {
         auto model_proto      = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
-        auto cpSolverResponse = Solve( *model_proto->shared_ptr );
+        auto cpSolverResponse = Solve( *model_proto->pCpModelProto );
         auto exterior         = Napi::External< CpSolverResponse >::New( info.Env(), new CpSolverResponse( cpSolverResponse ) );
         return GCpSolverResponse::constructor.New( { exterior } );
     }
