@@ -6,15 +6,24 @@
 
 namespace operations_research
 {
-WrapOrToolsClass(
-    MPObjective,
-    WrapOrToolsMethod( SetMinimization );
-    WrapOrToolsMethod( SetCoefficient );
-    WrapOrToolsMethod( Value );
-    WrapOrToolsMethod( BestBound );
-    WrapOrToolsMethod( SetMaximization );
-    WrapOrToolsMethod( MinimizeLinearExpr ); );
+class GMPObjective : public Napi::ObjectWrap< GMPObjective >
+{
+public:
+    static inline Napi::FunctionReference constructor;
+    std::shared_ptr< MPObjective > pMPObjective;
+    GMPObjective( const Napi::CallbackInfo& info );
+    static Napi::Object Init( Napi::Env env, Napi::Object exports );
+
+    Napi::Value SetMinimization( const Napi::CallbackInfo& info );
+    Napi::Value SetCoefficient( const Napi::CallbackInfo& info );
+    Napi::Value Value( const Napi::CallbackInfo& info );
+    Napi::Value BestBound( const Napi::CallbackInfo& info );
+    Napi::Value SetMaximization( const Napi::CallbackInfo& info );
+    Napi::Value MinimizeLinearExpr( const Napi::CallbackInfo& info );
+};
 };  // namespace operations_research
+
+
 
 inline operations_research::GMPObjective::GMPObjective( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GMPObjective >( info )
@@ -22,14 +31,14 @@ inline operations_research::GMPObjective::GMPObjective( const Napi::CallbackInfo
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
         auto external = info[ 0 ].As< Napi::External< MPObjective > >();
-        shared_ptr    = std::shared_ptr< MPObjective >( external.Data() );
+        pMPObjective  = std::shared_ptr< MPObjective >( external.Data() );
         return;
     }
 
     ThrowJsError( operations_research::GMPObjective::GMPObjective : Invalid argument );
 }
 
-inline void operations_research::GMPObjective::Init( Napi::Env env, Napi::Object exports )
+inline Napi::Object operations_research::GMPObjective::Init( Napi::Env env, Napi::Object exports )
 {
     Napi::HandleScope scope( env );
     Napi::Function    func = DefineClass(
@@ -45,6 +54,7 @@ inline void operations_research::GMPObjective::Init( Napi::Env env, Napi::Object
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "MPObjective" ), func );
+    return exports;
 }
 
 inline Napi::Value operations_research::GMPObjective::MinimizeLinearExpr( const Napi::CallbackInfo& info )
@@ -54,7 +64,7 @@ inline Napi::Value operations_research::GMPObjective::MinimizeLinearExpr( const 
          && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
         auto linear_expr = GLinearExpr::Unwrap( info[ 0 ].As< Napi::Object >() );
-        shared_ptr->MinimizeLinearExpr( *linear_expr->pLinearExpr );
+        pMPObjective->MinimizeLinearExpr( *linear_expr->pLinearExpr );
         return info.Env().Undefined();
     }
 
@@ -67,7 +77,7 @@ inline Napi::Value operations_research::GMPObjective::SetMaximization( const Nap
     //     void SetMaximization()
     if ( info.Length() == 0 )
     {
-        shared_ptr->SetMaximization();
+        pMPObjective->SetMaximization();
         return info.Env().Undefined();
     }
 
@@ -80,7 +90,7 @@ inline Napi::Value operations_research::GMPObjective::BestBound( const Napi::Cal
     //     double BestBound() const;
     if ( info.Length() == 0 )
     {
-        return Napi::Number::New( info.Env(), shared_ptr->BestBound() );
+        return Napi::Number::New( info.Env(), pMPObjective->BestBound() );
     }
 
     ThrowJsError( operations_research::GMPObjective::BestBound : Invalid argument );
@@ -92,7 +102,7 @@ inline Napi::Value operations_research::GMPObjective::Value( const Napi::Callbac
     //     double Value() const;
     if ( info.Length() == 0 )
     {
-        return Napi::Number::New( info.Env(), shared_ptr->Value() );
+        return Napi::Number::New( info.Env(), pMPObjective->Value() );
     }
 
     ThrowJsError( operations_research::GMPObjective::Value : Invalid argument );
@@ -104,7 +114,7 @@ inline Napi::Value operations_research::GMPObjective::SetMinimization( const Nap
     //     void SetMinimization()
     if ( info.Length() == 0 )
     {
-        shared_ptr->SetMinimization();
+        pMPObjective->SetMinimization();
         return info.Env().Undefined();
     }
 
@@ -122,7 +132,7 @@ inline Napi::Value operations_research::GMPObjective::SetCoefficient( const Napi
     {
         auto   var   = GMPVariable::Unwrap( info[ 0 ].As< Napi::Object >() );
         double coeff = info[ 1 ].As< Napi::Number >().DoubleValue();
-        shared_ptr->SetCoefficient( var->pMPVariable, coeff );
+        pMPObjective->SetCoefficient( var->pMPVariable, coeff );
         return info.Env().Undefined();
     }
 

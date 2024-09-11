@@ -1,5 +1,6 @@
 #pragma once
 
+
 #include "commonheader.hpp"
 #include "ortools/sat/cp_model.h"
 
@@ -7,28 +8,43 @@ namespace operations_research
 {
 namespace sat
 {
-    WrapOrToolsClass(
-        CpSolverResponse,
-        WrapOrToolsMethod( objective_value );
-        WrapOrToolsMethod( status );
-        WrapOrToolsMethod( sufficient_assumptions_for_infeasibility ); );
+    class GCpSolverResponse : public Napi::ObjectWrap< GCpSolverResponse >
+    {
+    public:
+        static inline Napi::FunctionReference constructor;
+        CpSolverResponse*              pCpSolverResponse = nullptr;
+        GCpSolverResponse( const Napi::CallbackInfo& info );
+        ~GCpSolverResponse();
+        static Napi::Object Init( Napi::Env env, Napi::Object exports );
+
+        Napi::Value objective_value( const Napi::CallbackInfo& info );
+        Napi::Value status( const Napi::CallbackInfo& info );
+        Napi::Value sufficient_assumptions_for_infeasibility( const Napi::CallbackInfo& info );
+    };
 };  // namespace sat
 };  // namespace operations_research
+
+
 
 inline operations_research::sat::GCpSolverResponse::GCpSolverResponse( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GCpSolverResponse >( info )
 {
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
-        auto external = info[ 0 ].As< Napi::External< CpSolverResponse > >();
-        shared_ptr    = std::shared_ptr< CpSolverResponse >( external.Data() );
-        return;
+        auto external     = info[ 0 ].As< Napi::External< CpSolverResponse > >();
+        pCpSolverResponse = dynamic_cast< CpSolverResponse* >( external.Data() );
+        if ( pCpSolverResponse != nullptr ) return;
     }
 
     ThrowJsError( operations_research::GCpSolverResponse::GCpSolverResponse : Invalid argument );
 }
 
-inline void operations_research::sat::GCpSolverResponse::Init( Napi::Env env, Napi::Object exports )
+inline operations_research::sat::GCpSolverResponse::~GCpSolverResponse()
+{
+    delete pCpSolverResponse;
+}
+
+inline Napi::Object operations_research::sat::GCpSolverResponse::Init( Napi::Env env, Napi::Object exports )
 {
     Napi::HandleScope scope( env );
     Napi::Function    func = DefineClass(
@@ -41,6 +57,7 @@ inline void operations_research::sat::GCpSolverResponse::Init( Napi::Env env, Na
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "CpSolverResponse" ), func );
+    return exports;
 }
 
 inline Napi::Value operations_research::sat::GCpSolverResponse::sufficient_assumptions_for_infeasibility( const Napi::CallbackInfo& info )
@@ -49,14 +66,14 @@ inline Napi::Value operations_research::sat::GCpSolverResponse::sufficient_assum
     if ( info.Length() == 1 && info[ 0 ].IsNumber() )
     {
         int index = info[ 0 ].As< Napi::Number >().Int32Value();
-        return Napi::Number::New( info.Env(), shared_ptr->sufficient_assumptions_for_infeasibility( index ) );
+        return Napi::Number::New( info.Env(), pCpSolverResponse->sufficient_assumptions_for_infeasibility( index ) );
     }
 
     //     const ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >&
     //     sufficient_assumptions_for_infeasibility() const;
     if ( info.Length() == 0 )
     {
-        auto assumptions = shared_ptr->sufficient_assumptions_for_infeasibility();
+        auto assumptions = pCpSolverResponse->sufficient_assumptions_for_infeasibility();
         auto array       = Napi::Array::New( info.Env(), assumptions.size() );
         for ( int i = 0; i < assumptions.size(); i++ )
         {
@@ -74,7 +91,7 @@ inline Napi::Value operations_research::sat::GCpSolverResponse::objective_value(
     //     double objective_value() const;
     if ( info.Length() == 0 )
     {
-        return Napi::Number::New( info.Env(), shared_ptr->objective_value() );
+        return Napi::Number::New( info.Env(), pCpSolverResponse->objective_value() );
     }
 
     ThrowJsError( operations_research::GCpSolverResponse::objective_value : Invalid argument );
@@ -86,7 +103,7 @@ inline Napi::Value operations_research::sat::GCpSolverResponse::status( const Na
     //     ::operations_research::sat::CpSolverStatus status() const;
     if ( info.Length() == 0 )
     {
-        return Napi::Number::New( info.Env(), shared_ptr->status() );
+        return Napi::Number::New( info.Env(), pCpSolverResponse->status() );
     }
 
     ThrowJsError( operations_research::GCpSolverResponse::Status : Invalid argument );

@@ -184,7 +184,7 @@ inline Napi::Value operations_research::sat::GSolutionBooleanValue( const Napi::
     {
         auto solver_response = GCpSolverResponse::Unwrap( info[ 0 ].As< Napi::Object >() );
         auto model_proto     = GBoolVar::Unwrap( info[ 1 ].As< Napi::Object >() );
-        return Napi::Boolean::New( info.Env(), SolutionBooleanValue( *solver_response->shared_ptr, *model_proto->pBoolVar ) );
+        return Napi::Boolean::New( info.Env(), SolutionBooleanValue( *solver_response->pCpSolverResponse, *model_proto->pBoolVar ) );
     }
 
     ThrowJsError( operations_research::sat::GSolutionBooleanValue : Invalid arguments );
@@ -200,7 +200,7 @@ Napi::Value operations_research::sat::GCpSolverResponseStats( const Napi::Callba
          && info[ 0 ].As< Napi::Object >().InstanceOf( GCpSolverResponse::constructor.Value() ) )
     {
         auto solver_response = GCpSolverResponse::Unwrap( info[ 0 ].As< Napi::Object >() );
-        return Napi::String::New( info.Env(), CpSolverResponseStats( *solver_response->shared_ptr ) );
+        return Napi::String::New( info.Env(), CpSolverResponseStats( *solver_response->pCpSolverResponse ) );
     }
 
     if ( info.Length() == 2
@@ -210,7 +210,7 @@ Napi::Value operations_research::sat::GCpSolverResponseStats( const Napi::Callba
     {
         auto solver_response = GCpSolverResponse::Unwrap( info[ 0 ].As< Napi::Object >() );
         bool has_objective   = info[ 1 ].As< Napi::Boolean >().Value();
-        return Napi::String::New( info.Env(), CpSolverResponseStats( *solver_response->shared_ptr, has_objective ) );
+        return Napi::String::New( info.Env(), CpSolverResponseStats( *solver_response->pCpSolverResponse, has_objective ) );
     }
 
     ThrowJsError( operations_research::sat::GCpSolverResponseStats : Invalid arguments );
@@ -227,7 +227,7 @@ Napi::Value operations_research::sat::GSolutionIntegerValue( const Napi::Callbac
          && GLinearExpr::ToLinearExpr( info[ 1 ], expr ) )
     {
         auto solver_response = GCpSolverResponse::Unwrap( info[ 0 ].As< Napi::Object >() );
-        return Napi::Number::New( info.Env(), SolutionIntegerValue( *solver_response->shared_ptr, expr ) );
+        return Napi::Number::New( info.Env(), SolutionIntegerValue( *solver_response->pCpSolverResponse, expr ) );
     }
 
     ThrowJsError( operations_research::sat::GSolutionIntegerValue : Invalid arguments );
