@@ -5,12 +5,13 @@
 This is a TypeScript wrapper for the [Google OR-Tools](https://github.com/google/or-tools) library.
 The corresponding version is [v9.6](https://github.com/google/or-tools/releases/tag/v9.6).
 
-The code is still being written, and if you have any questions, you can submit an issue.
-
-## Note
+## Warning
 
 The code is written on Windows; other platforms **may not work**.
 You should build the library yourself.
+
+In addition, the code is not yet fully tested and may contain bugs. Expecially there may be js memory leaks.
+If you find any bugs, please submit an issue.
 
 ## How to use
 
