@@ -119,7 +119,7 @@ inline Napi::Value operations_research::sat::GSolveCpModel( const Napi::Callback
         void OnOK() override
         {
             auto vExternal = Napi::External< CpSolverResponse >::New( this->env, new CpSolverResponse( this->vCpSolverResponse ) );
-            auto ret       = GCpSolverResponse::constructor.New( { vExternal, Napi::Boolean::New( env, true ) } );
+            auto ret       = GCpSolverResponse::constructor.New( { vExternal } );
             this->deferred.Resolve( ret );
         }
 
@@ -133,6 +133,8 @@ inline Napi::Value operations_research::sat::GSolveCpModel( const Napi::Callback
             std::cout << "Worker destructor" << std::endl;
         }
     };
+
+    LOG( INFO ) << __func__ << " : info.Length() " << info.Length();
 
     // CpSolverResponse SolveCpModel(const CpModelProto& model_proto, Model* model);
     if ( info.Length() == 2
@@ -302,7 +304,7 @@ Napi::Value operations_research::sat::GSolve( const Napi::CallbackInfo& info )
         void OnOK() override
         {
             auto vExternal = Napi::External< CpSolverResponse >::New( this->env, new CpSolverResponse( this->vCpSolverResponse ) );
-            auto ret       = GCpSolverResponse::constructor.New( { vExternal, Napi::Boolean::New( env, true ) } );
+            auto ret       = GCpSolverResponse::constructor.New( { vExternal } );
             this->deferred.Resolve( ret );
         }
 
