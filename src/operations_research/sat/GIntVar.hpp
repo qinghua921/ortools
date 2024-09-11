@@ -48,7 +48,7 @@ inline operations_research::sat::GIntVar::GIntVar( const Napi::CallbackInfo& inf
          && info[ 0 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
     {
         auto gboolvar = GBoolVar::Unwrap( info[ 0 ].As< Napi::Object >() );
-        pIntVar       = new IntVar( *gboolvar->pBoolVar );
+        pIntVar       = new IntVar( *gboolvar->shared_ptr );
         return;
     }
 

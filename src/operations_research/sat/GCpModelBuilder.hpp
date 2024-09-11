@@ -154,7 +154,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddDecisionStrateg
                  && arr.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
             {
                 auto gboolvar = GBoolVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
-                variables.push_back( *gboolvar->pBoolVar );
+                variables.push_back( *gboolvar->shared_ptr );
                 continue;
             }
 
@@ -199,7 +199,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddBoolOr( const N
                  && arr.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
             {
                 auto gboolvar = GBoolVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
-                literals.push_back( *gboolvar->pBoolVar );
+                literals.push_back( *gboolvar->shared_ptr );
                 continue;
             }
 
@@ -224,7 +224,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddImplication( co
     {
         auto gboolvar_a = GBoolVar::Unwrap( info[ 0 ].As< Napi::Object >() );
         auto gboolvar_b = GBoolVar::Unwrap( info[ 1 ].As< Napi::Object >() );
-        auto constraint = pCpModelBuilder->AddImplication( *gboolvar_a->pBoolVar, *gboolvar_b->pBoolVar );
+        auto constraint = pCpModelBuilder->AddImplication( *gboolvar_a->shared_ptr, *gboolvar_b->shared_ptr );
         return GConstraint::FromExternal( new Constraint( constraint ) );
     }
 
@@ -240,7 +240,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddImplication( co
                  && arr_lhs.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
             {
                 auto gboolvar = GBoolVar::Unwrap( arr_lhs.Get( i ).As< Napi::Object >() );
-                lhs.push_back( *gboolvar->pBoolVar );
+                lhs.push_back( *gboolvar->shared_ptr );
                 continue;
             }
 
@@ -256,7 +256,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddImplication( co
                  && arr_rhs.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
             {
                 auto gboolvar = GBoolVar::Unwrap( arr_rhs.Get( i ).As< Napi::Object >() );
-                rhs.push_back( *gboolvar->pBoolVar );
+                rhs.push_back( *gboolvar->shared_ptr );
                 continue;
             }
 
@@ -313,7 +313,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::NewOptionalFixedSi
     {
         auto size     = info[ 1 ].As< Napi::Number >().Int64Value();
         auto gboolvar = GBoolVar::Unwrap( info[ 2 ].As< Napi::Object >() );
-        auto expr     = pCpModelBuilder->NewOptionalFixedSizeIntervalVar( start, size, *gboolvar->pBoolVar );
+        auto expr     = pCpModelBuilder->NewOptionalFixedSizeIntervalVar( start, size, *gboolvar->shared_ptr );
         auto external = Napi::External< IntervalVar >::New( info.Env(), new IntervalVar( expr ) );
         return GIntervalVar::constructor.New( { external } );
     }
@@ -335,7 +335,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddAssumptions( co
                  && arr.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
             {
                 auto gboolvar = GBoolVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
-                literals.push_back( *gboolvar->pBoolVar );
+                literals.push_back( *gboolvar->shared_ptr );
                 continue;
             }
 
@@ -422,7 +422,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddAtMostOne( cons
                  && arr.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
             {
                 auto gboolvar = GBoolVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
-                literals.push_back( *gboolvar->pBoolVar );
+                literals.push_back( *gboolvar->shared_ptr );
             }
         }
         auto constraint = pCpModelBuilder->AddAtMostOne( literals );
@@ -517,7 +517,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddExactlyOne( con
                  && arr.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
             {
                 auto gboolvar = GBoolVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
-                literals.push_back( *gboolvar->pBoolVar );
+                literals.push_back( *gboolvar->shared_ptr );
             }
         }
         auto constraint = pCpModelBuilder->AddExactlyOne( literals );

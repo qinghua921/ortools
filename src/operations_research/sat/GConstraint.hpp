@@ -48,7 +48,7 @@ inline Napi::Value operations_research::sat::GConstraint::OnlyEnforceIf( const N
          && info[ 0 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
     {
         GBoolVar*  pLiteral   = Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 0 ].As< Napi::Object >() );
-        Constraint constraint = shared_ptr->OnlyEnforceIf( *pLiteral->pBoolVar );
+        Constraint constraint = shared_ptr->OnlyEnforceIf( *pLiteral->shared_ptr );
         return GConstraint::FromExternal( new Constraint( constraint ) );
     }
 
@@ -63,7 +63,7 @@ inline Napi::Value operations_research::sat::GConstraint::OnlyEnforceIf( const N
             if ( arrayElement.IsObject() && arrayElement.As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
             {
                 GBoolVar* pLiteral = Napi::ObjectWrap< GBoolVar >::Unwrap( arrayElement.As< Napi::Object >() );
-                literals.push_back( *pLiteral->pBoolVar );
+                literals.push_back( *pLiteral->shared_ptr );
                 continue;
             }
 
