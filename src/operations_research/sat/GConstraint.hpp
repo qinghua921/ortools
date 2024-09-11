@@ -13,7 +13,7 @@ namespace sat
     {
     public:
         static inline Napi::FunctionReference constructor;
-        std::shared_ptr< Constraint >         shared_ptr;
+        std::shared_ptr< Constraint >         pConstraint;
         GConstraint( const Napi::CallbackInfo& info );
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
 
@@ -28,7 +28,7 @@ inline operations_research::sat::GConstraint::GConstraint( const Napi::CallbackI
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
         auto external = info[ 0 ].As< Napi::External< Constraint > >();
-        shared_ptr    = std::shared_ptr< Constraint >( external.Data());
+        pConstraint   = std::shared_ptr< Constraint >( external.Data() );
         return;
     }
 
@@ -56,7 +56,7 @@ inline Napi::Value operations_research::sat::GConstraint::OnlyEnforceIf( const N
          && info[ 0 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
     {
         GBoolVar*  pLiteral   = Napi::ObjectWrap< GBoolVar >::Unwrap( info[ 0 ].As< Napi::Object >() );
-        Constraint constraint = shared_ptr->OnlyEnforceIf( *pLiteral->pBoolVar );
+        Constraint constraint = pConstraint->OnlyEnforceIf( *pLiteral->pBoolVar );
         auto       external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
         return GConstraint::constructor.New( { external } );
     }
@@ -80,7 +80,7 @@ inline Napi::Value operations_research::sat::GConstraint::OnlyEnforceIf( const N
             return info.Env().Undefined();
         }
 
-        auto constraint = shared_ptr->OnlyEnforceIf( literals );
+        auto constraint = pConstraint->OnlyEnforceIf( literals );
         auto external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
         return GConstraint::constructor.New( { external } );
     }
