@@ -43,15 +43,15 @@ test('assignment_groups_mip', () =>
     parameters.set_enumerate_all_solutions(true);
     model.Add(operations_research.sat.NewSatParameters(parameters));
 
-    // model.Add(operations_research.sat.NewFeasibleSolutionObserver(
-    //     (response: operations_research.sat.CpSolverResponse) =>
-    //     {
-    //         console.log(`x=${operations_research.sat.SolutionIntegerValue(response, x)} ` +
-    //                     `y=${operations_research.sat.SolutionIntegerValue(response, y)} ` +     
-                        
-    //                     `b=${operations_research.sat.SolutionBooleanValue(response, b)}`);
-    //     }
-    // ));
+    model.Add(operations_research.sat.NewFeasibleSolutionObserver(
+        (response: operations_research.sat.CpSolverResponse) =>
+        {
+            console.log(`x=${operations_research.sat.SolutionIntegerValue(response, x)} ` +
+                `y=${operations_research.sat.SolutionIntegerValue(response, y)} ` +
+
+                `b=${operations_research.sat.SolutionBooleanValue(response, b)}`);
+        }
+    ));
 
     operations_research.sat.SolveCpModel(cp_model.Build(), model);
 }

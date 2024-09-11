@@ -10,7 +10,7 @@ namespace sat
     {
     public:
         static inline Napi::FunctionReference constructor;
-        std::shared_ptr< Demo >        shared_ptr;
+        std::shared_ptr< Demo >               pDemo;
         GDemo( const Napi::CallbackInfo& info );
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
     };
@@ -23,7 +23,7 @@ inline operations_research::sat::GDemo::GDemo( const Napi::CallbackInfo& info )
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
         auto external = info[ 0 ].As< Napi::External< std::shared_ptr< Demo > > >();
-        shared_ptr         = *external.Data();
+        pDemo         = *external.Data();
         return;
     }
 

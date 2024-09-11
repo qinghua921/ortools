@@ -11,7 +11,7 @@ namespace sat
     {
     public:
         static inline Napi::FunctionReference constructor;
-        std::shared_ptr< Model >              shared_ptr;
+        std::shared_ptr< Model >              spModel;
         GModel( const Napi::CallbackInfo& info );
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
 
@@ -26,14 +26,14 @@ inline operations_research::sat::GModel::GModel( const Napi::CallbackInfo& info 
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
         auto external = info[ 0 ].As< Napi::External< std::shared_ptr< Model > > >();
-        shared_ptr    = *external.Data();
+        spModel       = *external.Data();
         return;
     }
 
     //     Model() {}
     if ( info.Length() == 0 )
     {
-        shared_ptr = std::make_shared< Model >();
+        spModel = std::make_shared< Model >();
         return;
     }
 

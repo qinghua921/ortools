@@ -58,29 +58,32 @@ inline Napi::Value operations_research::sat::GNewFeasibleSolutionObserver( const
     //     const std::function<void(const CpSolverResponse& response)>& observer);
     if ( info.Length() == 1 && info[ 0 ].IsFunction() )
     {
-        // TODO
-        // auto observer = info[ 0 ].As< Napi::Function >();
-        // auto ret_func = NewFeasibleSolutionObserver(
-        //     [ observer ]( Model* model )  //
-        //     {
-        //         auto response = CpSolverResponse( model->solver() );
-        //         observer.Call( { Napi::External< CpSolverResponse >::New( info.Env(), new CpSolverResponse( response ) ) } );
-        //     } );
+        auto              env = info.Env();
+        Napi::HandleScope scope( env );
+        auto              observer = info[ 0 ].As< Napi::Function >();
+        auto              ret_func = NewFeasibleSolutionObserver(
+            [ &observer, &info ]( const CpSolverResponse& response )  //
+            {
+                auto              env = info.Env();
+                Napi::HandleScope scope( env );
+                auto              exterior = Napi::External< CpSolverResponse >::New( env, new CpSolverResponse( response ) );
+                observer.Call( { exterior } );
+            } );
 
-        // return Napi::Function::New(
-        //     info.Env(), [ ret_func ]( const Napi::CallbackInfo& info ) -> Napi::Value  //
-        //     {
-        //         if ( info.Length() == 1 && info[ 0 ].IsObject()
-        //              && info[ 0 ].As< Napi::Object >().InstanceOf( GModel::constructor.Value() ) )
-        //         {
-        //             auto model = GModel::Unwrap( info[ 0 ].As< Napi::Object >() );
-        //             ret_func( model->pModel );
-        //             return info.Env().Undefined();
-        //         }
+        return Napi::Function::New(
+            env, [ ret_func ]( const Napi::CallbackInfo& info ) -> Napi::Value  //
+            {
+                if ( info.Length() == 1 && info[ 0 ].IsObject()
+                     && info[ 0 ].As< Napi::Object >().InstanceOf( GModel::constructor.Value() ) )
+                {
+                    auto model = GModel::Unwrap( info[ 0 ].As< Napi::Object >() );
+                    ret_func( model->spModel.get() );
+                    return info.Env().Undefined();
+                }
 
-        //         ThrowJsError( operations_research::sat::GNewFeasibleSolutionObserver : Invalid arguments );
-        //         return info.Env().Undefined();
-        //     } );
+                ThrowJsError( operations_research::sat::GNewFeasibleSolutionObserver : Invalid arguments );
+                return info.Env().Undefined();
+            } );
     }
 
     ThrowJsError( operations_research::sat::GNewFeasibleSolutionObserver : Invalid arguments );
@@ -98,7 +101,7 @@ inline Napi::Value operations_research::sat::GSolveCpModel( const Napi::Callback
     {
         auto model_proto      = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
         auto model            = GModel::Unwrap( info[ 1 ].As< Napi::Object >() );
-        auto cpSolverResponse = SolveCpModel( *model_proto->pCpModelProto, model->shared_ptr.get() );
+        auto cpSolverResponse = SolveCpModel( *model_proto->pCpModelProto, model->spModel.get() );
         auto exterior         = Napi::External< CpSolverResponse >::New( info.Env(), new CpSolverResponse( cpSolverResponse ) );
         return GCpSolverResponse::constructor.New( { exterior } );
     }
@@ -122,7 +125,7 @@ inline Napi::Value operations_research::sat::GNewSatParameters( const Napi::Call
                      && info[ 0 ].As< Napi::Object >().InstanceOf( GModel::constructor.Value() ) )
                 {
                     auto model = GModel::Unwrap( info[ 0 ].As< Napi::Object >() );
-                    auto ret   = ret_func( model->shared_ptr.get() );
+                    auto ret   = ret_func( model->spModel.get() );
                     return GSatParameters::constructor.New( { Napi::External< SatParameters >::New( info.Env(), new SatParameters( ret ) ) } );
                 }
 
