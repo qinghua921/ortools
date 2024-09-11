@@ -42,27 +42,25 @@ test('assignment_groups_mip', async () =>
     parameters.set_search_branching(operations_research.sat.SatParameters.SearchBranching.FIXED_SEARCH);
     parameters.set_enumerate_all_solutions(true);
 
-
-    const newLocal = (response: operations_research.sat.CpSolverResponse) =>
-    {
-        console.log(`x=${operations_research.sat.SolutionIntegerValue(response, x)} ` +
-            `y=${operations_research.sat.SolutionIntegerValue(response, y)} ` +
-
-            `b=${operations_research.sat.SolutionBooleanValue(response, b)}`);
-    };
     model.Add(operations_research.sat.NewFeasibleSolutionObserver(
-        newLocal
+        (response: operations_research.sat.CpSolverResponse) =>
+        {
+            console.log(`x=${operations_research.sat.SolutionIntegerValue(response, x)} ` +
+                `y=${operations_research.sat.SolutionIntegerValue(response, y)} ` +
+                `b=${operations_research.sat.SolutionBooleanValue(response, b)}`);
+        }
     ));
     model.Add(operations_research.sat.NewSatParameters(parameters));
 
     let response = operations_research.sat.SolveCpModel(cp_model.Build(), model);
     expect(response.status()).toBe(operations_research.sat.CpSolverStatus.OPTIMAL)
     console.log(`x=${operations_research.sat.SolutionIntegerValue(response, x)} ` +
-    `y=${operations_research.sat.SolutionIntegerValue(response, y)} ` +
-    `b=${operations_research.sat.SolutionBooleanValue(response, b)}`);
-    // const pause = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+        `y=${operations_research.sat.SolutionIntegerValue(response, y)} ` +
+        `b=${operations_research.sat.SolutionBooleanValue(response, b)}`);
 
-    // // 暂停 5 秒
-    // await pause(5000);
+    // waite for the observer to be called
+    await new Promise(resolve => setTimeout(resolve, 10000));
+
+
 }, 100000
 );

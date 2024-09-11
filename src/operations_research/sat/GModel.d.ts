@@ -44,7 +44,7 @@ export class Model
     //      */
     //     template < typename T >
     //     T Add( std::function< T( Model* ) > f )
-    Add<T>(func: (model: Model) => T): T
+    Add<T>(f: (model: Model) => T): T
 
     //     /// Similar to Add() but this is const.
     //     template < typename T >

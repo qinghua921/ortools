@@ -63,7 +63,7 @@ inline Napi::Value operations_research::sat::GModel::Add( const Napi::CallbackIn
         auto env  = info.Env();
         auto jsin = info[ 0 ].As< Napi::Function >();
 
-        auto ret = this->spModel->Add< Napi::Value >( [ env, jsin ]( Model* model ) -> Napi::Value {
+        auto ret = this->spModel->Add< Napi::Value >( [ &env, &jsin ]( Model* model ) -> Napi::Value {
             auto asExternalVar = Napi::External< Model >::New( env, model );
             auto vGModel       = GModel::constructor.New( { asExternalVar } );
             return jsin.Call( { vGModel } );

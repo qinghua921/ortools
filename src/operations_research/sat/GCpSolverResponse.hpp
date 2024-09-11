@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "commonheader.hpp"
 #include "ortools/sat/cp_model.h"
 
@@ -12,9 +11,8 @@ namespace sat
     {
     public:
         static inline Napi::FunctionReference constructor;
-        CpSolverResponse*              pCpSolverResponse = nullptr;
+        std::shared_ptr< CpSolverResponse >   pCpSolverResponse;
         GCpSolverResponse( const Napi::CallbackInfo& info );
-        ~GCpSolverResponse();
         static Napi::Object Init( Napi::Env env, Napi::Object exports );
 
         Napi::Value objective_value( const Napi::CallbackInfo& info );
@@ -24,24 +22,17 @@ namespace sat
 };  // namespace sat
 };  // namespace operations_research
 
-
-
 inline operations_research::sat::GCpSolverResponse::GCpSolverResponse( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GCpSolverResponse >( info )
 {
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
         auto external     = info[ 0 ].As< Napi::External< CpSolverResponse > >();
-        pCpSolverResponse = dynamic_cast< CpSolverResponse* >( external.Data() );
-        if ( pCpSolverResponse != nullptr ) return;
+        pCpSolverResponse = std::shared_ptr< CpSolverResponse >( external.Data() );
+        return;
     }
 
     ThrowJsError( operations_research::GCpSolverResponse::GCpSolverResponse : Invalid argument );
-}
-
-inline operations_research::sat::GCpSolverResponse::~GCpSolverResponse()
-{
-    delete pCpSolverResponse;
 }
 
 inline Napi::Object operations_research::sat::GCpSolverResponse::Init( Napi::Env env, Napi::Object exports )
