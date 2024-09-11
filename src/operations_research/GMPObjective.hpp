@@ -64,7 +64,7 @@ inline Napi::Value operations_research::GMPObjective::MinimizeLinearExpr( const 
          && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
         auto linear_expr = GLinearExpr::Unwrap( info[ 0 ].As< Napi::Object >() );
-        pMPObjective->MinimizeLinearExpr( *linear_expr->pLinearExpr );
+        pMPObjective->MinimizeLinearExpr( *linear_expr->spLinearExpr );
         return info.Env().Undefined();
     }
 

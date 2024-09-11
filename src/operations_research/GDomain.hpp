@@ -8,14 +8,9 @@ namespace operations_research
 class GDomain : public Napi::ObjectWrap< GDomain >
 {
 public:
-    static inline Napi::FunctionReference constructor;
-    std::shared_ptr< Domain >      pDomain;
-    GDomain( const Napi::CallbackInfo& info );
-    static Napi::Object Init( Napi::Env env, Napi::Object exports );
+    CommonProperties( Domain );
 };
 };  // namespace operations_research
-
-
 
 inline operations_research::GDomain::GDomain( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GDomain >( info )
@@ -23,14 +18,14 @@ inline operations_research::GDomain::GDomain( const Napi::CallbackInfo& info )
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
         auto external = info[ 0 ].As< Napi::External< Domain > >();
-        pDomain       = std::shared_ptr< Domain >( external.Data() );
+        spDomain      = std::shared_ptr< Domain >( external.Data() );
         return;
     }
 
     //      Domain() {}
     if ( info.Length() == 0 )
     {
-        pDomain = std::make_shared< Domain >();
+        spDomain = std::make_shared< Domain >();
         return;
     }
 
@@ -39,7 +34,7 @@ inline operations_research::GDomain::GDomain( const Napi::CallbackInfo& info )
     {
         int64_t left  = info[ 0 ].As< Napi::Number >().Int64Value();
         int64_t right = info[ 1 ].As< Napi::Number >().Int64Value();
-        pDomain       = std::make_shared< Domain >( left, right );
+        spDomain      = std::make_shared< Domain >( left, right );
         return;
     }
 
