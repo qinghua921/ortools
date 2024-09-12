@@ -67,4 +67,17 @@ test('assignment_groups_mip', () =>
         operations_research.Solver.IntValueStrategy.ASSIGN_MIN_VALUE);
 
     solver.NewSearch(db);
+
+    while (solver.NextSolution())
+    {
+        console.log("Solution");
+        console.log("x = " + x.Value() + "; y = " + y.Value() + "; z = " + z.Value());
+    }
+
+    solver.EndSearch();
+    console.log("Number of solutions: " + solver.solutions());
+    console.log("Advanced usage:");
+    console.log("Problem solved in " + solver.wall_time() + "ms");
+    console.log("Memory usage: " + operations_research.Solver.MemoryUsage() + " bytes");    
+    
 });

@@ -14,6 +14,7 @@ declare class IntVar
     //      /// This method returns the value of the variable. This method checks
     //      /// before that the variable is bound.
     //      virtual int64_t Value() const = 0;
+    Value(): number;
 
     //      /// This method removes the value 'v' from the domain of the variable.
     //      virtual void RemoveValue(int64_t v) = 0;

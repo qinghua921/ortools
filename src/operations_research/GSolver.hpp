@@ -7,6 +7,7 @@
 #include "GDecisionBuilder.hpp"
 #include "GSequenceVar.hpp"
 #include "GIntervalVar.hpp"
+#include "GSearchMonitor.hpp"
 
 namespace operations_research
 {
@@ -14,24 +15,30 @@ class GSolver : public Napi::ObjectWrap< GSolver >
 {
     CommonProperties( Solver );
 
-    Napi::Value MakeIntVar( const Napi::CallbackInfo& info );
-    Napi::Value MakeAllDifferent( const Napi::CallbackInfo& info );
-    Napi::Value AddConstraint( const Napi::CallbackInfo& info );
-    Napi::Value MakePhase_01( const Napi::CallbackInfo& info );
-    Napi::Value MakePhase_02( const Napi::CallbackInfo& info );
-    Napi::Value MakePhase_03( const Napi::CallbackInfo& info );
-    Napi::Value MakePhase_04( const Napi::CallbackInfo& info );
-    Napi::Value MakePhase_05( const Napi::CallbackInfo& info );
-    Napi::Value MakePhase_06( const Napi::CallbackInfo& info );
-    Napi::Value MakePhase_07( const Napi::CallbackInfo& info );
-    Napi::Value MakePhase_08( const Napi::CallbackInfo& info );
-    Napi::Value MakePhase_09( const Napi::CallbackInfo& info );
-    Napi::Value MakePhase_10( const Napi::CallbackInfo& info );
-    Napi::Value MakePhase_11( const Napi::CallbackInfo& info );
-    Napi::Value MakePhase_12( const Napi::CallbackInfo& info );
-    Napi::Value MakePhase_13( const Napi::CallbackInfo& info );
-    Napi::Value MakePhase_14( const Napi::CallbackInfo& info );
-    Napi::Value MakePhase_15( const Napi::CallbackInfo& info );
+    Napi::Value        MakeIntVar( const Napi::CallbackInfo& info );
+    Napi::Value        MakeAllDifferent( const Napi::CallbackInfo& info );
+    Napi::Value        AddConstraint( const Napi::CallbackInfo& info );
+    Napi::Value        MakePhase_01( const Napi::CallbackInfo& info );
+    Napi::Value        MakePhase_02( const Napi::CallbackInfo& info );
+    Napi::Value        MakePhase_03( const Napi::CallbackInfo& info );
+    Napi::Value        MakePhase_04( const Napi::CallbackInfo& info );
+    Napi::Value        MakePhase_05( const Napi::CallbackInfo& info );
+    Napi::Value        MakePhase_06( const Napi::CallbackInfo& info );
+    Napi::Value        MakePhase_07( const Napi::CallbackInfo& info );
+    Napi::Value        MakePhase_08( const Napi::CallbackInfo& info );
+    Napi::Value        MakePhase_09( const Napi::CallbackInfo& info );
+    Napi::Value        MakePhase_10( const Napi::CallbackInfo& info );
+    Napi::Value        MakePhase_11( const Napi::CallbackInfo& info );
+    Napi::Value        MakePhase_12( const Napi::CallbackInfo& info );
+    Napi::Value        MakePhase_13( const Napi::CallbackInfo& info );
+    Napi::Value        MakePhase_14( const Napi::CallbackInfo& info );
+    Napi::Value        MakePhase_15( const Napi::CallbackInfo& info );
+    Napi::Value        NewSearch( const Napi::CallbackInfo& info );
+    Napi::Value        NextSolution( const Napi::CallbackInfo& info );
+    Napi::Value        EndSearch( const Napi::CallbackInfo& info );
+    Napi::Value        solutions( const Napi::CallbackInfo& info );
+    Napi::Value        wall_time( const Napi::CallbackInfo& info );
+    static Napi::Value MemoryUsage( const Napi::CallbackInfo& info );
 };
 };  // namespace operations_research
 
@@ -101,7 +108,6 @@ inline Napi::Object operations_research::GSolver::Init( Napi::Env env, Napi::Obj
     sequenceStrategy.Set( Napi::String::New( env, "CHOOSE_MIN_SLACK_RANK_FORWARD" ), Napi::Number::New( env, Solver::CHOOSE_MIN_SLACK_RANK_FORWARD ) );
     sequenceStrategy.Set( Napi::String::New( env, "CHOOSE_RANDOM_RANK_FORWARD" ), Napi::Number::New( env, Solver::CHOOSE_RANDOM_RANK_FORWARD ) );
 
-
     Napi::Function func = DefineClass(
         env, "Solver",
         {
@@ -126,11 +132,180 @@ inline Napi::Object operations_research::GSolver::Init( Napi::Env env, Napi::Obj
             InstanceMethod( "MakePhase_13", &GSolver::MakePhase_13 ),
             InstanceMethod( "MakePhase_14", &GSolver::MakePhase_14 ),
             InstanceMethod( "MakePhase_15", &GSolver::MakePhase_15 ),
+            InstanceMethod( "NewSearch", &GSolver::NewSearch ),
+            InstanceMethod( "NextSolution", &GSolver::NextSolution ),
+            InstanceMethod( "EndSearch", &GSolver::EndSearch ),
+            InstanceMethod( "solutions", &GSolver::solutions ),
+            InstanceMethod( "wall_time", &GSolver::wall_time ),
+            StaticMethod( "MemoryUsage", &GSolver::MemoryUsage ),
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "Solver" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::GSolver::MemoryUsage( const Napi::CallbackInfo& info )
+{
+    //      static int64_t MemoryUsage();
+    if ( info.Length() == 0 )
+    {
+        return Napi::Number::New( info.Env(), Solver::MemoryUsage() );
+    }
+
+    ThrowJsError( operations_research::GSolver::MemoryUsage : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::GSolver::wall_time( const Napi::CallbackInfo& info )
+{
+    //      int64_t wall_time() const;
+    if ( info.Length() == 0 )
+    {
+        return Napi::Number::New( info.Env(), spSolver->wall_time() );
+    }
+
+    ThrowJsError( operations_research::GSolver::wall_time : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::GSolver::solutions( const Napi::CallbackInfo& info )
+{
+    //      int64_t solutions() const;
+    if ( info.Length() == 0 )
+    {
+        return Napi::Number::New( info.Env(), spSolver->solutions() );
+    }
+
+    ThrowJsError( operations_research::GSolver::solutions : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::GSolver::EndSearch( const Napi::CallbackInfo& info )
+{
+    //      void EndSearch();
+    if ( info.Length() == 0 )
+    {
+        spSolver->EndSearch();
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GSolver::EndSearch : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::GSolver::NextSolution( const Napi::CallbackInfo& info )
+{
+    //      bool NextSolution();
+    if ( info.Length() == 0 )
+    {
+        return Napi::Boolean::New( info.Env(), spSolver->NextSolution() );
+    }
+
+    ThrowJsError( operations_research::GSolver::NextSolution : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::GSolver::NewSearch( const Napi::CallbackInfo& info )
+{
+    //      void NewSearch(DecisionBuilder* const db,
+    //                     const std::vector<SearchMonitor*>& monitors);
+    if ( info.Length() == 2 && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GDecisionBuilder::constructor.Value() )
+         && info[ 1 ].IsArray() )
+    {
+        auto                          db = GDecisionBuilder::Unwrap( info[ 0 ].As< Napi::Object >() );
+        std::vector< SearchMonitor* > monitors;
+        Napi::Array                   arr = info[ 1 ].As< Napi::Array >();
+
+        for ( int i = 0; i < arr.Length(); i++ )
+        {
+            if ( arr.Get( i ).As< Napi::Object >().InstanceOf( GSearchMonitor::constructor.Value() ) )
+            {
+                auto gm = GSearchMonitor::Unwrap( arr.Get( i ).As< Napi::Object >() );
+                monitors.push_back( gm->spSearchMonitor.get() );
+                continue;
+            }
+
+            ThrowJsError( operations_research::GSolver::NewSearch : Invalid argument );
+            return info.Env().Undefined();
+        }
+
+        spSolver->NewSearch( db->spDecisionBuilder.get(), monitors );
+        return info.Env().Undefined();
+    }
+
+    //      void NewSearch(DecisionBuilder* const db);
+    if ( info.Length() == 1 && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GDecisionBuilder::constructor.Value() ) )
+    {
+        auto db = GDecisionBuilder::Unwrap( info[ 0 ].As< Napi::Object >() );
+        spSolver->NewSearch( db->spDecisionBuilder.get() );
+        return info.Env().Undefined();
+    }
+
+    //      void NewSearch(DecisionBuilder* const db, SearchMonitor* const m1);
+    if ( info.Length() == 2 && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GDecisionBuilder::constructor.Value() )
+         && info[ 1 ].IsObject() && info[ 1 ].As< Napi::Object >().InstanceOf( GSearchMonitor::constructor.Value() ) )
+    {
+        auto db = GDecisionBuilder::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto gm = GSearchMonitor::Unwrap( info[ 1 ].As< Napi::Object >() );
+        spSolver->NewSearch( db->spDecisionBuilder.get(), gm->spSearchMonitor.get() );
+        return info.Env().Undefined();
+    }
+
+    //      void NewSearch(DecisionBuilder* const db, SearchMonitor* const m1,
+    //                     SearchMonitor* const m2);
+    if ( info.Length() == 3 && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GDecisionBuilder::constructor.Value() )
+         && info[ 1 ].IsObject() && info[ 1 ].As< Napi::Object >().InstanceOf( GSearchMonitor::constructor.Value() )
+         && info[ 2 ].IsObject() && info[ 2 ].As< Napi::Object >().InstanceOf( GSearchMonitor::constructor.Value() ) )
+    {
+        auto db  = GDecisionBuilder::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto gm1 = GSearchMonitor::Unwrap( info[ 1 ].As< Napi::Object >() );
+        auto gm2 = GSearchMonitor::Unwrap( info[ 2 ].As< Napi::Object >() );
+        spSolver->NewSearch( db->spDecisionBuilder.get(), gm1->spSearchMonitor.get(), gm2->spSearchMonitor.get() );
+        return info.Env().Undefined();
+    }
+
+    //      void NewSearch(DecisionBuilder* const db, SearchMonitor* const m1,
+    //                     SearchMonitor* const m2, SearchMonitor* const m3);
+    if ( info.Length() == 4 && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GDecisionBuilder::constructor.Value() )
+         && info[ 1 ].IsObject() && info[ 1 ].As< Napi::Object >().InstanceOf( GSearchMonitor::constructor.Value() )
+         && info[ 2 ].IsObject() && info[ 2 ].As< Napi::Object >().InstanceOf( GSearchMonitor::constructor.Value() )
+         && info[ 3 ].IsObject() && info[ 3 ].As< Napi::Object >().InstanceOf( GSearchMonitor::constructor.Value() ) )
+    {
+        auto db  = GDecisionBuilder::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto gm1 = GSearchMonitor::Unwrap( info[ 1 ].As< Napi::Object >() );
+        auto gm2 = GSearchMonitor::Unwrap( info[ 2 ].As< Napi::Object >() );
+        auto gm3 = GSearchMonitor::Unwrap( info[ 3 ].As< Napi::Object >() );
+        spSolver->NewSearch( db->spDecisionBuilder.get(), gm1->spSearchMonitor.get(), gm2->spSearchMonitor.get(), gm3->spSearchMonitor.get() );
+        return info.Env().Undefined();
+    }
+
+    //      void NewSearch(DecisionBuilder* const db, SearchMonitor* const m1,
+    //                     SearchMonitor* const m2, SearchMonitor* const m3,
+    //                     SearchMonitor* const m4);
+    if ( info.Length() == 5 && info[ 0 ].IsObject()
+         && info[ 0 ].As< Napi::Object >().InstanceOf( GDecisionBuilder::constructor.Value() )
+         && info[ 1 ].IsObject() && info[ 1 ].As< Napi::Object >().InstanceOf( GSearchMonitor::constructor.Value() )
+         && info[ 2 ].IsObject() && info[ 2 ].As< Napi::Object >().InstanceOf( GSearchMonitor::constructor.Value() )
+         && info[ 3 ].IsObject() && info[ 3 ].As< Napi::Object >().InstanceOf( GSearchMonitor::constructor.Value() )
+         && info[ 4 ].IsObject() && info[ 4 ].As< Napi::Object >().InstanceOf( GSearchMonitor::constructor.Value() ) )
+    {
+        auto db  = GDecisionBuilder::Unwrap( info[ 0 ].As< Napi::Object >() );
+        auto gm1 = GSearchMonitor::Unwrap( info[ 1 ].As< Napi::Object >() );
+        auto gm2 = GSearchMonitor::Unwrap( info[ 2 ].As< Napi::Object >() );
+        auto gm3 = GSearchMonitor::Unwrap( info[ 3 ].As< Napi::Object >() );
+        auto gm4 = GSearchMonitor::Unwrap( info[ 4 ].As< Napi::Object >() );
+        spSolver->NewSearch( db->spDecisionBuilder.get(), gm1->spSearchMonitor.get(), gm2->spSearchMonitor.get(), gm3->spSearchMonitor.get(), gm4->spSearchMonitor.get() );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::GSolver::NewSearch : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::GSolver::MakePhase_01( const Napi::CallbackInfo& info )
@@ -682,10 +857,10 @@ inline Napi::Value operations_research::GSolver::MakePhase_15( const Napi::Callb
     if ( info.Length() == 2 && info[ 0 ].IsArray() && info[ 1 ].IsNumber() )
     {
         std::vector< SequenceVar* > sequences;
-        Napi::Array               arr = info[ 0 ].As< Napi::Array >();
+        Napi::Array                 arr = info[ 0 ].As< Napi::Array >();
 
         for ( int i = 0; i < arr.Length(); i++ )
-        {            
+        {
             if ( arr.Get( i ).As< Napi::Object >().InstanceOf( GSequenceVar::constructor.Value() ) )
             {
                 auto gsv = GSequenceVar::Unwrap( arr.Get( i ).As< Napi::Object >() );

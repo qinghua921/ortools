@@ -26,6 +26,7 @@
 #include "./operations_research/GDecisionBuilder.hpp"
 #include "./operations_research/GSequenceVar.hpp"
 #include "./operations_research/GIntervalVar.hpp"
+#include "./operations_research/GSearchMonitor.hpp"
 
 
 /***********************************************************************************
@@ -106,6 +107,7 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research::GDecisionBuilder::Init( env, operations_research_exports );
     operations_research::GSequenceVar::Init( env, operations_research_exports );
     operations_research::GIntervalVar::Init( env, operations_research_exports );
+    operations_research::GSearchMonitor::Init( env, operations_research_exports );
 
     // ./operations_research/sat
 

@@ -18,6 +18,7 @@
 
 import { Constraint } from "./GConstraint";
 import { DecisionBuilder } from "./GDecisionBuilder";
+import { SearchMonitor } from "./GSearchMonitor";
 import { SequenceVar } from "./GSequenceVar";
 
 export namespace Solver
@@ -588,6 +589,7 @@ export class Solver
     //      /// Solver API
     //      explicit Solver(const std::string& name);
     constructor(name: string);
+
     //      Solver(const std::string& name, const ConstraintSolverParameters& parameters);
     //      ~Solver();
 
@@ -746,19 +748,29 @@ export class Solver
 
     //      void NewSearch(DecisionBuilder* const db,
     //                     const std::vector<SearchMonitor*>& monitors);
+    NewSearch(db: DecisionBuilder, monitors: SearchMonitor[]): void;
     //      void NewSearch(DecisionBuilder* const db);
+    NewSearch(db: DecisionBuilder): void;
     //      void NewSearch(DecisionBuilder* const db, SearchMonitor* const m1);
+    NewSearch(db: DecisionBuilder, m1: SearchMonitor): void;
     //      void NewSearch(DecisionBuilder* const db, SearchMonitor* const m1,
     //                     SearchMonitor* const m2);
+    NewSearch(db: DecisionBuilder, m1: SearchMonitor, m2: SearchMonitor): void;
     //      void NewSearch(DecisionBuilder* const db, SearchMonitor* const m1,
     //                     SearchMonitor* const m2, SearchMonitor* const m3);
+    NewSearch(db: DecisionBuilder, m1: SearchMonitor, m2: SearchMonitor, m3: SearchMonitor): void;
     //      void NewSearch(DecisionBuilder* const db, SearchMonitor* const m1,
     //                     SearchMonitor* const m2, SearchMonitor* const m3,
     //                     SearchMonitor* const m4);
+    NewSearch(db: DecisionBuilder, m1: SearchMonitor, m2: SearchMonitor, m3: SearchMonitor, m4: SearchMonitor): void;
 
     //      bool NextSolution();
+    NextSolution(): boolean;
+
     //      void RestartSearch();
     //      void EndSearch();
+    EndSearch(): void;
+
     //      /// @}
 
     //      /// SolveAndCommit using a decision builder and up to three
@@ -805,6 +817,7 @@ export class Solver
 
     //      /// Current memory usage in bytes
     //      static int64_t MemoryUsage();
+    static MemoryUsage(): number;
 
     //      /// The 'absolute time' as seen by the solver. Unless a user-provided clock
     //      /// was injected via SetClock() (eg. for unit tests), this is a real walltime,
@@ -815,12 +828,14 @@ export class Solver
     //      /// DEPRECATED: Use Now() instead.
     //      /// Time elapsed, in ms since the creation of the solver.
     //      int64_t wall_time() const;
+    wall_time(): number;
 
     //      /// The number of branches explored since the creation of the solver.
     //      int64_t branches() const { return branches_; }
 
     //      /// The number of solutions found since the start of the search.
     //      int64_t solutions() const;
+    solutions(): number;
 
     //      /// The number of unchecked solutions found by local search.
     //      int64_t unchecked_solutions() const;

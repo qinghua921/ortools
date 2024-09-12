@@ -23,7 +23,8 @@ import { IntVar as operations_research_IntVar } from './operations_research/GInt
 import { Constraint as operations_research_Constraint } from './operations_research/GConstraint'
 import { DecisionBuilder as operations_research_DecisionBuilder } from './operations_research/GDecisionBuilder'
 import { SequenceVar as operations_research_SequenceVar } from './operations_research/GSequenceVar'
-import { IntervalVar as operations_research_IntervalVar } from './operations_research/sat/GIntervalVar'
+import { IntervalVar as operations_research_IntervalVar } from './operations_research/GIntervalVar'
+import { SearchMonitor as operations_research_SearchMonitor } from './operations_research/GSearchMonitor'
 
 /***********************************************************************************
  * ./operations_research/sat
@@ -103,6 +104,7 @@ export namespace operations_research
         operations_research_DecisionBuilder as DecisionBuilder,
         operations_research_SequenceVar as SequenceVar,
         operations_research_IntervalVar as IntervalVar,
+        operations_research_SearchMonitor as SearchMonitor,
     }
 
     export namespace math_opt
