@@ -1,21 +1,4 @@
 
-/// Solver Class
-///
-/// A solver represents the main computation engine. It implements the entire
-/// range of Constraint Programming protocols:
-///   - Reversibility
-///   - Propagation
-///   - Search
-///
-/// Usually, Constraint Programming code consists of
-///   - the creation of the Solver,
-///   - the creation of the decision variables of the model,
-///   - the creation of the constraints of the model and their addition to the
-///     solver() through the AddConstraint() method,
-///   - the creation of the main DecisionBuilder class,
-///   - the launch of the solve() method with the decision builder.
-///
-
 import { Constraint } from "./GConstraint";
 import { DecisionBuilder } from "./GDecisionBuilder";
 import { SearchMonitor } from "./GSearchMonitor";
@@ -23,122 +6,36 @@ import { SequenceVar } from "./GSequenceVar";
 
 export namespace Solver
 {
-    /// This enum describes the strategy used to select the next branching
-    /// variable at each node during the search.
     export enum IntVarStrategy
     {
-        /// The default behavior is CHOOSE_FIRST_UNBOUND.
         INT_VAR_DEFAULT,
-
-        /// The simple selection is CHOOSE_FIRST_UNBOUND.
         INT_VAR_SIMPLE,
-
-        /// Select the first unbound variable.
-        /// Variables are considered in the order of the vector of IntVars used
-        /// to create the selector.
         CHOOSE_FIRST_UNBOUND,
-
-        /// Randomly select one of the remaining unbound variables.
         CHOOSE_RANDOM,
-
-        /// Among unbound variables, select the variable with the smallest size,
-        /// i.e., the smallest number of possible values.
-        /// In case of a tie, the selected variables is the one with the lowest min
-        /// value.
-        /// In case of a tie, the first one is selected, first being defined by the
-        /// order in the vector of IntVars used to create the selector.
         CHOOSE_MIN_SIZE_LOWEST_MIN,
-
-        /// Among unbound variables, select the variable with the smallest size,
-        /// i.e., the smallest number of possible values.
-        /// In case of a tie, the selected variable is the one with the highest min
-        /// value.
-        /// In case of a tie, the first one is selected, first being defined by the
-        /// order in the vector of IntVars used to create the selector.
         CHOOSE_MIN_SIZE_HIGHEST_MIN,
-
-        /// Among unbound variables, select the variable with the smallest size,
-        /// i.e., the smallest number of possible values.
-        /// In case of a tie, the selected variables is the one with the lowest max
-        /// value.
-        /// In case of a tie, the first one is selected, first being defined by the
-        /// order in the vector of IntVars used to create the selector.
         CHOOSE_MIN_SIZE_LOWEST_MAX,
-
-        /// Among unbound variables, select the variable with the smallest size,
-        /// i.e., the smallest number of possible values.
-        /// In case of a tie, the selected variable is the one with the highest max
-        /// value.
-        /// In case of a tie, the first one is selected, first being defined by the
-        /// order in the vector of IntVars used to create the selector.
         CHOOSE_MIN_SIZE_HIGHEST_MAX,
-
-        /// Among unbound variables, select the variable with the smallest minimal
-        /// value.
-        /// In case of a tie, the first one is selected, "first" defined by the
-        /// order in the vector of IntVars used to create the selector.
         CHOOSE_LOWEST_MIN,
-
-        /// Among unbound variables, select the variable with the highest maximal
-        /// value.
-        /// In case of a tie, the first one is selected, first being defined by the
-        /// order in the vector of IntVars used to create the selector.
         CHOOSE_HIGHEST_MAX,
-
-        /// Among unbound variables, select the variable with the smallest size.
-        /// In case of a tie, the first one is selected, first being defined by the
-        /// order in the vector of IntVars used to create the selector.
         CHOOSE_MIN_SIZE,
-
-        /// Among unbound variables, select the variable with the highest size.
-        /// In case of a tie, the first one is selected, first being defined by the
-        /// order in the vector of IntVars used to create the selector.
         CHOOSE_MAX_SIZE,
-
-        /// Among unbound variables, select the variable with the largest
-        /// gap between the first and the second values of the domain.
         CHOOSE_MAX_REGRET_ON_MIN,
-
-        /// Selects the next unbound variable on a path, the path being defined by
-        /// the variables: var[i] corresponds to the index of the next of i.
         CHOOSE_PATH,
     };
-    // TODO(user): add HIGHEST_MIN and LOWEST_MAX.
 
-    /// This enum describes the strategy used to select the next variable value to
-    /// set.
     export enum IntValueStrategy
     {
-        /// The default behavior is ASSIGN_MIN_VALUE.
         INT_VALUE_DEFAULT,
-
-        /// The simple selection is ASSIGN_MIN_VALUE.
         INT_VALUE_SIMPLE,
-
-        /// Selects the min value of the selected variable.
         ASSIGN_MIN_VALUE,
-
-        /// Selects the max value of the selected variable.
         ASSIGN_MAX_VALUE,
-
-        /// Selects randomly one of the possible values of the selected variable.
         ASSIGN_RANDOM_VALUE,
-
-        /// Selects the first possible value which is the closest to the center
-        /// of the domain of the selected variable.
-        /// The center is defined as (min + max) / 2.
         ASSIGN_CENTER_VALUE,
-
-        /// Split the domain in two around the center, and choose the lower
-        /// part first.
         SPLIT_LOWER_HALF,
-
-        /// Split the domain in two around the center, and choose the lower
-        /// part first.
         SPLIT_UPPER_HALF,
     };
 
-    /// Used for scheduling. Not yet implemented.
     export enum SequenceStrategy
     {
         SEQUENCE_DEFAULT,
@@ -147,9 +44,111 @@ export namespace Solver
         CHOOSE_RANDOM_RANK_FORWARD,
     };
 
+    export enum EvaluatorStrategy
+    {
+        CHOOSE_STATIC_GLOBAL_BEST,
+        CHOOSE_DYNAMIC_GLOBAL_BEST,
+    };
+
+    export enum IntervalStrategy
+    {
+        INTERVAL_DEFAULT,
+        INTERVAL_SIMPLE,
+        INTERVAL_SET_TIMES_FORWARD,
+        INTERVAL_SET_TIMES_BACKWARD
+    };
+
+    export enum LocalSearchOperators
+    {
+        TWOOPT,
+        OROPT,
+        RELOCATE,
+        EXCHANGE,
+        CROSS,
+        MAKEACTIVE,
+        MAKEINACTIVE,
+        MAKECHAININACTIVE,
+        SWAPACTIVE,
+        EXTENDEDSWAPACTIVE,
+        PATHLNS,
+        FULLPATHLNS,
+        UNACTIVELNS,
+        INCREMENT,
+        DECREMENT,
+        SIMPLELNS
+    };
+
+    export enum EvaluatorLocalSearchOperators
+    {
+        LK,
+        TSPOPT,
+        TSPLNS
+    };
+
+    export enum LocalSearchFilterBound
+    {
+        GE,
+        LE,
+        EQ
+    };
+
+    export enum DemonPriority
+    {
+        DELAYED_PRIORITY = 0,
+        VAR_PRIORITY = 1,
+        NORMAL_PRIORITY = 2,
+    };
+
+    export enum BinaryIntervalRelation
+    {
+        ENDS_AFTER_END,
+        ENDS_AFTER_START,
+        ENDS_AT_END,
+        ENDS_AT_START,
+        STARTS_AFTER_END,
+        STARTS_AFTER_START,
+        STARTS_AT_END,
+        STARTS_AT_START,
+        STAYS_IN_SYNC
+    };
+
+    export enum UnaryIntervalRelation
+    {
+        ENDS_AFTER,
+        ENDS_AT,
+        ENDS_BEFORE,
+        STARTS_AFTER,
+        STARTS_AT,
+        STARTS_BEFORE,
+        CROSS_DATE,
+        AVOID_DATE
+    };
+
+    export enum DecisionModification
+    {
+        NO_CHANGE,
+        KEEP_LEFT,
+        KEEP_RIGHT,
+        KILL_BOTH,
+        SWITCH_BRANCHES
+    };
+
+    export enum MarkerType { SENTINEL, SIMPLE_MARKER, CHOICE_POINT, REVERSIBLE_ACTION };
+
+    export enum SolverState
+    {
+        OUTSIDE_SEARCH,
+        IN_ROOT_NODE,
+        IN_SEARCH,
+        AT_SOLUTION,
+        NO_MORE_SOLUTIONS,
+        PROBLEM_INFEASIBLE
+    };
+
+    export enum OptimizationDirection { NOT_SET, MAXIMIZATION, MINIMIZATION };
+
 }
 
-//      /// Callback typedefs
 //      typedef std::function<int64_t(int64_t)> IndexEvaluator1;
 type IndexEvaluator1 = (index: number) => number;
 //      typedef std::function<int64_t(int64_t, int64_t)> IndexEvaluator2;
@@ -197,320 +196,6 @@ export class Solver
     //      static constexpr int kNumPriorities = 3;
 
 
-    //      enum EvaluatorStrategy {
-    //        /// Pairs are compared at the first call of the selector, and results are
-    //        /// cached. Next calls to the selector use the previous computation, and so
-    //        /// are not up-to-date, e.g. some <variable, value> pairs may not be
-    //        /// possible anymore due to propagation since the first to call.
-    //        CHOOSE_STATIC_GLOBAL_BEST,
-
-    //        /// Pairs are compared each time a variable is selected. That way all pairs
-    //        /// are relevant and evaluation is accurate.
-    //        /// This strategy runs in O(number-of-pairs) at each variable selection,
-    //        /// versus O(1) in the static version.
-    //        CHOOSE_DYNAMIC_GLOBAL_BEST,
-    //      };
-
-
-
-    //      enum IntervalStrategy {
-    //        /// The default is INTERVAL_SET_TIMES_FORWARD.
-    //        INTERVAL_DEFAULT,
-    //        /// The simple is INTERVAL_SET_TIMES_FORWARD.
-    //        INTERVAL_SIMPLE,
-    //        /// Selects the variable with the lowest starting time of all variables,
-    //        /// and fixes its starting time to this lowest value.
-    //        INTERVAL_SET_TIMES_FORWARD,
-    //        /// Selects the variable with the highest ending time of all variables,
-    //        /// and fixes the ending time to this highest values.
-    //        INTERVAL_SET_TIMES_BACKWARD
-    //      };
-
-    //      enum LocalSearchOperators {
-    //        /// Operator which reverses a sub-chain of a path. It is called TwoOpt
-    //        /// because it breaks two arcs on the path; resulting paths are called
-    //        /// two-optimal.
-    //        /// Possible neighbors for the path 1 -> 2 -> 3 -> 4 -> 5
-    //        /// (where (1, 5) are first and last nodes of the path and can therefore not
-    //        /// be moved):
-    //        ///   1 -> [3 -> 2] -> 4  -> 5
-    //        ///   1 -> [4 -> 3  -> 2] -> 5
-    //        ///   1 ->  2 -> [4 -> 3] -> 5
-    //        TWOOPT,
-
-    //        /// Relocate: OROPT and RELOCATE.
-    //        /// Operator which moves a sub-chain of a path to another position; the
-    //        /// specified chain length is the fixed length of the chains being moved.
-    //        /// When this length is 1, the operator simply moves a node to another
-    //        /// position.
-    //        /// Possible neighbors for the path 1 -> 2 -> 3 -> 4 -> 5, for a chain
-    //        /// length of 2 (where (1, 5) are first and last nodes of the path and can
-    //        /// therefore not be moved):
-    //        ///   1 ->  4 -> [2 -> 3] -> 5
-    //        ///   1 -> [3 -> 4] -> 2  -> 5
-    //        ///
-    //        /// Using Relocate with chain lengths of 1, 2 and 3 together is equivalent
-    //        /// to the OrOpt operator on a path. The OrOpt operator is a limited
-    //        ///  version of 3Opt (breaks 3 arcs on a path).
-    //        OROPT,
-
-    //        /// Relocate neighborhood with length of 1 (see OROPT comment).
-    //        RELOCATE,
-
-    //        /// Operator which exchanges the positions of two nodes.
-    //        /// Possible neighbors for the path 1 -> 2 -> 3 -> 4 -> 5
-    //        /// (where (1, 5) are first and last nodes of the path and can therefore not
-    //        /// be moved):
-    //        ///   1 -> [3] -> [2] ->  4  -> 5
-    //        ///   1 -> [4] ->  3  -> [2] -> 5
-    //        ///   1 ->  2  -> [4] -> [3] -> 5
-    //        EXCHANGE,
-
-    //        /// Operator which cross exchanges the starting chains of 2 paths, including
-    //        /// exchanging the whole paths.
-    //        /// First and last nodes are not moved.
-    //        /// Possible neighbors for the paths 1 -> 2 -> 3 -> 4 -> 5 and 6 -> 7 -> 8
-    //        /// (where (1, 5) and (6, 8) are first and last nodes of the paths and can
-    //        /// therefore not be moved):
-    //        ///   1 -> [7] -> 3 -> 4 -> 5  6 -> [2] -> 8
-    //        ///   1 -> [7] -> 4 -> 5       6 -> [2 -> 3] -> 8
-    //        ///   1 -> [7] -> 5            6 -> [2 -> 3 -> 4] -> 8
-    //        CROSS,
-
-    //        /// Operator which inserts an inactive node into a path.
-    //        /// Possible neighbors for the path 1 -> 2 -> 3 -> 4 with 5 inactive
-    //        /// (where 1 and 4 are first and last nodes of the path) are:
-    //        ///   1 -> [5] ->  2  ->  3  -> 4
-    //        ///   1 ->  2  -> [5] ->  3  -> 4
-    //        ///   1 ->  2  ->  3  -> [5] -> 4
-    //        MAKEACTIVE,
-
-    //        /// Operator which makes path nodes inactive.
-    //        /// Possible neighbors for the path 1 -> 2 -> 3 -> 4 (where 1 and 4 are
-    //        /// first and last nodes of the path) are:
-    //        ///   1 -> 3 -> 4 with 2 inactive
-    //        ///   1 -> 2 -> 4 with 3 inactive
-    //        MAKEINACTIVE,
-
-    //        /// Operator which makes a "chain" of path nodes inactive.
-    //        /// Possible neighbors for the path 1 -> 2 -> 3 -> 4 (where 1 and 4 are
-    //        /// first and last nodes of the path) are:
-    //        ///   1 -> 3 -> 4 with 2 inactive
-    //        ///   1 -> 2 -> 4 with 3 inactive
-    //        ///   1 -> 4 with 2 and 3 inactive
-    //        MAKECHAININACTIVE,
-
-    //        /// Operator which replaces an active node by an inactive one.
-    //        /// Possible neighbors for the path 1 -> 2 -> 3 -> 4 with 5 inactive
-    //        /// (where 1 and 4 are first and last nodes of the path) are:
-    //        ///   1 -> [5] ->  3  -> 4 with 2 inactive
-    //        ///   1 ->  2  -> [5] -> 4 with 3 inactive
-    //        SWAPACTIVE,
-
-    //        /// Operator which makes an inactive node active and an active one inactive.
-    //        /// It is similar to SwapActiveOperator except that it tries to insert the
-    //        /// inactive node in all possible positions instead of just the position of
-    //        /// the node made inactive.
-    //        /// Possible neighbors for the path 1 -> 2 -> 3 -> 4 with 5 inactive
-    //        /// (where 1 and 4 are first and last nodes of the path) are:
-    //        ///   1 -> [5] ->  3  -> 4 with 2 inactive
-    //        ///   1 ->  3  -> [5] -> 4 with 2 inactive
-    //        ///   1 -> [5] ->  2  -> 4 with 3 inactive
-    //        ///   1 ->  2  -> [5] -> 4 with 3 inactive
-    //        EXTENDEDSWAPACTIVE,
-
-    //        /// Operator which relaxes two sub-chains of three consecutive arcs each.
-    //        /// Each sub-chain is defined by a start node and the next three arcs. Those
-    //        /// six arcs are relaxed to build a new neighbor.
-    //        /// PATHLNS explores all possible pairs of starting nodes and so defines
-    //        /// n^2 neighbors, n being the number of nodes.
-    //        /// Note that the two sub-chains can be part of the same path; they even may
-    //        /// overlap.
-    //        PATHLNS,
-
-    //        /// Operator which relaxes one entire path and all inactive nodes, thus
-    //        /// defining num_paths neighbors.
-    //        FULLPATHLNS,
-
-    //        /// Operator which relaxes all inactive nodes and one sub-chain of six
-    //        /// consecutive arcs. That way the path can be improved by inserting
-    //        /// inactive nodes or swapping arcs.
-    //        UNACTIVELNS,
-
-    //        /// Operator which defines one neighbor per variable. Each neighbor tries to
-    //        /// increment by one the value of the corresponding variable. When a new
-    //        /// solution is found the neighborhood is rebuilt from scratch, i.e., tries
-    //        /// to increment values in the variable order.
-    //        /// Consider for instance variables x and y. x is incremented one by one to
-    //        /// its max, and when it is not possible to increment x anymore, y is
-    //        /// incremented once. If this is a solution, then next neighbor tries to
-    //        /// increment x.
-    //        INCREMENT,
-
-    //        /// Operator which defines a neighborhood to decrement values.
-    //        /// The behavior is the same as INCREMENT, except values are decremented
-    //        /// instead of incremented.
-    //        DECREMENT,
-
-    //        /// Operator which defines one neighbor per variable. Each neighbor relaxes
-    //        /// one variable.
-    //        /// When a new solution is found the neighborhood is rebuilt from scratch.
-    //        /// Consider for instance variables x and y. First x is relaxed and the
-    //        /// solver is looking for the best possible solution (with only x relaxed).
-    //        /// Then y is relaxed, and the solver is looking for a new solution.
-    //        /// If a new solution is found, then the next variable to be relaxed is x.
-    //        SIMPLELNS
-    //      };
-
-    //      enum EvaluatorLocalSearchOperators {
-    //        /// Lin-Kernighan local search.
-    //        /// While the accumulated local gain is positive, perform a 2opt or a 3opt
-    //        /// move followed by a series of 2opt moves. Return a neighbor for which the
-    //        /// global gain is positive.
-    //        LK,
-
-    //        /// Sliding TSP operator.
-    //        /// Uses an exact dynamic programming algorithm to solve the TSP
-    //        /// corresponding to path sub-chains.
-    //        /// For a subchain 1 -> 2 -> 3 -> 4 -> 5 -> 6, solves the TSP on
-    //        /// nodes A, 2, 3, 4, 5, where A is a merger of nodes 1 and 6 such that
-    //        /// cost(A,i) = cost(1,i) and cost(i,A) = cost(i,6).
-    //        TSPOPT,
-
-    //        /// TSP-base LNS.
-    //        /// Randomly merge consecutive nodes until n "meta"-nodes remain and solve
-    //        /// the corresponding TSP.
-    //        /// This is an "unlimited" neighborhood which must be stopped by search
-    //        /// limits. To force diversification, the operator iteratively forces each
-    //        /// node to serve as base of a meta-node.
-    //        TSPLNS
-    //      };
-
-    //      enum LocalSearchFilterBound {
-    //        /// Move is accepted when the current objective value >= objective.Min.
-    //        GE,
-    //        /// Move is accepted when the current objective value <= objective.Max.
-    //        LE,
-    //        /// Move is accepted when the current objective value is in the interval
-    //        /// objective.Min .. objective.Max.
-    //        EQ
-    //      };
-
-    //      enum DemonPriority {
-    //        /// DELAYED_PRIORITY is the lowest priority: Demons will be processed after
-    //        /// VAR_PRIORITY and NORMAL_PRIORITY demons.
-    //        DELAYED_PRIORITY = 0,
-
-    //        /// VAR_PRIORITY is between DELAYED_PRIORITY and NORMAL_PRIORITY.
-    //        VAR_PRIORITY = 1,
-
-    //        /// NORMAL_PRIORITY is the highest priority: Demons will be processed first.
-    //        NORMAL_PRIORITY = 2,
-    //      };
-
-    //      enum BinaryIntervalRelation {
-    //        /// t1 ends after t2 end, i.e. End(t1) >= End(t2) + delay.
-    //        ENDS_AFTER_END,
-
-    //        /// t1 ends after t2 start, i.e. End(t1) >= Start(t2) + delay.
-    //        ENDS_AFTER_START,
-
-    //        /// t1 ends at t2 end, i.e. End(t1) == End(t2) + delay.
-    //        ENDS_AT_END,
-
-    //        /// t1 ends at t2 start, i.e. End(t1) == Start(t2) + delay.
-    //        ENDS_AT_START,
-
-    //        /// t1 starts after t2 end, i.e. Start(t1) >= End(t2) + delay.
-    //        STARTS_AFTER_END,
-
-    //        /// t1 starts after t2 start, i.e. Start(t1) >= Start(t2) + delay.
-    //        STARTS_AFTER_START,
-
-    //        /// t1 starts at t2 end, i.e. Start(t1) == End(t2) + delay.
-    //        STARTS_AT_END,
-
-    //        /// t1 starts at t2 start, i.e. Start(t1) == Start(t2) + delay.
-    //        STARTS_AT_START,
-
-    //        /// STARTS_AT_START and ENDS_AT_END at the same time.
-    //        /// t1 starts at t2 start, i.e. Start(t1) == Start(t2) + delay.
-    //        /// t1 ends at t2 end, i.e. End(t1) == End(t2).
-    //        STAYS_IN_SYNC
-    //      };
-
-    //      enum UnaryIntervalRelation {
-    //        /// t ends after d, i.e. End(t) >= d.
-    //        ENDS_AFTER,
-
-    //        /// t ends at d, i.e. End(t) == d.
-    //        ENDS_AT,
-
-    //        /// t ends before d, i.e. End(t) <= d.
-    //        ENDS_BEFORE,
-
-    //        /// t starts after d, i.e. Start(t) >= d.
-    //        STARTS_AFTER,
-
-    //        /// t starts at d, i.e. Start(t) == d.
-    //        STARTS_AT,
-
-    //        /// t starts before d, i.e. Start(t) <= d.
-    //        STARTS_BEFORE,
-
-    //        /// STARTS_BEFORE and ENDS_AFTER at the same time, i.e. d is in t.
-    //        /// t starts before d, i.e. Start(t) <= d.
-    //        /// t ends after d, i.e. End(t) >= d.
-    //        CROSS_DATE,
-
-    //        /// STARTS_AFTER or ENDS_BEFORE, i.e. d is not in t.
-    //        /// t starts after d, i.e. Start(t) >= d.
-    //        /// t ends before d, i.e. End(t) <= d.
-    //        AVOID_DATE
-    //      };
-
-    //      enum DecisionModification {
-    //        /// Keeps the default behavior, i.e. apply left branch first, and then right
-    //        /// branch in case of backtracking.
-    //        NO_CHANGE,
-
-    //        /// Right branches are ignored. This is used to make the code faster when
-    //        /// backtrack makes no sense or is not useful.
-    //        /// This is faster as there is no need to create one new node per decision.
-    //        KEEP_LEFT,
-
-    //        /// Left branches are ignored. This is used to make the code faster when
-    //        /// backtrack makes no sense or is not useful.
-    //        /// This is faster as there is no need to create one new node per decision.
-    //        KEEP_RIGHT,
-
-    //        /// Backtracks to the previous decisions, i.e. left and right branches are
-    //        /// not applied.
-    //        KILL_BOTH,
-
-    //        /// Applies right branch first. Left branch will be applied in case of
-    //        /// backtracking.
-    //        SWITCH_BRANCHES
-    //      };
-
-    //      enum MarkerType { SENTINEL, SIMPLE_MARKER, CHOICE_POINT, REVERSIBLE_ACTION };
-
-    //      enum SolverState {
-    //        /// Before search, after search.
-    //        OUTSIDE_SEARCH,
-    //        /// Executing the root node.
-    //        IN_ROOT_NODE,
-    //        /// Executing the search code.
-    //        IN_SEARCH,
-    //        /// After successful NextSolution and before EndSearch.
-    //        AT_SOLUTION,
-    //        /// After failed NextSolution and before EndSearch.
-    //        NO_MORE_SOLUTIONS,
-    //        /// After search, the model is infeasible.
-    //        PROBLEM_INFEASIBLE
-    //      };
-
-    //      enum OptimizationDirection { NOT_SET, MAXIMIZATION, MINIMIZATION };
 
     //    #ifndef SWIG
     //      enum class MonitorEvent : int {
@@ -682,14 +367,6 @@ export class Solver
     //        optimization_direction_ = direction;
     //      }
 
-    //      // All factories (MakeXXX methods) encapsulate creation of objects
-    //      // through RevAlloc(). Hence, the Solver used for allocating the
-    //      // returned object will retain ownership of the allocated memory.
-    //      // Destructors are called upon backtrack, or when the Solver is
-    //      // itself destructed.
-
-    //      // ----- Int Variables and Constants -----
-
     //      IntVar* MakeIntVar(int64_t min, int64_t max, const std::string& name);
     MakeIntVar(min: number, max: number, name: string): IntVar;
 
@@ -726,7 +403,6 @@ export class Solver
     //      void MakeBoolVarArray(int var_count, std::vector<IntVar*>* vars);
     //      IntVar** MakeBoolVarArray(int var_count, const std::string& name);
 
-    //      // ----- Integer Expressions -----
 
     //      IntExpr* MakeSum(IntExpr* const left, IntExpr* const right);
     //      IntExpr* MakeSum(IntExpr* const expr, int64_t value);
@@ -1446,24 +1122,12 @@ export class Solver
     //                                   std::function<std::string()> display_callback);
 
     //      struct SearchLogParameters {
-    //        /// SearchMonitors will display a periodic search log every branch_period
-    //        /// branches explored.
     //        int branch_period = 1;
-    //        /// SearchMonitors will display values of objective or variable (both cannot
-    //        /// be used together).
     //        OptimizeVar* objective = nullptr;
     //        IntVar* variable = nullptr;
-    //        /// When displayed, objective or var values will be scaled and offset by
-    //        /// the given values in the following way:
-    //        /// scaling_factor * (value + offset).
     //        double scaling_factor = 1.0;
     //        double offset = 0;
-    //        /// SearchMonitors will display the result of display_callback at each new
-    //        /// solution found and when the search finishes if
-    //        /// display_on_new_solutions_only is false.
     //        std::function<std::string()> display_callback;
-    //        /// To be used to protect from cases where display_callback assumes
-    //        /// variables are instantiated, which only happens in AtSolution().
     //        bool display_on_new_solutions_only = true;
     //      };
     //      SearchMonitor* MakeSearchLog(SearchLogParameters parameters);
@@ -1917,131 +1581,4 @@ export class Solver
 
     //      DecisionBuilder* MakeProfiledDecisionBuilderWrapper(DecisionBuilder* db);
 
-    //     private:
-    //      void Init();  /// Initialization. To be called by the constructors only.
-    //      void PushState(MarkerType t, const StateInfo& info);
-    //      MarkerType PopState(StateInfo* info);
-    //      void PushSentinel(int magic_code);
-    //      void BacktrackToSentinel(int magic_code);
-    //      void ProcessConstraints();
-    //      bool BacktrackOneLevel(Decision** fail_decision);
-    //      void JumpToSentinelWhenNested();
-    //      void JumpToSentinel();
-    //      void check_alloc_state();
-    //      void FreezeQueue();
-    //      void EnqueueVar(Demon* const d);
-    //      void EnqueueDelayedDemon(Demon* const d);
-    //      void ExecuteAll(const SimpleRevFIFO<Demon*>& demons);
-    //      void EnqueueAll(const SimpleRevFIFO<Demon*>& demons);
-    //      void UnfreezeQueue();
-    //      void reset_action_on_fail();
-    //      void set_action_on_fail(Action a);
-    //      void set_variable_to_clean_on_fail(IntVar* v);
-    //      void IncrementUncheckedSolutionCounter();
-    //      bool IsUncheckedSolutionLimitReached();
-
-    //      void InternalSaveValue(int* valptr);
-    //      void InternalSaveValue(int64_t* valptr);
-    //      void InternalSaveValue(uint64_t* valptr);
-    //      void InternalSaveValue(double* valptr);
-    //      void InternalSaveValue(bool* valptr);
-    //      void InternalSaveValue(void** valptr);
-    //      void InternalSaveValue(int64_t** valptr) {
-    //        InternalSaveValue(reinterpret_cast<void**>(valptr));
-    //      }
-
-    //      BaseObject* SafeRevAlloc(BaseObject* ptr);
-
-    //      int* SafeRevAllocArray(int* ptr);
-    //      int64_t* SafeRevAllocArray(int64_t* ptr);
-    //      uint64_t* SafeRevAllocArray(uint64_t* ptr);
-    //      double* SafeRevAllocArray(double* ptr);
-    //      BaseObject** SafeRevAllocArray(BaseObject** ptr);
-    //      IntVar** SafeRevAllocArray(IntVar** ptr);
-    //      IntExpr** SafeRevAllocArray(IntExpr** ptr);
-    //      Constraint** SafeRevAllocArray(Constraint** ptr);
-    //      void* UnsafeRevAllocAux(void* ptr);
-    //      template <class T>
-    //      T* UnsafeRevAlloc(T* ptr) {
-    //        return reinterpret_cast<T*>(
-    //            UnsafeRevAllocAux(reinterpret_cast<void*>(ptr)));
-    //      }
-    //      void** UnsafeRevAllocArrayAux(void** ptr);
-    //      template <class T>
-    //      T** UnsafeRevAllocArray(T** ptr) {
-    //        return reinterpret_cast<T**>(
-    //            UnsafeRevAllocArrayAux(reinterpret_cast<void**>(ptr)));
-    //      }
-
-    //      void InitCachedIntConstants();
-    //      void InitCachedConstraint();
-
-    //      Search* TopLevelSearch() const { return searches_.at(1); }
-    //      Search* ParentSearch() const {
-    //        const size_t search_size = searches_.size();
-    //        DCHECK_GT(search_size, 1);
-    //        return searches_[search_size - 2];
-    //      }
-
-    //      std::string GetName(const PropagationBaseObject* object);
-    //      void SetName(const PropagationBaseObject* object, const std::string& name);
-
-    //      int GetNewIntVarIndex() { return num_int_vars_++; }
-
-    //      bool IsADifference(IntExpr* expr, IntExpr** const left,
-    //                         IntExpr** const right);
-
-    //      const std::string name_;
-    //      const ConstraintSolverParameters parameters_;
-    //      absl::flat_hash_map<const PropagationBaseObject*, std::string>
-    //          propagation_object_names_;
-    //      absl::flat_hash_map<const PropagationBaseObject*, IntegerCastInfo>
-    //          cast_information_;
-    //      absl::flat_hash_set<const Constraint*> cast_constraints_;
-    //      const std::string empty_name_;
-    //      std::unique_ptr<Queue> queue_;
-    //      std::unique_ptr<Trail> trail_;
-    //      std::vector<Constraint*> constraints_list_;
-    //      std::vector<Constraint*> additional_constraints_list_;
-    //      std::vector<int> additional_constraints_parent_list_;
-    //      SolverState state_;
-    //      int64_t branches_;
-    //      int64_t fails_;
-    //      int64_t decisions_;
-    //      int64_t demon_runs_[kNumPriorities];
-    //      int64_t neighbors_;
-    //      int64_t filtered_neighbors_;
-    //      int64_t accepted_neighbors_;
-    //      std::string context_;
-    //      OptimizationDirection optimization_direction_;
-    //      std::unique_ptr<ClockTimer> timer_;
-    //      std::vector<Search*> searches_;
-    //      std::mt19937 random_;
-    //      uint64_t fail_stamp_;
-    //      std::unique_ptr<Decision> balancing_decision_;
-    //      std::function<void()> fail_intercept_;
-    //      DemonProfiler* const demon_profiler_;
-    //      bool use_fast_local_search_;
-    //      LocalSearchProfiler* const local_search_profiler_;
-    //      std::unique_ptr<Assignment> local_search_state_;
-
-    //      enum { MIN_CACHED_INT_CONST = -8, MAX_CACHED_INT_CONST = 8 };
-    //      IntVar* cached_constants_[MAX_CACHED_INT_CONST + 1 - MIN_CACHED_INT_CONST];
-
-    //      Constraint* true_constraint_;
-    //      Constraint* false_constraint_;
-
-    //      std::unique_ptr<Decision> fail_decision_;
-    //      int constraint_index_;
-    //      int additional_constraint_index_;
-    //      int num_int_vars_;
-
-    //      std::unique_ptr<ModelCache> model_cache_;
-    //      std::unique_ptr<PropagationMonitor> propagation_monitor_;
-    //      PropagationMonitor* print_trace_;
-    //      std::unique_ptr<LocalSearchMonitor> local_search_monitor_;
-    //      int anonymous_variable_index_;
-    //      bool should_fail_;
-
-    //      DISALLOW_COPY_AND_ASSIGN(Solver);
 };
