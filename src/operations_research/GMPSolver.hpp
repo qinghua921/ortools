@@ -248,7 +248,7 @@ inline Napi::Value operations_research::GMPSolver::MakeRowConstraint( const Napi
          && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearRange::constructor.Value() ) )
     {
         auto          range       = GLinearRange::Unwrap( info[ 0 ].As< Napi::Object >() );
-        MPConstraint* pConstraint = pMPSolver->MakeRowConstraint( *range->pLinearRange );
+        MPConstraint* pConstraint = pMPSolver->MakeRowConstraint( *range->spLinearRange );
         if ( pConstraint != nullptr )
         {
             auto external = Napi::External< MPConstraint >::New( info.Env(), pConstraint );
@@ -265,7 +265,7 @@ inline Napi::Value operations_research::GMPSolver::MakeRowConstraint( const Napi
     {
         auto          range       = GLinearRange::Unwrap( info[ 0 ].As< Napi::Object >() );
         std::string   name        = info[ 1 ].As< Napi::String >().Utf8Value();
-        MPConstraint* pConstraint = pMPSolver->MakeRowConstraint( *range->pLinearRange, name );
+        MPConstraint* pConstraint = pMPSolver->MakeRowConstraint( *range->spLinearRange, name );
         if ( pConstraint != nullptr )
         {
             auto external = Napi::External< MPConstraint >::New( info.Env(), pConstraint );
