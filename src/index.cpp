@@ -23,6 +23,10 @@
 #include "./operations_research/GSolver.hpp"
 #include "./operations_research/GIntVar.hpp"
 #include "./operations_research/GConstraint.hpp"
+#include "./operations_research/GDecisionBuilder.hpp"
+#include "./operations_research/GSequenceVar.hpp"
+#include "./operations_research/GIntervalVar.hpp"
+
 
 /***********************************************************************************
  * ./operations_research/sat
@@ -99,6 +103,9 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research::GSolver::Init( env, operations_research_exports );
     operations_research::GIntVar::Init( env, operations_research_exports );
     operations_research::GConstraint::Init( env, operations_research_exports );
+    operations_research::GDecisionBuilder::Init( env, operations_research_exports );
+    operations_research::GSequenceVar::Init( env, operations_research_exports );
+    operations_research::GIntervalVar::Init( env, operations_research_exports );
 
     // ./operations_research/sat
 

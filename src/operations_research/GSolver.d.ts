@@ -17,6 +17,167 @@
 ///
 
 import { Constraint } from "./GConstraint";
+import { DecisionBuilder } from "./GDecisionBuilder";
+import { SequenceVar } from "./GSequenceVar";
+
+export namespace Solver
+{
+    /// This enum describes the strategy used to select the next branching
+    /// variable at each node during the search.
+    export enum IntVarStrategy
+    {
+        /// The default behavior is CHOOSE_FIRST_UNBOUND.
+        INT_VAR_DEFAULT,
+
+        /// The simple selection is CHOOSE_FIRST_UNBOUND.
+        INT_VAR_SIMPLE,
+
+        /// Select the first unbound variable.
+        /// Variables are considered in the order of the vector of IntVars used
+        /// to create the selector.
+        CHOOSE_FIRST_UNBOUND,
+
+        /// Randomly select one of the remaining unbound variables.
+        CHOOSE_RANDOM,
+
+        /// Among unbound variables, select the variable with the smallest size,
+        /// i.e., the smallest number of possible values.
+        /// In case of a tie, the selected variables is the one with the lowest min
+        /// value.
+        /// In case of a tie, the first one is selected, first being defined by the
+        /// order in the vector of IntVars used to create the selector.
+        CHOOSE_MIN_SIZE_LOWEST_MIN,
+
+        /// Among unbound variables, select the variable with the smallest size,
+        /// i.e., the smallest number of possible values.
+        /// In case of a tie, the selected variable is the one with the highest min
+        /// value.
+        /// In case of a tie, the first one is selected, first being defined by the
+        /// order in the vector of IntVars used to create the selector.
+        CHOOSE_MIN_SIZE_HIGHEST_MIN,
+
+        /// Among unbound variables, select the variable with the smallest size,
+        /// i.e., the smallest number of possible values.
+        /// In case of a tie, the selected variables is the one with the lowest max
+        /// value.
+        /// In case of a tie, the first one is selected, first being defined by the
+        /// order in the vector of IntVars used to create the selector.
+        CHOOSE_MIN_SIZE_LOWEST_MAX,
+
+        /// Among unbound variables, select the variable with the smallest size,
+        /// i.e., the smallest number of possible values.
+        /// In case of a tie, the selected variable is the one with the highest max
+        /// value.
+        /// In case of a tie, the first one is selected, first being defined by the
+        /// order in the vector of IntVars used to create the selector.
+        CHOOSE_MIN_SIZE_HIGHEST_MAX,
+
+        /// Among unbound variables, select the variable with the smallest minimal
+        /// value.
+        /// In case of a tie, the first one is selected, "first" defined by the
+        /// order in the vector of IntVars used to create the selector.
+        CHOOSE_LOWEST_MIN,
+
+        /// Among unbound variables, select the variable with the highest maximal
+        /// value.
+        /// In case of a tie, the first one is selected, first being defined by the
+        /// order in the vector of IntVars used to create the selector.
+        CHOOSE_HIGHEST_MAX,
+
+        /// Among unbound variables, select the variable with the smallest size.
+        /// In case of a tie, the first one is selected, first being defined by the
+        /// order in the vector of IntVars used to create the selector.
+        CHOOSE_MIN_SIZE,
+
+        /// Among unbound variables, select the variable with the highest size.
+        /// In case of a tie, the first one is selected, first being defined by the
+        /// order in the vector of IntVars used to create the selector.
+        CHOOSE_MAX_SIZE,
+
+        /// Among unbound variables, select the variable with the largest
+        /// gap between the first and the second values of the domain.
+        CHOOSE_MAX_REGRET_ON_MIN,
+
+        /// Selects the next unbound variable on a path, the path being defined by
+        /// the variables: var[i] corresponds to the index of the next of i.
+        CHOOSE_PATH,
+    };
+    // TODO(user): add HIGHEST_MIN and LOWEST_MAX.
+
+    /// This enum describes the strategy used to select the next variable value to
+    /// set.
+    export enum IntValueStrategy
+    {
+        /// The default behavior is ASSIGN_MIN_VALUE.
+        INT_VALUE_DEFAULT,
+
+        /// The simple selection is ASSIGN_MIN_VALUE.
+        INT_VALUE_SIMPLE,
+
+        /// Selects the min value of the selected variable.
+        ASSIGN_MIN_VALUE,
+
+        /// Selects the max value of the selected variable.
+        ASSIGN_MAX_VALUE,
+
+        /// Selects randomly one of the possible values of the selected variable.
+        ASSIGN_RANDOM_VALUE,
+
+        /// Selects the first possible value which is the closest to the center
+        /// of the domain of the selected variable.
+        /// The center is defined as (min + max) / 2.
+        ASSIGN_CENTER_VALUE,
+
+        /// Split the domain in two around the center, and choose the lower
+        /// part first.
+        SPLIT_LOWER_HALF,
+
+        /// Split the domain in two around the center, and choose the lower
+        /// part first.
+        SPLIT_UPPER_HALF,
+    };
+
+    /// Used for scheduling. Not yet implemented.
+    export enum SequenceStrategy
+    {
+        SEQUENCE_DEFAULT,
+        SEQUENCE_SIMPLE,
+        CHOOSE_MIN_SLACK_RANK_FORWARD,
+        CHOOSE_RANDOM_RANK_FORWARD,
+    };
+
+}
+
+//      /// Callback typedefs
+//      typedef std::function<int64_t(int64_t)> IndexEvaluator1;
+type IndexEvaluator1 = (index: number) => number;
+//      typedef std::function<int64_t(int64_t, int64_t)> IndexEvaluator2;
+type IndexEvaluator2 = (index1: number, index2: number) => number;
+//      typedef std::function<int64_t(int64_t, int64_t, int64_t)> IndexEvaluator3;
+type IndexEvaluator3 = (index1: number, index2: number, index3: number) => number;
+
+//      typedef std::function<bool(int64_t)> IndexFilter1;
+type IndexFilter1 = (index: number) => boolean;
+//      typedef std::function<IntVar*(int64_t)> Int64ToIntVar;
+type Int64ToIntVar = (index: number) => IntVar;
+
+//      typedef std::function<int64_t(Solver* solver,
+//                                    const std::vector<IntVar*>& vars,
+//                                    int64_t first_unbound, int64_t last_unbound)>
+//          VariableIndexSelector;
+type VariableIndexSelector = (solver: Solver, vars: IntVar[], first_unbound: number, last_unbound: number) => number;
+
+//      typedef std::function<int64_t(const IntVar* v, int64_t id)>
+//          VariableValueSelector;
+type VariableValueSelector = (v: IntVar, id: number) => number;
+//      typedef std::function<bool(int64_t, int64_t, int64_t)>
+//          VariableValueComparator;
+type VariableValueComparator = (index1: number, index2: number, index3: number) => boolean;
+//      typedef std::function<DecisionModification()> BranchSelector;
+type BranchSelector = () => DecisionModification;
+//      // TODO(user): wrap in swig.
+//      typedef std::function<void(Solver*)> Action;
+//      typedef std::function<void()> Closure;
 
 /// For the time being, Solver is neither MT_SAFE nor MT_HOT.
 export class Solver
@@ -39,118 +200,6 @@ export class Solver
     //      /// Number of priorities for demons.
     //      static constexpr int kNumPriorities = 3;
 
-    //      /// This enum describes the strategy used to select the next branching
-    //      /// variable at each node during the search.
-    //      enum IntVarStrategy {
-    //        /// The default behavior is CHOOSE_FIRST_UNBOUND.
-    //        INT_VAR_DEFAULT,
-
-    //        /// The simple selection is CHOOSE_FIRST_UNBOUND.
-    //        INT_VAR_SIMPLE,
-
-    //        /// Select the first unbound variable.
-    //        /// Variables are considered in the order of the vector of IntVars used
-    //        /// to create the selector.
-    //        CHOOSE_FIRST_UNBOUND,
-
-    //        /// Randomly select one of the remaining unbound variables.
-    //        CHOOSE_RANDOM,
-
-    //        /// Among unbound variables, select the variable with the smallest size,
-    //        /// i.e., the smallest number of possible values.
-    //        /// In case of a tie, the selected variables is the one with the lowest min
-    //        /// value.
-    //        /// In case of a tie, the first one is selected, first being defined by the
-    //        /// order in the vector of IntVars used to create the selector.
-    //        CHOOSE_MIN_SIZE_LOWEST_MIN,
-
-    //        /// Among unbound variables, select the variable with the smallest size,
-    //        /// i.e., the smallest number of possible values.
-    //        /// In case of a tie, the selected variable is the one with the highest min
-    //        /// value.
-    //        /// In case of a tie, the first one is selected, first being defined by the
-    //        /// order in the vector of IntVars used to create the selector.
-    //        CHOOSE_MIN_SIZE_HIGHEST_MIN,
-
-    //        /// Among unbound variables, select the variable with the smallest size,
-    //        /// i.e., the smallest number of possible values.
-    //        /// In case of a tie, the selected variables is the one with the lowest max
-    //        /// value.
-    //        /// In case of a tie, the first one is selected, first being defined by the
-    //        /// order in the vector of IntVars used to create the selector.
-    //        CHOOSE_MIN_SIZE_LOWEST_MAX,
-
-    //        /// Among unbound variables, select the variable with the smallest size,
-    //        /// i.e., the smallest number of possible values.
-    //        /// In case of a tie, the selected variable is the one with the highest max
-    //        /// value.
-    //        /// In case of a tie, the first one is selected, first being defined by the
-    //        /// order in the vector of IntVars used to create the selector.
-    //        CHOOSE_MIN_SIZE_HIGHEST_MAX,
-
-    //        /// Among unbound variables, select the variable with the smallest minimal
-    //        /// value.
-    //        /// In case of a tie, the first one is selected, "first" defined by the
-    //        /// order in the vector of IntVars used to create the selector.
-    //        CHOOSE_LOWEST_MIN,
-
-    //        /// Among unbound variables, select the variable with the highest maximal
-    //        /// value.
-    //        /// In case of a tie, the first one is selected, first being defined by the
-    //        /// order in the vector of IntVars used to create the selector.
-    //        CHOOSE_HIGHEST_MAX,
-
-    //        /// Among unbound variables, select the variable with the smallest size.
-    //        /// In case of a tie, the first one is selected, first being defined by the
-    //        /// order in the vector of IntVars used to create the selector.
-    //        CHOOSE_MIN_SIZE,
-
-    //        /// Among unbound variables, select the variable with the highest size.
-    //        /// In case of a tie, the first one is selected, first being defined by the
-    //        /// order in the vector of IntVars used to create the selector.
-    //        CHOOSE_MAX_SIZE,
-
-    //        /// Among unbound variables, select the variable with the largest
-    //        /// gap between the first and the second values of the domain.
-    //        CHOOSE_MAX_REGRET_ON_MIN,
-
-    //        /// Selects the next unbound variable on a path, the path being defined by
-    //        /// the variables: var[i] corresponds to the index of the next of i.
-    //        CHOOSE_PATH,
-    //      };
-    //      // TODO(user): add HIGHEST_MIN and LOWEST_MAX.
-
-    //      /// This enum describes the strategy used to select the next variable value to
-    //      /// set.
-    //      enum IntValueStrategy {
-    //        /// The default behavior is ASSIGN_MIN_VALUE.
-    //        INT_VALUE_DEFAULT,
-
-    //        /// The simple selection is ASSIGN_MIN_VALUE.
-    //        INT_VALUE_SIMPLE,
-
-    //        /// Selects the min value of the selected variable.
-    //        ASSIGN_MIN_VALUE,
-
-    //        /// Selects the max value of the selected variable.
-    //        ASSIGN_MAX_VALUE,
-
-    //        /// Selects randomly one of the possible values of the selected variable.
-    //        ASSIGN_RANDOM_VALUE,
-
-    //        /// Selects the first possible value which is the closest to the center
-    //        /// of the domain of the selected variable.
-    //        /// The center is defined as (min + max) / 2.
-    //        ASSIGN_CENTER_VALUE,
-
-    //        /// Split the domain in two around the center, and choose the lower
-    //        /// part first.
-    //        SPLIT_LOWER_HALF,
-
-    //        /// Split the domain in two around the center, and choose the lower
-    //        /// part first.
-    //        SPLIT_UPPER_HALF,
-    //      };
 
     //      /// This enum is used by Solver::MakePhase to specify how to select variables
     //      /// and values during the search.
@@ -176,13 +225,7 @@ export class Solver
     //        CHOOSE_DYNAMIC_GLOBAL_BEST,
     //      };
 
-    //      /// Used for scheduling. Not yet implemented.
-    //      enum SequenceStrategy {
-    //        SEQUENCE_DEFAULT,
-    //        SEQUENCE_SIMPLE,
-    //        CHOOSE_MIN_SLACK_RANK_FORWARD,
-    //        CHOOSE_RANDOM_RANK_FORWARD,
-    //      };
+
 
     //      /// This enum describes the straregy used to select the next interval variable
     //      /// and its value to be fixed.
@@ -540,28 +583,7 @@ export class Solver
     //      };
     //    #endif  // SWIG
 
-    //      /// Callback typedefs
-    //      typedef std::function<int64_t(int64_t)> IndexEvaluator1;
-    //      typedef std::function<int64_t(int64_t, int64_t)> IndexEvaluator2;
-    //      typedef std::function<int64_t(int64_t, int64_t, int64_t)> IndexEvaluator3;
 
-    //      typedef std::function<bool(int64_t)> IndexFilter1;
-
-    //      typedef std::function<IntVar*(int64_t)> Int64ToIntVar;
-
-    //      typedef std::function<int64_t(Solver* solver,
-    //                                    const std::vector<IntVar*>& vars,
-    //                                    int64_t first_unbound, int64_t last_unbound)>
-    //          VariableIndexSelector;
-
-    //      typedef std::function<int64_t(const IntVar* v, int64_t id)>
-    //          VariableValueSelector;
-    //      typedef std::function<bool(int64_t, int64_t, int64_t)>
-    //          VariableValueComparator;
-    //      typedef std::function<DecisionModification()> BranchSelector;
-    //      // TODO(user): wrap in swig.
-    //      typedef std::function<void(Solver*)> Action;
-    //      typedef std::function<void()> Closure;
 
     //      /// Solver API
     //      explicit Solver(const std::string& name);
@@ -2279,33 +2301,41 @@ export class Solver
     //      /// for all other functions that have several homonyms in this .h).
     //      DecisionBuilder* MakePhase(const std::vector<IntVar*>& vars,
     //                                 IntVarStrategy var_str, IntValueStrategy val_str);
+    MakePhase_01(vars: IntVar[], var_str: Solver.IntVarStrategy, val_str: Solver.IntValueStrategy): DecisionBuilder;
+
     //      DecisionBuilder* MakePhase(const std::vector<IntVar*>& vars,
     //                                 IndexEvaluator1 var_evaluator,
     //                                 IntValueStrategy val_str);
+    MakePhase_02(vars: IntVar[], var_evaluator: IndexEvaluator1, val_str: Solver.IntValueStrategy): DecisionBuilder;
 
     //      DecisionBuilder* MakePhase(const std::vector<IntVar*>& vars,
     //                                 IntVarStrategy var_str,
     //                                 IndexEvaluator2 value_evaluator);
+    MakePhase_03(vars: IntVar[], var_str: Solver.IntVarStrategy, value_evaluator: IndexEvaluator2): DecisionBuilder;
 
     //      /// var_val1_val2_comparator(var, val1, val2) is true iff assigning value
     //      /// "val1" to variable "var" is better than assigning value "val2".
     //      DecisionBuilder* MakePhase(const std::vector<IntVar*>& vars,
     //                                 IntVarStrategy var_str,
     //                                 VariableValueComparator var_val1_val2_comparator);
+    MakePhase_04(vars: IntVar[], var_str: Solver.IntVarStrategy, var_val1_val2_comparator: VariableValueComparator): DecisionBuilder;
 
     //      DecisionBuilder* MakePhase(const std::vector<IntVar*>& vars,
     //                                 IndexEvaluator1 var_evaluator,
     //                                 IndexEvaluator2 value_evaluator);
+    MakePhase_05(vars: IntVar[], var_evaluator: IndexEvaluator1, value_evaluator: IndexEvaluator2): DecisionBuilder;
 
     //      DecisionBuilder* MakePhase(const std::vector<IntVar*>& vars,
     //                                 IntVarStrategy var_str,
     //                                 IndexEvaluator2 value_evaluator,
     //                                 IndexEvaluator1 tie_breaker);
+    MakePhase_06(vars: IntVar[], var_str: Solver.IntVarStrategy, value_evaluator: IndexEvaluator2, tie_breaker: IndexEvaluator1): DecisionBuilder;
 
     //      DecisionBuilder* MakePhase(const std::vector<IntVar*>& vars,
     //                                 IndexEvaluator1 var_evaluator,
     //                                 IndexEvaluator2 value_evaluator,
     //                                 IndexEvaluator1 tie_breaker);
+    MakePhase_07(vars: IntVar[], var_evaluator: IndexEvaluator1, value_evaluator: IndexEvaluator2, tie_breaker: IndexEvaluator1): DecisionBuilder;
 
     //      DecisionBuilder* MakeDefaultPhase(const std::vector<IntVar*>& vars);
     //      DecisionBuilder* MakeDefaultPhase(const std::vector<IntVar*>& vars,
@@ -2314,14 +2344,21 @@ export class Solver
     //      /// Shortcuts for small arrays.
     //      DecisionBuilder* MakePhase(IntVar* const v0, IntVarStrategy var_str,
     //                                 IntValueStrategy val_str);
+    MakePhase_08(v0: IntVar, var_str: Solver.IntVarStrategy, val_str: Solver.IntValueStrategy): DecisionBuilder;
+
     //      DecisionBuilder* MakePhase(IntVar* const v0, IntVar* const v1,
     //                                 IntVarStrategy var_str, IntValueStrategy val_str);
+    MakePhase_09(v0: IntVar, v1: IntVar, var_str: Solver.IntVarStrategy, val_str: Solver.IntValueStrategy): DecisionBuilder;
+
     //      DecisionBuilder* MakePhase(IntVar* const v0, IntVar* const v1,
     //                                 IntVar* const v2, IntVarStrategy var_str,
     //                                 IntValueStrategy val_str);
+    MakePhase_10(v0: IntVar, v1: IntVar, v2: IntVar, var_str: Solver.IntVarStrategy, val_str: Solver.IntValueStrategy): DecisionBuilder;
+
     //      DecisionBuilder* MakePhase(IntVar* const v0, IntVar* const v1,
     //                                 IntVar* const v2, IntVar* const v3,
     //                                 IntVarStrategy var_str, IntValueStrategy val_str);
+    MakePhase_11(v0: IntVar, v1: IntVar, v2: IntVar, v3: IntVar, var_str: Solver.IntVarStrategy, val_str: Solver.IntValueStrategy): DecisionBuilder;
 
     //      /// Returns a decision that tries to schedule a task at a given time.
     //      /// On the Apply branch, it will set that interval var as performed and set
@@ -2354,6 +2391,7 @@ export class Solver
     //      /// builder.
     //      DecisionBuilder* MakePhase(const std::vector<IntVar*>& vars,
     //                                 IndexEvaluator2 eval, EvaluatorStrategy str);
+    MakePhase_12(vars: IntVar[], eval: IndexEvaluator2, str: Solver.EvaluatorStrategy): DecisionBuilder;
 
     //      /// Returns a decision builder which assigns values to variables
     //      /// which minimize the values returned by the evaluator. In case of
@@ -2365,13 +2403,16 @@ export class Solver
     //      DecisionBuilder* MakePhase(const std::vector<IntVar*>& vars,
     //                                 IndexEvaluator2 eval, IndexEvaluator1 tie_breaker,
     //                                 EvaluatorStrategy str);
+    MakePhase_13(vars: IntVar[], eval: IndexEvaluator2, tie_breaker: IndexEvaluator1, str: Solver.EvaluatorStrategy): DecisionBuilder;
 
     //      /// Scheduling phases.
     //      DecisionBuilder* MakePhase(const std::vector<IntervalVar*>& intervals,
     //                                 IntervalStrategy str);
+    MakePhase_14(intervals: IntervalVar[], str: Solver.IntervalStrategy): DecisionBuilder;
 
     //      DecisionBuilder* MakePhase(const std::vector<SequenceVar*>& sequences,
     //                                 SequenceStrategy str);
+    MakePhase_15(sequences: SequenceVar[], str: Solver.SequenceStrategy): DecisionBuilder;
 
     //      /// Returns a decision builder for which the left-most leaf corresponds
     //      /// to assignment, the rest of the tree being explored using 'db'.

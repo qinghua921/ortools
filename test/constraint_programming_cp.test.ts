@@ -61,4 +61,10 @@ test('assignment_groups_mip', () =>
     let z = solver.MakeIntVar(0, num_vals - 1, "z");
     let xyvars = [x, y];
     solver.AddConstraint(solver.MakeAllDifferent(xyvars));
+    let allvars = [x, y, z];
+    let db = solver.MakePhase_01(allvars,
+        operations_research.Solver.IntVarStrategy.CHOOSE_FIRST_UNBOUND,
+        operations_research.Solver.IntValueStrategy.ASSIGN_MIN_VALUE);
+
+    solver.NewSearch(db);
 });

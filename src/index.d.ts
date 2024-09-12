@@ -20,6 +20,10 @@ import { Domain as operations_research_Domain } from './operations_research/GDom
 import { MPVariable as operations_research_MPVariable } from './operations_research/GMPVariable'
 import { Solver as operations_research_Solver } from './operations_research/GSolver'
 import { IntVar as operations_research_IntVar } from './operations_research/GIntVar'
+import { Constraint as operations_research_Constraint } from './operations_research/GConstraint'
+import { DecisionBuilder as operations_research_DecisionBuilder } from './operations_research/GDecisionBuilder'
+import { SequenceVar as operations_research_SequenceVar } from './operations_research/GSequenceVar'
+import { IntervalVar as operations_research_IntervalVar } from './operations_research/sat/GIntervalVar'
 
 /***********************************************************************************
  * ./operations_research/sat
@@ -95,6 +99,10 @@ export namespace operations_research
         operations_research_MPVariable as MPVariable,
         operations_research_Solver as Solver,
         operations_research_IntVar as IntVar,
+        operations_research_Constraint as Constraint,
+        operations_research_DecisionBuilder as DecisionBuilder,
+        operations_research_SequenceVar as SequenceVar,
+        operations_research_IntervalVar as IntervalVar,
     }
 
     export namespace math_opt
