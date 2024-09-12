@@ -190,7 +190,7 @@ inline Napi::Value operations_research::sat::GNot( const Napi::CallbackInfo& inf
          && info[ 0 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
     {
         auto bool_var = GBoolVar::Unwrap( info[ 0 ].As< Napi::Object >() );
-        auto not_     = Not( *bool_var->pBoolVar );
+        auto not_     = Not( *bool_var->spBoolVar );
         auto exterior = Napi::External< BoolVar >::New( info.Env(), new BoolVar( not_ ) );
         return GBoolVar::constructor.New( { exterior } );
     }
@@ -231,7 +231,7 @@ inline Napi::Value operations_research::sat::GSolutionBooleanValue( const Napi::
     {
         auto solver_response = GCpSolverResponse::Unwrap( info[ 0 ].As< Napi::Object >() );
         auto model_proto     = GBoolVar::Unwrap( info[ 1 ].As< Napi::Object >() );
-        return Napi::Boolean::New( info.Env(), SolutionBooleanValue( *solver_response->pCpSolverResponse, *model_proto->pBoolVar ) );
+        return Napi::Boolean::New( info.Env(), SolutionBooleanValue( *solver_response->pCpSolverResponse, *model_proto->spBoolVar ) );
     }
 
     ThrowJsError( operations_research::sat::GSolutionBooleanValue : Invalid arguments );

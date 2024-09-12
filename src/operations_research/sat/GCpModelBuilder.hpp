@@ -43,6 +43,10 @@ namespace sat
         Napi::Value AddBoolOr( const Napi::CallbackInfo& info );
         Napi::Value AddLessThan( const Napi::CallbackInfo& info );
         Napi::Value AddDecisionStrategy( const Napi::CallbackInfo& info );
+        Napi::Value AddNotEqual( const Napi::CallbackInfo& info );
+        Napi::Value Proto( const Napi::CallbackInfo& info );
+        Napi::Value CopyFrom( const Napi::CallbackInfo& info );
+        Napi::Value GetIntVarFromProtoIndex( const Napi::CallbackInfo& info );
     };
 };  // namespace sat
 };  // namespace operations_research
@@ -96,12 +100,74 @@ inline Napi::Object operations_research::sat::GCpModelBuilder::Init( Napi::Env e
             InstanceMethod( "AddBoolOr", &GCpModelBuilder::AddBoolOr ),
             InstanceMethod( "AddLessThan", &GCpModelBuilder::AddLessThan ),
             InstanceMethod( "AddDecisionStrategy", &GCpModelBuilder::AddDecisionStrategy ),
+            InstanceMethod( "AddNotEqual", &GCpModelBuilder::AddNotEqual ),
+            InstanceMethod( "Proto", &GCpModelBuilder::Proto ),
+            InstanceMethod( "CopyFrom", &GCpModelBuilder::CopyFrom ),
+            InstanceMethod( "GetIntVarFromProtoIndex", &GCpModelBuilder::GetIntVarFromProtoIndex ),
 
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "CpModelBuilder" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::GetIntVarFromProtoIndex( const Napi::CallbackInfo& info )
+{
+    //     IntVar GetIntVarFromProtoIndex( int index );
+    if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+    {
+        auto index    = info[ 0 ].As< Napi::Number >().Int32Value();
+        auto var      = pCpModelBuilder->GetIntVarFromProtoIndex( index );
+        auto external = Napi::External< IntVar >::New( info.Env(), new IntVar( var ) );
+        return GIntVar::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::GetIntVarFromProtoIndex : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::CopyFrom( const Napi::CallbackInfo& info )
+{
+    //     void CopyFrom( const CpModelProto& model_proto );
+    if ( info.Length() == 1 && info[ 0 ].IsObject() && info[ 0 ].As< Napi::Object >().InstanceOf( GCpModelProto::constructor.Value() ) )
+    {
+        auto gcpmodelproto = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
+        pCpModelBuilder->CopyFrom( *gcpmodelproto->pCpModelProto );
+        return info.Env().Undefined();
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::CopyFrom : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::Proto( const Napi::CallbackInfo& info )
+{
+    //     const CpModelProto& Proto() const
+    if ( info.Length() == 0 )
+    {
+        auto proto    = pCpModelBuilder->Proto();
+        auto external = Napi::External< CpModelProto >::New( info.Env(), new CpModelProto( proto ) );
+        return GCpModelProto::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::Proto : Invalid argument );
+    return info.Env().Undefined();
+}
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::AddNotEqual( const Napi::CallbackInfo& info )
+{
+    //     Constraint AddNotEqual( const LinearExpr& left, const LinearExpr& right );
+    LinearExpr left, right;
+    if ( info.Length() == 2 && GLinearExpr::ToLinearExpr( info[ 0 ], left ) && GLinearExpr::ToLinearExpr( info[ 1 ], right ) )
+    {
+        auto constraint = pCpModelBuilder->AddNotEqual( left, right );
+        auto external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
+        return GConstraint::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::AddNotEqual : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::sat::GCpModelBuilder::AddDecisionStrategy( const Napi::CallbackInfo& info )
@@ -123,7 +189,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddDecisionStrateg
                  && arr.Get( i ).As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
             {
                 auto gintvar = GIntVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
-                variables.push_back( *gintvar->pIntVar );
+                variables.push_back( *gintvar->spIntVar );
                 continue;
             }
 
@@ -154,7 +220,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddDecisionStrateg
                  && arr.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
             {
                 auto gboolvar = GBoolVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
-                variables.push_back( *gboolvar->pBoolVar );
+                variables.push_back( *gboolvar->spBoolVar );
                 continue;
             }
 
@@ -200,7 +266,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddBoolOr( const N
                  && arr.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
             {
                 auto gboolvar = GBoolVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
-                literals.push_back( *gboolvar->pBoolVar );
+                literals.push_back( *gboolvar->spBoolVar );
                 continue;
             }
 
@@ -226,7 +292,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddImplication( co
     {
         auto gboolvar_a = GBoolVar::Unwrap( info[ 0 ].As< Napi::Object >() );
         auto gboolvar_b = GBoolVar::Unwrap( info[ 1 ].As< Napi::Object >() );
-        auto constraint = pCpModelBuilder->AddImplication( *gboolvar_a->pBoolVar, *gboolvar_b->pBoolVar );
+        auto constraint = pCpModelBuilder->AddImplication( *gboolvar_a->spBoolVar, *gboolvar_b->spBoolVar );
         auto external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
         return GConstraint::constructor.New( { external } );
     }
@@ -243,7 +309,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddImplication( co
                  && arr_lhs.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
             {
                 auto gboolvar = GBoolVar::Unwrap( arr_lhs.Get( i ).As< Napi::Object >() );
-                lhs.push_back( *gboolvar->pBoolVar );
+                lhs.push_back( *gboolvar->spBoolVar );
                 continue;
             }
 
@@ -259,7 +325,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddImplication( co
                  && arr_rhs.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
             {
                 auto gboolvar = GBoolVar::Unwrap( arr_rhs.Get( i ).As< Napi::Object >() );
-                rhs.push_back( *gboolvar->pBoolVar );
+                rhs.push_back( *gboolvar->spBoolVar );
                 continue;
             }
 
@@ -318,7 +384,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::NewOptionalFixedSi
     {
         auto size     = info[ 1 ].As< Napi::Number >().Int64Value();
         auto gboolvar = GBoolVar::Unwrap( info[ 2 ].As< Napi::Object >() );
-        auto expr     = pCpModelBuilder->NewOptionalFixedSizeIntervalVar( start, size, *gboolvar->pBoolVar );
+        auto expr     = pCpModelBuilder->NewOptionalFixedSizeIntervalVar( start, size, *gboolvar->spBoolVar );
         auto external = Napi::External< IntervalVar >::New( info.Env(), new IntervalVar( expr ) );
         return GIntervalVar::constructor.New( { external } );
     }
@@ -340,7 +406,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddAssumptions( co
                  && arr.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
             {
                 auto gboolvar = GBoolVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
-                literals.push_back( *gboolvar->pBoolVar );
+                literals.push_back( *gboolvar->spBoolVar );
                 continue;
             }
 
@@ -429,7 +495,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddAtMostOne( cons
                  && arr.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
             {
                 auto gboolvar = GBoolVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
-                literals.push_back( *gboolvar->pBoolVar );
+                literals.push_back( *gboolvar->spBoolVar );
             }
         }
         auto constraint = pCpModelBuilder->AddAtMostOne( literals );
@@ -482,7 +548,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddAllowedAssignme
                  && arr.Get( i ).As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
             {
                 auto gintvar = GIntVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
-                vars.push_back( *gintvar->pIntVar );
+                vars.push_back( *gintvar->spIntVar );
                 continue;
             }
 
@@ -527,7 +593,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::AddExactlyOne( con
                  && arr.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
             {
                 auto gboolvar = GBoolVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
-                literals.push_back( *gboolvar->pBoolVar );
+                literals.push_back( *gboolvar->spBoolVar );
             }
         }
         auto constraint = pCpModelBuilder->AddExactlyOne( literals );

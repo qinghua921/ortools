@@ -90,7 +90,6 @@ export class CpSolverResponse
     //         InternalSwap( other );
     //     }
 
-    //     // implements Message ----------------------------------------------
 
     //     CpSolverResponse* New( ::PROTOBUF_NAMESPACE_ID::Arena* arena = nullptr ) const final
     //     {
@@ -125,9 +124,7 @@ export class CpSolverResponse
 
     //     ::PROTOBUF_NAMESPACE_ID::Metadata GetMetadata() const final;
 
-    //     // nested types ----------------------------------------------------
 
-    //     // accessors -------------------------------------------------------
 
     //     enum : int
     //     {
@@ -155,7 +152,6 @@ export class CpSolverResponse
     //         kNumIntegersFieldNumber                           = 30,
     //         kStatusFieldNumber                                = 1,
     //     };
-    //     // repeated int64 solution = 2;
     //     int solution_size() const;
 
 
@@ -172,7 +168,6 @@ export class CpSolverResponse
     //     ::PROTOBUF_NAMESPACE_ID::RepeatedField< int64_t >*
     //     mutable_solution();
 
-    //     // repeated .operations_research.sat.IntegerVariableProto tightened_variables = 21;
     //     int tightened_variables_size() const;
 
 
@@ -189,7 +184,6 @@ export class CpSolverResponse
     //     const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::sat::IntegerVariableProto >&
     //     tightened_variables() const;
 
-    //     // repeated int32 sufficient_assumptions_for_infeasibility = 23;
     //     int sufficient_assumptions_for_infeasibility_size() const;
 
 
@@ -209,7 +203,6 @@ export class CpSolverResponse
     //     ::PROTOBUF_NAMESPACE_ID::RepeatedField< int32_t >*
     //     mutable_sufficient_assumptions_for_infeasibility();
 
-    //     // repeated .operations_research.sat.CpSolverSolution additional_solutions = 27;
     //     int additional_solutions_size() const;
 
 
@@ -226,7 +219,6 @@ export class CpSolverResponse
     //     const ::PROTOBUF_NAMESPACE_ID::RepeatedPtrField< ::operations_research::sat::CpSolverSolution >&
     //     additional_solutions() const;
 
-    //     // string solution_info = 20;
     //     void               clear_solution_info();
     //     const std::string& solution_info() const;
     //     template < typename ArgT0 = const std::string&, typename... ArgT >
@@ -236,7 +228,6 @@ export class CpSolverResponse
     //     void                            set_allocated_solution_info( std::string* solution_info );
 
     // public:
-    //     // string solve_log = 26;
     //     void               clear_solve_log();
     //     const std::string& solve_log() const;
     //     template < typename ArgT0 = const std::string&, typename... ArgT >
@@ -246,7 +237,6 @@ export class CpSolverResponse
     //     void                            set_allocated_solve_log( std::string* solve_log );
 
     // public:
-    //     // .operations_research.sat.CpObjectiveProto integer_objective = 28;
     //     bool has_integer_objective() const;
 
     // public:
@@ -261,7 +251,6 @@ export class CpSolverResponse
     //         ::operations_research::sat::CpObjectiveProto* integer_objective );
     //     ::operations_research::sat::CpObjectiveProto* unsafe_arena_release_integer_objective();
 
-    //     // double objective_value = 3;
     //     void   clear_objective_value();
     //     double objective_value() const;
     objective_value(): double;
@@ -272,7 +261,6 @@ export class CpSolverResponse
     //     void   _internal_set_objective_value( double value );
 
     // public:
-    //     // double best_objective_bound = 4;
     //     void   clear_best_objective_bound();
     //     double best_objective_bound() const;
     //     void   set_best_objective_bound( double value );
@@ -282,7 +270,6 @@ export class CpSolverResponse
     //     void   _internal_set_best_objective_bound( double value );
 
     // public:
-    //     // int64 num_booleans = 10;
     //     void    clear_num_booleans();
     //     int64_t num_booleans() const;
     //     void    set_num_booleans( int64_t value );
@@ -292,13 +279,11 @@ export class CpSolverResponse
     //     void    _internal_set_num_booleans( int64_t value );
 
     // public:
-    //     // int64 num_conflicts = 11;
     //     void    clear_num_conflicts();
     //     int64_t num_conflicts() const;
     //     void    set_num_conflicts( int64_t value );
 
     // public:
-    //     // int64 num_branches = 12;
     //     void    clear_num_branches();
     //     int64_t num_branches() const;
     //     void    set_num_branches( int64_t value );
@@ -308,7 +293,6 @@ export class CpSolverResponse
     //     void    _internal_set_num_branches( int64_t value );
 
     // public:
-    //     // int64 num_binary_propagations = 13;
     //     void    clear_num_binary_propagations();
     //     int64_t num_binary_propagations() const;
     //     void    set_num_binary_propagations( int64_t value );
@@ -318,7 +302,6 @@ export class CpSolverResponse
     //     void    _internal_set_num_binary_propagations( int64_t value );
 
     // public:
-    //     // int64 num_integer_propagations = 14;
     //     void    clear_num_integer_propagations();
     //     int64_t num_integer_propagations() const;
     //     void    set_num_integer_propagations( int64_t value );
@@ -328,7 +311,6 @@ export class CpSolverResponse
     //     void    _internal_set_num_integer_propagations( int64_t value );
 
     // public:
-    //     // double wall_time = 15;
     //     void   clear_wall_time();
     //     double wall_time() const;
     //     void   set_wall_time( double value );
@@ -338,7 +320,6 @@ export class CpSolverResponse
     //     void   _internal_set_wall_time( double value );
 
     // public:
-    //     // double user_time = 16;
     //     void   clear_user_time();
     //     double user_time() const;
     //     void   set_user_time( double value );
@@ -348,7 +329,6 @@ export class CpSolverResponse
     //     void   _internal_set_user_time( double value );
 
     // public:
-    //     // double deterministic_time = 17;
     //     void   clear_deterministic_time();
     //     double deterministic_time() const;
     //     void   set_deterministic_time( double value );
@@ -358,7 +338,6 @@ export class CpSolverResponse
     //     void   _internal_set_deterministic_time( double value );
 
     // public:
-    //     // double gap_integral = 22;
     //     void   clear_gap_integral();
     //     double gap_integral() const;
     //     void   set_gap_integral( double value );
@@ -368,7 +347,6 @@ export class CpSolverResponse
     //     void   _internal_set_gap_integral( double value );
 
     // public:
-    //     // int64 num_restarts = 24;
     //     void    clear_num_restarts();
     //     int64_t num_restarts() const;
     //     void    set_num_restarts( int64_t value );
@@ -378,7 +356,6 @@ export class CpSolverResponse
     //     void    _internal_set_num_restarts( int64_t value );
 
     // public:
-    //     // int64 num_lp_iterations = 25;
     //     void    clear_num_lp_iterations();
     //     int64_t num_lp_iterations() const;
     //     void    set_num_lp_iterations( int64_t value );
@@ -388,7 +365,6 @@ export class CpSolverResponse
     //     void    _internal_set_num_lp_iterations( int64_t value );
 
     // public:
-    //     // int64 inner_objective_lower_bound = 29;
     //     void    clear_inner_objective_lower_bound();
     //     int64_t inner_objective_lower_bound() const;
     //     void    set_inner_objective_lower_bound( int64_t value );
@@ -398,14 +374,12 @@ export class CpSolverResponse
     //     void    _internal_set_inner_objective_lower_bound( int64_t value );
 
     // public:
-    //     // int64 num_integers = 30;
     //     void    clear_num_integers();
     //     int64_t num_integers() const;
     //     void    set_num_integers( int64_t value );
 
 
     // public:
-    //     // .operations_research.sat.CpSolverStatus status = 1;
     //     void                                       clear_status();
 
     //     ::operations_research::sat::CpSolverStatus status() const;

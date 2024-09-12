@@ -19,133 +19,89 @@ export class CpModelBuilder
 {
     constructor();
     // public:
-    //     /// Sets the name of the model.
     //     void SetName( const std::string& name );
 
-    //     /// Creates an integer variable with the given domain.
     //     IntVar NewIntVar( const Domain& domain );
     NewIntVar(domain: Domain): IntVar;
 
-    //     /// Creates a Boolean variable.
     //     BoolVar NewBoolVar();
     NewBoolVar(): BoolVar;
 
-    //     /// Creates a constant variable. This is a shortcut for
-    //     /// NewVariable(Domain(value)).but it will return the same variable if used
-    //     /// twice with the same constant.
     //     IntVar NewConstant( int64_t value );
 
-    //     /// Creates an always true Boolean variable.
-    //     /// If this is called multiple times, the same variable will always be
-    //     /// returned.
     //     BoolVar TrueVar();
 
-    //     /// Creates an always false Boolean variable.
-    //     /// If this is called multiple times, the same variable will always be
-    //     /// returned.
     //     BoolVar FalseVar();
 
-    //     /// Creates an interval variable from 3 affine expressions.
     //     IntervalVar NewIntervalVar( const LinearExpr& start, const LinearExpr& size,
     //                                 const LinearExpr& end );
 
-    //     /// Creates an interval variable with a fixed size.
     //     IntervalVar NewFixedSizeIntervalVar( const LinearExpr& start, int64_t size );
 
-    //     /// Creates an optional interval variable from 3 affine expressions and a
-    //     /// Boolean variable.
     //     IntervalVar NewOptionalIntervalVar( const LinearExpr& start,
     //                                         const LinearExpr& size,
     //                                         const LinearExpr& end, BoolVar presence );
 
-    //     /// Creates an optional interval variable with a fixed size.
     //     IntervalVar NewOptionalFixedSizeIntervalVar( const LinearExpr& start,
     //                                                  int64_t size, BoolVar presence );
     NewOptionalFixedSizeIntervalVar(start: CanAsLinearExpr, size: number, presence: BoolVar): IntervalVar;
 
-    //     /// It is sometime convenient when building a model to create a bunch of
-    //     /// variables that will later be fixed. Instead of doing AddEquality(var,
-    //     /// value) which add a constraint, these functions modify directly the
-    //     /// underlying variable domain.
     //     ///
-    //     /// Note that this ignore completely the original variable domain and just fix
-    //     /// the given variable to the given value, even if it was outside the given
-    //     /// variable domain. You can still use AddEquality() if this is not what you
-    //     /// want.
     //     void FixVariable( IntVar var, int64_t value );
     //     void FixVariable( BoolVar var, bool value );
 
-    //     /// Adds the constraint that at least one of the literals must be true.
     //     Constraint AddBoolOr( absl::Span< const BoolVar > literals );
     AddBoolOr(literals: BoolVar[]): Constraint;
 
-    //     /// Same as AddBoolOr(). Sum literals >= 1.
     //     Constraint AddAtLeastOne( absl::Span< const BoolVar > literals );
 
-    //     /// At most one literal is true. Sum literals <= 1.
     //     Constraint AddAtMostOne( absl::Span< const BoolVar > literals );
     AddAtMostOne(literals: BoolVar[]): Constraint;
 
-    //     /// Exactly one literal is true. Sum literals == 1.
     //     Constraint AddExactlyOne( absl::Span< const BoolVar > literals );
     AddExactlyOne(literals: BoolVar[]): Constraint;
 
-    //     /// Adds the constraint that all literals must be true.
     //     Constraint AddBoolAnd( absl::Span< const BoolVar > literals );
 
-    //     /// Adds the constraint that an odd number of literals is true.
     //     Constraint AddBoolXor( absl::Span< const BoolVar > literals );
 
-    //     /// Adds a => b.
     //     Constraint AddImplication( BoolVar a, BoolVar b )
     AddImplication(a: BoolVar, b: BoolVar): Constraint;
 
-    //     /// Adds implication: if all lhs vars are true then all rhs vars must be true.
     //     Constraint AddImplication( absl::Span< const BoolVar > lhs,
     //                                absl::Span< const BoolVar > rhs )
     AddImplication(lhs: BoolVar[], rhs: BoolVar[]): Constraint;
 
-    //     /// Adds left == right.
     //     Constraint AddEquality( const LinearExpr& left, const LinearExpr& right );
     AddEquality(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
-    //     /// Adds left >= right.
     //     Constraint AddGreaterOrEqual( const LinearExpr& left, const LinearExpr& right );
     AddGreaterOrEqual(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
-    //     /// Adds left > right.
     //     Constraint AddGreaterThan( const LinearExpr& left, const LinearExpr& right );
     AddGreaterThan(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
-    //     /// Adds left <= right.
     //     Constraint AddLessOrEqual( const LinearExpr& left, const LinearExpr& right );
     AddLessOrEqual(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
-    //     /// Adds left < right.
     //     Constraint AddLessThan( const LinearExpr& left, const LinearExpr& right );
     AddLessThan(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
-    //     /// Adds expr in domain.
     //     Constraint AddLinearConstraint( const LinearExpr& expr, const Domain& domain );
 
-    //     /// Adds left != right.
     //     Constraint AddNotEqual( const LinearExpr& left, const LinearExpr& right );
+    AddNotEqual(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
-    //     /// This constraint forces all variables to have different values.
     //     Constraint AddAllDifferent( absl::Span< const IntVar > vars );
 
-    //     /// This constraint forces all expressions to have different values.
     //     Constraint AddAllDifferent( absl::Span< const LinearExpr > exprs );
 
-    //     /// This constraint forces all expressions to have different values.
     //     Constraint AddAllDifferent( std::initializer_list< LinearExpr > exprs );
 
-    //     /// Adds the element constraint: variables[index] == target
     //     Constraint AddVariableElement( IntVar                     index,
     //                                    absl::Span< const IntVar > variables,
     //                                    IntVar                     target );
 
-    //     /// Adds the element constraint: values[index] == target
     //     Constraint AddElement( IntVar index, absl::Span< const int64_t > values,
     //                            IntVar target );
 
@@ -268,55 +224,42 @@ export class CpModelBuilder
     //         absl::Span< const IntVar > transition_variables, int starting_state,
     //         absl::Span< const int > final_states );
 
-    //     /// Adds target == min(vars).
     //     Constraint AddMinEquality( const LinearExpr&          target,
     //                                absl::Span< const IntVar > vars );
 
-    //     /// Adds target == min(exprs).
     //     Constraint AddMinEquality( const LinearExpr&              target,
     //                                absl::Span< const LinearExpr > exprs );
 
-    //     /// Adds target == min(exprs).
     //     Constraint AddMinEquality( const LinearExpr&                   target,
     //                                std::initializer_list< LinearExpr > exprs );
 
-    //     /// Adds target == max(vars).
     //     Constraint AddMaxEquality( const LinearExpr&          target,
     //                                absl::Span< const IntVar > vars );
 
-    //     /// Adds target == max(exprs).
     //     Constraint AddMaxEquality( const LinearExpr&              target,
     //                                absl::Span< const LinearExpr > exprs );
 
-    //     /// Adds target == max(exprs).
     //     Constraint AddMaxEquality( const LinearExpr&                   target,
     //                                std::initializer_list< LinearExpr > exprs );
 
-    //     /// Adds target = num / denom (integer division rounded towards 0).
     //     Constraint AddDivisionEquality( const LinearExpr& target,
     //                                     const LinearExpr& numerator,
     //                                     const LinearExpr& denominator );
 
-    //     /// Adds target == abs(expr).
     //     Constraint AddAbsEquality( const LinearExpr& target, const LinearExpr& expr );
 
-    //     /// Adds target = var % mod.
     //     Constraint AddModuloEquality( const LinearExpr& target, const LinearExpr& var,
     //                                   const LinearExpr& mod );
 
-    //     /// Adds target == prod(exprs).
     //     Constraint AddMultiplicationEquality( const LinearExpr&              target,
     //                                           absl::Span< const LinearExpr > exprs );
 
-    //     /// Adds target == prod(vars).
     //     Constraint AddMultiplicationEquality( const LinearExpr&          target,
     //                                           absl::Span< const IntVar > vars );
 
-    //     /// Adds target == prod(vars).
     //     Constraint AddMultiplicationEquality( const LinearExpr&                   target,
     //                                           std::initializer_list< LinearExpr > exprs );
 
-    //     /// Adds target == left * right.
     //     Constraint AddMultiplicationEquality( const LinearExpr& target,
     //                                           const LinearExpr& left,
     //                                           const LinearExpr& right );
@@ -341,36 +284,26 @@ export class CpModelBuilder
     //      */
     //     CumulativeConstraint AddCumulative( LinearExpr capacity );
 
-    //     /// Adds a linear minimization objective.
     //     void Minimize( const LinearExpr& expr );
     Minimize(expr: CanAsLinearExpr): void;
 
-    //     /// Adds a linear floating point minimization objective.
-    //     /// Note that the coefficients will be internally scaled to integer.
     //     void Minimize( const DoubleLinearExpr& expr );
 
-    //     /// Adds a linear maximization objective.
     //     void Maximize( const LinearExpr& expr );
     Maximize(expr: LinearExpr): void;
 
-    //     /// Adds a linear floating point maximization objective.
-    //     /// Note that the coefficients will be internally scaled to integer.
     //     void Maximize( const DoubleLinearExpr& expr );
 
-    //     /// Removes the objective from the model.
     //     void ClearObjective();
 
-    //     /// Checks whether the model contains an objective.
     //     bool HasObjective() const;
 
-    //     /// Adds a decision strategy on a list of integer variables.
     //     void AddDecisionStrategy(
     //         absl::Span< const IntVar >                       variables,
     //         DecisionStrategyProto::VariableSelectionStrategy var_strategy,
     //         DecisionStrategyProto::DomainReductionStrategy   domain_strategy );
     AddDecisionStrategy(variables: IntVar[], var_strategy: DecisionStrategyProto.VariableSelectionStrategy, domain_strategy: DecisionStrategyProto.DomainReductionStrategy): void;
 
-    //     /// Adds a decision strategy on a list of boolean variables.
     //     void AddDecisionStrategy(
     //         absl::Span< const BoolVar >                      variables,
     //         DecisionStrategyProto::VariableSelectionStrategy var_strategy,
@@ -378,50 +311,39 @@ export class CpModelBuilder
     AddDecisionStrategy(variables: BoolVar[], var_strategy: DecisionStrategyProto.VariableSelectionStrategy, domain_strategy: DecisionStrategyProto.DomainReductionStrategy): void;
 
 
-    //     /// Adds hinting to a variable.
     //     void AddHint( IntVar var, int64_t value );
 
-    //     /// Adds hinting to a Boolean variable.
     //     void AddHint( BoolVar var, bool value );
 
-    //     /// Removes all hints.
     //     void ClearHints();
 
-    //     /// Adds a literal to the model as assumptions.
     //     void AddAssumption( BoolVar lit );
 
-    //     /// Adds multiple literals to the model as assumptions.
     //     void AddAssumptions( absl::Span< const BoolVar > literals );
     AddAssumptions(literals: BoolVar[]): void;
 
-    //     /// Remove all assumptions from the model.
     //     void ClearAssumptions();
 
     //     const CpModelProto& Build() const
     Build(): CpModelProto;
 
     //     const CpModelProto& Proto() const
-    //     {
-    //         return cp_model_;
-    //     }
+    Proto(): CpModelProto;
     //     CpModelProto* MutableProto()
     //     {
     //         return &cp_model_;
     //     }
 
-    //     /// Export the model to file.
     //     bool ExportToFile( const std::string& filename ) const;
 
-    //     /// Replaces the current model with the one from the given proto.
     //     void CopyFrom( const CpModelProto& model_proto );
+    CopyFrom(model_proto: CpModelProto): void;
 
-    //     /// Returns the Boolean variable from its index in the proto.
     //     BoolVar GetBoolVarFromProtoIndex( int index );
 
-    //     /// Returns the integer variable from its index in the proto.
     //     IntVar GetIntVarFromProtoIndex( int index );
+    GetIntVarFromProtoIndex(index: number): IntVar;
 
-    //     /// Returns the interval variable from its index in the proto.
     //     IntervalVar GetIntervalVarFromProtoIndex( int index );
 
 }
