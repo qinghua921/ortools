@@ -1541,24 +1541,8 @@ export class Solver
 
     //      std::vector<int64_t> tmp_vector_;
 
-    //      friend class BaseIntExpr;
-    //      friend class Constraint;
-    //      friend class DemonProfiler;
-    //      friend class FindOneNeighbor;
-    //      friend class IntVar;
-    //      friend class PropagationBaseObject;
-    //      friend class Queue;
-    //      friend class SearchMonitor;
-    //      friend class SearchLimit;
-    //      friend class RoutingModel;
-    //      friend class LocalSearchProfiler;
 
     //    #if !defined(SWIG)
-    //      friend void InternalSaveBooleanVarValue(Solver* const, IntVar* const);
-    //      template <class>
-    //      friend class SimpleRevFIFO;
-    //      template <class K, class V>
-    //      friend class RevImmutableMultiMap;
 
     //      bool IsBooleanVar(IntExpr* const expr, IntVar** inner_var,
     //                        bool* is_negated) const;
