@@ -8,6 +8,8 @@ namespace operations_research
 class GIntVar : public Napi::ObjectWrap< GIntVar >
 {
     CommonProperties( IntVar )
+
+    Napi::Value Value( const Napi::CallbackInfo& info );
 };
 }  // namespace operations_research
 
@@ -29,9 +31,17 @@ inline Napi::Object operations_research::GIntVar::Init( Napi::Env env, Napi::Obj
     Napi::HandleScope scope( env );
     Napi::Function    func = DefineClass(
         env, "IntVar",
-        {} );
+        {
+            InstanceMethod( "Value", &GIntVar::Value ),
+        } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "IntVar" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::GIntVar::Value( const Napi::CallbackInfo& info )
+{
+    //      virtual int64_t Value() const = 0;
+    return Napi::Number::New( info.Env(), spIntVar->Value() );
 }

@@ -61,4 +61,23 @@ test('assignment_groups_mip', () =>
     let z = solver.MakeIntVar(0, num_vals - 1, "z");
     let xyvars = [x, y];
     solver.AddConstraint(solver.MakeAllDifferent(xyvars));
+    let allvars = [x, y, z];
+    let db = solver.MakePhase_01(allvars,
+        operations_research.Solver.IntVarStrategy.CHOOSE_FIRST_UNBOUND,
+        operations_research.Solver.IntValueStrategy.ASSIGN_MIN_VALUE);
+
+    solver.NewSearch(db);
+
+    while (solver.NextSolution())
+    {
+        console.log("Solution");
+        console.log("x = " + x.Value() + "; y = " + y.Value() + "; z = " + z.Value());
+    }
+
+    solver.EndSearch();
+    console.log("Number of solutions: " + solver.solutions());
+    console.log("Advanced usage:");
+    console.log("Problem solved in " + solver.wall_time() + "ms");
+    console.log("Memory usage: " + operations_research.Solver.MemoryUsage() + " bytes");    
+    
 });
