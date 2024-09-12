@@ -443,7 +443,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::Maximize( const Na
     if ( info.Length() == 1 && info[ 0 ].IsObject() && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
         auto glinearexpr = GLinearExpr::Unwrap( info[ 0 ].As< Napi::Object >() );
-        pCpModelBuilder->Maximize( *glinearexpr->pLinearExpr );
+        pCpModelBuilder->Maximize( *glinearexpr->spLinearExpr );
         return info.Env().Undefined();
     }
 
