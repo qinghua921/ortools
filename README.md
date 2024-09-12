@@ -29,16 +29,6 @@ I have made its usage similar to C++ style with a few changes to C++ operators.
 
 Some C++ classes are not yet implemented, and some classes are not defined. The code is organized according to the namespace of the C++ class. If needed, you can reorganize it accordingly.
 
-I have added a template (`Demo.hpp`, `Demo.d.ts`):
-
-To add a new class (e.g., `Foo`):
-
-- Copy `Demo.hpp` and `Demo.d.ts`.
-- Rename them to `Foo.hpp` and `Foo.d.ts`.
-- Replace occurrences of `Demo` with `Foo` in `Foo.hpp`.
-- Add the C++ code for `Foo` to `Foo.d.ts` and comment out any missing methods.
-- Add the declaration of `Foo` in `index.d.ts` and `index.cpp`.
-
 ## Progress
 
 The codebase is large, and the priority is to implement the code in the examples directory.
