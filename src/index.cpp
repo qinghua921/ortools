@@ -20,6 +20,9 @@
 #include "./operations_research/GSimpleLinearSumAssignment.hpp"
 #include "./operations_research/GSimpleMinCostFlow.hpp"
 #include "./operations_research/GDomain.hpp"
+#include "./operations_research/GSolver.hpp"
+#include "./operations_research/GIntVar.hpp"
+#include "./operations_research/GConstraint.hpp"
 
 /***********************************************************************************
  * ./operations_research/sat
@@ -93,6 +96,9 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research::GSimpleLinearSumAssignment::Init( env, operations_research_exports );
     operations_research::GSimpleMinCostFlow::Init( env, operations_research_exports );
     operations_research::GDomain::Init( env, operations_research_exports );
+    operations_research::GSolver::Init( env, operations_research_exports );
+    operations_research::GIntVar::Init( env, operations_research_exports );
+    operations_research::GConstraint::Init( env, operations_research_exports );
 
     // ./operations_research/sat
 

@@ -18,6 +18,8 @@ import
 } from './operations_research/GFunc'
 import { Domain as operations_research_Domain } from './operations_research/GDomain'
 import { MPVariable as operations_research_MPVariable } from './operations_research/GMPVariable'
+import { Solver as operations_research_Solver } from './operations_research/GSolver'
+import { IntVar as operations_research_IntVar } from './operations_research/GIntVar'
 
 /***********************************************************************************
  * ./operations_research/sat
@@ -91,6 +93,8 @@ export namespace operations_research
         operations_research_operator_times as operator_times,
         operations_research_Domain as Domain,
         operations_research_MPVariable as MPVariable,
+        operations_research_Solver as Solver,
+        operations_research_IntVar as IntVar,
     }
 
     export namespace math_opt

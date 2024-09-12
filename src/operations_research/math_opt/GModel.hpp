@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "commonheader.hpp"
 #include "GVariable.hpp"
 #include "GLinearConstraint.hpp"
@@ -12,12 +11,7 @@ namespace math_opt
 {
     class GModel : public Napi::ObjectWrap< GModel >
     {
-    public:
-        static inline Napi::FunctionReference constructor;
-        Model*                         pModel = nullptr;
-        GModel( const Napi::CallbackInfo& info );
-        ~GModel();
-        static Napi::Object Init( Napi::Env env, Napi::Object exports );
+        CommonProperties( Model );
 
         Napi::Value AddBinaryVariable( const Napi::CallbackInfo& info );
         Napi::Value AddContinuousVariable( const Napi::CallbackInfo& info );
@@ -26,32 +20,25 @@ namespace math_opt
 };  // namespace math_opt
 };  // namespace operations_research
 
-
-
 inline operations_research::math_opt::GModel::GModel( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GModel >( info )
 {
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
         auto external = info[ 0 ].As< Napi::External< Model > >();
-        pModel        = dynamic_cast< Model* >( external.Data() );
-        if ( pModel != nullptr ) return;
+        spModel       = std::shared_ptr< Model >( external.Data() );
+        return;
     }
 
     //     explicit Model( absl::string_view name = "" );
     if ( info.Length() == 1 && info[ 0 ].IsString() )
     {
         std::string name = info[ 0 ].As< Napi::String >().Utf8Value();
-        pModel           = new Model( name );
+        spModel          = std::make_shared< Model >( name );
         return;
     }
 
     ThrowJsError( operations_research::GModel::GModel : Invalid argument );
-}
-
-inline operations_research::math_opt::GModel::~GModel()
-{
-    delete pModel;
 }
 
 inline Napi::Object operations_research::math_opt::GModel::Init( Napi::Env env, Napi::Object exports )
@@ -76,7 +63,7 @@ inline Napi::Value operations_research::math_opt::GModel::AddLinearConstraint( c
     if ( info.Length() == 1 && info[ 0 ].IsString() )
     {
         std::string name     = info[ 0 ].As< Napi::String >().Utf8Value();
-        auto        cons     = pModel->AddLinearConstraint( name );
+        auto        cons     = spModel->AddLinearConstraint( name );
         auto        external = Napi::External< LinearConstraint >::New( info.Env(), new LinearConstraint( cons ) );
         return GLinearConstraint::constructor.New( { external } );
     }
@@ -89,7 +76,7 @@ inline Napi::Value operations_research::math_opt::GModel::AddLinearConstraint( c
         double      lower_bound = info[ 0 ].As< Napi::Number >().DoubleValue();
         double      upper_bound = info[ 1 ].As< Napi::Number >().DoubleValue();
         std::string name        = info[ 2 ].As< Napi::String >().Utf8Value();
-        auto        cons        = pModel->AddLinearConstraint( lower_bound, upper_bound, name );
+        auto        cons        = spModel->AddLinearConstraint( lower_bound, upper_bound, name );
         auto        external    = Napi::External< LinearConstraint >::New( info.Env(), new LinearConstraint( cons ) );
         return GLinearConstraint::constructor.New( { external } );
     }
@@ -107,7 +94,7 @@ inline Napi::Value operations_research::math_opt::GModel::AddContinuousVariable(
         double      lower_bound = info[ 0 ].As< Napi::Number >().DoubleValue();
         double      upper_bound = info[ 1 ].As< Napi::Number >().DoubleValue();
         std::string name        = info[ 2 ].As< Napi::String >().Utf8Value();
-        auto        var         = pModel->AddContinuousVariable( lower_bound, upper_bound, name );
+        auto        var         = spModel->AddContinuousVariable( lower_bound, upper_bound, name );
         auto        external    = Napi::External< Variable >::New( info.Env(), new Variable( var ) );
         return GVariable::constructor.New( { external } );
     }
@@ -122,7 +109,7 @@ inline Napi::Value operations_research::math_opt::GModel::AddBinaryVariable( con
     if ( info.Length() == 1 && info[ 0 ].IsString() )
     {
         std::string name     = info[ 0 ].As< Napi::String >().Utf8Value();
-        auto        var      = pModel->AddBinaryVariable( name );
+        auto        var      = spModel->AddBinaryVariable( name );
         auto        external = Napi::External< Variable >::New( info.Env(), new Variable( var ) );
         return GVariable::constructor.New( { external } );
     }

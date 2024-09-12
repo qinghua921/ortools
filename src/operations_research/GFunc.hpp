@@ -105,7 +105,7 @@ inline Napi::Value operations_research::operator_divide( const Napi::CallbackInf
     {
         auto lhs   = GLinearExpr::Unwrap( info[ 0 ].As< Napi::Object >() );
         auto rhs   = info[ 1 ].As< Napi::Number >().DoubleValue();
-        auto pExpr = new LinearExpr( *lhs->pLinearExpr / rhs );  // lhs / rhs
+        auto pExpr = new LinearExpr( *lhs->spLinearExpr / rhs );  // lhs / rhs
         return GLinearExpr::constructor.New( { Napi::External< LinearExpr >::New( info.Env(), pExpr ) } );
     }
 

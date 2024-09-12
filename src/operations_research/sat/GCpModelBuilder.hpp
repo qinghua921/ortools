@@ -407,7 +407,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::NewIntVar( const N
          && info[ 0 ].As< Napi::Object >().InstanceOf( GDomain::constructor.Value() ) )
     {
         auto gdomain  = GDomain::Unwrap( info[ 0 ].As< Napi::Object >() );
-        auto expr     = pCpModelBuilder->NewIntVar( *gdomain->pDomain );
+        auto expr     = pCpModelBuilder->NewIntVar( *gdomain->spDomain );
         auto external = Napi::External< IntVar >::New( info.Env(), new IntVar( expr ) );
         return GIntVar::constructor.New( { external } );
     }
