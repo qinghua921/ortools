@@ -52,7 +52,7 @@
 // }
 import { operations_research } from "../../src";
 
-test('assignment_groups_mip', () =>
+test('ts-ortools', () =>
 {
     let solver = new operations_research.Solver("assignment_groups_mip");
     let num_vals = 3;

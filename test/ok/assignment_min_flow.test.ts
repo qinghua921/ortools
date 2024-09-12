@@ -1,7 +1,7 @@
 import { operations_research } from "../../src";
 
 
-test('assignment_min_flow', () =>
+test('ts-ortools', () =>
 {
   let min_cost_flow = new operations_research.SimpleMinCostFlow();
   let start_nodes = [0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2,

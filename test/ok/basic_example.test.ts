@@ -1,6 +1,6 @@
 import { operations_research } from "../../src";
 
-test('cp_sat_example', () =>
+test('ts-ortools', () =>
 {
   let solver =  operations_research.MPSolver.CreateSolver("GLOP");
   

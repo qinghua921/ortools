@@ -1,6 +1,6 @@
 import { operations_research } from "../../src";
 
-test('assignment_groups_mip', async () =>
+test('ts-ortools', async () =>
 {
     let cp_model = new operations_research.sat.CpModelBuilder();
     const domain = new operations_research.Domain(0, 2);

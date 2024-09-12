@@ -1,6 +1,6 @@
 import { operations_research } from "../../src";
 
-test('cp_sat_example', async () =>
+test('ts-ortools', async () =>
 {
   let cp_model = new operations_research.sat.CpModelBuilder();
 

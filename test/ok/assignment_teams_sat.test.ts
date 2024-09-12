@@ -1,6 +1,6 @@
 import { operations_research } from "../../src";
 
-test('assignment_groups_mip', async () =>
+test('ts-ortools', async () =>
 {
   let costs = [
     [90, 76, 75, 70],

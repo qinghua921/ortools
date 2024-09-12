@@ -13,7 +13,7 @@ process.on('unhandledRejection', (reason, promise) =>
     process.exit(1);
 });
 
-test('assignment_groups_mip', async () =>
+test('ts-ortools', async () =>
 {
     const cp_model = new operations_research.sat.CpModelBuilder();
 

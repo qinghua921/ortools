@@ -3,7 +3,7 @@ import { operations_research } from "../../src";
 import { BoolVar } from "../../src/operations_research/sat/GBoolVar";
 
 
-test('assignment_groups_mip', () =>
+test('ts-ortools', () =>
 {
 
 

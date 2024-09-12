@@ -42,7 +42,7 @@
 
 import { operations_research } from "../../src";
 
-test('assignment_groups_mip', () =>
+test('ts-ortools', () =>
 {
     const cp_model = new operations_research.sat.CpModelBuilder();
     
