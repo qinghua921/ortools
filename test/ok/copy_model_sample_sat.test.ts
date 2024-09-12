@@ -74,7 +74,7 @@
 //     return EXIT_SUCCESS;
 // }
 // // [END program]
-import { operations_research } from "../src";
+import { operations_research } from "../../src";
 
 test('assignment_groups_mip', async () =>
 {
