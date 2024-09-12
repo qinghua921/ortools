@@ -53,7 +53,7 @@ The codebase is large, and the priority is to implement the code in the examples
 - bool_or_sample_sat - 🆗
 - channeling_sample_sat - 🆗
 - cocktail_hour_mo - ❌ ( math_opt compiliertor error )
-- constraint_programming_cp
+- constraint_programming_cp - 🆗
 - copy_model_sample_sat
 - costas_array_sat
 - course_scheduling
