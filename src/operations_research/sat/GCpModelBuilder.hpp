@@ -133,7 +133,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::CopyFrom( const Na
     if ( info.Length() == 1 && info[ 0 ].IsObject() && info[ 0 ].As< Napi::Object >().InstanceOf( GCpModelProto::constructor.Value() ) )
     {
         auto gcpmodelproto = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
-        pCpModelBuilder->CopyFrom( *gcpmodelproto->pCpModelProto );
+        pCpModelBuilder->CopyFrom( *gcpmodelproto->spCpModelProto );
         return info.Env().Undefined();
     }
 

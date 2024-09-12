@@ -113,7 +113,7 @@ inline Napi::Value operations_research::sat::GSolveCpModel( const Napi::Callback
 
         void Execute() override
         {
-            this->vCpSolverResponse = SolveCpModel( *pGCpModelProto->pCpModelProto, pGModel->spModel.get() );
+            this->vCpSolverResponse = SolveCpModel( *pGCpModelProto->spCpModelProto, pGModel->spModel.get() );
         }
 
         void OnOK() override
@@ -211,7 +211,7 @@ inline Napi::Value operations_research::sat::GSolveWithParameters( const Napi::C
     {
         auto model_proto      = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
         auto sat_parameters   = GSatParameters::Unwrap( info[ 1 ].As< Napi::Object >() );
-        auto cpSolverResponse = SolveWithParameters( *model_proto->pCpModelProto, *sat_parameters->pSatParameters );
+        auto cpSolverResponse = SolveWithParameters( *model_proto->spCpModelProto, *sat_parameters->pSatParameters );
         auto exterior         = Napi::External< CpSolverResponse >::New( info.Env(), new CpSolverResponse( cpSolverResponse ) );
         return GCpSolverResponse::constructor.New( { exterior } );
     }
@@ -298,7 +298,7 @@ Napi::Value operations_research::sat::GSolve( const Napi::CallbackInfo& info )
 
         void Execute() override
         {
-            this->vCpSolverResponse = Solve( *pGCpModelProto->pCpModelProto );
+            this->vCpSolverResponse = Solve( *pGCpModelProto->spCpModelProto );
         }
 
         void OnOK() override

@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "commonheader.hpp"
 #include "ortools/sat/cp_model.h"
 
@@ -10,17 +9,10 @@ namespace sat
 {
     class GCpModelProto : public Napi::ObjectWrap< GCpModelProto >
     {
-    public:
-        static inline Napi::FunctionReference constructor;
-        CpModelProto*                  pCpModelProto = nullptr;
-        GCpModelProto( const Napi::CallbackInfo& info );
-        ~GCpModelProto();
-        static Napi::Object Init( Napi::Env env, Napi::Object exports );
+        CommonProperties( CpModelProto );
     };
 };  // namespace sat
 };  // namespace operations_research
-
-
 
 inline operations_research::sat::GCpModelProto::GCpModelProto( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GCpModelProto >( info )
@@ -28,16 +20,11 @@ inline operations_research::sat::GCpModelProto::GCpModelProto( const Napi::Callb
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
         auto external = info[ 0 ].As< Napi::External< CpModelProto > >();
-        pCpModelProto = dynamic_cast< CpModelProto* >( external.Data() );
-        if ( pCpModelProto != nullptr ) return;
+        spCpModelProto = std::shared_ptr< CpModelProto >( external.Data());
+        return;
     }
 
     ThrowJsError( operations_research::GCpModelProto::GCpModelProto : Invalid argument );
-}
-
-inline operations_research::sat::GCpModelProto::~GCpModelProto()
-{
-    delete pCpModelProto;
 }
 
 inline Napi::Object operations_research::sat::GCpModelProto::Init( Napi::Env env, Napi::Object exports )
