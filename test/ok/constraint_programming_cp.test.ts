@@ -50,7 +50,7 @@
 //     operations_research::RunConstraintProgrammingExample();
 //     return EXIT_SUCCESS;
 // }
-import { operations_research } from "../src";
+import { operations_research } from "../../src";
 
 test('assignment_groups_mip', () =>
 {

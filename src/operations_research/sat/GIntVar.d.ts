@@ -56,10 +56,7 @@ export class IntVar
 
     //     std::string DebugString() const;
 
-    //     /// Returns the index of the variable in the model. This will be non-negative.
     //     int index() const
-    //     {
-    //         return index_;
-    //     }
+    index(): number;
 
 }
