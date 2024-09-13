@@ -77,12 +77,8 @@ export class Domain
     //      static Domain FromVectorIntervals(
     //          const std::vector<std::vector<int64_t> >& intervals);
 
-    //      /**
-    //       * This method is available in Python, Java and .NET. It allows
-    //       * building a Domain object from a flattened list of intervals
-    //       * (long[] in Java and .NET, [0, 2, 5, 5, 8, 10] in python).
-    //       */
-    //      static Domain FromFlatIntervals(const std::vector<int64_t>& flat_intervals);
+    // static Domain FromFlatIntervals(const std::vector<int64_t>& flat_intervals);
+    static FromFlatIntervals(flat_intervals: number[]): Domain;
 
     //      /**
     //       * This method returns the flattened list of interval bounds of the domain.

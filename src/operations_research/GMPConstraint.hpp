@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "commonheader.hpp"
 #include "ortools/linear_solver/linear_solver.h"
 #include "GMPVariable.hpp"
@@ -10,34 +9,23 @@ namespace operations_research
 class GMPConstraint : public Napi::ObjectWrap< GMPConstraint >
 {
 public:
-    static inline Napi::FunctionReference constructor;
-    MPConstraint*                  pMPConstraint = nullptr;
-    GMPConstraint( const Napi::CallbackInfo& info );
-    ~GMPConstraint();
-    static Napi::Object Init( Napi::Env env, Napi::Object exports );
+    CommonProperties( MPConstraint );
 
     Napi::Value SetCoefficient( const Napi::CallbackInfo& info );
 };
 };  // namespace operations_research
-
-
 
 inline operations_research::GMPConstraint::GMPConstraint( const Napi::CallbackInfo& info )
     : Napi::ObjectWrap< GMPConstraint >( info )
 {
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
-        auto external = info[ 0 ].As< Napi::External< MPConstraint > >();
-        pMPConstraint = dynamic_cast< MPConstraint* >( external.Data() );
-        if ( pMPConstraint != nullptr ) return;
+        auto external  = info[ 0 ].As< Napi::External< MPConstraint > >();
+        spMPConstraint = std::shared_ptr< MPConstraint >( external.Data() );
+        return;
     }
 
     ThrowJsError( operations_research::GMPConstraint::GMPConstraint : Invalid argument );
-}
-
-inline operations_research::GMPConstraint::~GMPConstraint()
-{
-    delete pMPConstraint;
 }
 
 inline Napi::Object operations_research::GMPConstraint::Init( Napi::Env env, Napi::Object exports )
@@ -63,7 +51,7 @@ inline Napi::Value operations_research::GMPConstraint::SetCoefficient( const Nap
     {
         auto   var   = GMPVariable::Unwrap( info[ 0 ].As< Napi::Object >() );
         double coeff = info[ 1 ].As< Napi::Number >().DoubleValue();
-        pMPConstraint->SetCoefficient( var->pMPVariable, coeff );
+        spMPConstraint->SetCoefficient( var->pMPVariable, coeff );
         return info.Env().Undefined();
     }
 

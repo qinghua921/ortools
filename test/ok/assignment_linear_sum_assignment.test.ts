@@ -1,7 +1,7 @@
 import { operations_research } from "../../src";
 
 
-test('assignment_linear_sum_assignment', () =>
+test('ts-ortools', () =>
 {
   let assignment = new operations_research.SimpleLinearSumAssignment();
 

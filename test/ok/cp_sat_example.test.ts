@@ -1,6 +1,6 @@
 import { operations_research } from "../../src";
 
-test('cp_sat_example', () =>
+test('ts-ortools', async () =>
 {
   let cp_model = new operations_research.sat.CpModelBuilder();
 
@@ -38,7 +38,7 @@ test('cp_sat_example', () =>
       operations_research.sat.operator_plus(operations_research.sat.operator_times(2, y),
         operations_research.sat.operator_times(3, z))));
 
-  let response = operations_research.sat.Solve(cp_model.Build());
+  let response = await operations_research.sat.Solve(cp_model.Build());
   expect(response.status()).toBe(operations_research.sat.CpSolverStatus.OPTIMAL);
   operations_research.sat.SolutionIntegerValue(response, x)
 

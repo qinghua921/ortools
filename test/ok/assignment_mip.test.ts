@@ -1,7 +1,7 @@
 import { operations_research } from "../../src";
 
 
-test('assignment_mip', () =>
+test('ts-ortools', () =>
 {
 
   let costs = [

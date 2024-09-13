@@ -1,6 +1,6 @@
 import { operations_research } from "../../src";
 
-test('assignment_groups_mip', () =>
+test('ts-ortools', () =>
 {
   // CpModelBuilder cp_model;
   // // [END model]

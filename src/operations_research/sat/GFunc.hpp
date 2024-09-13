@@ -12,7 +12,7 @@ namespace operations_research
 namespace sat
 {
 
-    static Napi::Object GFuncInit( Napi::Env env, Napi::Object exports );
+    static void GFuncInit( Napi::Env env, Napi::Object exports );
 
     Napi::Value GCpSolverResponseStats( const Napi::CallbackInfo& info );
     Napi::Value GSolutionIntegerValue( const Napi::CallbackInfo& info );
@@ -31,7 +31,7 @@ namespace sat
 };  // namespace sat
 };  // namespace operations_research
 
-inline Napi::Object operations_research::sat::GFuncInit( Napi::Env env, Napi::Object exports )
+inline void operations_research::sat::GFuncInit( Napi::Env env, Napi::Object exports )
 {
     Napi::HandleScope scope( env );
 
@@ -48,8 +48,6 @@ inline Napi::Object operations_research::sat::GFuncInit( Napi::Env env, Napi::Ob
     exports.Set( Napi::String::New( env, "NewSatParameters" ), Napi::Function::New( env, GNewSatParameters ) );
     exports.Set( Napi::String::New( env, "SolveCpModel" ), Napi::Function::New( env, GSolveCpModel ) );
     exports.Set( Napi::String::New( env, "NewFeasibleSolutionObserver" ), Napi::Function::New( env, GNewFeasibleSolutionObserver ) );
-
-    return exports;
 }
 
 inline Napi::Value operations_research::sat::GNewFeasibleSolutionObserver( const Napi::CallbackInfo& info )
@@ -113,7 +111,7 @@ inline Napi::Value operations_research::sat::GSolveCpModel( const Napi::Callback
 
         void Execute() override
         {
-            this->vCpSolverResponse = SolveCpModel( *pGCpModelProto->pCpModelProto, pGModel->spModel.get() );
+            this->vCpSolverResponse = SolveCpModel( *pGCpModelProto->spCpModelProto, pGModel->spModel.get() );
         }
 
         void OnOK() override
@@ -179,6 +177,28 @@ inline Napi::Value operations_research::sat::GNewSatParameters( const Napi::Call
         return ret_js_func;
     }
 
+    // std::function<SatParameters(Model*)> NewSatParameters( const std::string& params);
+    if ( info.Length() == 1 && info[ 0 ].IsString() )
+    {
+        auto params_str  = info[ 0 ].As< Napi::String >().Utf8Value();
+        auto ret_func    = NewSatParameters( params_str );
+        auto ret_js_func = Napi::Function::New(
+            info.Env(), [ ret_func ]( const Napi::CallbackInfo& info ) -> Napi::Value  //
+            {
+                if ( info.Length() == 1 && info[ 0 ].IsObject()
+                     && info[ 0 ].As< Napi::Object >().InstanceOf( GModel::constructor.Value() ) )
+                {
+                    auto model = GModel::Unwrap( info[ 0 ].As< Napi::Object >() );
+                    auto ret   = ret_func( model->spModel.get() );
+                    return GSatParameters::constructor.New( { Napi::External< SatParameters >::New( info.Env(), new SatParameters( ret ) ) } );
+                }
+
+                ThrowJsError( operations_research::sat::GNewSatParameters std::function< SatParameters( Model* ) > : Invalid arguments );
+                return info.Env().Undefined();
+            } );
+        return ret_js_func;
+    }
+
     ThrowJsError( operations_research::sat::GNewSatParameters : Invalid arguments );
     return info.Env().Undefined();
 }
@@ -211,7 +231,7 @@ inline Napi::Value operations_research::sat::GSolveWithParameters( const Napi::C
     {
         auto model_proto      = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
         auto sat_parameters   = GSatParameters::Unwrap( info[ 1 ].As< Napi::Object >() );
-        auto cpSolverResponse = SolveWithParameters( *model_proto->pCpModelProto, *sat_parameters->pSatParameters );
+        auto cpSolverResponse = SolveWithParameters( *model_proto->spCpModelProto, *sat_parameters->pSatParameters );
         auto exterior         = Napi::External< CpSolverResponse >::New( info.Env(), new CpSolverResponse( cpSolverResponse ) );
         return GCpSolverResponse::constructor.New( { exterior } );
     }
@@ -298,7 +318,7 @@ Napi::Value operations_research::sat::GSolve( const Napi::CallbackInfo& info )
 
         void Execute() override
         {
-            this->vCpSolverResponse = Solve( *pGCpModelProto->pCpModelProto );
+            this->vCpSolverResponse = Solve( *pGCpModelProto->spCpModelProto );
         }
 
         void OnOK() override

@@ -93,10 +93,11 @@ export class CpModelBuilder
     AddNotEqual(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
     //     Constraint AddAllDifferent( absl::Span< const IntVar > vars );
+    AddAllDifferent(vars: IntVar[]): Constraint;
 
     //     Constraint AddAllDifferent( absl::Span< const LinearExpr > exprs );
-
     //     Constraint AddAllDifferent( std::initializer_list< LinearExpr > exprs );
+    AddAllDifferent(exprs: LinearExpr[]): Constraint;
 
     //     Constraint AddVariableElement( IntVar                     index,
     //                                    absl::Span< const IntVar > variables,

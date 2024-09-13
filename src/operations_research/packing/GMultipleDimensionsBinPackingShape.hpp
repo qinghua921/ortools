@@ -10,11 +10,7 @@ namespace packing
 {
     class GMultipleDimensionsBinPackingShape : public Napi::ObjectWrap< GMultipleDimensionsBinPackingShape >
     {
-    public:
-        static inline Napi::FunctionReference                constructor;
-        std::shared_ptr< MultipleDimensionsBinPackingShape > shared_ptr;
-        GMultipleDimensionsBinPackingShape( const Napi::CallbackInfo& info );
-        static Napi::Object Init( Napi::Env env, Napi::Object exports );
+        CommonProperties( MultipleDimensionsBinPackingShape );
 
         Napi::Value dimensions( const Napi::CallbackInfo& info );
         Napi::Value dimensions_size( const Napi::CallbackInfo& info );
@@ -27,8 +23,8 @@ inline operations_research::packing::GMultipleDimensionsBinPackingShape::GMultip
 {
     if ( info.Length() == 1 && info[ 0 ].IsExternal() )
     {
-        auto external = info[ 0 ].As< Napi::External< std::shared_ptr< MultipleDimensionsBinPackingShape > > >();
-        shared_ptr    = *external.Data();
+        auto external                       = info[ 0 ].As< Napi::External< MultipleDimensionsBinPackingShape > >();
+        spMultipleDimensionsBinPackingShape = std::shared_ptr< MultipleDimensionsBinPackingShape >( external.Data() );
         return;
     }
 
@@ -55,7 +51,7 @@ inline Napi::Value operations_research::packing::GMultipleDimensionsBinPackingSh
     //     int dimensions_size() const;
     if ( info.Length() == 0 )
     {
-        return Napi::Number::New( info.Env(), shared_ptr->dimensions_size() );
+        return Napi::Number::New( info.Env(), spMultipleDimensionsBinPackingShape->dimensions_size() );
     }
 
     ThrowJsError( operations_research::GMultipleDimensionsBinPackingShape::dimensions_size : Invalid argument );
@@ -68,7 +64,7 @@ inline Napi::Value operations_research::packing::GMultipleDimensionsBinPackingSh
     //     dimensions() const;
     if ( info.Length() == 0 )
     {
-        auto dimensions = shared_ptr->dimensions();
+        auto dimensions = spMultipleDimensionsBinPackingShape->dimensions();
         auto external   = Napi::External< google::protobuf::RepeatedField< int64_t > >::New( info.Env(), new google::protobuf::RepeatedField< int64_t >( dimensions ) );
         return google::protobuf::GRepeatedField< int64_t >::constructor.New( { external } );
     }
@@ -77,7 +73,7 @@ inline Napi::Value operations_research::packing::GMultipleDimensionsBinPackingSh
     if ( info.Length() == 1 && info[ 0 ].IsNumber() )
     {
         auto index = info[ 0 ].As< Napi::Number >().Int64Value();
-        return Napi::Number::New( info.Env(), shared_ptr->dimensions( index ) );
+        return Napi::Number::New( info.Env(), spMultipleDimensionsBinPackingShape->dimensions( index ) );
     }
 
     ThrowJsError( operations_research::GMultipleDimensionsBinPackingShape::dimensions : Invalid argument );

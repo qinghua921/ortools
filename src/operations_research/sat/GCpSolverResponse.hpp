@@ -18,6 +18,8 @@ namespace sat
         Napi::Value objective_value( const Napi::CallbackInfo& info );
         Napi::Value status( const Napi::CallbackInfo& info );
         Napi::Value sufficient_assumptions_for_infeasibility( const Napi::CallbackInfo& info );
+        Napi::Value wall_time( const Napi::CallbackInfo& info );
+
     };
 };  // namespace sat
 };  // namespace operations_research
@@ -44,11 +46,24 @@ inline Napi::Object operations_research::sat::GCpSolverResponse::Init( Napi::Env
             InstanceMethod( "status", &GCpSolverResponse::status ),
             InstanceMethod( "objective_value", &GCpSolverResponse::objective_value ),
             InstanceMethod( "sufficient_assumptions_for_infeasibility", &GCpSolverResponse::sufficient_assumptions_for_infeasibility ),
+            InstanceMethod( "wall_time", &GCpSolverResponse::wall_time ),
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "CpSolverResponse" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::sat::GCpSolverResponse::wall_time( const Napi::CallbackInfo& info )
+{
+    //     double wall_time() const;
+    if ( info.Length() == 0 )
+    {
+        return Napi::Number::New( info.Env(), pCpSolverResponse->wall_time() );
+    }
+
+    ThrowJsError( operations_research::GCpSolverResponse::wall_time : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::sat::GCpSolverResponse::sufficient_assumptions_for_infeasibility( const Napi::CallbackInfo& info )

@@ -9,7 +9,7 @@ class DataModel
   bin_capacity: number = 100;
 }
 
-test('assignment_groups_mip', () =>
+test('ts-ortools', () =>
 {
   const data = new DataModel();
   const solver = operations_research.MPSolver.CreateSolver('SCIP');

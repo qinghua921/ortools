@@ -99,7 +99,7 @@
 // }
 import { operations_research } from "../../src";
 
-test('assignment_groups_mip', () =>
+test('ts-ortools', () =>
 {
   const kBinCapacity = 100;
   const kSlackCapacity = 20;

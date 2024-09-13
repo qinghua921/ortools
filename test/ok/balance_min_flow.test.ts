@@ -1,6 +1,6 @@
 import { operations_research } from "../../src";
 
-test('assignment_groups_mip', () =>
+test('ts-ortools', () =>
 {
   let min_cost_flow = new operations_research.SimpleMinCostFlow();
   let team_A = [1, 3, 5];

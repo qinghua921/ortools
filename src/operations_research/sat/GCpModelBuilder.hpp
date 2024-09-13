@@ -47,6 +47,7 @@ namespace sat
         Napi::Value Proto( const Napi::CallbackInfo& info );
         Napi::Value CopyFrom( const Napi::CallbackInfo& info );
         Napi::Value GetIntVarFromProtoIndex( const Napi::CallbackInfo& info );
+        Napi::Value AddAllDifferent( const Napi::CallbackInfo& info );
     };
 };  // namespace sat
 };  // namespace operations_research
@@ -104,12 +105,82 @@ inline Napi::Object operations_research::sat::GCpModelBuilder::Init( Napi::Env e
             InstanceMethod( "Proto", &GCpModelBuilder::Proto ),
             InstanceMethod( "CopyFrom", &GCpModelBuilder::CopyFrom ),
             InstanceMethod( "GetIntVarFromProtoIndex", &GCpModelBuilder::GetIntVarFromProtoIndex ),
+            InstanceMethod( "AddAllDifferent", &GCpModelBuilder::AddAllDifferent ),
 
         } );
     constructor = Napi::Persistent( func );
     constructor.SuppressDestruct();
     exports.Set( Napi::String::New( env, "CpModelBuilder" ), func );
     return exports;
+}
+
+inline Napi::Value operations_research::sat::GCpModelBuilder::AddAllDifferent( const Napi::CallbackInfo& info )
+{
+
+    if ( info.Length() != 1 || !info[ 0 ].IsArray() )
+    {
+        ThrowJsError( operations_research::sat::GCpModelBuilder::AddAllDifferent : Invalid argument );
+        return info.Env().Undefined();
+    }
+
+    auto arr = info[ 0 ].As< Napi::Array >();
+    if ( arr.Length() == 0 )
+    {
+        ThrowJsError( operations_research::sat::GCpModelBuilder::AddAllDifferent : Invalid argument );
+        return info.Env().Undefined();
+    }
+
+    auto first = arr.Get( static_cast< uint32_t >( 0 ) );
+
+    //     Constraint AddAllDifferent( absl::Span< const IntVar > vars );
+    if ( first.IsObject() && first.As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
+    {
+        std::vector< IntVar > variables;
+        for ( int i = 0; i < arr.Length(); i++ )
+        {
+            if ( arr.Get( i ).IsObject()
+                 && arr.Get( i ).As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
+            {
+                auto gintvar = GIntVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
+                variables.push_back( *gintvar->spIntVar );
+                continue;
+            }
+
+            ThrowJsError( operations_research::sat::GCpModelBuilder::AddAllDifferent : Invalid argument );
+            return info.Env().Undefined();
+        }
+
+        auto constraint = pCpModelBuilder->AddAllDifferent( variables );
+        auto external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
+        return GConstraint::constructor.New( { external } );
+    }
+
+    //     Constraint AddAllDifferent( absl::Span< const LinearExpr > exprs );
+    //     Constraint AddAllDifferent( std::initializer_list< LinearExpr > exprs );
+    if ( first.IsObject() && first.As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+    {
+        std::vector< LinearExpr > expressions;
+        for ( int i = 0; i < arr.Length(); i++ )
+        {
+            if ( arr.Get( i ).IsObject()
+                 && arr.Get( i ).As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+            {
+                auto glinearexpr = GLinearExpr::Unwrap( arr.Get( i ).As< Napi::Object >() );
+                expressions.push_back( *glinearexpr->spLinearExpr );
+                continue;
+            }
+
+            ThrowJsError( operations_research::sat::GCpModelBuilder::AddAllDifferent : Invalid argument );
+            return info.Env().Undefined();
+        }
+
+        auto constraint = pCpModelBuilder->AddAllDifferent( expressions );
+        auto external   = Napi::External< Constraint >::New( info.Env(), new Constraint( constraint ) );
+        return GConstraint::constructor.New( { external } );
+    }
+
+    ThrowJsError( operations_research::sat::GCpModelBuilder::AddAllDifferent : Invalid argument );
+    return info.Env().Undefined();
 }
 
 inline Napi::Value operations_research::sat::GCpModelBuilder::GetIntVarFromProtoIndex( const Napi::CallbackInfo& info )
@@ -133,7 +204,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::CopyFrom( const Na
     if ( info.Length() == 1 && info[ 0 ].IsObject() && info[ 0 ].As< Napi::Object >().InstanceOf( GCpModelProto::constructor.Value() ) )
     {
         auto gcpmodelproto = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
-        pCpModelBuilder->CopyFrom( *gcpmodelproto->pCpModelProto );
+        pCpModelBuilder->CopyFrom( *gcpmodelproto->spCpModelProto );
         return info.Env().Undefined();
     }
 
@@ -443,7 +514,7 @@ inline Napi::Value operations_research::sat::GCpModelBuilder::Maximize( const Na
     if ( info.Length() == 1 && info[ 0 ].IsObject() && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
     {
         auto glinearexpr = GLinearExpr::Unwrap( info[ 0 ].As< Napi::Object >() );
-        pCpModelBuilder->Maximize( *glinearexpr->pLinearExpr );
+        pCpModelBuilder->Maximize( *glinearexpr->spLinearExpr );
         return info.Env().Undefined();
     }
 
