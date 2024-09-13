@@ -27,55 +27,7 @@
 // namespace sat
 // {
 
-//     // Checks that all pairwise distances are unique and returns all violators
-//     void CheckConstraintViolators( const std::vector< int64_t >& vars,
-//                                    std::vector< int >* const     violators )
-//     {
-//         int dim = vars.size();
 
-//         // Check that all indices are unique
-//         for ( int i = 0; i < dim; ++i )
-//         {
-//             for ( int k = i + 1; k < dim; ++k )
-//             {
-//                 if ( vars[ i ] == vars[ k ] )
-//                 {
-//                     violators->push_back( i );
-//                     violators->push_back( k );
-//                 }
-//             }
-//         }
-
-//         // Check that all differences are unique for each level
-//         for ( int level = 1; level < dim; ++level )
-//         {
-//             for ( int i = 0; i < dim - level; ++i )
-//             {
-//                 const int difference = vars[ i + level ] - vars[ i ];
-
-//                 for ( int k = i + 1; k < dim - level; ++k )
-//                 {
-//                     if ( difference == vars[ k + level ] - vars[ k ] )
-//                     {
-//                         violators->push_back( k + level );
-//                         violators->push_back( k );
-//                         violators->push_back( i + level );
-//                         violators->push_back( i );
-//                     }
-//                 }
-//             }
-//         }
-//     }
-
-//     // Check that all pairwise differences are unique
-//     bool CheckCostas( const std::vector< int64_t >& vars )
-//     {
-//         std::vector< int > violators;
-
-//         CheckConstraintViolators( vars, &violators );
-
-//         return violators.empty();
-//     }
 
 //     // Computes a Costas Array.
 //     void CostasHard( const int dim )
@@ -365,14 +317,332 @@
 //     return EXIT_SUCCESS;
 // }
 
-import { operations_research } from "../src";
+import { operations_research } from "../../src";
 
-test('ts-ortools', () =>
+test('ts-ortools', async () =>
 {
     let minsize = 0;
     let maxsize = 0;
     let model = 1;
     let params = "";
+
+    function CheckConstraintViolators(vars: number[], violators: number[])
+    {
+        let dim = vars.length;
+
+        // Check that all indices are unique
+        for (let i = 0; i < dim; ++i)
+        {
+            for (let k = i + 1; k < dim; ++k)
+            {
+                if (vars[i] == vars[k])
+                {
+                    violators.push(i);
+                    violators.push(k);
+                }
+            }
+        }
+
+        // Check that all differences are unique for each level
+        for (let level = 1; level < dim; ++level)
+        {
+            for (let i = 0; i < dim - level; ++i)
+            {
+                const difference = vars[i + level] - vars[i];
+
+                for (let j = i + 1; j < dim - level; ++j)
+                {
+                    if (vars[j + level] - vars[j] == difference)
+                    {
+                        violators.push(j + level);
+                        violators.push(j);
+                        violators.push(i + level);
+                        violators.push(i);
+                    }
+                }
+            }
+        }
+    }
+
+    function CheckCostas(vars: number[]): boolean
+    {
+        let violators: number[] = [];
+        CheckConstraintViolators(vars, violators);
+        return violators.length == 0;
+    }
+
+
+    async function CostasHard(dim: number)
+    {
+        const cp_model = new operations_research.sat.CpModelBuilder();
+        const vars: operations_research.sat.IntVar[] = [];
+        const domain = new operations_research.Domain(1, dim);
+        for (let i = 0; i < dim; ++i)
+        {
+            vars.push(cp_model.NewIntVar(domain).WithName("var_" + i));
+        }
+        cp_model.AddAllDifferent(vars);
+
+        // Check that the pairwise difference is unique
+        for (let i = 1; i < dim; ++i)
+        {
+            const subset: operations_research.sat.IntVar[] = [];
+            const difference_domain = new operations_research.Domain(-dim, dim);
+
+            for (let j = 0; j < dim - i; ++j)
+            {
+                const diff = cp_model.NewIntVar(difference_domain);
+                subset.push(diff);
+                cp_model.AddEquality(diff, operations_research.sat.operator_minus(vars[j + i], vars[j]));
+            }
+            cp_model.AddAllDifferent(subset);
+        }
+
+        const model = new operations_research.sat.Model();
+        if (params != "")
+        {
+            model.Add(operations_research.sat.NewSatParameters(params));
+        }
+        const response = await operations_research.sat.SolveCpModel(cp_model.Build(), model);
+
+        if (response.status() == operations_research.sat.CpSolverStatus.OPTIMAL)
+        {
+            const costas_matrix: number[] = [];
+            let output = "";
+
+            for (let n = 0; n < dim; ++n)
+            {
+                const v = operations_research.sat.SolutionIntegerValue(response, vars[n]);
+                costas_matrix.push(v);
+                output += " " + v.toString().padStart(3, "0");
+            }
+
+            console.log(output + " (" + response.wall_time().toString() + " s)");
+
+            if (!CheckCostas(costas_matrix))
+            {
+                console.log("Solution is not a valid Costas Matrix.");
+            }
+            else
+            {
+                console.log("Solution is a valid Costas Matrix.");
+            }
+        }
+        else
+        {
+            console.log("No solution found.");
+        }
+    }
+
+    async function CostasBool(dim: number)
+    {
+        const cp_model = new operations_research.sat.CpModelBuilder();
+        const vars: operations_research.sat.BoolVar[][] = [];
+        const transposed_vars: operations_research.sat.BoolVar[][] = [];
+        for (let i = 0; i < dim; ++i)
+        {
+            const row: operations_research.sat.BoolVar[] = [];
+            vars.push(row);
+            const transposed_row: operations_research.sat.BoolVar[] = [];
+            transposed_vars.push(transposed_row);
+            for (let j = 0; j < dim; ++j)
+            {
+                const var_ = cp_model.NewBoolVar();
+                row.push(var_);
+                transposed_row.push(var_);
+            }
+        }
+
+        for (let i = 0; i < dim; ++i)   
+        {
+            cp_model.AddEquality(operations_research.sat.LinearExpr.Sum(vars[i]), 1);
+            cp_model.AddEquality(operations_research.sat.LinearExpr.Sum(transposed_vars[i]), 1);
+        }
+
+        // Check that the pairwise difference is unique
+        for (let step = 1; step < dim; ++step)
+        {
+            for (let diff = 1; diff < dim - 1; ++diff)
+            {
+                const positive_diffs: operations_research.sat.BoolVar[] = [];
+                const negative_diffs: operations_research.sat.BoolVar[] = [];
+                for (let var_ = 0; var_ < dim - step; ++var_)
+                {
+                    for (let value = 0; value < dim - diff; ++value)
+                    {
+                        const pos = cp_model.NewBoolVar();
+                        const neg = cp_model.NewBoolVar();
+                        positive_diffs.push(pos);
+                        negative_diffs.push(neg);
+                        cp_model.AddBoolOr([
+                            operations_research.sat.Not(vars[var_][value]),
+                            operations_research.sat.Not(vars[var_ + step][value + diff]),
+                            pos
+                        ]);
+                        cp_model.AddBoolOr([
+                            operations_research.sat.Not(vars[var_][value + diff]),
+                            operations_research.sat.Not(vars[var_ + step][value]),
+                            neg
+                        ]);
+                    }
+                }
+                cp_model.AddLessOrEqual(operations_research.sat.LinearExpr.Sum(positive_diffs), 1);
+                cp_model.AddLessOrEqual(operations_research.sat.LinearExpr.Sum(negative_diffs), 1);
+            }
+        }
+
+        const model = new operations_research.sat.Model();
+        if (params != "")
+        {
+            model.Add(operations_research.sat.NewSatParameters(params));
+        }
+        const response = await operations_research.sat.SolveCpModel(cp_model.Build(), model);
+
+        if (response.status() == operations_research.sat.CpSolverStatus.OPTIMAL)
+        {
+            const costas_matrix: number[] = [];
+            let output = "";
+
+            for (let n = 0; n < dim; ++n)
+            {
+                for (let v = 0; v < dim; ++v)
+                {
+                    if (operations_research.sat.SolutionBooleanValue(response, vars[n][v]))
+                    {
+                        costas_matrix.push(v + 1);
+                        output += " " + (v + 1).toString().padStart(3, "0");
+                        break;
+                    }
+                }
+            }
+
+            console.log(output + " (" + response.wall_time().toString() + " s)");
+
+            if (!CheckCostas(costas_matrix))
+            {
+                console.log("Solution is not a valid Costas Matrix.");
+            }
+            else
+            {
+                console.log("Solution is a valid Costas Matrix.");
+            }
+        }
+        else
+        {
+            console.log("No solution found.");
+        }
+    }
+
+    async function CostasBoolSoft(dim: number)
+    {
+        const cp_model = new operations_research.sat.CpModelBuilder();
+        const vars: operations_research.sat.BoolVar[][] = [];
+        const transposed_vars: operations_research.sat.BoolVar[][] = [];
+        for (let i = 0; i < dim; ++i)
+        {
+            const row: operations_research.sat.BoolVar[] = [];
+            vars.push(row);
+            const transposed_row: operations_research.sat.BoolVar[] = [];
+            transposed_vars.push(transposed_row);
+            for (let j = 0; j < dim; ++j)
+            {
+                const var_ = cp_model.NewBoolVar();
+                row.push(var_);
+                transposed_row.push(var_);
+            }
+        }
+
+        for (let i = 0; i < dim; ++i)   
+        {
+            cp_model.AddEquality(operations_research.sat.LinearExpr.Sum(vars[i]), 1);
+            cp_model.AddEquality(operations_research.sat.LinearExpr.Sum(transposed_vars[i]), 1);
+        }
+
+        let all_violations: operations_research.sat.IntVar[] = [];
+        // Check that the pairwise difference is unique
+        for (let step = 1; step < dim; ++step)
+        {
+            for (let diff = 1; diff < dim - 1; ++diff)
+            {
+                const positive_diffs: operations_research.sat.BoolVar[] = [];
+                const negative_diffs: operations_research.sat.BoolVar[] = [];
+                for (let var_ = 0; var_ < dim - step; ++var_)
+                {
+                    for (let value = 0; value < dim - diff; ++value)
+                    {
+                        const pos = cp_model.NewBoolVar();
+                        const neg = cp_model.NewBoolVar();
+                        positive_diffs.push(pos);
+                        negative_diffs.push(neg);
+                        cp_model.AddBoolOr([
+                            operations_research.sat.Not(vars[var_][value]),
+                            operations_research.sat.Not(vars[var_ + step][value + diff]),
+                            pos
+                        ]);
+                        cp_model.AddBoolOr([
+                            operations_research.sat.Not(vars[var_][value + diff]),
+                            operations_research.sat.Not(vars[var_ + step][value]),
+                            neg
+                        ]);
+                    }
+                }
+                const pos_var = cp_model.NewIntVar(operations_research.Domain.FromFlatIntervals([0, positive_diffs.length]));
+                const neg_var = cp_model.NewIntVar(operations_research.Domain.FromFlatIntervals([0, negative_diffs.length]));
+                cp_model.AddGreaterOrEqual(pos_var,
+                    operations_research.sat.operator_minus(
+                        operations_research.sat.LinearExpr.Sum(positive_diffs), 1)
+                );
+                cp_model.AddGreaterOrEqual(neg_var,
+                    operations_research.sat.operator_minus(
+                        operations_research.sat.LinearExpr.Sum(negative_diffs), 1)
+                );
+                all_violations.push(pos_var);
+                all_violations.push(neg_var);
+            }
+        }
+        cp_model.Minimize(operations_research.sat.LinearExpr.Sum(all_violations));
+
+        const model = new operations_research.sat.Model();
+        if (params != "")
+        {
+            model.Add(operations_research.sat.NewSatParameters(params));
+        }
+        const response = await operations_research.sat.SolveCpModel(cp_model.Build(), model);
+
+        if (response.status() == operations_research.sat.CpSolverStatus.OPTIMAL)
+        {
+            const costas_matrix: number[] = [];
+            let output = "";
+
+            for (let n = 0; n < dim; ++n)
+            {
+                for (let v = 0; v < dim; ++v)
+                {
+                    if (operations_research.sat.SolutionBooleanValue(response, vars[n][v]))
+                    {
+                        costas_matrix.push(v + 1);
+                        output += " " + (v + 1).toString().padStart(3, "0");
+                        break;
+                    }
+                }
+            }
+
+            console.log(output + " (" + response.wall_time().toString() + " s)");
+
+            if (!CheckCostas(costas_matrix))
+            {
+                console.log("Solution is not a valid Costas Matrix.");
+            }
+            else
+            {
+                console.log("Solution is a valid Costas Matrix.");
+            }
+        }
+        else
+        {
+            console.log("No solution found.");
+        }
+    }
 
     let min = 1;
     let max = 10;
@@ -396,15 +666,15 @@ test('ts-ortools', () =>
         console.log("Computing Costas Array for dim = " + size);
         if (model == 1)
         {
-            operations_research.sat.CostasHard(size);
+            await CostasHard(size);
         }
         else if (model == 2)
         {
-            operations_research.sat.CostasBool(size);
+            CostasBool(size);
         }
         else if (model == 3)
         {
-            operations_research.sat.CostasBoolSoft(size);
+            CostasBoolSoft(size);
         }
     }
 });

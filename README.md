@@ -55,7 +55,7 @@ The codebase is large, and the priority is to implement the code in the examples
 - cocktail_hour_mo - ❌ ( math_opt compiliertor error )
 - constraint_programming_cp - 🆗
 - copy_model_sample_sat - 🆗
-- costas_array_sat
+- costas_array_sat - 🆗
 - course_scheduling
 - course_scheduling_run
 - cp_is_fun_cp

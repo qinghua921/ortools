@@ -177,6 +177,28 @@ inline Napi::Value operations_research::sat::GNewSatParameters( const Napi::Call
         return ret_js_func;
     }
 
+    // std::function<SatParameters(Model*)> NewSatParameters( const std::string& params);
+    if ( info.Length() == 1 && info[ 0 ].IsString() )
+    {
+        auto params_str  = info[ 0 ].As< Napi::String >().Utf8Value();
+        auto ret_func    = NewSatParameters( params_str );
+        auto ret_js_func = Napi::Function::New(
+            info.Env(), [ ret_func ]( const Napi::CallbackInfo& info ) -> Napi::Value  //
+            {
+                if ( info.Length() == 1 && info[ 0 ].IsObject()
+                     && info[ 0 ].As< Napi::Object >().InstanceOf( GModel::constructor.Value() ) )
+                {
+                    auto model = GModel::Unwrap( info[ 0 ].As< Napi::Object >() );
+                    auto ret   = ret_func( model->spModel.get() );
+                    return GSatParameters::constructor.New( { Napi::External< SatParameters >::New( info.Env(), new SatParameters( ret ) ) } );
+                }
+
+                ThrowJsError( operations_research::sat::GNewSatParameters std::function< SatParameters( Model* ) > : Invalid arguments );
+                return info.Env().Undefined();
+            } );
+        return ret_js_func;
+    }
+
     ThrowJsError( operations_research::sat::GNewSatParameters : Invalid arguments );
     return info.Env().Undefined();
 }

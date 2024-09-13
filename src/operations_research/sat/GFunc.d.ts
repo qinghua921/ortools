@@ -47,6 +47,8 @@ export function Not(x: BoolVar): BoolVar;
 
 // std::function<SatParameters(Model*)> NewSatParameters( const SatParameters& parameters);
 export function NewSatParameters(parameters: SatParameters): (model: Model) => SatParameters;
+// std::function<SatParameters(Model*)> NewSatParameters( const std::string& params);
+export function NewSatParameters(params: string): (model: Model) => SatParameters;
 
 // CpSolverResponse SolveCpModel(const CpModelProto& model_proto, Model* model);
 export function SolveCpModel(model_proto: CpModelProto, model: Model): Promise<CpSolverResponse>;

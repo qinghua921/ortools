@@ -313,11 +313,9 @@ export class CpSolverResponse
     // public:
     //     void   clear_wall_time();
     //     double wall_time() const;
+    wall_time(): double;
     //     void   set_wall_time( double value );
 
-    // private:
-    //     double _internal_wall_time() const;
-    //     void   _internal_set_wall_time( double value );
 
     // public:
     //     void   clear_user_time();
