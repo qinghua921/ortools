@@ -12,7 +12,7 @@ namespace operations_research
 namespace sat
 {
 
-    static Napi::Object GFuncInit( Napi::Env env, Napi::Object exports );
+    static void GFuncInit( Napi::Env env, Napi::Object exports );
 
     Napi::Value GCpSolverResponseStats( const Napi::CallbackInfo& info );
     Napi::Value GSolutionIntegerValue( const Napi::CallbackInfo& info );
@@ -31,7 +31,7 @@ namespace sat
 };  // namespace sat
 };  // namespace operations_research
 
-inline Napi::Object operations_research::sat::GFuncInit( Napi::Env env, Napi::Object exports )
+inline void operations_research::sat::GFuncInit( Napi::Env env, Napi::Object exports )
 {
     Napi::HandleScope scope( env );
 
@@ -48,8 +48,6 @@ inline Napi::Object operations_research::sat::GFuncInit( Napi::Env env, Napi::Ob
     exports.Set( Napi::String::New( env, "NewSatParameters" ), Napi::Function::New( env, GNewSatParameters ) );
     exports.Set( Napi::String::New( env, "SolveCpModel" ), Napi::Function::New( env, GSolveCpModel ) );
     exports.Set( Napi::String::New( env, "NewFeasibleSolutionObserver" ), Napi::Function::New( env, GNewFeasibleSolutionObserver ) );
-
-    return exports;
 }
 
 inline Napi::Value operations_research::sat::GNewFeasibleSolutionObserver( const Napi::CallbackInfo& info )
