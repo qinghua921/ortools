@@ -190,17 +190,15 @@ export namespace operations_research
         LoadModelFromProtoWithUniqueNamesOrDie(input_model: MPModelProto): { return: GEnum.MPSolverResponseStatus, error_message: string };
 
         // void FillSolutionResponseProto( MPSolutionResponse* response ) const;
+        FillSolutionResponseProto(response: MPSolutionResponse): void;
 
         // ABSL_DEPRECATED( "Prefer SolveMPModel() from solve_mp_model.h." )
-
         // static void SolveWithProto( const MPModelRequest& model_request, MPSolutionResponse* response, std::atomic< bool >* interrupt = nullptr );
 
         // ABSL_DEPRECATED( "Prefer SolveMPModel() from solve_mp_model.h." )
-
         // static void SolveLazyMutableRequest( LazyMutableCopy< MPModelRequest > request, MPSolutionResponse* response, std::atomic< bool >* interrupt = nullptr );
 
         // ABSL_DEPRECATED( "Prefer SolverTypeSupportsInterruption() from solve_mp_model.h." )
-
         // static bool SolverTypeSupportsInterruption( const MPModelRequest::SolverType solver );
 
         // void ExportModelToProto( MPModelProto* output_model ) const;

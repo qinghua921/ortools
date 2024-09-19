@@ -8,6 +8,7 @@
 #include "GMPObjective.hpp"
 #include "GMPSolverParameters.hpp"
 #include "GMPModelProto.hpp"
+#include "GMPSolutionResponse.hpp"
 
 namespace operations_research
 {
@@ -205,6 +206,7 @@ public:
                 InstanceMethod( "LoadModelFromProtoWithUniqueNamesOrDie", &GMPSolver::LoadModelFromProtoWithUniqueNamesOrDie ),
 
                 // void FillSolutionResponseProto( MPSolutionResponse* response ) const;
+                InstanceMethod( "FillSolutionResponseProto", &GMPSolver::FillSolutionResponseProto ),
 
                 // ABSL_DEPRECATED( "Prefer SolveMPModel() from solve_mp_model.h." )
 
@@ -1033,6 +1035,22 @@ public:
     };
 
     // void FillSolutionResponseProto( MPSolutionResponse* response ) const;
+    Napi::Value FillSolutionResponseProto( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 1 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GMPSolutionResponse::constructor.Value() ) )
+        {
+            auto        response = GMPSolutionResponse::Unwrap( info[ 0 ].As< Napi::Object >() );
+            pMPSolver->FillSolutionResponseProto( response->pMPSolutionResponse );
+            return env.Undefined();
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::FillSolutionResponseProto : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // ABSL_DEPRECATED( "Prefer SolveMPModel() from solve_mp_model.h." )
 

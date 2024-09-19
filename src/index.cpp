@@ -13,6 +13,7 @@
 #include "operations_research/GMPSolverParameters.hpp"
 #include "operations_research/GEnum.hpp"
 #include "operations_research/GMPModelProto.hpp"
+#include "operations_research/GMPSolutionResponse.hpp"
 
 Napi::Object Init( Napi::Env env, Napi::Object exports )
 {
@@ -28,8 +29,10 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research::GLinearRange::Init( env, operations_research );
     operations_research::GMPObjective::Init( env, operations_research );
     operations_research::GMPSolverParameters::Init( env, operations_research );
-    operations_research::GMPModelProto::Init( env, operations_research );
     operations_research::GEnumInit( env, operations_research );
+    operations_research::GMPModelProto::Init( env, operations_research );
+    operations_research::GMPSolutionResponse::Init( env, operations_research );
+
     exports.Set( "operations_research", operations_research );
 
     return exports;

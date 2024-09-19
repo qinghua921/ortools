@@ -6,3 +6,4 @@ export * from './operations_research/GMPObjective';
 export * from './operations_research/GMPSolverParameters';
 export * from './operations_research/GEnum';
 export * from './operations_research/GMPModelProto';
+export * from './operations_research/GMPSolutionResponse';
