@@ -192,6 +192,7 @@ public:
                 InstanceMethod( "VerifySolution", &GMPSolver::VerifySolution ),
 
                 // void Reset();
+                InstanceMethod( "Reset", &GMPSolver::Reset ),
 
                 // bool InterruptSolve();
 
@@ -927,9 +928,9 @@ public:
 
         if ( info.Length() == 2 && info[ 0 ].IsNumber() && info[ 1 ].IsBoolean() )
         {
-            double      tolerance  = info[ 0 ].As< Napi::Number >().DoubleValue();
-            bool        log_errors = info[ 1 ].As< Napi::Boolean >().Value();
-            bool        ret        = pMPSolver->VerifySolution( tolerance, log_errors );
+            double tolerance  = info[ 0 ].As< Napi::Number >().DoubleValue();
+            bool   log_errors = info[ 1 ].As< Napi::Boolean >().Value();
+            bool   ret        = pMPSolver->VerifySolution( tolerance, log_errors );
             return Napi::Boolean::New( env, ret );
         }
 
@@ -938,6 +939,20 @@ public:
     };
 
     // void Reset();
+    Napi::Value Reset( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            pMPSolver->Reset();
+            return env.Undefined();
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::Reset : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // bool InterruptSolve();
 

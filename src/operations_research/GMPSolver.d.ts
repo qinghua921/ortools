@@ -176,6 +176,7 @@ export namespace operations_research
         VerifySolution(tolerance: number, log_errors: boolean): boolean;
 
         // void Reset();
+        Reset(): void;
 
         // bool InterruptSolve();
 
