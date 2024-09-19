@@ -1,5 +1,3 @@
-import { operations_research } from "../../src";
-
 test('ts-ortools', () =>
 {
     let costs = [

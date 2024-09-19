@@ -1,4 +1,4 @@
-export namespace operations_research
+declare namespace operations_research
 {
 
 }

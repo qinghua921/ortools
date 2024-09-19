@@ -9,7 +9,8 @@ class GDemo : public Napi::ObjectWrap< GDemo >
 {
 public:
     static inline Napi::FunctionReference constructor;
-    Demo*                                 pDemo;
+    Demo*                                 pDemo = nullptr;
+
     GDemo( const Napi::CallbackInfo& info )
         : Napi::ObjectWrap< GDemo >( info )
     {
@@ -24,6 +25,9 @@ public:
 
         Napi::TypeError::New( env, "operations_research::GDemo::GDemo : Invalid arguments" ).ThrowAsJavaScriptException();
     };
+
+    // ~GDemo()
+
     static Napi::Object Init( Napi::Env env, Napi::Object exports )
     {
         Napi::HandleScope scope( env );
