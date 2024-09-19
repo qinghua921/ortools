@@ -7,6 +7,9 @@
 
 #include "operations_research/GMPSolver.hpp"
 #include "operations_research/GMPVariable.hpp"
+#include "operations_research/GMPConstraint.hpp"
+#include "operations_research/GLinearRange.hpp"
+#include "operations_research/GMPObjective.hpp"
 
 Napi::Object Init( Napi::Env env, Napi::Object exports )
 {
@@ -18,6 +21,9 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     auto operations_research = Napi::Object::New( env );
     operations_research::GMPSolver::Init( env, operations_research );
     operations_research::GMPVariable::Init( env, operations_research );
+    operations_research::GMPConstraint::Init( env, operations_research );
+    operations_research::GLinearRange::Init( env, operations_research );
+    operations_research::GMPObjective::Init( env, operations_research );
     exports.Set( "operations_research", operations_research );
 
     return exports;

@@ -10,7 +10,7 @@ class GMPVariable : public Napi::ObjectWrap< GMPVariable >
 {
 public:
     static inline Napi::FunctionReference constructor;
-    std::shared_ptr< MPVariable >         spMPVariable;
+    MPVariable*                           pMPVariable;
     GMPVariable( const Napi::CallbackInfo& info )
         : Napi::ObjectWrap< GMPVariable >( info )
     {
@@ -19,12 +19,13 @@ public:
         if ( info.Length() == 1 && info[ 0 ].IsExternal() )
         {
             auto external = info[ 0 ].As< Napi::External< MPVariable > >();
-            spMPVariable  = std::shared_ptr< MPVariable >( external.Data() );
-            return;
+            pMPVariable   = dynamic_cast< MPVariable* >( external.Data() );
+            if ( pMPVariable ) return;
         }
 
         Napi::TypeError::New( env, "operations_research::GMPVariable::GMPVariable : Invalid arguments" ).ThrowAsJavaScriptException();
     };
+
     static Napi::Object Init( Napi::Env env, Napi::Object exports )
     {
         Napi::HandleScope scope( env );

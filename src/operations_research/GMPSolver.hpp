@@ -3,6 +3,9 @@
 #include "napi.h"
 #include "ortools/linear_solver/linear_solver.h"
 #include "GMPVariable.hpp"
+#include "GMPConstraint.hpp"
+#include "GLinearRange.hpp"
+#include "GMPObjective.hpp"
 
 namespace operations_research
 {
@@ -11,7 +14,7 @@ class GMPSolver : public Napi::ObjectWrap< GMPSolver >
 {
 public:
     static inline Napi::FunctionReference constructor;
-    std::shared_ptr< MPSolver >           spMPSolver;
+    MPSolver*                             pMPSolver;
 
     GMPSolver( const Napi::CallbackInfo& info )
         : Napi::ObjectWrap< GMPSolver >( info )
@@ -21,8 +24,8 @@ public:
         if ( info.Length() == 1 && info[ 0 ].IsExternal() )
         {
             auto external = info[ 0 ].As< Napi::External< MPSolver > >();
-            spMPSolver    = std::shared_ptr< MPSolver >( external.Data() );
-            return;
+            pMPSolver     = dynamic_cast< MPSolver* >( external.Data() );
+            if ( pMPSolver ) return;
         }
 
         // MPSolver( const std::string& name, OptimizationProblemType problem_type );
@@ -30,12 +33,17 @@ public:
         {
             std::string name         = info[ 0 ].As< Napi::String >().Utf8Value();
             int         problem_type = info[ 1 ].As< Napi::Number >().Int32Value();
-            spMPSolver               = std::make_shared< MPSolver >( name, static_cast< MPSolver::OptimizationProblemType >( problem_type ) );
+            pMPSolver                = new MPSolver( name, static_cast< MPSolver::OptimizationProblemType >( problem_type ) );
             return;
         }
 
         Napi::TypeError::New( env, "operations_research::GMPSolver::GMPSolver : Invalid arguments" ).ThrowAsJavaScriptException();
     };
+
+    ~GMPSolver()
+    {
+        if ( pMPSolver ) delete pMPSolver;
+    }
 
     static Napi::Object Init( Napi::Env env, Napi::Object exports )
     {
@@ -135,36 +143,39 @@ public:
                 InstanceMethod( "MakeBoolVar", &GMPSolver::MakeBoolVar ),
 
                 // void MakeVarArray( int nb, double lb, double ub, bool integer, const std::string& name_prefix, std::vector< MPVariable* >* vars );
+                InstanceMethod( "MakeVarArray", &GMPSolver::MakeVarArray ),
 
                 // void MakeNumVarArray( int nb, double lb, double ub, const std::string& name, std::vector< MPVariable* >* vars );
+                InstanceMethod( "MakeNumVarArray", &GMPSolver::MakeNumVarArray ),
 
                 // void MakeIntVarArray( int nb, double lb, double ub, const std::string& name, std::vector< MPVariable* >* vars );
+                InstanceMethod( "MakeIntVarArray", &GMPSolver::MakeIntVarArray ),
 
                 // void MakeBoolVarArray( int nb, const std::string& name, std::vector< MPVariable* >* vars );
+                InstanceMethod( "MakeBoolVarArray", &GMPSolver::MakeBoolVarArray ),
 
                 // int NumConstraints() const;
+                InstanceMethod( "NumConstraints", &GMPSolver::NumConstraints ),
 
                 // const std::vector< MPConstraint* >& constraints() const;
+                InstanceMethod( "constraints", &GMPSolver::constraints ),
 
                 // MPConstraint* constraint( int index ) const;
+                InstanceMethod( "constraint", &GMPSolver::constraint ),
 
                 // MPConstraint* LookupConstraintOrNull( const std::string& constraint_name ) const;
+                InstanceMethod( "LookupConstraintOrNull", &GMPSolver::LookupConstraintOrNull ),
 
                 // MPConstraint* MakeRowConstraint( double lb, double ub );
-
                 // MPConstraint* MakeRowConstraint();
-
                 // MPConstraint* MakeRowConstraint( double lb, double ub, const std::string& name );
-
                 // MPConstraint* MakeRowConstraint( const std::string& name );
-
                 // MPConstraint* MakeRowConstraint( const LinearRange& range );
-
                 // MPConstraint* MakeRowConstraint( const LinearRange& range, const std::string& name );
-
-                // const MPObjective& Objective() const;
+                InstanceMethod( "MakeRowConstraint", &GMPSolver::MakeRowConstraint ),
 
                 // MPObjective* MutableObjective();
+                InstanceMethod( "MutableObjective", &GMPSolver::MutableObjective ),
 
                 // ResultStatus Solve();
 
@@ -284,9 +295,9 @@ public:
 
         if ( info.Length() == 1 && info[ 0 ].IsString() )
         {
-            std::string solver_id  = info[ 0 ].As< Napi::String >().Utf8Value();
-            MPSolver*   spMPSolver = MPSolver::CreateSolver( solver_id );
-            auto        external   = Napi::External< MPSolver >::New( env, spMPSolver );
+            std::string solver_id = info[ 0 ].As< Napi::String >().Utf8Value();
+            MPSolver*   pMPSolver = MPSolver::CreateSolver( solver_id );
+            auto        external  = Napi::External< MPSolver >::New( env, pMPSolver );
             return GMPSolver::constructor.New( { external } );
         }
 
@@ -356,7 +367,7 @@ public:
 
         if ( info.Length() == 0 )
         {
-            return Napi::Boolean::New( env, spMPSolver->IsMIP() );
+            return Napi::Boolean::New( env, pMPSolver->IsMIP() );
         }
 
         Napi::TypeError::New( env, "operations_research::GMPSolver::IsMIP : Invalid arguments" ).ThrowAsJavaScriptException();
@@ -371,7 +382,7 @@ public:
 
         if ( info.Length() == 0 )
         {
-            return Napi::String::New( env, spMPSolver->Name() );
+            return Napi::String::New( env, pMPSolver->Name() );
         }
 
         Napi::TypeError::New( env, "operations_research::GMPSolver::Name : Invalid arguments" ).ThrowAsJavaScriptException();
@@ -386,7 +397,7 @@ public:
 
         if ( info.Length() == 0 )
         {
-            return Napi::Number::New( env, static_cast< int >( spMPSolver->ProblemType() ) );
+            return Napi::Number::New( env, static_cast< int >( pMPSolver->ProblemType() ) );
         }
 
         Napi::TypeError::New( env, "operations_research::GMPSolver::ProblemType : Invalid arguments" ).ThrowAsJavaScriptException();
@@ -401,7 +412,7 @@ public:
 
         if ( info.Length() == 0 )
         {
-            spMPSolver->Clear();
+            pMPSolver->Clear();
             return env.Undefined();
         }
 
@@ -417,7 +428,7 @@ public:
 
         if ( info.Length() == 0 )
         {
-            return Napi::Number::New( env, spMPSolver->NumVariables() );
+            return Napi::Number::New( env, pMPSolver->NumVariables() );
         }
 
         Napi::TypeError::New( env, "operations_research::GMPSolver::NumVariables : Invalid arguments" ).ThrowAsJavaScriptException();
@@ -432,7 +443,7 @@ public:
 
         if ( info.Length() == 0 )
         {
-            auto variables = spMPSolver->variables();
+            auto variables = pMPSolver->variables();
             auto ret       = Napi::Array::New( env, variables.size() );
             for ( int i = 0; i < variables.size(); i++ )
             {
@@ -455,7 +466,7 @@ public:
         if ( info.Length() == 1 && info[ 0 ].IsNumber() )
         {
             int  index = info[ 0 ].As< Napi::Number >().Int32Value();
-            auto var   = spMPSolver->variable( index );
+            auto var   = pMPSolver->variable( index );
             if ( var == nullptr )
             {
                 return env.Null();
@@ -477,7 +488,7 @@ public:
         if ( info.Length() == 1 && info[ 0 ].IsString() )
         {
             std::string var_name = info[ 0 ].As< Napi::String >().Utf8Value();
-            auto        var      = spMPSolver->LookupVariableOrNull( var_name );
+            auto        var      = pMPSolver->LookupVariableOrNull( var_name );
             if ( var == nullptr )
             {
                 return env.Null();
@@ -502,7 +513,7 @@ public:
             double      ub       = info[ 1 ].As< Napi::Number >().DoubleValue();
             bool        integer  = info[ 2 ].As< Napi::Boolean >().Value();
             std::string name     = info[ 3 ].As< Napi::String >().Utf8Value();
-            auto        var      = spMPSolver->MakeVar( lb, ub, integer, name );
+            auto        var      = pMPSolver->MakeVar( lb, ub, integer, name );
             auto        external = Napi::External< MPVariable >::New( env, var );
             return GMPVariable::constructor.New( { external } );
         }
@@ -522,7 +533,7 @@ public:
             double      lb       = info[ 0 ].As< Napi::Number >().DoubleValue();
             double      ub       = info[ 1 ].As< Napi::Number >().DoubleValue();
             std::string name     = info[ 2 ].As< Napi::String >().Utf8Value();
-            auto        var      = spMPSolver->MakeNumVar( lb, ub, name );
+            auto        var      = pMPSolver->MakeNumVar( lb, ub, name );
             auto        external = Napi::External< MPVariable >::New( env, var );
             return GMPVariable::constructor.New( { external } );
         }
@@ -542,7 +553,7 @@ public:
             double      lb       = info[ 0 ].As< Napi::Number >().DoubleValue();
             double      ub       = info[ 1 ].As< Napi::Number >().DoubleValue();
             std::string name     = info[ 2 ].As< Napi::String >().Utf8Value();
-            auto        var      = spMPSolver->MakeIntVar( lb, ub, name );
+            auto        var      = pMPSolver->MakeIntVar( lb, ub, name );
             auto        external = Napi::External< MPVariable >::New( env, var );
             return GMPVariable::constructor.New( { external } );
         }
@@ -560,7 +571,7 @@ public:
         if ( info.Length() == 1 && info[ 0 ].IsString() )
         {
             std::string name     = info[ 0 ].As< Napi::String >().Utf8Value();
-            auto        var      = spMPSolver->MakeBoolVar( name );
+            auto        var      = pMPSolver->MakeBoolVar( name );
             auto        external = Napi::External< MPVariable >::New( env, var );
             return GMPVariable::constructor.New( { external } );
         }
@@ -570,36 +581,278 @@ public:
     };
 
     // void MakeVarArray( int nb, double lb, double ub, bool integer, const std::string& name_prefix, std::vector< MPVariable* >* vars );
+    Napi::Value MakeVarArray( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 5 && info[ 0 ].IsNumber() && info[ 1 ].IsNumber() && info[ 2 ].IsNumber() && info[ 3 ].IsBoolean() && info[ 4 ].IsString() )
+        {
+            int                        nb          = info[ 0 ].As< Napi::Number >().Int32Value();
+            double                     lb          = info[ 1 ].As< Napi::Number >().DoubleValue();
+            double                     ub          = info[ 2 ].As< Napi::Number >().DoubleValue();
+            bool                       integer     = info[ 3 ].As< Napi::Boolean >().Value();
+            std::string                name_prefix = info[ 4 ].As< Napi::String >().Utf8Value();
+            std::vector< MPVariable* > vars;
+            pMPSolver->MakeVarArray( nb, lb, ub, integer, name_prefix, &vars );
+            auto ret = Napi::Array::New( env, vars.size() );
+            for ( int i = 0; i < vars.size(); i++ )
+            {
+                auto external = Napi::External< MPVariable >::New( env, vars[ i ] );
+                ret.Set( i, GMPVariable::constructor.New( { external } ) );
+            }
+            return ret;
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::MakeVarArray : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // void MakeNumVarArray( int nb, double lb, double ub, const std::string& name, std::vector< MPVariable* >* vars );
+    Napi::Value MakeNumVarArray( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 4 && info[ 0 ].IsNumber() && info[ 1 ].IsNumber() && info[ 2 ].IsNumber() && info[ 3 ].IsString() )
+        {
+            int                        nb          = info[ 0 ].As< Napi::Number >().Int32Value();
+            double                     lb          = info[ 1 ].As< Napi::Number >().DoubleValue();
+            double                     ub          = info[ 2 ].As< Napi::Number >().DoubleValue();
+            std::string                name_prefix = info[ 3 ].As< Napi::String >().Utf8Value();
+            std::vector< MPVariable* > vars;
+            pMPSolver->MakeNumVarArray( nb, lb, ub, name_prefix, &vars );
+            auto ret = Napi::Array::New( env, vars.size() );
+            for ( int i = 0; i < vars.size(); i++ )
+            {
+                auto external = Napi::External< MPVariable >::New( env, vars[ i ] );
+                ret.Set( i, GMPVariable::constructor.New( { external } ) );
+            }
+            return ret;
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::MakeNumVarArray : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // void MakeIntVarArray( int nb, double lb, double ub, const std::string& name, std::vector< MPVariable* >* vars );
+    Napi::Value MakeIntVarArray( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 4 && info[ 0 ].IsNumber() && info[ 1 ].IsNumber() && info[ 2 ].IsNumber() && info[ 3 ].IsString() )
+        {
+            int                        nb          = info[ 0 ].As< Napi::Number >().Int32Value();
+            double                     lb          = info[ 1 ].As< Napi::Number >().DoubleValue();
+            double                     ub          = info[ 2 ].As< Napi::Number >().DoubleValue();
+            std::string                name_prefix = info[ 3 ].As< Napi::String >().Utf8Value();
+            std::vector< MPVariable* > vars;
+            pMPSolver->MakeIntVarArray( nb, lb, ub, name_prefix, &vars );
+            auto ret = Napi::Array::New( env, vars.size() );
+            for ( int i = 0; i < vars.size(); i++ )
+            {
+                auto external = Napi::External< MPVariable >::New( env, vars[ i ] );
+                ret.Set( i, GMPVariable::constructor.New( { external } ) );
+            }
+            return ret;
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::MakeIntVarArray : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // void MakeBoolVarArray( int nb, const std::string& name, std::vector< MPVariable* >* vars );
+    Napi::Value MakeBoolVarArray( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 2 && info[ 0 ].IsNumber() && info[ 1 ].IsString() )
+        {
+            int                        nb          = info[ 0 ].As< Napi::Number >().Int32Value();
+            std::string                name_prefix = info[ 1 ].As< Napi::String >().Utf8Value();
+            std::vector< MPVariable* > vars;
+            pMPSolver->MakeBoolVarArray( nb, name_prefix, &vars );
+            auto ret = Napi::Array::New( env, vars.size() );
+            for ( int i = 0; i < vars.size(); i++ )
+            {
+                auto external = Napi::External< MPVariable >::New( env, vars[ i ] );
+                ret.Set( i, GMPVariable::constructor.New( { external } ) );
+            }
+            return ret;
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::MakeBoolVarArray : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // int NumConstraints() const;
+    Napi::Value NumConstraints( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            return Napi::Number::New( env, pMPSolver->NumConstraints() );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::NumConstraints : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // const std::vector< MPConstraint* >& constraints() const;
+    Napi::Value constraints( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            auto constraints = pMPSolver->constraints();
+            auto ret         = Napi::Array::New( env, constraints.size() );
+            for ( int i = 0; i < constraints.size(); i++ )
+            {
+                auto external = Napi::External< MPConstraint >::New( env, constraints[ i ] );
+                ret.Set( i, GMPConstraint::constructor.New( { external } ) );
+            }
+            return ret;
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::constraints : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // MPConstraint* constraint( int index ) const;
+    Napi::Value constraint( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+        {
+            int  index      = info[ 0 ].As< Napi::Number >().Int32Value();
+            auto constraint = pMPSolver->constraint( index );
+            if ( constraint == nullptr )
+            {
+                return env.Null();
+            }
+            auto external = Napi::External< MPConstraint >::New( env, constraint );
+            return GMPConstraint::constructor.New( { external } );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::constraint : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // MPConstraint* LookupConstraintOrNull( const std::string& constraint_name ) const;
+    Napi::Value LookupConstraintOrNull( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
 
-    // MPConstraint* MakeRowConstraint( double lb, double ub );
+        if ( info.Length() == 1 && info[ 0 ].IsString() )
+        {
+            std::string constraint_name = info[ 0 ].As< Napi::String >().Utf8Value();
+            auto        constraint      = pMPSolver->LookupConstraintOrNull( constraint_name );
+            if ( constraint == nullptr )
+            {
+                return env.Null();
+            }
+            auto external = Napi::External< MPConstraint >::New( env, constraint );
+            return GMPConstraint::constructor.New( { external } );
+        }
 
-    // MPConstraint* MakeRowConstraint();
+        Napi::TypeError::New( env, "operations_research::GMPSolver::LookupConstraintOrNull : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
-    // MPConstraint* MakeRowConstraint( double lb, double ub, const std::string& name );
+    Napi::Value MakeRowConstraint( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
 
-    // MPConstraint* MakeRowConstraint( const std::string& name );
+        // MPConstraint* MakeRowConstraint( double lb, double ub );
+        if ( info.Length() == 2 && info[ 0 ].IsNumber() && info[ 1 ].IsNumber() )
+        {
+            double lb         = info[ 0 ].As< Napi::Number >().DoubleValue();
+            double ub         = info[ 1 ].As< Napi::Number >().DoubleValue();
+            auto   constraint = pMPSolver->MakeRowConstraint( lb, ub );
+            auto   external   = Napi::External< MPConstraint >::New( env, constraint );
+            return GMPConstraint::constructor.New( { external } );
+        }
 
-    // MPConstraint* MakeRowConstraint( const LinearRange& range );
+        // MPConstraint* MakeRowConstraint();
+        if ( info.Length() == 0 )
+        {
+            auto constraint = pMPSolver->MakeRowConstraint();
+            auto external   = Napi::External< MPConstraint >::New( env, constraint );
+            return GMPConstraint::constructor.New( { external } );
+        }
 
-    // MPConstraint* MakeRowConstraint( const LinearRange& range, const std::string& name );
+        // MPConstraint* MakeRowConstraint( double lb, double ub, const std::string& name );
+        if ( info.Length() == 3 && info[ 0 ].IsNumber() && info[ 1 ].IsNumber() && info[ 2 ].IsString() )
+        {
+            double      lb         = info[ 0 ].As< Napi::Number >().DoubleValue();
+            double      ub         = info[ 1 ].As< Napi::Number >().DoubleValue();
+            std::string name       = info[ 2 ].As< Napi::String >().Utf8Value();
+            auto        constraint = pMPSolver->MakeRowConstraint( lb, ub, name );
+            auto        external   = Napi::External< MPConstraint >::New( env, constraint );
+            return GMPConstraint::constructor.New( { external } );
+        }
 
-    // const MPObjective& Objective() const;
+        // MPConstraint* MakeRowConstraint( const std::string& name );
+        if ( info.Length() == 1 && info[ 0 ].IsString() )
+        {
+            std::string name       = info[ 0 ].As< Napi::String >().Utf8Value();
+            auto        constraint = pMPSolver->MakeRowConstraint( name );
+            auto        external   = Napi::External< MPConstraint >::New( env, constraint );
+            return GMPConstraint::constructor.New( { external } );
+        }
+
+        // MPConstraint* MakeRowConstraint( const LinearRange& range );
+        if ( info.Length() == 1 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearRange::constructor.Value() ) )
+        {
+            auto range      = GLinearRange::Unwrap( info[ 0 ].As< Napi::Object >() );
+            auto constraint = pMPSolver->MakeRowConstraint( *range->pLinearRange );
+            auto external   = Napi::External< MPConstraint >::New( env, constraint );
+            return GMPConstraint::constructor.New( { external } );
+        }
+
+        // MPConstraint* MakeRowConstraint( const LinearRange& range, const std::string& name );
+        if ( info.Length() == 2 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearRange::constructor.Value() )
+             && info[ 1 ].IsString() )
+        {
+            auto        range      = GLinearRange::Unwrap( info[ 0 ].As< Napi::Object >() );
+            std::string name       = info[ 1 ].As< Napi::String >().Utf8Value();
+            auto        constraint = pMPSolver->MakeRowConstraint( *range->pLinearRange, name );
+            auto        external   = Napi::External< MPConstraint >::New( env, constraint );
+            return GMPConstraint::constructor.New( { external } );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::MakeRowConstraint : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // MPObjective* MutableObjective();
+    Napi::Value MutableObjective( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            auto objective = pMPSolver->MutableObjective();
+            auto external  = Napi::External< MPObjective >::New( env, objective );
+            return GMPObjective::constructor.New( { external, Napi::Boolean::New( env, true ) } );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::MutableObjective : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // ResultStatus Solve();
 

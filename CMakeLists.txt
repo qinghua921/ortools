@@ -37,6 +37,7 @@ target_link_libraries(
   ${PROJECT_NAME}
   ${CMAKE_JS_LIB}
   ${PROJECT_SOURCE_DIR}/cmake/or-tools_x64_VisualStudio2022_cpp_v9.11.4210/lib/ortools_full.lib
+  ${PROJECT_SOURCE_DIR}/cmake/or-tools_x64_VisualStudio2022_cpp_v9.11.4210/lib/utf8_validity.lib
 )
 
 if(MSVC)

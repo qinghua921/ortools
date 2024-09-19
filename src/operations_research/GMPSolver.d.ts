@@ -52,7 +52,21 @@ export namespace operations_research
         constructor(name: string, problem_type: MPSolver.OptimizationProblemType);
 
         // static MPSolver* CreateSolver( const std::string& solver_id );
-        static CreateSolver(solver_id: string): MPSolver;
+        static CreateSolver(solver_id:
+            "CLP_LINEAR_PROGRAMMING" | "CLP"
+            | "CBC_MIXED_INTEGER_PROGRAMMING" | "CBC"
+            | "GLOP_LINEAR_PROGRAMMING" | "GLOP"
+            | "BOP_INTEGER_PROGRAMMING" | "BOP" | "CP_SAT"
+            | "SCIP_MIXED_INTEGER_PROGRAMMING" | "SCIP"
+            | "GUROBI_LINEAR_PROGRAMMING" | "GUROBI_LP"
+            | "GUROBI_MIXED_INTEGER_PROGRAMMING" | "GUROBI" | "GUROBI_MIP"
+            | "CPLEX_LINEAR_PROGRAMMING" | "CPLEX_LP"
+            | "CPLEX_MIXED_INTEGER_PROGRAMMING" | "CPLEX_MIP"
+            | "XPRESS_LINEAR_PROGRAMMING" | "XPRESS_LP"
+            | "XPRESS_MIXED_INTEGER_PROGRAMMING" | "XPRESS" | "XPRESS_MIP"
+            | "GLPK_LINEAR_PROGRAMMING" | "GLPK_LP"
+            | "GLPK_MIXED_INTEGER_PROGRAMMING" | "GLPK" | "GLPK_MIP"
+        ): MPSolver;
 
         // static bool SupportsProblemType( OptimizationProblemType problem_type );
         static SupportsProblemType(problem_type: MPSolver.OptimizationProblemType): boolean;
@@ -100,36 +114,51 @@ export namespace operations_research
         MakeBoolVar(name: string): MPVariable;
 
         // void MakeVarArray( int nb, double lb, double ub, bool integer, const std::string& name_prefix, std::vector< MPVariable* >* vars );
+        MakeVarArray(nb: number, lb: number, ub: number, integer: boolean, name_prefix: string): Array<MPVariable>;
 
         // void MakeNumVarArray( int nb, double lb, double ub, const std::string& name, std::vector< MPVariable* >* vars );
+        MakeNumVarArray(nb: number, lb: number, ub: number, name: string): Array<MPVariable>;
 
         // void MakeIntVarArray( int nb, double lb, double ub, const std::string& name, std::vector< MPVariable* >* vars );
+        MakeIntVarArray(nb: number, lb: number, ub: number, name: string): Array<MPVariable>;
 
         // void MakeBoolVarArray( int nb, const std::string& name, std::vector< MPVariable* >* vars );
+        MakeBoolVarArray(nb: number, name: string): Array<MPVariable>;
 
         // int NumConstraints() const;
+        NumConstraints(): number;
 
         // const std::vector< MPConstraint* >& constraints() const;
+        constraints(): Array<MPConstraint>;
 
         // MPConstraint* constraint( int index ) const;
+        constraint(index: number): MPConstraint;
 
         // MPConstraint* LookupConstraintOrNull( const std::string& constraint_name ) const;
+        LookupConstraintOrNull(constraint_name: string): MPConstraint;
 
         // MPConstraint* MakeRowConstraint( double lb, double ub );
+        MakeRowConstraint(lb: number, ub: number): MPConstraint;
 
         // MPConstraint* MakeRowConstraint();
+        MakeRowConstraint(): MPConstraint;
 
         // MPConstraint* MakeRowConstraint( double lb, double ub, const std::string& name );
+        MakeRowConstraint(lb: number, ub: number, name: string): MPConstraint;
 
         // MPConstraint* MakeRowConstraint( const std::string& name );
+        MakeRowConstraint(name: string): MPConstraint;
 
         // MPConstraint* MakeRowConstraint( const LinearRange& range );
+        MakeRowConstraint(range: LinearRange): MPConstraint;
 
         // MPConstraint* MakeRowConstraint( const LinearRange& range, const std::string& name );
+        MakeRowConstraint(range: LinearRange, name: string): MPConstraint;
 
-        // const MPObjective& Objective() const;
+        // const MPObjective& Objective() const; not implemented
 
         // MPObjective* MutableObjective();
+        MutableObjective(): MPObjective;
 
         // ResultStatus Solve();
 
