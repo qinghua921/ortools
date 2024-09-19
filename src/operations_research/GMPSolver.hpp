@@ -6,6 +6,7 @@
 #include "GMPConstraint.hpp"
 #include "GLinearRange.hpp"
 #include "GMPObjective.hpp"
+#include "GMPSolverParameters.hpp"
 
 namespace operations_research
 {
@@ -178,14 +179,17 @@ public:
                 InstanceMethod( "MutableObjective", &GMPSolver::MutableObjective ),
 
                 // ResultStatus Solve();
-
                 // ResultStatus Solve( const MPSolverParameters& param );
+                InstanceMethod( "Solve", &GMPSolver::Solve ),
 
                 // void Write( const std::string& file_name );
+                InstanceMethod( "Write", &GMPSolver::Write ),
 
                 // std::vector< double > ComputeConstraintActivities() const;
+                InstanceMethod( "ComputeConstraintActivities", &GMPSolver::ComputeConstraintActivities ),
 
                 // bool VerifySolution( double tolerance, bool log_errors ) const;
+                InstanceMethod( "VerifySolution", &GMPSolver::VerifySolution ),
 
                 // void Reset();
 
@@ -854,15 +858,84 @@ public:
         return env.Null();
     };
 
-    // ResultStatus Solve();
+    Napi::Value Solve( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
 
-    // ResultStatus Solve( const MPSolverParameters& param );
+        // ResultStatus Solve();
+        if ( info.Length() == 0 )
+        {
+            return Napi::Number::New( env, static_cast< int >( pMPSolver->Solve() ) );
+        }
+
+        // ResultStatus Solve( const MPSolverParameters& param );
+        if ( info.Length() == 1 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GMPSolverParameters::constructor.Value() ) )
+        {
+            auto param = GMPSolverParameters::Unwrap( info[ 0 ].As< Napi::Object >() );
+            return Napi::Number::New( env, static_cast< int >( pMPSolver->Solve( *param->pMPSolverParameters ) ) );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::Solve : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // void Write( const std::string& file_name );
+    Napi::Value Write( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 1 && info[ 0 ].IsString() )
+        {
+            std::string file_name = info[ 0 ].As< Napi::String >().Utf8Value();
+            pMPSolver->Write( file_name );
+            return env.Undefined();
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::Write : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // std::vector< double > ComputeConstraintActivities() const;
+    Napi::Value ComputeConstraintActivities( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            auto activities = pMPSolver->ComputeConstraintActivities();
+            auto ret        = Napi::Array::New( env, activities.size() );
+            for ( int i = 0; i < activities.size(); i++ )
+            {
+                ret.Set( i, Napi::Number::New( env, activities[ i ] ) );
+            }
+            return ret;
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::ComputeConstraintActivities : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // bool VerifySolution( double tolerance, bool log_errors ) const;
+    Napi::Value VerifySolution( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 2 && info[ 0 ].IsNumber() && info[ 1 ].IsBoolean() )
+        {
+            double      tolerance  = info[ 0 ].As< Napi::Number >().DoubleValue();
+            bool        log_errors = info[ 1 ].As< Napi::Boolean >().Value();
+            bool        ret        = pMPSolver->VerifySolution( tolerance, log_errors );
+            return Napi::Boolean::New( env, ret );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::VerifySolution : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // void Reset();
 

@@ -155,20 +155,25 @@ export namespace operations_research
         // MPConstraint* MakeRowConstraint( const LinearRange& range, const std::string& name );
         MakeRowConstraint(range: LinearRange, name: string): MPConstraint;
 
-        // const MPObjective& Objective() const; not implemented
+        // const MPObjective& Objective() const; not implemented for not SWIG
 
         // MPObjective* MutableObjective();
         MutableObjective(): MPObjective;
 
         // ResultStatus Solve();
+        Solve(): MPSolver.ResultStatus;
 
         // ResultStatus Solve( const MPSolverParameters& param );
+        Solve(param: MPSolverParameters): MPSolver.ResultStatus;
 
         // void Write( const std::string& file_name );
+        Write(file_name: string): void;
 
         // std::vector< double > ComputeConstraintActivities() const;
+        ComputeConstraintActivities(): Array<number>;
 
         // bool VerifySolution( double tolerance, bool log_errors ) const;
+        VerifySolution(tolerance: number, log_errors: boolean): boolean;
 
         // void Reset();
 

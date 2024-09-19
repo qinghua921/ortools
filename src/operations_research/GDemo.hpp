@@ -5,13 +5,11 @@
 namespace operations_research
 {
 
-class Demo;
-
 class GDemo : public Napi::ObjectWrap< GDemo >
 {
 public:
     static inline Napi::FunctionReference constructor;
-    std::shared_ptr< Demo >               spDemo;
+    Demo*                                 pDemo;
     GDemo( const Napi::CallbackInfo& info )
         : Napi::ObjectWrap< GDemo >( info )
     {
@@ -20,8 +18,8 @@ public:
         if ( info.Length() == 1 && info[ 0 ].IsExternal() )
         {
             auto external = info[ 0 ].As< Napi::External< Demo > >();
-            spDemo        = std::shared_ptr< Demo >( external.Data() );
-            return;
+            pDemo         = dynamic_cast< Demo* >( external.Data() );
+            if ( pDemo ) return;
         }
 
         Napi::TypeError::New( env, "operations_research::GDemo::GDemo : Invalid arguments" ).ThrowAsJavaScriptException();
