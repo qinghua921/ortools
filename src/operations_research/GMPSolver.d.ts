@@ -1,3 +1,5 @@
+import { operations_research as GEnum } from './GEnum';
+
 export namespace operations_research
 {
     export namespace MPSolver
@@ -179,10 +181,13 @@ export namespace operations_research
         Reset(): void;
 
         // bool InterruptSolve();
+        InterruptSolve(): boolean;
 
         // MPSolverResponseStatus LoadModelFromProto( const MPModelProto& input_model, std::string* error_message, bool clear_names = true );
+        LoadModelFromProto(input_model: MPModelProto, clear_names: boolean = true): { return: GEnum.MPSolverResponseStatus, error_message: string };
 
         // MPSolverResponseStatus LoadModelFromProtoWithUniqueNamesOrDie( const MPModelProto& input_model, std::string* error_message );
+        LoadModelFromProtoWithUniqueNamesOrDie(input_model: MPModelProto): { return: GEnum.MPSolverResponseStatus, error_message: string };
 
         // void FillSolutionResponseProto( MPSolutionResponse* response ) const;
 

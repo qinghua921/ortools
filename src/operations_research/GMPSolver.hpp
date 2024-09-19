@@ -7,6 +7,7 @@
 #include "GLinearRange.hpp"
 #include "GMPObjective.hpp"
 #include "GMPSolverParameters.hpp"
+#include "GMPModelProto.hpp"
 
 namespace operations_research
 {
@@ -195,10 +196,13 @@ public:
                 InstanceMethod( "Reset", &GMPSolver::Reset ),
 
                 // bool InterruptSolve();
+                InstanceMethod( "InterruptSolve", &GMPSolver::InterruptSolve ),
 
                 // MPSolverResponseStatus LoadModelFromProto( const MPModelProto& input_model, std::string* error_message, bool clear_names = true );
+                InstanceMethod( "LoadModelFromProto", &GMPSolver::LoadModelFromProto ),
 
                 // MPSolverResponseStatus LoadModelFromProtoWithUniqueNamesOrDie( const MPModelProto& input_model, std::string* error_message );
+                InstanceMethod( "LoadModelFromProtoWithUniqueNamesOrDie", &GMPSolver::LoadModelFromProtoWithUniqueNamesOrDie ),
 
                 // void FillSolutionResponseProto( MPSolutionResponse* response ) const;
 
@@ -955,10 +959,78 @@ public:
     };
 
     // bool InterruptSolve();
+    Napi::Value InterruptSolve( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            bool ret = pMPSolver->InterruptSolve();
+            return Napi::Boolean::New( env, ret );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::InterruptSolve : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // MPSolverResponseStatus LoadModelFromProto( const MPModelProto& input_model, std::string* error_message, bool clear_names = true );
+    Napi::Value LoadModelFromProto( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 1 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GMPModelProto::constructor.Value() ) )
+        {
+            auto        input_model = GMPModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
+            std::string error_message;
+            auto        result = pMPSolver->LoadModelFromProto( *input_model->pMPModelProto, &error_message, true );
+            auto        ret    = Napi::Object::New( env );
+            ret.Set( "return", Napi::Number::New( env, static_cast< int >( result ) ) );
+            ret.Set( "error_message", Napi::String::New( env, error_message ) );
+            return ret;
+        }
+
+        if ( info.Length() == 2 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GMPModelProto::constructor.Value() )
+             && info[ 1 ].IsBoolean() )
+        {
+            auto        input_model = GMPModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
+            bool        clear_names = info[ 1 ].As< Napi::Boolean >().Value();
+            std::string error_message;
+            auto        result = pMPSolver->LoadModelFromProto( *input_model->pMPModelProto, &error_message, clear_names );
+            auto        ret    = Napi::Object::New( env );
+            ret.Set( "return", Napi::Number::New( env, static_cast< int >( result ) ) );
+            ret.Set( "error_message", Napi::String::New( env, error_message ) );
+            return ret;
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::LoadModelFromProto : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // MPSolverResponseStatus LoadModelFromProtoWithUniqueNamesOrDie( const MPModelProto& input_model, std::string* error_message );
+    Napi::Value LoadModelFromProtoWithUniqueNamesOrDie( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 1 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GMPModelProto::constructor.Value() ) )
+        {
+            auto        input_model = GMPModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
+            std::string error_message;
+            auto        result = pMPSolver->LoadModelFromProtoWithUniqueNamesOrDie( *input_model->pMPModelProto, &error_message );
+            auto        ret    = Napi::Object::New( env );
+            ret.Set( "return", Napi::Number::New( env, static_cast< int >( result ) ) );
+            ret.Set( "error_message", Napi::String::New( env, error_message ) );
+            return ret;
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::LoadModelFromProtoWithUniqueNamesOrDie : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
 
     // void FillSolutionResponseProto( MPSolutionResponse* response ) const;
 
