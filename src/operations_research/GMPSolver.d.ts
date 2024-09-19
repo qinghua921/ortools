@@ -135,7 +135,23 @@ export namespace operations_research
          * 
          * C++ static MPSolver* CreateSolver( const std::string& solver_id );
          */
-        static CreateSolver(solver_id: string): MPSolver;
+        static CreateSolver(
+            solver_id:
+                "CLP_LINEAR_PROGRAMMING" | "CLP" |
+                "CBC_MIXED_INTEGER_PROGRAMMING" | "CBC" |
+                "GLOP_LINEAR_PROGRAMMING" | "GLOP" |
+                "BOP_INTEGER_PROGRAMMING" | "BOP" |
+                "SAT_INTEGER_PROGRAMMING" | "SAT" | "CP_SAT" |
+                "SCIP_MIXED_INTEGER_PROGRAMMING" | "SCIP" |
+                "GUROBI_LINEAR_PROGRAMMING" | "GUROBI_LP" |
+                "GUROBI_MIXED_INTEGER_PROGRAMMING" | "GUROBI" | "GUROBI_MIP" |
+                "CPLEX_LINEAR_PROGRAMMING" | "CPLEX_LP" |
+                "CPLEX_MIXED_INTEGER_PROGRAMMING" | "CPLEX_MIP" |
+                "XPRESS_LINEAR_PROGRAMMING" | "XPRESS_LP" |
+                "XPRESS_MIXED_INTEGER_PROGRAMMING" | "XPRESS_MIP" |
+                "GLPK_LINEAR_PROGRAMMING" | "GLPK_LP" |
+                "GLPK_MIXED_INTEGER_PROGRAMMING" | "GLPK" | "GLPK_MIP"
+        ): MPSolver;
 
         /**
          * Whether the given problem type is supported (this will depend on the
@@ -249,7 +265,6 @@ export namespace operations_research
          */
         MakeIntVar(lb: number, ub: number, name: string): MPVariable;
 
-
         /**
          * Creates a boolean variable.
          * 
@@ -275,7 +290,7 @@ export namespace operations_research
          *                         const std::string& name_prefix, 
          *                         std::vector< MPVariable* >* vars );
          */
-        MakeVarArray(nb: number, lb: number, ub: number, integer: boolean, name_prefix: string, vars: std.Vector<MPVariable>): void;
+        MakeVarArray(nb: number, lb: number, ub: number, integer: boolean, name_prefix: string): Array<MPVariable>;
 
         /**
          * Creates an array of continuous variables.
@@ -283,8 +298,7 @@ export namespace operations_research
          * C++ void MakeNumVarArray( int nb, double lb, double ub, const std::string& name, 
          *                           std::vector< MPVariable* >* vars );
          */
-        MakeNumVarArray(nb: number, lb: number, ub: number, name: string, vars: std.Vector<MPVariable>): void;
-
+        MakeNumVarArray(nb: number, lb: number, ub: number, name: string): Array<MPVariable>;
 
         /**
          * Creates an array of integer variables.
@@ -292,9 +306,7 @@ export namespace operations_research
          * C++ void MakeIntVarArray( int nb, double lb, double ub, const std::string& name, 
          *                           std::vector< MPVariable* >* vars );
          */
-        MakeIntVarArray(nb: number, lb: number, ub: number, name: string, vars: std.Vector<MPVariable>): void;
-
-
+        MakeIntVarArray(nb: number, lb: number, ub: number, name: string): Array<MPVariable>;
 
         /**
          * Creates an array of boolean variables.
@@ -302,8 +314,7 @@ export namespace operations_research
          * C++ void MakeBoolVarArray( int nb, const std::string& name, 
          *                           std::vector< MPVariable* >* vars );
          */
-        MakeBoolVarArray(nb: number, name: string, vars: std.Vector<MPVariable>): void;
-
+        MakeBoolVarArray(nb: number, name: string): Array<MPVariable>;
 
         /**
          * Returns the number of constraints.
@@ -311,7 +322,6 @@ export namespace operations_research
          * C++ int NumConstraints() const;
          */
         NumConstraints(): number;
-
 
         /**
          * Returns the array of constraints handled by the MPSolver.
@@ -322,14 +332,12 @@ export namespace operations_research
          */
         constraints(): Array<MPConstraint>;
 
-
         /**
          * Returns the constraint at the given index.
          * 
          * C++ MPConstraint* constraint( int index ) const;
          */
         constraint(index: number): MPConstraint;
-
 
         /**
          *  Looks up a constraint by name, and returns nullptr if it does not exist.
@@ -343,7 +351,6 @@ export namespace operations_research
          */
         LookupConstraintOrNull(constraint_name: string): MPConstraint;
 
-
         /**
          * Creates a linear constraint with given bounds.
          * 
@@ -356,14 +363,12 @@ export namespace operations_research
          */
         MakeRowConstraint(lb: number, ub: number): MPConstraint;
 
-
         /**
          * Creates a constraint with -infinity and +infinity bounds.
          * 
          * C++ MPConstraint* MakeRowConstraint();
          */
         MakeRowConstraint(): MPConstraint;
-
 
         /**
          * Creates a named constraint with given bounds.
@@ -373,14 +378,12 @@ export namespace operations_research
          */
         MakeRowConstraint(lb: number, ub: number, name: string): MPConstraint;
 
-
         /**
          * Creates a named constraint with -infinity and +infinity bounds.
          * 
          * C++ MPConstraint* MakeRowConstraint( const std::string& name );
          */
         MakeRowConstraint(name: string): MPConstraint;
-
 
         /**
          * Creates a constraint owned by MPSolver enforcing:
@@ -390,7 +393,6 @@ export namespace operations_research
          */
         MakeRowConstraint(range: LinearRange): MPConstraint;
 
-
         /**
          * As above, but also names the constraint.
          * 
@@ -398,7 +400,6 @@ export namespace operations_research
          *                                       const std::string& name );
          */
         MakeRowConstraint(range: LinearRange, name: string): MPConstraint;
-
 
         /**
          * Returns the objective object.
@@ -410,16 +411,12 @@ export namespace operations_research
          */
         Objective(): MPObjective;
 
-
         /**
          * Returns the mutable objective object.
          * 
          * C++ MPObjective* MutableObjective();
          */
         MutableObjective(): MPObjective;
-
-
-
 
         /**
          * Solves the problem using the default parameter values.
@@ -428,15 +425,12 @@ export namespace operations_research
          */
         Solve(): MPSolver.ResultStatus;
 
-
-
         /**
          * Solves the problem using the specified parameter values.
          * 
          * C++ ResultStatus Solve( const MPSolverParameters& param );
          */
         Solve(param: MPSolverParameters): MPSolver.ResultStatus;
-
 
         /**
          * Writes the model using the solver internal write function.  Currently only
@@ -446,7 +440,6 @@ export namespace operations_research
          */
         Write(file_name: string): void;
 
-
         /**
          * Advanced usage: compute the "activities" of all constraints, which are the
          * sums of their linear terms. The activities are returned in the same order
@@ -455,8 +448,7 @@ export namespace operations_research
          * 
          * C++ std::vector< double > ComputeConstraintActivities() const;
          */
-        ComputeConstraintActivities(): std.Vector<number>;
-
+        ComputeConstraintActivities(): Array<number>;
 
         /**
          * Advanced usage: Verifies the *correctness* of the solution.
@@ -480,7 +472,6 @@ export namespace operations_research
          */
         VerifySolution(tolerance: number, log_errors: boolean): boolean;
 
-
         /**
          * Advanced usage: resets extracted model to solve from scratch.
          * 
@@ -492,7 +483,6 @@ export namespace operations_research
          * C++ void Reset();
          */
         Reset(): void;
-
 
         /**
          * Interrupts the Solve() execution to terminate processing if possible.
@@ -508,7 +498,6 @@ export namespace operations_research
          */
         InterruptSolve(): boolean;
 
-
         /**
          * Loads model from protocol buffer.
          * 
@@ -519,10 +508,10 @@ export namespace operations_research
          * MPSOLVER_MODEL_INVALID if there are duplicates (non-empty) names.
          * 
          * C++ MPSolverResponseStatus LoadModelFromProto( const MPModelProto& input_model, 
-        *                                                 std::string* error_message, 
-        *                                                 bool clear_names = true );
+         *                                                 std::string* error_message, 
+         *                                                 bool clear_names = true );
          */
-        LoadModelFromProto(input_model: MPModelProto, error_message: string, clear_names: boolean): MPSolver.MPSolverResponseStatus;
+        LoadModelFromProto(input_model: MPModelProto, clear_names: boolean): { return: MPSolver.MPSolverResponseStatus, error_message: string };
 
         /**
          * Loads model from protocol buffer.
@@ -534,8 +523,7 @@ export namespace operations_research
          * C++ MPSolverResponseStatus LoadModelFromProtoWithUniqueNamesOrDie( 
          *         const MPModelProto& input_model, std::string* error_message );
          */
-        LoadModelFromProtoWithUniqueNamesOrDie(input_model: MPModelProto, error_message: string): MPSolver.MPSolverResponseStatus;
-
+        LoadModelFromProtoWithUniqueNamesOrDie(input_model: MPModelProto): { return: MPSolver.MPSolverResponseStatus, error_message: string };
 
         /**
          * Encodes the current solution in a solution response protocol buffer.
@@ -570,13 +558,6 @@ export namespace operations_research
          */
         static SolveWithProto(model_request: MPModelRequest, response: MPSolutionResponse, interrupt: atomic<boolean>): void;
 
-
-        //     /**
-        //      */
-        //     
-        //     static void SolveLazyMutableRequest( LazyMutableCopy< MPModelRequest > request,
-        //                                          MPSolutionResponse*               response,
-        //                                          std::atomic< bool >*              interrupt = nullptr );
         /**
          * This version support both `const MPModelRequest&` and `MPModelRequest&&`
          * for the request. When using the second form, it will try to delete the
@@ -594,7 +575,6 @@ export namespace operations_research
          */
         static SolveLazyMutableRequest(request: LazyMutableCopy<MPModelRequest>, response: MPSolutionResponse, interrupt: atomic<boolean>): void;
 
-
         /**
          * ABSL_DEPRECATED( 
          *   "Prefer SolverTypeSupportsInterruption() from solve_mp_model.h." )
@@ -604,7 +584,6 @@ export namespace operations_research
          */
         static SolverTypeSupportsInterruption(solver: MPModelRequest.SolverType): boolean;
 
-
         /**
          * Exports model to protocol buffer.
          * 
@@ -612,60 +591,45 @@ export namespace operations_research
          */
         ExportModelToProto(output_model: MPModelProto): void;
 
-        // TODO  
-        //     /**
-        //      * Load a solution encoded in a protocol buffer onto this solver for easy
-        //     access via the MPSolver interface.
-        //      *
-        //      * IMPORTANT: This may only be used in conjunction with ExportModel(),
-        //     following this example:
-        //      *
-        //      \code
-        //        MPSolver my_solver;
-        //        ... add variables and constraints ...
-        //        MPModelProto model_proto;
-        //        my_solver.ExportModelToProto(&model_proto);
-        //        MPSolutionResponse solver_response;
-        //        MPSolver::SolveWithProto(model_proto, &solver_response);
-        //        if (solver_response.result_status() == MPSolutionResponse::OPTIMAL) {
-        //          CHECK_OK(my_solver.LoadSolutionFromProto(solver_response));
-        //          ... inspect the solution using the usual API: solution_value(), etc...
-        //        }
-        //     \endcode
-        //      *
-        //      * The response must be in OPTIMAL or FEASIBLE status.
-        //      *
-        //      * Returns a non-OK status if a problem arised (typically, if it wasn't used
-        //      *     like it should be):
-        //      * - loading a solution whose variables don't correspond to the solver's
-        //      *   current variables
-        //      * - loading a dual solution whose constraints don't correspond to the
-        //      *   solver's current constraints
-        //      * - loading a solution with a status other than OPTIMAL / FEASIBLE.
-        //      *
-        //      * Note: the objective value isn't checked. You can use VerifySolution() for
-        //      *       that.
-        //      */
-        //     absl::Status LoadSolutionFromProto(
-        //         const MPSolutionResponse& response,
-        //         double                    tolerance = std::numeric_limits< double >::infinity() );
         /**
          * Load a solution encoded in a protocol buffer onto this solver for easy
-         * access via the MPSolver interface.
-         * 
+        access via the MPSolver interface.
+         *
          * IMPORTANT: This may only be used in conjunction with ExportModel(),
-         * following this example:
+        following this example:
+         *
+         \code
+           MPSolver my_solver;
+           ... add variables and constraints ...
+           MPModelProto model_proto;
+           my_solver.ExportModelToProto(&model_proto);
+           MPSolutionResponse solver_response;
+           MPSolver::SolveWithProto(model_proto, &solver_response);
+           if (solver_response.result_status() == MPSolutionResponse::OPTIMAL) {
+             CHECK_OK(my_solver.LoadSolutionFromProto(solver_response));
+             ... inspect the solution using the usual API: solution_value(), etc...
+           }
+        \endcode
+         *
+         * The response must be in OPTIMAL or FEASIBLE status.
+         *
+         * Returns a non-OK status if a problem arised (typically, if it wasn't used
+         *     like it should be):
+         * - loading a solution whose variables don't correspond to the solver's
+         *   current variables
+         * - loading a dual solution whose constraints don't correspond to the
+         *   solver's current constraints
+         * - loading a solution with a status other than OPTIMAL / FEASIBLE.
+         *
+         * Note: the objective value isn't checked. You can use VerifySolution() for
+         *       that.
          * 
-         * C++ absl::Status LoadSolutionFromProto( const MPSolutionResponse& response, double tolerance = std::numeric_limits< double >::infinity() );
+         * CPP absl::Status LoadSolutionFromProto(
+         *          const MPSolutionResponse& response,    
+         *          double                    tolerance = std::numeric_limits< double >::infinity() );
          */
         LoadSolutionFromProto(response: MPSolutionResponse, tolerance: number): absl.Status;
 
-
-        //     /**
-        //      * Resets values of out of bound variables to the corresponding bound and
-        //      * returns an error if any of the variables have NaN value.
-        //      */
-        //     absl::Status ClampSolutionWithinBounds();
         /**
          * Resets values of out of bound variables to the corresponding bound and
          * returns an error if any of the variables have NaN value.
@@ -674,16 +638,6 @@ export namespace operations_research
          */
         ClampSolutionWithinBounds(): absl.Status;
 
-
-        //     /**
-        //      * Shortcuts to the homonymous MPModelProtoExporter methods, via exporting to
-        //      * a MPModelProto with ExportModelToProto() (see above).
-        //      *
-        //      * Produces empty std::string on portable platforms (e.g. android, ios).
-        //      */
-        //     bool ExportModelAsLpFormat( bool obfuscate, std::string* model_str ) const;
-        //     bool ExportModelAsMpsFormat( bool fixed_format, bool obfuscate,
-        //                                  std::string* model_str ) const;
         /**
          * Shortcuts to the homonymous MPModelProtoExporter methods, via exporting to
          * a MPModelProto with ExportModelToProto() (see above).
@@ -691,23 +645,15 @@ export namespace operations_research
          * Produces empty std::string on portable platforms (e.g. android, ios).
          * 
          * C++ bool ExportModelAsLpFormat( bool obfuscate, std::string* model_str ) const;
-         * C++ bool ExportModelAsMpsFormat( bool fixed_format, bool obfuscate, std::string* model_str ) const;
-         */
+        */
         ExportModelAsLpFormat(obfuscate: boolean, model_str: string): boolean;
+
+        /**
+         * C++ bool ExportModelAsMpsFormat( bool fixed_format, bool obfuscate, 
+         *                                    std::string* model_str ) const;
+         */
         ExportModelAsMpsFormat(fixed_format: boolean, obfuscate: boolean, model_str: string): boolean;
 
-
-        //     /**
-        //      *  Sets the number of threads to use by the underlying solver.
-        //      *
-        //      * Returns OkStatus if the operation was successful. num_threads must be equal
-        //      * to or greater than 1. Note that the behaviour of this call depends on the
-        //      * underlying solver. E.g., it may set the exact number of threads or the max
-        //      * number of threads (check the solver's interface implementation for
-        //      * details). Also, some solvers may not (yet) support this function, but still
-        //      * enable multi-threading via SetSolverSpecificParametersAsString().
-        //      */
-        //     absl::Status SetNumThreads( int num_threads );
         /**
          *  Sets the number of threads to use by the underlying solver.
          * 
@@ -722,12 +668,6 @@ export namespace operations_research
          */
         SetNumThreads(num_threads: number): absl.Status;
 
-
-        //     /// Returns the number of threads to be used during solve.
-        //     int GetNumThreads() const
-        //     {
-        //         return num_threads_;
-        //     }
         /**
          * Returns the number of threads to be used during solve.
          * 
@@ -735,19 +675,6 @@ export namespace operations_research
          */
         GetNumThreads(): number;
 
-
-
-        //     /**
-        //      * Advanced usage: pass solver specific parameters in text format.
-        //      *
-        //      * The format is solver-specific and is the same as the corresponding solver
-        //      * configuration file format. Returns true if the operation was successful.
-        //      */
-        //     bool        SetSolverSpecificParametersAsString( const std::string& parameters );
-        //     std::string GetSolverSpecificParametersAsString() const
-        //     {
-        //         return solver_specific_parameter_string_;
-        //     }
         /**
          * Advanced usage: pass solver specific parameters in text format.
          * 
@@ -755,28 +682,14 @@ export namespace operations_research
          * configuration file format. Returns true if the operation was successful.
          * 
          * C++ bool SetSolverSpecificParametersAsString( const std::string& parameters );
-         * C++ std::string GetSolverSpecificParametersAsString() const;
          */
         SetSolverSpecificParametersAsString(parameters: string): boolean;
+
+        /**
+         * C++ std::string GetSolverSpecificParametersAsString() const;
+         */
         GetSolverSpecificParametersAsString(): string;
 
-
-        //     /**
-        //      * Sets a hint for solution.
-        //      *
-        //      * If a feasible or almost-feasible solution to the problem is already known,
-        //      * it may be helpful to pass it to the solver so that it can be used. A solver
-        //      * that supports this feature will try to use this information to create its
-        //      * initial feasible solution.
-        //      *
-        //      * Note: It may not always be faster to give a hint like this to the
-        //      * solver. There is also no guarantee that the solver will use this hint or
-        //      * try to return a solution "close" to this assignment in case of multiple
-        //      * optimal solutions.
-        //      *
-        //      * Calling SetHint clears all previous hints.
-        //      */
-        //     void SetHint( std::vector< std::pair< const MPVariable*, double > > hint );
         /**
          * Sets a hint for solution.
          * 
@@ -794,66 +707,36 @@ export namespace operations_research
          * 
          * C++ void SetHint( std::vector< std::pair< const MPVariable*, double > > hint );
          */
-        SetHint(hint: std:: vector <std.pair <const MPVariable, number>>): void;
+        SetHint(hint: MPVariable): void;
 
-
-        //     // Gives some brief (a few lines, at most) human-readable information about
-        //     // the given request, suitable for debug logging.
-        //     ABSL_DEPRECATED( "Prefer MPModelRequestLoggingInfo() from solve_mp_model.h." )
-        //     static std::string GetMPModelRequestLoggingInfo(
-        //         const MPModelRequest& request );
         /**
          * Gives some brief (a few lines, at most) human-readable information about
          * the given request, suitable for debug logging.
          * 
          * ABSL_DEPRECATED( "Prefer MPModelRequestLoggingInfo() from solve_mp_model.h." )
          * 
-         * C++ static std::string GetMPModelRequestLoggingInfo( const MPModelRequest& request );
+         * C++ static std::string GetMPModelRequestLoggingInfo(
+         *         const MPModelRequest& request );
          */
         static GetMPModelRequestLoggingInfo(request: MPModelRequest): string;
 
+        /**
+         * Advanced usage: Incrementality.
+         * 
+         * This function takes a starting basis to be used in the next LP Solve()
+         * call. The statuses of a current solution can be retrieved via the
+         * basis_status() function of a MPVariable or a MPConstraint.
+         * 
+         * WARNING: With Glop, you should disable presolve when using this because
+         * this information will not be modified in sync with the presolve and will
+         * likely not mean much on the presolved problem.
+         * 
+         * C++ void SetStartingLpBasis( 
+         *         const std::vector< MPSolver::BasisStatus >& variable_statuses, 
+         *         const std::vector< MPSolver::BasisStatus >& constraint_statuses );
+         */
+        SetStartingLpBasis(variable_statuses: std.vector<MPSolver.BasisStatus>, constraint_statuses: std.vector<MPSolver.BasisStatus>): void;
 
-
-    //     /**
-    //      * Advanced usage: Incrementality.
-    //      *
-    //      * This function takes a starting basis to be used in the next LP Solve()
-    //      * call. The statuses of a current solution can be retrieved via the
-    //      * basis_status() function of a MPVariable or a MPConstraint.
-    //      *
-    //      * WARNING: With Glop, you should disable presolve when using this because
-    //      * this information will not be modified in sync with the presolve and will
-    //      * likely not mean much on the presolved problem.
-    //      */
-    //     void SetStartingLpBasis(
-    //         const std::vector< MPSolver::BasisStatus >& variable_statuses,
-    //         const std::vector< MPSolver::BasisStatus >& constraint_statuses );
-    /**
-     * Advanced usage: Incrementality.
-     * 
-     * This function takes a starting basis to be used in the next LP Solve()
-     * call. The statuses of a current solution can be retrieved via the
-     * basis_status() function of a MPVariable or a MPConstraint.
-     * 
-     * WARNING: With Glop, you should disable presolve when using this because
-     * this information will not be modified in sync with the presolve and will
-     * likely not mean much on the presolved problem.
-     * 
-     * C++ void SetStartingLpBasis( const std::vector< MPSolver::BasisStatus >& variable_statuses, const std::vector< MPSolver::BasisStatus >& constraint_statuses );
-     */
-    SetStartingLpBasis(variable_statuses: std.vector<MPSolver.BasisStatus>, constraint_statuses: std.vector<MPSolver.BasisStatus>): void;
-
-
-    //     /**
-    //      * Infinity.
-    //      *
-    //      * You can use -MPSolver::infinity() for negative infinity.
-    //      */
-    //     static double infinity()
-    //     {
-    //         return std::numeric_limits< double >::infinity();
-    //     }
-    //     double solver_infinity();
         /**
          * Infinity.
          * 
@@ -862,351 +745,200 @@ export namespace operations_research
          * C++ static double infinity();
          */
         static infinity(): number;
-    solver_infinity(): number;
 
+        /**
+         * double solver_infinity();
+         */
+        solver_infinity(): number;
 
-    //     /**
-    //      * Controls (or queries) the amount of output produced by the underlying
-    //      * solver. The output can surface to LOGs, or to stdout or stderr, depending
-    //      * on the implementation. The amount of output will greatly vary with each
-    //      * implementation and each problem.
-    //      *
-    //      * Output is suppressed by default.
-    //      */
-    //     bool OutputIsEnabled() const;
-    /**
-     * Controls (or queries) the amount of output produced by the underlying
-     * solver. The output can surface to LOGs, or to stdout or stderr, depending
-     * on the implementation. The amount of output will greatly vary with each
-     * implementation and each problem.
-     * 
-     * Output is suppressed by default.
-     * 
-     * C++ bool OutputIsEnabled() const;
-     */
-    OutputIsEnabled(): boolean;
+        /**
+         * Controls (or queries) the amount of output produced by the underlying
+         * solver. The output can surface to LOGs, or to stdout or stderr, depending
+         * on the implementation. The amount of output will greatly vary with each
+         * implementation and each problem.
+         * 
+         * Output is suppressed by default.
+         * 
+         * C++ bool OutputIsEnabled() const;
+         */
+        OutputIsEnabled(): boolean;
 
+        /**
+         * Enables solver logging.
+         * 
+         * C++ void EnableOutput();
+         */
+        EnableOutput(): void;
 
-    //     /// Enables solver logging.
-    //     void EnableOutput();
-    /**
-     * Enables solver logging.
-     * 
-     * C++ void EnableOutput();
-     */
-    EnableOutput(): void;
+        /**
+         * Suppresses solver logging.
+         * 
+         * C++ void SuppressOutput();
+         */
+        SuppressOutput(): void;
 
+        /**
+         * 
+         * C++ absl::Duration TimeLimit() const;
+         */
+        TimeLimit(): number;
 
-    //     /// Suppresses solver logging.
-    //     void SuppressOutput();
-    /**
-     * Suppresses solver logging.
-     * 
-     * C++ void SuppressOutput();
-     */
-    SuppressOutput(): void;
+        /**
+         * C++ void SetTimeLimit( absl::Duration time_limit );
+         */
+        SetTimeLimit(time_limit: number): void;
 
+        /**
+         * C++ absl::Duration DurationSinceConstruction() const;
+         */
+        DurationSinceConstruction(): number;
 
-    //     absl::Duration TimeLimit() const
-    //     {
-    //         return time_limit_;
-    //     }
-    /**
-     * Returns the time limit for the solve.
-     * 
-     * C++ absl::Duration TimeLimit() const;
-     */
-    TimeLimit(): number;
+        /**
+         * Returns the number of simplex iterations.
+         * 
+         * C++ int64_t iterations() const;
+         */
+        iterations(): number;
 
+        /**
+         * Returns the number of branch-and-bound nodes evaluated during the solve.
+         * 
+         * Only available for discrete problems.
+         * 
+         * C++ int64_t nodes() const;
+         */
+        nodes(): number;
 
-    //     void SetTimeLimit( absl::Duration time_limit )
-    //     {
-    //         DCHECK_GE( time_limit, absl::ZeroDuration() );
-    //         time_limit_ = time_limit;
-    //     }
-    /**
-     * Sets the time limit for the solve.
-     * 
-     * C++ void SetTimeLimit( absl::Duration time_limit );
-     */
-    SetTimeLimit(time_limit: number): void;
+        /**
+         * Returns a string describing the underlying solver and its version.
+         * 
+         * C++ std::string SolverVersion() const;
+         */
+        SolverVersion(): string;
 
+        /**
+         * Advanced usage: returns the underlying solver.
+         * 
+         * Returns the underlying solver so that the user can use solver-specific
+         * features or features that are not exposed in the simple API of MPSolver.
+         * This method is for advanced users, use at your own risk! In particular, if
+         * you modify the model or the solution by accessing the underlying solver
+         * directly, then the underlying solver will be out of sync with the
+         * information kept in the wrapper (MPSolver, MPVariable, MPConstraint,
+         * MPObjective). You need to cast the void* returned back to its original type
+         * that depends on the interface (CBC: OsiClpSolverInterface*, CLP:
+         * ClpSimplex*, GLPK: glp_prob*, SCIP: SCIP*).
+         * 
+         * C++ void* underlying_solver();
+         */
+        underlying_solver(): void;
 
-    //     absl::Duration DurationSinceConstruction() const
-    //     {
-    //         return absl::Now() - construction_time_;
-    //     }
-    /**
-     * Returns the time elapsed since the creation of this MPSolver instance.
-     * 
-     * C++ absl::Duration DurationSinceConstruction() const;
-     */
-    DurationSinceConstruction(): number;
+        /**
+         * Advanced usage: computes the exact condition number of the current scaled
+         * basis: L1norm(B) * L1norm(inverse(B)), where B is the scaled basis.
+         * 
+         * It is only available for continuous problems. It is implemented for GLPK
+         * but not CLP because CLP does not provide the API for doing it.
+         * 
+         * The condition number measures how well the constraint matrix is conditioned
+         * and can be used to predict whether numerical issues will arise during the
+         * solve: the model is declared infeasible whereas it is feasible (or
+         * vice-versa), the solution obtained is not optimal or violates some
+         * constraints, the resolution is slow because of repeated singularities.
+         * 
+         * The rule of thumb to interpret the condition number kappa is:
+         *   - o kappa <= 1e7: virtually no chance of numerical issues
+         *   - o 1e7 < kappa <= 1e10: small chance of numerical issues
+         *   - o 1e10 < kappa <= 1e13: medium chance of numerical issues
+         *   - o kappa > 1e13: high chance of numerical issues
+         * 
+         * The computation of the condition number depends on the quality of the LU
+         * decomposition, so it is not very accurate when the matrix is ill
+         * conditioned.
+         * 
+         * C++ double ComputeExactConditionNumber() const;
+         */
+        ComputeExactConditionNumber(): number;
 
+        /**
+         * Some solvers (MIP only, not LP) can produce multiple solutions to the
+         * problem. Returns true when another solution is available, and updates the
+         * MPVariable* objects to make the new solution queryable. Call only after
+         * calling solve.
+         * 
+         * The optimality properties of the additional solutions found, and whether or
+         * not the solver computes them ahead of time or when NextSolution() is called
+         * is solver specific.
+         * 
+         * As of 2020-02-10, only Gurobi and SCIP support NextSolution(), see
+         * linear_solver_interfaces_test for an example of how to configure these
+         * solvers for multiple solutions. Other solvers return false unconditionally.
+         * 
+         * C++ ABSL_MUST_USE_RESULT bool NextSolution();
+         */
+        NextSolution(): boolean;
 
-    //     /// Returns the number of simplex iterations.
-    //     int64_t iterations() const;
-    /**
-     * Returns the number of simplex iterations.
-     * 
-     * C++ int64_t iterations() const;
-     */
-    iterations(): number;
+        /**
+         * Does not take ownership of "mp_callback".
+         * 
+         * As of 2019-10-22, only SCIP and Gurobi support Callbacks.
+         * SCIP does not support suggesting a heuristic solution in the callback.
+         * 
+         * C++ void SetCallback( MPCallback* mp_callback );
+         */
+        SetCallback(mp_callback: MPCallback): void;
 
+        /**
+         * C++ bool SupportsCallbacks() const;
+         */
+        SupportsCallbacks(): boolean;
 
-    //     /**
-    //      * Returns the number of branch-and-bound nodes evaluated during the solve.
-    //      *
-    //      * Only available for discrete problems.
-    //      */
-    //     int64_t nodes() const;
-    /**
-     * Returns the number of branch-and-bound nodes evaluated during the solve.
-     * 
-     * Only available for discrete problems.
-     * 
-     * C++ int64_t nodes() const;
-     */
-    nodes(): number;
-
-
-    //     /// Returns a string describing the underlying solver and its version.
-    //     std::string SolverVersion() const;
-    /**
-     * Returns a string describing the underlying solver and its version.
-     * 
-     * C++ std::string SolverVersion() const;
-     */
-    SolverVersion(): string;
-
-
-    //     /**
-    //      * Advanced usage: returns the underlying solver.
-    //      *
-    //      * Returns the underlying solver so that the user can use solver-specific
-    //      * features or features that are not exposed in the simple API of MPSolver.
-    //      * This method is for advanced users, use at your own risk! In particular, if
-    //      * you modify the model or the solution by accessing the underlying solver
-    //      * directly, then the underlying solver will be out of sync with the
-    //      * information kept in the wrapper (MPSolver, MPVariable, MPConstraint,
-    //      * MPObjective). You need to cast the void* returned back to its original type
-    //      * that depends on the interface (CBC: OsiClpSolverInterface*, CLP:
-    //      * ClpSimplex*, GLPK: glp_prob*, SCIP: SCIP*).
-    //      */
-    //     void* underlying_solver();
-    /**
-     * Advanced usage: returns the underlying solver.
-     * 
-     * Returns the underlying solver so that the user can use solver-specific
-     * features or features that are not exposed in the simple API of MPSolver.
-     * This method is for advanced users, use at your own risk! In particular, if
-     * you modify the model or the solution by accessing the underlying solver
-     * directly, then the underlying solver will be out of sync with the
-     * information kept in the wrapper (MPSolver, MPVariable, MPConstraint,
-     * MPObjective). You need to cast the void* returned back to its original type
-     * that depends on the interface (CBC: OsiClpSolverInterface*, CLP:
-     * ClpSimplex*, GLPK: glp_prob*, SCIP: SCIP*).
-     * 
-     * C++ void* underlying_solver();
-     */
-    underlying_solver(): void;
-
-
-    //     /** Advanced usage: computes the exact condition number of the current scaled
-    //      * basis: L1norm(B) * L1norm(inverse(B)), where B is the scaled basis.
-    //      *
-    //      * This method requires that a basis exists: it should be called after Solve.
-    //      * It is only available for continuous problems. It is implemented for GLPK
-    //      * but not CLP because CLP does not provide the API for doing it.
-    //      *
-    //      * The condition number measures how well the constraint matrix is conditioned
-    //      * and can be used to predict whether numerical issues will arise during the
-    //      * solve: the model is declared infeasible whereas it is feasible (or
-    //      * vice-versa), the solution obtained is not optimal or violates some
-    //      * constraints, the resolution is slow because of repeated singularities.
-    //      *
-    //      * The rule of thumb to interpret the condition number kappa is:
-    //      *   - o kappa <= 1e7: virtually no chance of numerical issues
-    //      *   - o 1e7 < kappa <= 1e10: small chance of numerical issues
-    //      *   - o 1e10 < kappa <= 1e13: medium chance of numerical issues
-    //      *   - o kappa > 1e13: high chance of numerical issues
-    //      *
-    //      * The computation of the condition number depends on the quality of the LU
-    //      * decomposition, so it is not very accurate when the matrix is ill
-    //      * conditioned.
-    //      */
-    //     double ComputeExactConditionNumber() const;
-    /**
-     * Advanced usage: computes the exact condition number of the current scaled
-     * basis: L1norm(B) * L1norm(inverse(B)), where B is the scaled basis.
-     * 
-     * It is only available for continuous problems. It is implemented for GLPK
-     * but not CLP because CLP does not provide the API for doing it.
-     * 
-     * The condition number measures how well the constraint matrix is conditioned
-     * and can be used to predict whether numerical issues will arise during the
-     * solve: the model is declared infeasible whereas it is feasible (or
-     * vice-versa), the solution obtained is not optimal or violates some
-     * constraints, the resolution is slow because of repeated singularities.
-     * 
-     * The rule of thumb to interpret the condition number kappa is:
-     *   - o kappa <= 1e7: virtually no chance of numerical issues
-     *   - o 1e7 < kappa <= 1e10: small chance of numerical issues
-     *   - o 1e10 < kappa <= 1e13: medium chance of numerical issues
-     *   - o kappa > 1e13: high chance of numerical issues
-     * 
-     * The computation of the condition number depends on the quality of the LU
-     * decomposition, so it is not very accurate when the matrix is ill
-     * conditioned.
-     * 
-     * C++ double ComputeExactConditionNumber() const;
-     */
-    ComputeExactConditionNumber(): number;
-
-
-    //     /**
-    //      * Some solvers (MIP only, not LP) can produce multiple solutions to the
-    //      * problem. Returns true when another solution is available, and updates the
-    //      * MPVariable* objects to make the new solution queryable. Call only after
-    //      * calling solve.
-    //      *
-    //      * The optimality properties of the additional solutions found, and whether or
-    //      * not the solver computes them ahead of time or when NextSolution() is called
-    //      * is solver specific.
-    //      *
-    //      * As of 2020-02-10, only Gurobi and SCIP support NextSolution(), see
-    //      * linear_solver_interfaces_test for an example of how to configure these
-    //      * solvers for multiple solutions. Other solvers return false unconditionally.
-    //      */
-    //     ABSL_MUST_USE_RESULT bool NextSolution();
-    /**
-     * Some solvers (MIP only, not LP) can produce multiple solutions to the
-     * problem. Returns true when another solution is available, and updates the
-     * MPVariable* objects to make the new solution queryable. Call only after
-     * calling solve.
-     * 
-     * The optimality properties of the additional solutions found, and whether or
-     * not the solver computes them ahead of time or when NextSolution() is called
-     * is solver specific.
-     * 
-     * As of 2020-02-10, only Gurobi and SCIP support NextSolution(), see
-     * linear_solver_interfaces_test for an example of how to configure these
-     * solvers for multiple solutions. Other solvers return false unconditionally.
-     * 
-     * C++ ABSL_MUST_USE_RESULT bool NextSolution();
-     */
-    NextSolution(): boolean;
-
-
-    //     // Does not take ownership of "mp_callback".
-    //     //
-    //     // As of 2019-10-22, only SCIP and Gurobi support Callbacks.
-    //     // SCIP does not support suggesting a heuristic solution in the callback.
-    //     void SetCallback( MPCallback* mp_callback );
-    //     bool SupportsCallbacks() const;
-    /**
-     * Does not take ownership of "mp_callback".
-     * 
-     * As of 2019-10-22, only SCIP and Gurobi support Callbacks.
-     * SCIP does not support suggesting a heuristic solution in the callback.
-     * 
-     * C++ void SetCallback( MPCallback* mp_callback );
-     */
-    SetCallback(mp_callback: MPCallback): void;
-    SupportsCallbacks(): boolean;
-
-
-    //     // Global counters of variables and constraints ever created across all
-    //     // MPSolver instances. Those are only updated after the destruction
-    //     // (or Clear()) of each MPSolver instance.
-    //     static int64_t global_num_variables();
-    //     static int64_t global_num_constraints();
         /**
          * Global counters of variables and constraints ever created across all
          * MPSolver instances. Those are only updated after the destruction
          * (or Clear()) of each MPSolver instance.
          * 
          * C++ static int64_t global_num_variables();
-         * C++ static int64_t global_num_constraints();
          */
         static global_num_variables(): number;
+
+        /**
+         * C++ static int64_t global_num_constraints();
+         */
         static global_num_constraints(): number;
 
+        /**
+         * DEPRECATED: Use TimeLimit() and SetTimeLimit(absl::Duration) instead.
+         * NOTE: These deprecated functions used the convention time_limit = 0 to mean  
+         * "no limit", which now corresponds to time_limit_ = InfiniteDuration().
+         * 
+         * C++ int64_t time_limit() const;
+         */
+        time_limit(): number;
 
-    //     // DEPRECATED: Use TimeLimit() and SetTimeLimit(absl::Duration) instead.
-    //     // NOTE: These deprecated functions used the convention time_limit = 0 to mean
-    //     // "no limit", which now corresponds to time_limit_ = InfiniteDuration().
-    //     int64_t time_limit() const
-    //     {
-    //         return time_limit_ == absl::InfiniteDuration()
-    //                    ? 0
-    //                    : absl::ToInt64Milliseconds( time_limit_ );
-    //     }
-    /**
-     * DEPRECATED: Use TimeLimit() and SetTimeLimit(absl::Duration) instead.
-     * NOTE: These deprecated functions used the convention time_limit = 0 to mean  
-     * "no limit", which now corresponds to time_limit_ = InfiniteDuration().
-     * 
-     * C++ int64_t time_limit() const;
-     */
-    time_limit(): number;
+        /**
+         * C++ void set_time_limit( int64_t time_limit_milliseconds );
+         */
+        set_time_limit(time_limit_milliseconds: number): void;
 
+        /**
+         * C++ double time_limit_in_secs() const;
+         */
+        time_limit_in_secs(): number;
 
-    //     void set_time_limit( int64_t time_limit_milliseconds )
-    //     {
-    //         SetTimeLimit( time_limit_milliseconds == 0
-    //                           ? absl::InfiniteDuration()
-    //                           : absl::Milliseconds( time_limit_milliseconds ) );
-    //     }
-    /**
-     * DEPRECATED: Use TimeLimit() and SetTimeLimit(absl::Duration) instead.
-     * NOTE: These deprecated functions used the convention time_limit = 0 to mean  
-     * "no limit", which now corresponds to time_limit_ = InfiniteDuration().
-     * 
-     * C++ void set_time_limit( int64_t time_limit_milliseconds );
-     */
-    set_time_limit(time_limit_milliseconds: number): void;
+        /**
+         * DEPRECATED: Use DurationSinceConstruction() instead.
+         * 
+         * C++ int64_t wall_time() const;
+         */
+        wall_time(): number;
 
-
-    //     double time_limit_in_secs() const
-    //     {
-    //         return static_cast< double >( time_limit() ) / 1000.0;
-    //     }
-    /**
-     * DEPRECATED: Use TimeLimit() and SetTimeLimit(absl::Duration) instead.
-     * NOTE: These deprecated functions used the convention time_limit = 0 to mean  
-     * "no limit", which now corresponds to time_limit_ = InfiniteDuration().
-     * 
-     * C++ double time_limit_in_secs() const;
-     */
-    time_limit_in_secs(): number;
-
-
-
-    //     // DEPRECATED: Use DurationSinceConstruction() instead.
-    //     int64_t wall_time() const
-    //     {
-    //         return absl::ToInt64Milliseconds( DurationSinceConstruction() );
-    //     }
-    /**
-     * DEPRECATED: Use DurationSinceConstruction() instead.
-     * 
-     * C++ int64_t wall_time() const;
-     */
-    wall_time(): number;
-
-
-
-
-    //     // Debugging: verify that the given MPVariable* belongs to this solver.
-    //     bool OwnsVariable( const MPVariable* var ) const;
-    /**
-     * Debugging: verify that the given MPVariable* belongs to this solver.
-     * 
-     * C++ bool OwnsVariable( const MPVariable* var ) const;
-     */
-    OwnsVariable(var: MPVariable): boolean;
-};
-
+        /**
+         * Debugging: verify that the given MPVariable* belongs to this solver.
+         * 
+         * C++ bool OwnsVariable( const MPVariable* var ) const;
+         */
+        OwnsVariable(var_: MPVariable): boolean;
+    };
 
 }
