@@ -27,6 +27,7 @@ public:
     };
 
     // ~GDemo()
+    // TODO  delete pDemo or not????;
 
     static Napi::Object Init( Napi::Env env, Napi::Object exports )
     {

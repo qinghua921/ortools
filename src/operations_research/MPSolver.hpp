@@ -5,6 +5,9 @@
 #include "MPVariable.hpp"
 #include "MPConstraint.hpp"
 #include "LinearRange.hpp"
+#include "MPObjective.hpp"
+#include "MPSolverParameters.hpp"
+#include "MPModelProto.hpp"
 
 namespace operations_research
 {
@@ -47,9 +50,44 @@ public:
     static Napi::Object Init( Napi::Env env, Napi::Object exports )
     {
         Napi::HandleScope scope( env );
-        Napi::Function    func = DefineClass(
+
+        auto enumOptimizationProblemType = Napi::Object::New( env );
+        enumOptimizationProblemType.Set( "CLP_LINEAR_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::CLP_LINEAR_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "GLPK_LINEAR_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::GLPK_LINEAR_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "GLOP_LINEAR_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::GLOP_LINEAR_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "PDLP_LINEAR_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::PDLP_LINEAR_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "HIGHS_LINEAR_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::HIGHS_LINEAR_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "SCIP_MIXED_INTEGER_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::SCIP_MIXED_INTEGER_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "GLPK_MIXED_INTEGER_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::GLPK_MIXED_INTEGER_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "CBC_MIXED_INTEGER_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::CBC_MIXED_INTEGER_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "HIGHS_MIXED_INTEGER_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::HIGHS_MIXED_INTEGER_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "BOP_INTEGER_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::BOP_INTEGER_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "SAT_INTEGER_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::SAT_INTEGER_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "KNAPSACK_MIXED_INTEGER_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::KNAPSACK_MIXED_INTEGER_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "GUROBI_LINEAR_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::GUROBI_LINEAR_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "GUROBI_MIXED_INTEGER_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::GUROBI_MIXED_INTEGER_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "CPLEX_LINEAR_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::CPLEX_LINEAR_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "CPLEX_MIXED_INTEGER_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::CPLEX_MIXED_INTEGER_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "XPRESS_LINEAR_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::XPRESS_LINEAR_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "XPRESS_MIXED_INTEGER_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::XPRESS_MIXED_INTEGER_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "COPT_LINEAR_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::COPT_LINEAR_PROGRAMMING ) );
+        enumOptimizationProblemType.Set( "COPT_MIXED_INTEGER_PROGRAMMING", static_cast< int >( MPSolver::OptimizationProblemType::COPT_MIXED_INTEGER_PROGRAMMING ) );
+
+        auto enumResultStatus = Napi::Object::New( env );
+        enumResultStatus.Set( "OPTIMAL", static_cast< int >( MPSolver::ResultStatus::OPTIMAL ) );
+        enumResultStatus.Set( "FEASIBLE", static_cast< int >( MPSolver::ResultStatus::FEASIBLE ) );
+        enumResultStatus.Set( "INFEASIBLE", static_cast< int >( MPSolver::ResultStatus::INFEASIBLE ) );
+        enumResultStatus.Set( "UNBOUNDED", static_cast< int >( MPSolver::ResultStatus::UNBOUNDED ) );
+        enumResultStatus.Set( "ABNORMAL", static_cast< int >( MPSolver::ResultStatus::ABNORMAL ) );
+        enumResultStatus.Set( "MODEL_INVALID", static_cast< int >( MPSolver::ResultStatus::MODEL_INVALID ) );
+        enumResultStatus.Set( "NOT_SOLVED", static_cast< int >( MPSolver::ResultStatus::NOT_SOLVED ) );
+
+        Napi::Function func = DefineClass(
             env, "MPSolver",
             {
+                StaticValue( "OptimizationProblemType", enumOptimizationProblemType ),
+                StaticValue( "ResultStatus", enumResultStatus ),
+
                 StaticMethod( "CreateSolver", &GMPSolver::CreateSolver ),
                 StaticMethod( "SupportsProblemType", &GMPSolver::SupportsProblemType ),
                 StaticMethod( "ParseSolverType", &GMPSolver::ParseSolverType ),
@@ -75,11 +113,192 @@ public:
                 InstanceMethod( "constraint", &GMPSolver::constraint ),
                 InstanceMethod( "LookupConstraintOrNull", &GMPSolver::LookupConstraintOrNull ),
                 InstanceMethod( "MakeRowConstraint", &GMPSolver::MakeRowConstraint ),
+                InstanceMethod( "MutableObjective", &GMPSolver::MutableObjective ),
+                InstanceMethod( "Solve", &GMPSolver::Solve ),
+                InstanceMethod( "Write", &GMPSolver::Write ),
+                InstanceMethod( "ComputeConstraintActivities", &GMPSolver::ComputeConstraintActivities ),
+                InstanceMethod( "VerifySolution", &GMPSolver::VerifySolution ),
+                InstanceMethod( "Reset", &GMPSolver::Reset ),
+                InstanceMethod( "InterruptSolve", &GMPSolver::InterruptSolve ),
+                InstanceMethod( "LoadModelFromProto", &GMPSolver::LoadModelFromProto ),
+
             } );
         constructor = Napi::Persistent( func );
         constructor.SuppressDestruct();
         exports.Set( Napi::String::New( env, "MPSolver" ), func );
         return exports;
+    };
+
+    //     MPSolverResponseStatus LoadModelFromProto( const MPModelProto& input_model,
+    //                                                std::string*        error_message,
+    //                                                bool                clear_names = true );
+    Napi::Value LoadModelFromProto( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 1 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GMPModelProto::constructor.Value() ) )
+        {
+            auto        input_model = GMPModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
+            std::string error_message;
+            auto        status = pMPSolver->LoadModelFromProto( *input_model->pMPModelProto, &error_message );
+            auto        ret    = Napi::Object::New( env );
+            ret.Set( "return", Napi::Number::New( env, static_cast< int >( status ) ) );
+            ret.Set( "error_message", Napi::String::New( env, error_message ) );
+            return ret;
+        }
+
+        if ( info.Length() == 2 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GMPModelProto::constructor.Value() )
+             && info[ 1 ].IsBoolean() )
+        {
+            auto        input_model = GMPModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
+            bool        clear_names = info[ 1 ].As< Napi::Boolean >().Value();
+            std::string error_message;
+            auto        status = pMPSolver->LoadModelFromProto( *input_model->pMPModelProto, &error_message, clear_names );
+            auto        ret    = Napi::Object::New( env );
+            ret.Set( "return", Napi::Number::New( env, static_cast< int >( status ) ) );
+            ret.Set( "error_message", Napi::String::New( env, error_message ) );
+            return ret;
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::LoadModelFromProto : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    //     bool InterruptSolve();
+    Napi::Value InterruptSolve( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            bool result = pMPSolver->InterruptSolve();
+            return Napi::Boolean::New( env, result );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::InterruptSolve : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    //     void Reset();
+    Napi::Value Reset( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            pMPSolver->Reset();
+            return env.Undefined();
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::Reset : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    //     bool VerifySolution( double tolerance, bool log_errors ) const;
+    Napi::Value VerifySolution( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 2 && info[ 0 ].IsNumber() && info[ 1 ].IsBoolean() )
+        {
+            double tolerance  = info[ 0 ].As< Napi::Number >().DoubleValue();
+            bool   log_errors = info[ 1 ].As< Napi::Boolean >().Value();
+            bool   result     = pMPSolver->VerifySolution( tolerance, log_errors );
+            return Napi::Boolean::New( env, result );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::VerifySolution : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    //     std::vector< double > ComputeConstraintActivities() const;
+    Napi::Value ComputeConstraintActivities( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            std::vector< double > activities = pMPSolver->ComputeConstraintActivities();
+            Napi::Array           result     = Napi::Array::New( env, activities.size() );
+            for ( int i = 0; i < activities.size(); i++ )
+            {
+                result[ i ] = Napi::Number::New( env, activities[ i ] );
+            }
+            return result;
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::ComputeConstraintActivities : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    //     void Write( const std::string& file_name );
+    Napi::Value Write( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 1 && info[ 0 ].IsString() )
+        {
+            std::string file_name = info[ 0 ].As< Napi::String >().Utf8Value();
+            pMPSolver->Write( file_name );
+            return env.Undefined();
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::Write : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    Napi::Value Solve( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        //     ResultStatus Solve();
+        if ( info.Length() == 0 )
+        {
+            MPSolver::ResultStatus status = pMPSolver->Solve();
+            return Napi::Number::New( env, static_cast< int >( status ) );
+        }
+
+        //     ResultStatus Solve( const MPSolverParameters& param );
+        if ( info.Length() == 1 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GMPSolverParameters::constructor.Value() ) )
+        {
+            auto                   param  = GMPSolverParameters::Unwrap( info[ 0 ].As< Napi::Object >() );
+            MPSolver::ResultStatus status = pMPSolver->Solve( *param->pMPSolverParameters );
+            return Napi::Number::New( env, static_cast< int >( status ) );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::Solve : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    //     MPObjective* MutableObjective()
+    Napi::Value MutableObjective( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            auto obj = pMPSolver->MutableObjective();
+            if ( obj )
+            {
+                auto external = Napi::External< MPObjective >::New( env, obj );
+                return GMPObjective::constructor.New( { external } );
+            }
+            return env.Null();
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::MutableObjective : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
     };
 
     Napi::Value MakeRowConstraint( const Napi::CallbackInfo& info )

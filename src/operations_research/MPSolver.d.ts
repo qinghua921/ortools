@@ -55,6 +55,29 @@ declare namespace operations_research
             COPT_MIXED_INTEGER_PROGRAMMING = 104,
         };
 
+        /**
+         * The status of solving the problem. The straightforward translation to
+         * homonymous enum values of MPSolverResponseStatus (see
+         * ./linear_solver.proto) is guaranteed by ./enum_consistency_test.cc, you may
+         * rely on it.
+         */
+        enum ResultStatus
+        {
+            /// optimal.
+            OPTIMAL,
+            /// feasible, or stopped by limit.
+            FEASIBLE,
+            /// proven infeasible.
+            INFEASIBLE,
+            /// proven unbounded.
+            UNBOUNDED,
+            /// abnormal, i.e., error of some kind.
+            ABNORMAL,
+            /// the model is trivially invalid (NaN coefficients, etc).
+            MODEL_INVALID,
+            /// not been solved yet.
+            NOT_SOLVED = 6
+        };
     }
 
     /**
@@ -613,49 +636,69 @@ declare namespace operations_research
         //     {
         //         return *objective_;
         //     }
-        // TODO  
+        /**
+         * Returns the objective object.
+         * 
+         * Note that the objective is owned by the solver, and is initialized to its
+         * default value (see the MPObjective class below) at construction.
+         * 
+         * C++ const MPObjective& Objective() const;
+         * 
+         * omit because it's not for other languages.
+         */
+        // Objective(): MPObjective;
 
         //     /// Returns the mutable objective object.
         //     MPObjective* MutableObjective()
         //     {
         //         return objective_.get();
         //     }
+        /**
+         * Returns the mutable objective object.
+         * 
+         * C++ MPObjective* MutableObjective();
+         */
+        MutableObjective(): MPObjective;
 
-        //     /**
-        //      * The status of solving the problem. The straightforward translation to
-        //      * homonymous enum values of MPSolverResponseStatus (see
-        //      * ./linear_solver.proto) is guaranteed by ./enum_consistency_test.cc, you may
-        //      * rely on it.
-        //      */
-        //     enum ResultStatus
-        //     {
-        //         /// optimal.
-        //         OPTIMAL,
-        //         /// feasible, or stopped by limit.
-        //         FEASIBLE,
-        //         /// proven infeasible.
-        //         INFEASIBLE,
-        //         /// proven unbounded.
-        //         UNBOUNDED,
-        //         /// abnormal, i.e., error of some kind.
-        //         ABNORMAL,
-        //         /// the model is trivially invalid (NaN coefficients, etc).
-        //         MODEL_INVALID,
-        //         /// not been solved yet.
-        //         NOT_SOLVED = 6
-        //     };
+
+
 
         //     /// Solves the problem using the default parameter values.
         //     ResultStatus Solve();
+        /**
+         * Solves the problem using the default parameter values.
+         * 
+         * C++ ResultStatus Solve();
+         */
+        Solve(): ResultStatus;
+
+
 
         //     /// Solves the problem using the specified parameter values.
         //     ResultStatus Solve( const MPSolverParameters& param );
+        /**
+         * Solves the problem using the specified parameter values.
+         * 
+         * C++ ResultStatus Solve( const MPSolverParameters& param );
+         */
+        Solve(param: MPSolverParameters): ResultStatus;
+
+
 
         //     /**
         //      * Writes the model using the solver internal write function.  Currently only
         //      * available for Gurobi.
         //      */
         //     void Write( const std::string& file_name );
+        /**
+         * Writes the model using the solver internal write function.  Currently only
+         * available for Gurobi.
+         * 
+         * C++ void Write( const std::string& file_name );
+         */
+        Write(file_name: string): void;
+
+
 
         //     /**
         //      * Advanced usage: compute the "activities" of all constraints, which are the
@@ -664,6 +707,17 @@ declare namespace operations_research
         //      * you can also use MPConstraint::index() to get a constraint's index.
         //      */
         //     std::vector< double > ComputeConstraintActivities() const;
+        /**
+         * Advanced usage: compute the "activities" of all constraints, which are the
+         * sums of their linear terms. The activities are returned in the same order
+         * as constraints(), which is the order in which constraints were added; but
+         * you can also use MPConstraint::index() to get a constraint's index.
+         * 
+         * C++ std::vector< double > ComputeConstraintActivities() const;
+         */
+        ComputeConstraintActivities(): Array<number>;
+
+
 
         //     /**
         //      * Advanced usage: Verifies the *correctness* of the solution.
@@ -684,6 +738,29 @@ declare namespace operations_research
         //      * this method directly.
         //      */
         //     bool VerifySolution( double tolerance, bool log_errors ) const;
+        /**
+         * Advanced usage: Verifies the *correctness* of the solution.
+         * 
+         * It verifies that all variables must be within their domains, all
+         * constraints must be satisfied, and the reported objective value must be
+         * accurate.
+         * 
+         * Usage:
+         * - This can only be called after Solve() was called.
+         * - "tolerance" is interpreted as an absolute error threshold.
+         * - For the objective value only, if the absolute error is too large,
+         *   the tolerance is interpreted as a relative error threshold instead.
+         * - If "log_errors" is true, every single violation will be logged.
+         * - If "tolerance" is negative, it will be set to infinity().
+         * 
+         * Most users should just set the --verify_solution flag and not bother using
+         * this method directly.
+         * 
+         * C++ bool VerifySolution( double tolerance, bool log_errors ) const;
+         */
+        VerifySolution(tolerance: number, log_errors: boolean): boolean;
+
+
 
         //     /**
         //      * Advanced usage: resets extracted model to solve from scratch.
@@ -694,6 +771,19 @@ declare namespace operations_research
         //      * everything was reconstructed from scratch.
         //      */
         //     void Reset();
+        /**
+         * Advanced usage: resets extracted model to solve from scratch.
+         * 
+         * This won't reset the parameters that were set with
+         * SetSolverSpecificParametersAsString() or set_time_limit() or even clear the
+         * linear program. It will just make sure that next Solve() will be as if
+         * everything was reconstructed from scratch.
+         * 
+         * C++ void Reset();
+         */
+        Reset(): void;
+
+
 
         //     /** Interrupts the Solve() execution to terminate processing if possible.
         //      *
@@ -705,6 +795,21 @@ declare namespace operations_research
         //      * interruption is supported for a given solver type.
         //      */
         //     bool InterruptSolve();
+        /**
+         * Interrupts the Solve() execution to terminate processing if possible.
+         * 
+         * If the underlying interface supports interruption; it does that and returns
+         * true regardless of whether there's an ongoing Solve() or not. The Solve()
+         * call may still linger for a while depending on the conditions.  If
+         * interruption is not supported; returns false and does nothing.
+         * MPSolver::SolverTypeSupportsInterruption can be used to check if
+         * interruption is supported for a given solver type.
+         * 
+         * C++ bool InterruptSolve();
+         */
+        InterruptSolve(): boolean;
+
+
 
         //     /**
         //      * Loads model from protocol buffer.
@@ -718,6 +823,22 @@ declare namespace operations_research
         //     MPSolverResponseStatus LoadModelFromProto( const MPModelProto& input_model,
         //                                                std::string*        error_message,
         //                                                bool                clear_names = true );
+        /**
+         * Loads model from protocol buffer.
+         * 
+         * Returns MPSOLVER_MODEL_IS_VALID if the model is valid, and another status
+         * otherwise (currently only MPSOLVER_MODEL_INVALID and MPSOLVER_INFEASIBLE).
+         * If the model isn't valid, populates "error_message".
+         * If `clear_names` is true (the default), clears all names, otherwise returns
+         * MPSOLVER_MODEL_INVALID if there are duplicates (non-empty) names.
+         * 
+         * C++ MPSolverResponseStatus LoadModelFromProto( const MPModelProto& input_model,
+         *                                                std::string*        error_message,
+         *                                                bool                clear_names = true );
+         */
+        LoadModelFromProto(input_model: MPModelProto, clear_names: boolean = true): { return: MPSolverResponseStatus, error_message: string, };
+
+
         //     /**
         //      * Loads model from protocol buffer.
         //      *

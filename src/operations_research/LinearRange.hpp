@@ -28,7 +28,7 @@ public:
     };
 
     // ~GLinearRange()
-    // TODO
+    // TODO delete pLinearRange or not?????;
 
     static Napi::Object Init( Napi::Env env, Napi::Object exports )
     {
