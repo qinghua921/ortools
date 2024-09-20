@@ -848,9 +848,30 @@ declare namespace operations_research
         //      */
         //     MPSolverResponseStatus LoadModelFromProtoWithUniqueNamesOrDie(
         //         const MPModelProto& input_model, std::string* error_message );
+        /**
+         * Loads model from protocol buffer.
+         * 
+         * The same as above, except that the loading keeps original variable and
+         * constraint names. Caller should make sure that all variable names and
+         * constraint names are unique, respectively.
+         * 
+         * C++ MPSolverResponseStatus LoadModelFromProtoWithUniqueNamesOrDie(
+         *     const MPModelProto& input_model, std::string* error_message );
+         */
+        LoadModelFromProtoWithUniqueNamesOrDie(input_model: MPModelProto): { return: MPSolverResponseStatus, error_message: string, };
+
+
 
         //     /// Encodes the current solution in a solution response protocol buffer.
         //     void FillSolutionResponseProto( MPSolutionResponse* response ) const;
+        /**
+         * Encodes the current solution in a solution response protocol buffer.
+         * 
+         * C++ void FillSolutionResponseProto( MPSolutionResponse* response ) const;
+         */
+        FillSolutionResponseProto(response: MPSolutionResponse): void;
+
+
 
         //     /**
         //      * Solves the model encoded by a MPModelRequest protocol buffer and fills the
@@ -874,6 +895,7 @@ declare namespace operations_research
         //     static void SolveWithProto( const MPModelRequest& model_request,
         //                                 MPSolutionResponse*   response,
         //                                 std::atomic< bool >*  interrupt = nullptr );
+        
 
         //     /**
         //      * This version support both `const MPModelRequest&` and `MPModelRequest&&`
