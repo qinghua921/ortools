@@ -9,6 +9,7 @@
 #include "MPSolverParameters.hpp"
 #include "MPModelProto.hpp"
 #include "MPSolutionResponse.hpp"
+#include "MPModelRequest.hpp"
 
 namespace operations_research
 {
@@ -125,12 +126,52 @@ public:
                 InstanceMethod( "LoadModelFromProtoWithUniqueNamesOrDie", &GMPSolver::LoadModelFromProtoWithUniqueNamesOrDie ),
                 InstanceMethod( "FillSolutionResponseProto", &GMPSolver::FillSolutionResponseProto ),
                 InstanceMethod( "ExportModelToProto", &GMPSolver::ExportModelToProto ),
+                StaticMethod( "SolveWithProto", &GMPSolver::SolveWithProto ),
 
             } );
         constructor = Napi::Persistent( func );
         constructor.SuppressDestruct();
         exports.Set( Napi::String::New( env, "MPSolver" ), func );
         return exports;
+    };
+
+    //     static void SolveWithProto( const MPModelRequest& model_request,
+    //                                 MPSolutionResponse*   response,
+    //                                 std::atomic< bool >*  interrupt = nullptr );
+    static Napi::Value SolveWithProto( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 2 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GMPModelRequest::constructor.Value() )
+             && info[ 1 ].IsBoolean() )
+        {
+            auto                model_request = GMPModelRequest::Unwrap( info[ 0 ].As< Napi::Object >() );
+            bool                interrupt     = info[ 1 ].As< Napi::Boolean >().Value();
+            MPSolutionResponse* response      = new MPSolutionResponse();
+            std::atomic< bool > interrupt_flag( interrupt );
+            MPSolver::SolveWithProto( *model_request->pMPModelRequest, response, &interrupt_flag );
+            auto ret = Napi::Object::New( env );
+            ret.Set( "response", GMPSolutionResponse::constructor.New( { Napi::External< MPSolutionResponse >::New( env, response ) } ) );
+            ret.Set( "interrupt", Napi::Boolean::New( env, interrupt_flag.load() ) );
+            return ret;
+        }
+
+        if ( info.Length() == 1 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GMPModelRequest::constructor.Value() ) )
+        {
+            auto                model_request = GMPModelRequest::Unwrap( info[ 0 ].As< Napi::Object >() );
+            MPSolutionResponse* response      = new MPSolutionResponse();
+            MPSolver::SolveWithProto( *model_request->pMPModelRequest, response );
+            auto ret = Napi::Object::New( env );
+            ret.Set( "response", GMPSolutionResponse::constructor.New( { Napi::External< MPSolutionResponse >::New( env, response ) } ) );
+            ret.Set( "interrupt", env.Null() );
+            return ret;
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::SolveWithProto : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
     };
 
     //     void ExportModelToProto( MPModelProto* output_model ) const;

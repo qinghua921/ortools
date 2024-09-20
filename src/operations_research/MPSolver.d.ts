@@ -919,9 +919,9 @@ declare namespace operations_research
          *                                 MPSolutionResponse*   response,
          *                                 std::atomic< bool >*  interrupt = nullptr );
          * 
-         * omit because it's deprecated.
+         * @deprecated Prefer SolveMPModel() from solve_mp_model.h.
          */
-        // static SolveWithProto(model_request: MPModelRequest, response: MPSolutionResponse, interrupt: boolean): void;
+        static SolveWithProto(model_request: MPModelRequest, interrupt: boolean | null = null): { response: MPSolutionResponse, interrupt: boolean | null, };
 
         //     /**
         //      * This version support both `const MPModelRequest&` and `MPModelRequest&&`
