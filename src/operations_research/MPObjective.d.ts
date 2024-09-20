@@ -5,18 +5,18 @@ declare namespace operations_research
      */
     declare class MPObjective
     {
-        // public:
-        // #ifndef SWIG
-        //     // This type is neither copyable nor movable.
-        //     MPObjective( const MPObjective& )            = delete;
-        //     MPObjective& operator=( const MPObjective& ) = delete;
-        // #endif
-
         //     /**
         //      *  Clears the offset, all variables and coefficients, and the optimization
         //      * direction.
         //      */
         //     void Clear();
+        /**
+         *  Clears the offset, all variables and coefficients, and the optimization
+         *  direction.
+         * 
+         * C++ void Clear();
+         */
+        Clear(): void;
 
         //     /**
         //      * Sets the coefficient of the variable in the objective.
@@ -25,6 +25,17 @@ declare namespace operations_research
         //      * or crashes in non-opt mode.
         //      */
         //     void SetCoefficient( const MPVariable* var, double coeff );
+        /**
+         * Sets the coefficient of the variable in the objective.
+         *
+         * If the variable does not belong to the solver, the function just returns,
+         * or crashes in non-opt mode.
+         * 
+         * C++ void SetCoefficient( const MPVariable* var, double coeff );
+         */
+        SetCoefficient(var_: MPVariable, coeff: number): void;
+
+
 
         //     /**
         //      *  Gets the coefficient of a given variable in the objective
@@ -32,6 +43,16 @@ declare namespace operations_research
         //      * It returns 0 if the variable does not appear in the objective).
         //      */
         //     double GetCoefficient( const MPVariable* var ) const;
+        /**
+         *  Gets the coefficient of a given variable in the objective
+         *
+         * It returns 0 if the variable does not appear in the objective).
+         * 
+         * C++ double GetCoefficient( const MPVariable* var ) const;
+         */
+        GetCoefficient(var_: MPVariable): number;
+
+
 
         //     /**
         //      * Returns a map from variables to their coefficients in the objective.
@@ -42,6 +63,14 @@ declare namespace operations_research
         //     {
         //         return coefficients_;
         //     }
+        /**
+         * Returns a map from variables to their coefficients in the objective.
+         *
+         * If a variable is not present in the map, then its coefficient is zero.
+         * 
+         * C++ const absl::flat_hash_map< const MPVariable*, double >& terms() const;
+         */
+        terms(): Map< Readonly<MPVariable>, number>;
 
         //     /// Sets the constant term in the objective.
         //     void SetOffset( double value );
@@ -113,39 +142,6 @@ declare namespace operations_research
         //      * optimal integer solution. Only available for discrete problems.
         //      */
         //     double BestBound() const;
-
-        // private:
-        //     friend class MPSolver;
-        //     friend class MPSolverInterface;
-        //     friend class CBCInterface;
-        //     friend class CLPInterface;
-        //     friend class GLPKInterface;
-        //     friend class SCIPInterface;
-        //     friend class SLMInterface;
-        //     friend class GurobiInterface;
-        //     friend class CplexInterface;
-        //     friend class XpressInterface;
-        //     friend class GLOPInterface;
-        //     friend class BopInterface;
-        //     friend class SatInterface;
-        //     friend class PdlpInterface;
-        //     friend class HighsInterface;
-        //     friend class KnapsackInterface;
-
-        //     // Constructor. An objective points to a single MPSolverInterface
-        //     // that is specified in the constructor. An objective cannot belong
-        //     // to several models.
-        //     // At construction, an MPObjective has no terms (which is equivalent
-        //     // on having a coefficient of 0 for all variables), and an offset of 0.
-        //     explicit MPObjective( MPSolverInterface* const interface_in )
-        //         : interface_( interface_in ), coefficients_( 1 ), offset_( 0.0 ) {}
-
-        //     MPSolverInterface* const interface_;
-
-        //     // Mapping var -> coefficient.
-        //     absl::flat_hash_map< const MPVariable*, double > coefficients_;
-        //     // Constant term.
-        //     double offset_;
     };
 
 }
