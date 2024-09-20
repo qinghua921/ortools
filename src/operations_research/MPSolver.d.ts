@@ -1025,6 +1025,7 @@ declare namespace operations_research
         //     absl::Status LoadSolutionFromProto(
         //         const MPSolutionResponse& response,
         //         double                    tolerance = std::numeric_limits< double >::infinity() );
+        // TODO  continue here.
 
         //     /**
         //      * Resets values of out of bound variables to the corresponding bound and
@@ -1273,106 +1274,8 @@ declare namespace operations_research
         //         return absl::ToInt64Milliseconds( DurationSinceConstruction() );
         //     }
 
-        //     friend class GLPKInterface;
-        //     friend class CLPInterface;
-        //     friend class CBCInterface;
-        //     friend class SCIPInterface;
-        //     friend class GurobiInterface;
-        //     friend class CplexInterface;
-        //     friend class XpressInterface;
-        //     friend class SLMInterface;
-        //     friend class MPSolverInterface;
-        //     friend class GLOPInterface;
-        //     friend class BopInterface;
-        //     friend class SatInterface;
-        //     friend class PdlpInterface;
-        //     friend class HighsInterface;
-        //     friend class KnapsackInterface;
-
         //     // Debugging: verify that the given MPVariable* belongs to this solver.
         //     bool OwnsVariable( const MPVariable* var ) const;
-
-        // private:
-        //     // Computes the size of the constraint with the largest number of
-        //     // coefficients with index in [min_constraint_index,
-        //     // max_constraint_index)
-        //     int ComputeMaxConstraintSize( int min_constraint_index,
-        //                                   int max_constraint_index ) const;
-
-        //     // Returns true if the model has constraints with lower bound > upper bound.
-        //     bool HasInfeasibleConstraints() const;
-
-        //     // Returns true if the model has at least 1 integer variable.
-        //     bool HasIntegerVariables() const;
-
-        //     // Generates the map from variable names to their indices.
-        //     void GenerateVariableNameIndex() const;
-
-        //     // Generates the map from constraint names to their indices.
-        //     void GenerateConstraintNameIndex() const;
-
-        //     // The name of the linear programming problem.
-        //     const std::string name_;
-
-        //     // The type of the linear programming problem.
-        //     const OptimizationProblemType problem_type_;
-
-        //     // The solver interface.
-        //     std::unique_ptr< MPSolverInterface > interface_;
-
-        //     // The vector of variables in the problem.
-        //     std::vector< MPVariable* > variables_;
-        //     // A map from a variable's name to its index in variables_.
-        //     mutable std::optional< absl::flat_hash_map< std::string, int > >
-        //         variable_name_to_index_;
-        //     // Whether variables have been extracted to the underlying interface.
-        //     std::vector< bool > variable_is_extracted_;
-
-        //     // The vector of constraints in the problem.
-        //     std::vector< MPConstraint* > constraints_;
-        //     // A map from a constraint's name to its index in constraints_.
-        //     mutable std::optional< absl::flat_hash_map< std::string, int > >
-        //         constraint_name_to_index_;
-        //     // Whether constraints have been extracted to the underlying interface.
-        //     std::vector< bool > constraint_is_extracted_;
-
-        //     // The linear objective function.
-        //     std::unique_ptr< MPObjective > objective_;
-
-        //     // Initial values for all or some of the problem variables that can be
-        //     // exploited as a starting hint by a solver.
-        //     //
-        //     // Note(user): as of 05/05/2015, we can't use >> because of some SWIG errors.
-        //     //
-        //     // TODO(user): replace by two vectors, a std::vector<bool> to indicate if a
-        //     // hint is provided and a std::vector<double> for the hint value.
-        //     std::vector< std::pair< const MPVariable*, double > > solution_hint_;
-
-        //     absl::Duration time_limit_ = absl::InfiniteDuration();  // Default = No limit.
-
-        //     const absl::Time construction_time_;
-
-        //     // Permanent storage for the number of threads.
-        //     int num_threads_ = 1;
-
-        //     // Permanent storage for SetSolverSpecificParametersAsString().
-        //     std::string solver_specific_parameter_string_;
-
-        //     static absl::Mutex global_count_mutex_;
-        // #ifndef SWIG
-        //     static int64_t global_num_variables_   ABSL_GUARDED_BY( global_count_mutex_ );
-        //     static int64_t global_num_constraints_ ABSL_GUARDED_BY( global_count_mutex_ );
-        // #endif
-
-        //     enum ModelProtoNamesPolicy
-        //     {
-        //         DEFAULT_CLEAR_NAMES                       = 0,
-        //         INVALID_MODEL_ON_DUPLICATE_NONEMPTY_NAMES = 1,
-        //         DIE_ON_DUPLICATE_NONEMPTY_NAMES           = 2,
-        //     };
-        //     MPSolverResponseStatus LoadModelFromProtoInternal(
-        //         const MPModelProto& input_model, ModelProtoNamesPolicy name_policy,
-        //         bool check_model_validity, std::string* error_message );
     };
 
 }
