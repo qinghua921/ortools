@@ -895,7 +895,33 @@ declare namespace operations_research
         //     static void SolveWithProto( const MPModelRequest& model_request,
         //                                 MPSolutionResponse*   response,
         //                                 std::atomic< bool >*  interrupt = nullptr );
-        
+        /**
+         * Solves the model encoded by a MPModelRequest protocol buffer and fills the
+         * solution encoded as a MPSolutionResponse. The solve is stopped prematurely
+         * if interrupt is non-null at set to true during (or before) solving.
+         * Interruption is only supported if SolverTypeSupportsInterruption() returns
+         * true for the requested solver. Passing a non-null interruption with any
+         * other solver type immediately returns an MPSOLVER_INCOMPATIBLE_OPTIONS
+         * error.
+         * 
+         * `interrupt` is non-const because the internal solver may set it to true
+         * itself, in some cases.
+         * 
+         * Note(user): This attempts to first use `DirectlySolveProto()` (if
+         * implemented). Consequently, this most likely does *not* override any of
+         * the default parameters of the underlying solver. This behavior *differs*
+         * from `MPSolver::Solve()` which by default sets the feasibility tolerance
+         * and the gap limit (as of 2020/02/11, to 1e-7 and 0.0001, respectively).
+         * 
+         * ABSL_DEPRECATED( "Prefer SolveMPModel() from solve_mp_model.h." )
+         * 
+         * C++ static void SolveWithProto( const MPModelRequest& model_request,
+         *                                 MPSolutionResponse*   response,
+         *                                 std::atomic< bool >*  interrupt = nullptr );
+         * 
+         * omit because it's deprecated.
+         */
+        // static SolveWithProto(model_request: MPModelRequest, response: MPSolutionResponse, interrupt: boolean): void;
 
         //     /**
         //      * This version support both `const MPModelRequest&` and `MPModelRequest&&`
@@ -910,6 +936,25 @@ declare namespace operations_research
         //     static void SolveLazyMutableRequest( LazyMutableCopy< MPModelRequest > request,
         //                                          MPSolutionResponse*               response,
         //                                          std::atomic< bool >*              interrupt = nullptr );
+        /**
+         * This version support both `const MPModelRequest&` and `MPModelRequest&&`
+         * for the request. When using the second form, it will try to delete the
+         * request as soon as it is translated to the solver internal representation.
+         * This saves peak memory usage.
+         * 
+         * Note that we need a different name and can't just accept MPModelRequest&&
+         * otherwise we have swig issues.
+         * 
+         * ABSL_DEPRECATED( "Prefer SolveMPModel() from solve_mp_model.h." )
+         * 
+         * C++ static void SolveLazyMutableRequest( LazyMutableCopy< MPModelRequest > request,
+         *                                          MPSolutionResponse*               response,
+         *                                          std::atomic< bool >*              interrupt = nullptr );
+         * 
+         * omit because it's deprecated.
+         */
+        // static SolveLazyMutableRequest(request: LazyMutableCopy< MPModelRequest >, response: MPSolutionResponse, interrupt: boolean): void;
+
 
         //     ABSL_DEPRECATED(
         //         "Prefer SolverTypeSupportsInterruption() from solve_mp_model.h." )
@@ -921,9 +966,28 @@ declare namespace operations_research
         //         // as of 2021/08/23, since InterruptSolve is not thread safe for SCIP.
         //         return solver == MPModelRequest::GLOP_LINEAR_PROGRAMMING || solver == MPModelRequest::GUROBI_LINEAR_PROGRAMMING || solver == MPModelRequest::GUROBI_MIXED_INTEGER_PROGRAMMING || solver == MPModelRequest::SAT_INTEGER_PROGRAMMING || solver == MPModelRequest::PDLP_LINEAR_PROGRAMMING;
         //     }
+        /**
+         * ABSL_DEPRECATED(
+         *      "Prefer SolverTypeSupportsInterruption() from solve_mp_model.h." )
+         * 
+         * C++ static bool SolverTypeSupportsInterruption(
+         *     const MPModelRequest::SolverType solver )
+         * 
+         * omit because it's deprecated.
+         */
+        // static SolverTypeSupportsInterruption(solver: MPModelRequest.SolverType): boolean;
+
 
         //     /// Exports model to protocol buffer.
         //     void ExportModelToProto( MPModelProto* output_model ) const;
+        /**
+         * Exports model to protocol buffer.
+         * 
+         * C++ void ExportModelToProto( MPModelProto* output_model ) const;
+         */
+        ExportModelToProto(output_model: MPModelProto): void;
+
+
 
         //     /**
         //      * Load a solution encoded in a protocol buffer onto this solver for easy

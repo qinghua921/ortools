@@ -124,12 +124,31 @@ public:
                 InstanceMethod( "LoadModelFromProto", &GMPSolver::LoadModelFromProto ),
                 InstanceMethod( "LoadModelFromProtoWithUniqueNamesOrDie", &GMPSolver::LoadModelFromProtoWithUniqueNamesOrDie ),
                 InstanceMethod( "FillSolutionResponseProto", &GMPSolver::FillSolutionResponseProto ),
+                InstanceMethod( "ExportModelToProto", &GMPSolver::ExportModelToProto ),
 
             } );
         constructor = Napi::Persistent( func );
         constructor.SuppressDestruct();
         exports.Set( Napi::String::New( env, "MPSolver" ), func );
         return exports;
+    };
+
+    //     void ExportModelToProto( MPModelProto* output_model ) const;
+    Napi::Value ExportModelToProto( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 1 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GMPModelProto::constructor.Value() ) )
+        {
+            auto output_model = GMPModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
+            pMPSolver->ExportModelToProto( output_model->pMPModelProto );
+            return env.Undefined();
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::ExportModelToProto : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
     };
 
     //     void FillSolutionResponseProto( MPSolutionResponse* response ) const;
