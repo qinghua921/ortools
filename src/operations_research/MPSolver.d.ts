@@ -61,7 +61,7 @@ declare namespace operations_research
          * ./linear_solver.proto) is guaranteed by ./enum_consistency_test.cc, you may
          * rely on it.
          */
-        enum ResultStatus
+        declare enum ResultStatus
         {
             /// optimal.
             OPTIMAL,
@@ -78,6 +78,20 @@ declare namespace operations_research
             /// not been solved yet.
             NOT_SOLVED = 6
         };
+
+        /**
+         * Advanced usage: possible basis status values for a variable and the slack
+         * variable of a linear constraint.
+         */
+        declare enum BasisStatus
+        {
+            FREE = 0,
+            AT_LOWER_BOUND,
+            AT_UPPER_BOUND,
+            FIXED_VALUE,
+            BASIC
+        };
+
     }
 
     /**
@@ -88,8 +102,6 @@ declare namespace operations_research
     {
         // public:
 
-        //     /// Create a solver with the given name and underlying solver backend.
-        //     MPSolver( const std::string& name, OptimizationProblemType problem_type );
         /**
          * Create a solver with the given name and underlying solver backend.
          * 
@@ -97,35 +109,6 @@ declare namespace operations_research
          */
         constructor(name: string, problem_type: MPSolver.OptimizationProblemType);
 
-        //     /**
-        //      * Recommended factory method to create a MPSolver instance, especially in
-        //      * non C++ languages.
-        //      *
-        //      * It returns a newly created solver instance if successful, or a nullptr
-        //      * otherwise. This can occur if the relevant interface is not linked in, or if
-        //      * a needed license is not accessible for commercial solvers.
-        //      *
-        //      * Ownership of the solver is passed on to the caller of this method.
-        //      * It will accept both string names of the OptimizationProblemType enum, as
-        //      * well as a short version (i.e. "SCIP_MIXED_INTEGER_PROGRAMMING" or "SCIP").
-        //      *
-        //      * solver_id is case insensitive, and the following names are supported:
-        //      *   - CLP_LINEAR_PROGRAMMING or CLP
-        //      *   - CBC_MIXED_INTEGER_PROGRAMMING or CBC
-        //      *   - GLOP_LINEAR_PROGRAMMING or GLOP
-        //      *   - BOP_INTEGER_PROGRAMMING or BOP
-        //      *   - SAT_INTEGER_PROGRAMMING or SAT or CP_SAT
-        //      *   - SCIP_MIXED_INTEGER_PROGRAMMING or SCIP
-        //      *   - GUROBI_LINEAR_PROGRAMMING or GUROBI_LP
-        //      *   - GUROBI_MIXED_INTEGER_PROGRAMMING or GUROBI or GUROBI_MIP
-        //      *   - CPLEX_LINEAR_PROGRAMMING or CPLEX_LP
-        //      *   - CPLEX_MIXED_INTEGER_PROGRAMMING or CPLEX or CPLEX_MIP
-        //      *   - XPRESS_LINEAR_PROGRAMMING or XPRESS_LP
-        //      *   - XPRESS_MIXED_INTEGER_PROGRAMMING or XPRESS or XPRESS_MIP
-        //      *   - GLPK_LINEAR_PROGRAMMING or GLPK_LP
-        //      *   - GLPK_MIXED_INTEGER_PROGRAMMING or GLPK or GLPK_MIP
-        //      */
-        //     static MPSolver* CreateSolver( const std::string& solver_id );
         /**
          * Recommended factory method to create a MPSolver instance, especially in
          * non C++ languages.
@@ -175,11 +158,6 @@ declare namespace operations_research
 
 
 
-        //     /**
-        //      * Whether the given problem type is supported (this will depend on the
-        //      * targets that you linked).
-        //      */
-        //     static bool SupportsProblemType( OptimizationProblemType problem_type );
         /**
          * Whether the given problem type is supported (this will depend on the
          * targets that you linked).
@@ -189,13 +167,6 @@ declare namespace operations_research
         static SupportsProblemType(problem_type: MPSolver.OptimizationProblemType): boolean;
 
 
-        //     /**
-        //      * Parses the name of the solver. Returns true if the solver type is
-        //      * successfully parsed as one of the OptimizationProblemType.
-        //      * See the documentation of CreateSolver() for the list of supported names.
-        //      */
-        //     static bool ParseSolverType( absl::string_view        solver_id,
-        //                                  OptimizationProblemType* type );
         /**
          * Parses the name of the solver. Returns true if the solver type is
          * successfully parsed as one of the OptimizationProblemType.
@@ -207,12 +178,6 @@ declare namespace operations_research
         static ParseSolverType(solver_id: string): { type: MPSolver.OptimizationProblemType, return: boolean }
 
 
-        //     /**
-        //      * Parses the name of the solver and returns the correct optimization type or
-        //      * dies. Invariant: ParseSolverTypeOrDie(ToString(type)) = type.
-        //      */
-        //     static OptimizationProblemType ParseSolverTypeOrDie(
-        //         const std::string& solver_id );
         /**
          * Parses the name of the solver and returns the correct optimization type or
          * dies. Invariant: ParseSolverTypeOrDie(ToString(type)) = type.
@@ -224,18 +189,12 @@ declare namespace operations_research
 
 
 
-        //     bool IsMIP() const;
         /**
          * C++ bool IsMIP() const;
          */
         IsMIP(): boolean;
 
 
-        //     /// Returns the name of the model set at construction.
-        //     const std::string& Name() const
-        //     {
-        //         return name_;  // Set at construction.
-        //     }
         /**
          * Returns the name of the model set at construction.
          * 
@@ -243,11 +202,6 @@ declare namespace operations_research
          */
         Name(): string;
 
-        //     /// Returns the optimization problem type set at construction.
-        //     virtual OptimizationProblemType ProblemType() const
-        //     {
-        //         return problem_type_;  // Set at construction.
-        //     }
         /**
          * Returns the optimization problem type set at construction.
          * 
@@ -257,12 +211,6 @@ declare namespace operations_research
 
 
 
-        //     /**
-        //      * Clears the objective (including the optimization direction), all variables
-        //      * and constraints. All the other properties of the MPSolver (like the time
-        //      * limit) are kept untouched.
-        //      */
-        //     void Clear();
         /**
          * Clears the objective (including the optimization direction), all variables
          * and constraints. All the other properties of the MPSolver (like the time
@@ -274,11 +222,6 @@ declare namespace operations_research
 
 
 
-        //     /// Returns the number of variables.
-        //     int NumVariables() const
-        //     {
-        //         return variables_.size();
-        //     }
         /**
          * Returns the number of variables.
          * 
@@ -288,14 +231,6 @@ declare namespace operations_research
 
 
 
-        //     /**
-        //      * Returns the array of variables handled by the MPSolver. (They are listed in
-        //      * the order in which they were created.)
-        //      */
-        //     const std::vector< MPVariable* >& variables() const
-        //     {
-        //         return variables_;
-        //     }
         /**
          * Returns the array of variables handled by the MPSolver. (They are listed in
          * the order in which they were created.)
@@ -306,13 +241,6 @@ declare namespace operations_research
 
 
 
-        //     /**
-        //      * Returns the variable at position index.
-        //      */
-        //     MPVariable* variable( int index ) const
-        //     {
-        //         return variables_[ index ];
-        //     }
         /**
          * Returns the variable at position index.
          * 
@@ -321,12 +249,6 @@ declare namespace operations_research
         variable(index: number): MPVariable;
 
 
-        //     /**
-        //      * Looks up a variable by name, and returns nullptr if it does not exist. The
-        //      * first call has a O(n) complexity, as the variable name index is lazily
-        //      * created upon first use. Will crash if variable names are not unique.
-        //      */
-        //     MPVariable* LookupVariableOrNull( const std::string& var_name ) const;
         /**
          * Looks up a variable by name, and returns nullptr if it does not exist. The
          * first call has a O(n) complexity, as the variable name index is lazily
@@ -563,8 +485,6 @@ declare namespace operations_research
 
 
 
-        //     /// Creates a constraint with -infinity and +infinity bounds.
-        //     MPConstraint* MakeRowConstraint();
         /**
          * Creates a constraint with -infinity and +infinity bounds.
          * 
@@ -574,9 +494,6 @@ declare namespace operations_research
 
 
 
-        //     /// Creates a named constraint with given bounds.
-        //     MPConstraint* MakeRowConstraint( double lb, double ub,
-        //                                      const std::string& name );
         /**
          * Creates a named constraint with given bounds.
          * 
@@ -587,8 +504,6 @@ declare namespace operations_research
 
 
 
-        //     /// Creates a named constraint with -infinity and +infinity bounds.
-        //     MPConstraint* MakeRowConstraint( const std::string& name );
         /**
          * Creates a named constraint with -infinity and +infinity bounds.
          * 
@@ -598,11 +513,6 @@ declare namespace operations_research
 
 
 
-        //     /**
-        //      * Creates a constraint owned by MPSolver enforcing:
-        //      *     range.lower_bound() <= range.linear_expr() <= range.upper_bound()
-        //      */
-        //     MPConstraint* MakeRowConstraint( const LinearRange& range );
         /**
          * Creates a constraint owned by MPSolver enforcing:
          *     range.lower_bound() <= range.linear_expr() <= range.upper_bound()
@@ -613,9 +523,6 @@ declare namespace operations_research
 
 
 
-        //     /// As above, but also names the constraint.
-        //     MPConstraint* MakeRowConstraint( const LinearRange& range,
-        //                                      const std::string& name );
         /**
          * As above, but also names the constraint.
          * 
@@ -626,16 +533,6 @@ declare namespace operations_research
 
 
 
-        //     /**
-        //      * Returns the objective object.
-        //      *
-        //      * Note that the objective is owned by the solver, and is initialized to its
-        //      * default value (see the MPObjective class below) at construction.
-        //      */
-        //     const MPObjective& Objective() const
-        //     {
-        //         return *objective_;
-        //     }
         /**
          * Returns the objective object.
          * 
@@ -648,11 +545,6 @@ declare namespace operations_research
          */
         // Objective(): MPObjective;
 
-        //     /// Returns the mutable objective object.
-        //     MPObjective* MutableObjective()
-        //     {
-        //         return objective_.get();
-        //     }
         /**
          * Returns the mutable objective object.
          * 
@@ -663,8 +555,6 @@ declare namespace operations_research
 
 
 
-        //     /// Solves the problem using the default parameter values.
-        //     ResultStatus Solve();
         /**
          * Solves the problem using the default parameter values.
          * 
@@ -674,8 +564,6 @@ declare namespace operations_research
 
 
 
-        //     /// Solves the problem using the specified parameter values.
-        //     ResultStatus Solve( const MPSolverParameters& param );
         /**
          * Solves the problem using the specified parameter values.
          * 
@@ -685,11 +573,6 @@ declare namespace operations_research
 
 
 
-        //     /**
-        //      * Writes the model using the solver internal write function.  Currently only
-        //      * available for Gurobi.
-        //      */
-        //     void Write( const std::string& file_name );
         /**
          * Writes the model using the solver internal write function.  Currently only
          * available for Gurobi.
@@ -700,13 +583,6 @@ declare namespace operations_research
 
 
 
-        //     /**
-        //      * Advanced usage: compute the "activities" of all constraints, which are the
-        //      * sums of their linear terms. The activities are returned in the same order
-        //      * as constraints(), which is the order in which constraints were added; but
-        //      * you can also use MPConstraint::index() to get a constraint's index.
-        //      */
-        //     std::vector< double > ComputeConstraintActivities() const;
         /**
          * Advanced usage: compute the "activities" of all constraints, which are the
          * sums of their linear terms. The activities are returned in the same order
@@ -719,25 +595,6 @@ declare namespace operations_research
 
 
 
-        //     /**
-        //      * Advanced usage: Verifies the *correctness* of the solution.
-        //      *
-        //      * It verifies that all variables must be within their domains, all
-        //      * constraints must be satisfied, and the reported objective value must be
-        //      * accurate.
-        //      *
-        //      * Usage:
-        //      * - This can only be called after Solve() was called.
-        //      * - "tolerance" is interpreted as an absolute error threshold.
-        //      * - For the objective value only, if the absolute error is too large,
-        //      *   the tolerance is interpreted as a relative error threshold instead.
-        //      * - If "log_errors" is true, every single violation will be logged.
-        //      * - If "tolerance" is negative, it will be set to infinity().
-        //      *
-        //      * Most users should just set the --verify_solution flag and not bother using
-        //      * this method directly.
-        //      */
-        //     bool VerifySolution( double tolerance, bool log_errors ) const;
         /**
          * Advanced usage: Verifies the *correctness* of the solution.
          * 
@@ -762,15 +619,6 @@ declare namespace operations_research
 
 
 
-        //     /**
-        //      * Advanced usage: resets extracted model to solve from scratch.
-        //      *
-        //      * This won't reset the parameters that were set with
-        //      * SetSolverSpecificParametersAsString() or set_time_limit() or even clear the
-        //      * linear program. It will just make sure that next Solve() will be as if
-        //      * everything was reconstructed from scratch.
-        //      */
-        //     void Reset();
         /**
          * Advanced usage: resets extracted model to solve from scratch.
          * 
@@ -785,16 +633,6 @@ declare namespace operations_research
 
 
 
-        //     /** Interrupts the Solve() execution to terminate processing if possible.
-        //      *
-        //      * If the underlying interface supports interruption; it does that and returns
-        //      * true regardless of whether there's an ongoing Solve() or not. The Solve()
-        //      * call may still linger for a while depending on the conditions.  If
-        //      * interruption is not supported; returns false and does nothing.
-        //      * MPSolver::SolverTypeSupportsInterruption can be used to check if
-        //      * interruption is supported for a given solver type.
-        //      */
-        //     bool InterruptSolve();
         /**
          * Interrupts the Solve() execution to terminate processing if possible.
          * 
@@ -811,18 +649,6 @@ declare namespace operations_research
 
 
 
-        //     /**
-        //      * Loads model from protocol buffer.
-        //      *
-        //      * Returns MPSOLVER_MODEL_IS_VALID if the model is valid, and another status
-        //      * otherwise (currently only MPSOLVER_MODEL_INVALID and MPSOLVER_INFEASIBLE).
-        //      * If the model isn't valid, populates "error_message".
-        //      * If `clear_names` is true (the default), clears all names, otherwise returns
-        //      * MPSOLVER_MODEL_INVALID if there are duplicates (non-empty) names.
-        //      */
-        //     MPSolverResponseStatus LoadModelFromProto( const MPModelProto& input_model,
-        //                                                std::string*        error_message,
-        //                                                bool                clear_names = true );
         /**
          * Loads model from protocol buffer.
          * 
@@ -839,15 +665,6 @@ declare namespace operations_research
         LoadModelFromProto(input_model: MPModelProto, clear_names: boolean = true): { return: MPSolverResponseStatus, error_message: string, };
 
 
-        //     /**
-        //      * Loads model from protocol buffer.
-        //      *
-        //      * The same as above, except that the loading keeps original variable and
-        //      * constraint names. Caller should make sure that all variable names and
-        //      * constraint names are unique, respectively.
-        //      */
-        //     MPSolverResponseStatus LoadModelFromProtoWithUniqueNamesOrDie(
-        //         const MPModelProto& input_model, std::string* error_message );
         /**
          * Loads model from protocol buffer.
          * 
@@ -862,8 +679,6 @@ declare namespace operations_research
 
 
 
-        //     /// Encodes the current solution in a solution response protocol buffer.
-        //     void FillSolutionResponseProto( MPSolutionResponse* response ) const;
         /**
          * Encodes the current solution in a solution response protocol buffer.
          * 
@@ -873,28 +688,6 @@ declare namespace operations_research
 
 
 
-        //     /**
-        //      * Solves the model encoded by a MPModelRequest protocol buffer and fills the
-        //      * solution encoded as a MPSolutionResponse. The solve is stopped prematurely
-        //      * if interrupt is non-null at set to true during (or before) solving.
-        //      * Interruption is only supported if SolverTypeSupportsInterruption() returns
-        //      * true for the requested solver. Passing a non-null interruption with any
-        //      * other solver type immediately returns an MPSOLVER_INCOMPATIBLE_OPTIONS
-        //      * error.
-        //      *
-        //      * `interrupt` is non-const because the internal solver may set it to true
-        //      * itself, in some cases.
-        //      *
-        //      * Note(user): This attempts to first use `DirectlySolveProto()` (if
-        //      * implemented). Consequently, this most likely does *not* override any of
-        //      * the default parameters of the underlying solver. This behavior *differs*
-        //      * from `MPSolver::Solve()` which by default sets the feasibility tolerance
-        //      * and the gap limit (as of 2020/02/11, to 1e-7 and 0.0001, respectively).
-        //      */
-        //     ABSL_DEPRECATED( "Prefer SolveMPModel() from solve_mp_model.h." )
-        //     static void SolveWithProto( const MPModelRequest& model_request,
-        //                                 MPSolutionResponse*   response,
-        //                                 std::atomic< bool >*  interrupt = nullptr );
         /**
          * Solves the model encoded by a MPModelRequest protocol buffer and fills the
          * solution encoded as a MPSolutionResponse. The solve is stopped prematurely
@@ -923,19 +716,6 @@ declare namespace operations_research
          */
         static SolveWithProto(model_request: MPModelRequest, interrupt: boolean | null = null): { response: MPSolutionResponse, interrupt: boolean | null, };
 
-        //     /**
-        //      * This version support both `const MPModelRequest&` and `MPModelRequest&&`
-        //      * for the request. When using the second form, it will try to delete the
-        //      * request as soon as it is translated to the solver internal representation.
-        //      * This saves peak memory usage.
-        //      *
-        //      * Note that we need a different name and can't just accept MPModelRequest&&
-        //      * otherwise we have swig issues.
-        //      */
-        //     ABSL_DEPRECATED( "Prefer SolveMPModel() from solve_mp_model.h." )
-        //     static void SolveLazyMutableRequest( LazyMutableCopy< MPModelRequest > request,
-        //                                          MPSolutionResponse*               response,
-        //                                          std::atomic< bool >*              interrupt = nullptr );
         /**
          * This version support both `const MPModelRequest&` and `MPModelRequest&&`
          * for the request. When using the second form, it will try to delete the
@@ -1096,18 +876,6 @@ declare namespace operations_research
         //     static std::string GetMPModelRequestLoggingInfo(
         //         const MPModelRequest& request );
 
-        //     /**
-        //      * Advanced usage: possible basis status values for a variable and the slack
-        //      * variable of a linear constraint.
-        //      */
-        //     enum BasisStatus
-        //     {
-        //         FREE = 0,
-        //         AT_LOWER_BOUND,
-        //         AT_UPPER_BOUND,
-        //         FIXED_VALUE,
-        //         BASIC
-        //     };
 
         //     /**
         //      * Advanced usage: Incrementality.

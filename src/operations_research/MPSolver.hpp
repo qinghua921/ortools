@@ -84,11 +84,19 @@ public:
         enumResultStatus.Set( "MODEL_INVALID", static_cast< int >( MPSolver::ResultStatus::MODEL_INVALID ) );
         enumResultStatus.Set( "NOT_SOLVED", static_cast< int >( MPSolver::ResultStatus::NOT_SOLVED ) );
 
+        auto enumBasisStatus = Napi::Object::New( env );
+        enumBasisStatus.Set( "FREE", static_cast< int >( MPSolver::BasisStatus::FREE ) );
+        enumBasisStatus.Set( "AT_LOWER_BOUND", static_cast< int >( MPSolver::BasisStatus::AT_LOWER_BOUND ) );
+        enumBasisStatus.Set( "AT_UPPER_BOUND", static_cast< int >( MPSolver::BasisStatus::AT_UPPER_BOUND ) );
+        enumBasisStatus.Set( "FIXED_VALUE", static_cast< int >( MPSolver::BasisStatus::FIXED_VALUE ) );
+        enumBasisStatus.Set( "BASIC", static_cast< int >( MPSolver::BasisStatus::BASIC ) );
+
         Napi::Function func = DefineClass(
             env, "MPSolver",
             {
                 StaticValue( "OptimizationProblemType", enumOptimizationProblemType ),
                 StaticValue( "ResultStatus", enumResultStatus ),
+                StaticValue( "BasisStatus", enumBasisStatus ),
 
                 StaticMethod( "CreateSolver", &GMPSolver::CreateSolver ),
                 StaticMethod( "SupportsProblemType", &GMPSolver::SupportsProblemType ),
