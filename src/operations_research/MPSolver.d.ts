@@ -100,8 +100,6 @@ declare namespace operations_research
      */
     declare class MPSolver
     {
-        // public:
-
         /**
          * Create a solver with the given name and underlying solver backend.
          * 
@@ -156,8 +154,6 @@ declare namespace operations_research
             "GLPK_MIXED_INTEGER_PROGRAMMING" | "GLPK" | "GLPK_MIP"
         ): MPSolver;
 
-
-
         /**
          * Whether the given problem type is supported (this will depend on the
          * targets that you linked).
@@ -165,7 +161,6 @@ declare namespace operations_research
          * C++ static bool SupportsProblemType( OptimizationProblemType problem_type );
          */
         static SupportsProblemType(problem_type: MPSolver.OptimizationProblemType): boolean;
-
 
         /**
          * Parses the name of the solver. Returns true if the solver type is
@@ -177,7 +172,6 @@ declare namespace operations_research
          */
         static ParseSolverType(solver_id: string): { type: MPSolver.OptimizationProblemType, return: boolean }
 
-
         /**
          * Parses the name of the solver and returns the correct optimization type or
          * dies. Invariant: ParseSolverTypeOrDie(ToString(type)) = type.
@@ -187,13 +181,10 @@ declare namespace operations_research
          */
         static ParseSolverTypeOrDie(solver_id: string): MPSolver.OptimizationProblemType;
 
-
-
         /**
          * C++ bool IsMIP() const;
          */
         IsMIP(): boolean;
-
 
         /**
          * Returns the name of the model set at construction.
@@ -209,8 +200,6 @@ declare namespace operations_research
          */
         ProblemType(): MPSolver.OptimizationProblemType;
 
-
-
         /**
          * Clears the objective (including the optimization direction), all variables
          * and constraints. All the other properties of the MPSolver (like the time
@@ -220,16 +209,12 @@ declare namespace operations_research
          */
         Clear(): void;
 
-
-
         /**
          * Returns the number of variables.
          * 
          * C++ int NumVariables() const;
          */
         NumVariables(): number;
-
-
 
         /**
          * Returns the array of variables handled by the MPSolver. (They are listed in
@@ -239,15 +224,12 @@ declare namespace operations_research
          */
         variables(): Array<MPVariable>;
 
-
-
         /**
          * Returns the variable at position index.
          * 
          * C++ MPVariable* variable( int index ) const;
          */
         variable(index: number): MPVariable;
-
 
         /**
          * Looks up a variable by name, and returns nullptr if it does not exist. The
@@ -258,17 +240,6 @@ declare namespace operations_research
          */
         LookupVariableOrNull(var_name: string): MPVariable;
 
-
-
-        //     /**
-        //      * Creates a variable with the given bounds, integrality requirement and
-        //      * name. Bounds can be finite or +/- MPSolver::infinity(). The MPSolver owns
-        //      * the variable (i.e. the returned pointer is borrowed). Variable names are
-        //      * optional. If you give an empty name, name() will auto-generate one for you
-        //      * upon request.
-        //      */
-        //     MPVariable* MakeVar( double lb, double ub, bool integer,
-        //                          const std::string& name );
         /**
          * Creates a variable with the given bounds, integrality requirement and
          * name. Bounds can be finite or +/- MPSolver::infinity(). The MPSolver owns
@@ -281,10 +252,6 @@ declare namespace operations_research
          */
         MakeVar(lb: number, ub: number, integer: boolean, name: string): MPVariable;
 
-
-
-        //     /// Creates a continuous variable.
-        //     MPVariable* MakeNumVar( double lb, double ub, const std::string& name );
         /**
          * Creates a continuous variable.
          * 
@@ -292,10 +259,6 @@ declare namespace operations_research
          */
         MakeNumVar(lb: number, ub: number, name: string): MPVariable;
 
-
-
-        //     /// Creates an integer variable.
-        //     MPVariable* MakeIntVar( double lb, double ub, const std::string& name );
         /**
          * Creates an integer variable.
          * 
@@ -303,10 +266,6 @@ declare namespace operations_research
          */
         MakeIntVar(lb: number, ub: number, name: string): MPVariable;
 
-
-
-        //     /// Creates a boolean variable.
-        //     MPVariable* MakeBoolVar( const std::string& name );
         /**
          * Creates a boolean variable.
          * 
@@ -314,25 +273,6 @@ declare namespace operations_research
          */
         MakeBoolVar(name: string): MPVariable;
 
-
-
-        //     /**
-        //      * Creates an array of variables. All variables created have the same bounds
-        //      * and integrality requirement. If nb <= 0, no variables are created, the
-        //      * function crashes in non-opt mode.
-        //      *
-        //      * @param nb the number of variables to create.
-        //      * @param lb the lower bound of created variables
-        //      * @param ub the upper bound of created variables
-        //      * @param integer controls whether the created variables are continuous or
-        //      * integral.
-        //      * @param name_prefix the prefix of the variable names. Variables are named
-        //      * name_prefix0, name_prefix1, ...
-        //      * @param[out] vars the vector of variables to fill with variables.
-        //      */
-        //     void MakeVarArray( int nb, double lb, double ub, bool integer,
-        //                        const std::string&          name_prefix,
-        //                        std::vector< MPVariable* >* vars );
         /**
          * Creates an array of variables. All variables created have the same bounds
          * and integrality requirement. If nb <= 0, no variables are created, the
@@ -353,9 +293,6 @@ declare namespace operations_research
          */
         MakeVarArray(nb: number, lb: number, ub: number, integer: boolean, name_prefix: string): Array<MPVariable>;
 
-        //     /// Creates an array of continuous variables.
-        //     void MakeNumVarArray( int nb, double lb, double ub, const std::string& name,
-        //                           std::vector< MPVariable* >* vars );
         /**
          * Creates an array of continuous variables.
          * 
@@ -364,11 +301,6 @@ declare namespace operations_research
          */
         MakeNumVarArray(nb: number, lb: number, ub: number, name: string): Array<MPVariable>;
 
-
-
-        //     ///  Creates an array of integer variables.
-        //     void MakeIntVarArray( int nb, double lb, double ub, const std::string& name,
-        //                           std::vector< MPVariable* >* vars );
         /**
          * Creates an array of integer variables.
          * 
@@ -377,11 +309,6 @@ declare namespace operations_research
          */
         MakeIntVarArray(nb: number, lb: number, ub: number, name: string): Array<MPVariable>;
 
-
-
-        //     /// Creates an array of boolean variables.
-        //     void MakeBoolVarArray( int nb, const std::string& name,
-        //                            std::vector< MPVariable* >* vars );
         /**
          * Creates an array of boolean variables.
          * 
@@ -390,13 +317,6 @@ declare namespace operations_research
          */
         MakeBoolVarArray(nb: number, name: string): Array<MPVariable>;
 
-
-
-        //     /// Returns the number of constraints.
-        //     int NumConstraints() const
-        //     {
-        //         return constraints_.size();
-        //     }
         /**
          * Returns the number of constraints.
          * 
@@ -404,17 +324,6 @@ declare namespace operations_research
          */
         NumConstraints(): number;
 
-
-
-        //     /**
-        //      * Returns the array of constraints handled by the MPSolver.
-        //      *
-        //      * They are listed in the order in which they were created.
-        //      */
-        //     const std::vector< MPConstraint* >& constraints() const
-        //     {
-        //         return constraints_;
-        //     }
         /**
          * Returns the array of constraints handled by the MPSolver.
          * 
@@ -424,13 +333,6 @@ declare namespace operations_research
          */
         constraints(): Array<MPConstraint>;
 
-
-
-        //     /** Returns the constraint at the given index. */
-        //     MPConstraint* constraint( int index ) const
-        //     {
-        //         return constraints_[ index ];
-        //     }
         /**
          * Returns the constraint at the given index.
          * 
@@ -438,17 +340,6 @@ declare namespace operations_research
          */
         constraint(index: number): MPConstraint;
 
-
-
-        //     /**
-        //      *  Looks up a constraint by name, and returns nullptr if it does not exist.
-        //      *
-        //      * The first call has a O(n) complexity, as the constraint name index is
-        //      * lazily created upon first use. Will crash if constraint names are not
-        //      * unique.
-        //      */
-        //     MPConstraint* LookupConstraintOrNull(
-        //         const std::string& constraint_name ) const;
         /**
          *  Looks up a constraint by name, and returns nullptr if it does not exist.
          * 
@@ -461,16 +352,6 @@ declare namespace operations_research
          */
         LookupConstraintOrNull(constraint_name: string): MPConstraint;
 
-
-        //     /**
-        //      * Creates a linear constraint with given bounds.
-        //      *
-        //      * Bounds can be finite or +/- MPSolver::infinity(). The MPSolver class
-        //      * assumes ownership of the constraint.
-        //      *
-        //      * @return a pointer to the newly created constraint.
-        //      */
-        //     MPConstraint* MakeRowConstraint( double lb, double ub );
         /**
          * Creates a linear constraint with given bounds.
          * 
@@ -483,16 +364,12 @@ declare namespace operations_research
          */
         MakeRowConstraint(lb: number, ub: number): MPConstraint;
 
-
-
         /**
          * Creates a constraint with -infinity and +infinity bounds.
          * 
          * C++ MPConstraint* MakeRowConstraint();
          */
         MakeRowConstraint(): MPConstraint;
-
-
 
         /**
          * Creates a named constraint with given bounds.
@@ -502,16 +379,12 @@ declare namespace operations_research
          */
         MakeRowConstraint(lb: number, ub: number, name: string): MPConstraint;
 
-
-
         /**
          * Creates a named constraint with -infinity and +infinity bounds.
          * 
          * C++ MPConstraint* MakeRowConstraint( const std::string& name );
          */
         MakeRowConstraint(name: string): MPConstraint;
-
-
 
         /**
          * Creates a constraint owned by MPSolver enforcing:
@@ -521,8 +394,6 @@ declare namespace operations_research
          */
         MakeRowConstraint(range: LinearRange): MPConstraint;
 
-
-
         /**
          * As above, but also names the constraint.
          * 
@@ -530,8 +401,6 @@ declare namespace operations_research
          *                                      const std::string& name );
          */
         MakeRowConstraint(range: LinearRange, name: string): MPConstraint;
-
-
 
         /**
          * Returns the objective object.
@@ -552,17 +421,12 @@ declare namespace operations_research
          */
         MutableObjective(): MPObjective;
 
-
-
-
         /**
          * Solves the problem using the default parameter values.
          * 
          * C++ ResultStatus Solve();
          */
         Solve(): ResultStatus;
-
-
 
         /**
          * Solves the problem using the specified parameter values.
@@ -571,8 +435,6 @@ declare namespace operations_research
          */
         Solve(param: MPSolverParameters): ResultStatus;
 
-
-
         /**
          * Writes the model using the solver internal write function.  Currently only
          * available for Gurobi.
@@ -580,8 +442,6 @@ declare namespace operations_research
          * C++ void Write( const std::string& file_name );
          */
         Write(file_name: string): void;
-
-
 
         /**
          * Advanced usage: compute the "activities" of all constraints, which are the
@@ -592,8 +452,6 @@ declare namespace operations_research
          * C++ std::vector< double > ComputeConstraintActivities() const;
          */
         ComputeConstraintActivities(): Array<number>;
-
-
 
         /**
          * Advanced usage: Verifies the *correctness* of the solution.
@@ -617,8 +475,6 @@ declare namespace operations_research
          */
         VerifySolution(tolerance: number, log_errors: boolean): boolean;
 
-
-
         /**
          * Advanced usage: resets extracted model to solve from scratch.
          * 
@@ -630,8 +486,6 @@ declare namespace operations_research
          * C++ void Reset();
          */
         Reset(): void;
-
-
 
         /**
          * Interrupts the Solve() execution to terminate processing if possible.
@@ -646,8 +500,6 @@ declare namespace operations_research
          * C++ bool InterruptSolve();
          */
         InterruptSolve(): boolean;
-
-
 
         /**
          * Loads model from protocol buffer.
@@ -664,7 +516,6 @@ declare namespace operations_research
          */
         LoadModelFromProto(input_model: MPModelProto, clear_names: boolean = true): { return: MPSolverResponseStatus, error_message: string, };
 
-
         /**
          * Loads model from protocol buffer.
          * 
@@ -677,16 +528,12 @@ declare namespace operations_research
          */
         LoadModelFromProtoWithUniqueNamesOrDie(input_model: MPModelProto): { return: MPSolverResponseStatus, error_message: string, };
 
-
-
         /**
          * Encodes the current solution in a solution response protocol buffer.
          * 
          * C++ void FillSolutionResponseProto( MPSolutionResponse* response ) const;
          */
         FillSolutionResponseProto(response: MPSolutionResponse): void;
-
-
 
         /**
          * Solves the model encoded by a MPModelRequest protocol buffer and fills the
@@ -733,8 +580,7 @@ declare namespace operations_research
          * 
          * omit because it's deprecated.
          */
-        // static SolveLazyMutableRequest(request: LazyMutableCopy< MPModelRequest >, response: MPSolutionResponse, interrupt: boolean): void;
-
+        // static SolveLazyMutableRequest(request: LazyMutableCopy<MPModelRequest>, response: MPSolutionResponse, interrupt: boolean): void;
 
         //     ABSL_DEPRECATED(
         //         "Prefer SolverTypeSupportsInterruption() from solve_mp_model.h." )
@@ -757,7 +603,6 @@ declare namespace operations_research
          */
         // static SolverTypeSupportsInterruption(solver: MPModelRequest.SolverType): boolean;
 
-
         //     /// Exports model to protocol buffer.
         //     void ExportModelToProto( MPModelProto* output_model ) const;
         /**
@@ -766,8 +611,6 @@ declare namespace operations_research
          * C++ void ExportModelToProto( MPModelProto* output_model ) const;
          */
         ExportModelToProto(output_model: MPModelProto): void;
-
-
 
         //     /**
         //      * Load a solution encoded in a protocol buffer onto this solver for easy
@@ -835,6 +678,7 @@ declare namespace operations_research
         //      */
         //     absl::Status SetNumThreads( int num_threads );
 
+
         //     /// Returns the number of threads to be used during solve.
         //     int GetNumThreads() const
         //     {
@@ -875,7 +719,6 @@ declare namespace operations_research
         //     ABSL_DEPRECATED( "Prefer MPModelRequestLoggingInfo() from solve_mp_model.h." )
         //     static std::string GetMPModelRequestLoggingInfo(
         //         const MPModelRequest& request );
-
 
         //     /**
         //      * Advanced usage: Incrementality.

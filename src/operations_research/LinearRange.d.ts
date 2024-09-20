@@ -39,12 +39,6 @@ declare namespace operations_research
         //        {
         //            return upper_bound_;
         //        }
-
-        //    private:
-        //        double lower_bound_;
-        //        // invariant: linear_expr_.offset() == 0.
-        //        LinearExpr linear_expr_;
-        //        double     upper_bound_;
     };
 
 }
