@@ -5,10 +5,12 @@
 #include "ortools/base/logging.h"
 #include "ortools/init/init.h"
 
+#include "operations_research/Func.hpp"
 #include "operations_research/MPSolver.hpp"
 #include "operations_research/MPVariable.hpp"
 #include "operations_research/LinearExpr.hpp"
 #include "operations_research/MPConstraint.hpp"
+#include "operations_research/MPObjective.hpp"
 #include "operations_research/LinearRange.hpp"
 
 Napi::Object Init( Napi::Env env, Napi::Object exports )
@@ -19,10 +21,12 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     Napi::HandleScope scope( env );
 
     auto operations_research = Napi::Object::New( env );
+    operations_research::FuncInit( env, operations_research );
     operations_research::GMPSolver::Init( env, operations_research );
     operations_research::GMPVariable::Init( env, operations_research );
     operations_research::GLinearExpr::Init( env, operations_research );
     operations_research::GMPConstraint::Init( env, operations_research );
+    operations_research::GMPObjective::Init( env, operations_research );
     operations_research::GLinearRange::Init( env, operations_research );
     exports.Set( "operations_research", operations_research );
 

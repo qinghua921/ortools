@@ -5,6 +5,7 @@
 #include "MPVariable.hpp"
 #include "MPConstraint.hpp"
 #include "LinearRange.hpp"
+#include "MPObjective.hpp"
 
 namespace operations_research
 {
@@ -44,11 +45,29 @@ public:
                 StaticMethod( "CreateSolver", &GMPSolver::CreateSolver ),
                 InstanceMethod( "MakeBoolVar", &GMPSolver::MakeBoolVar ),
                 InstanceMethod( "MakeRowConstraint", &GMPSolver::MakeRowConstraint ),
+                InstanceMethod( "MutableObjective", &GMPSolver::MutableObjective ),
             } );
         constructor = Napi::Persistent( func );
         constructor.SuppressDestruct();
         exports.Set( Napi::String::New( env, "MPSolver" ), func );
         return exports;
+    };
+
+    // MPObjective* MutableObjective();
+    Napi::Value MutableObjective( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            MPObjective* pMPObjective = pMPSolver->MutableObjective();
+            auto         external     = Napi::External< MPObjective >::New( env, pMPObjective );
+            return GMPObjective::constructor.New( { external } );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::MutableObjective : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
     };
 
     Napi::Value MakeRowConstraint( const Napi::CallbackInfo& info )
