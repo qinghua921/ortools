@@ -1,6 +1,6 @@
 {
   "name": "ts-ortools",
-  "version": "0.0.16",
+  "version": "0.0.17",
   "publishConfig": {
     "tag": "windows-v9.11"
   },
