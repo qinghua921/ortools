@@ -1,6 +1,5 @@
 declare namespace operations_research
 {
-
     /**
      * The class for variables of a Mathematical Programming (MP) model.
      */

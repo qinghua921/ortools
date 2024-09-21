@@ -6,15 +6,9 @@ declare namespace operations_research
      *
      * A constraint is represented as a linear equation or inequality.
      */
-    class MPConstraint
+    declare class MPConstraint
     {
         // public:
-        // #ifndef SWIG
-        //     // This type is neither copyable nor movable.
-        //     MPConstraint( const MPConstraint& )            = delete;
-        //     MPConstraint& operator=( const MPConstraint& ) = delete;
-        // #endif
-
         //     /// Returns the name of the constraint.
         //     const std::string& name() const
         //     {
@@ -31,15 +25,6 @@ declare namespace operations_research
         //      * or crashes in non-opt mode.
         //      */
         //     void SetCoefficient( const MPVariable* var, double coeff );
-        /**
-         * Sets the coefficient of the variable on the constraint.
-         *
-         * If the variable does not belong to the solver, the function just returns,
-         * or crashes in non-opt mode.
-         * 
-         * C++ void SetCoefficient( const MPVariable* var, double coeff );
-         */
-        SetCoefficient(var_: MPVariable, coeff: number): void;
 
         //     /**
         //      * Gets the coefficient of a given variable on the constraint (which is 0 if

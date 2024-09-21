@@ -1,6 +1,6 @@
 declare namespace operations_research
 {
-    declare type CanAsLinearExpr = MPVariable | number | LinearExpr;
+    declare type CanAsLinearExpr = LinearExpr | number | MPVariable;
 
     /**
      * LinearExpr models a quantity that is linear in the decision variables
@@ -29,7 +29,13 @@ declare namespace operations_research
     declare class LinearExpr
     {
         // public:
+
         //     LinearExpr();
+        /**
+         * C++ LinearExpr();
+         */
+        constructor();
+
         //     /// Possible implicit conversions are intentional.
         //     LinearExpr( double constant );  // NOLINT
 
@@ -50,7 +56,6 @@ declare namespace operations_research
         //     static LinearExpr NotVar( LinearExpr var );
 
         //     LinearExpr& operator+=( const LinearExpr& rhs );
-
         /**
          * C++ LinearExpr& operator+=( const LinearExpr& rhs );
          */
@@ -82,10 +87,6 @@ declare namespace operations_research
         //      * of lowest index first.
         //      */
         //     std::string ToString() const;
-
-        // private:
-        //     double                                           offset_;
-        //     absl::flat_hash_map< const MPVariable*, double > terms_;
     };
 
 }
