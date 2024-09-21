@@ -10,9 +10,6 @@ The corresponding version is [v9.11](https://github.com/google/or-tools/releases
 The code is written on Windows; other platforms **may not work**.
 You should build the library yourself.
 
-In addition, the code is not yet fully tested and may contain bugs. Expecially there may be js memory leaks.
-If you find any bugs, please submit an issue.
-
 ## How to use
 
 Please refer to the C++ usage.
@@ -32,8 +29,6 @@ Some C++ classes are not yet implemented, and some classes are not defined. The 
 The codebase is large, and the priority is to implement the code in the examples directory.
 
 - assignment_groups_mip
-- assignment_groups_mip/assignment_groups_mip.cc
-- assignment_groups_mip/CMakeLists.txt
 - assignment_groups_sat
 - assignment_linear_sum_assignment
 - assignment_min_flow

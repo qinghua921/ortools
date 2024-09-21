@@ -1,6 +1,9 @@
 {
   "name": "ts-ortools",
   "version": "0.0.16",
+  "publishConfig": {
+    "tag": "windows-v9.11"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/qinghua921/ortools.git"
