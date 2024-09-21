@@ -1,3 +1,6 @@
+import { MPConstraint } from './MPConstraint'
+import { MPObjective } from './MPObjective';
+
 export namespace MPSolver
 {
     /**
@@ -50,6 +53,30 @@ export namespace MPSolver
         XPRESS_MIXED_INTEGER_PROGRAMMING = 102,
         COPT_LINEAR_PROGRAMMING = 103,
         COPT_MIXED_INTEGER_PROGRAMMING = 104,
+    };
+
+    /**
+     * The status of solving the problem. The straightforward translation to
+     * homonymous enum values of MPSolverResponseStatus (see
+     * ./linear_solver.proto) is guaranteed by ./enum_consistency_test.cc, you may
+     * rely on it.
+     */
+    enum ResultStatus
+    {
+        /// optimal.
+        OPTIMAL,
+        /// feasible, or stopped by limit.
+        FEASIBLE,
+        /// proven infeasible.
+        INFEASIBLE,
+        /// proven unbounded.
+        UNBOUNDED,
+        /// abnormal, i.e., error of some kind.
+        ABNORMAL,
+        /// the model is trivially invalid (NaN coefficients, etc).
+        MODEL_INVALID,
+        /// not been solved yet.
+        NOT_SOLVED = 6
     };
 }
 
@@ -293,35 +320,55 @@ export class MPSolver
     //    MPConstraint* LookupConstraintOrNull(
     //        const std::string& constraint_name ) const;
 
-    //    /**
-    //     * Creates a linear constraint with given bounds.
-    //     *
-    //     * Bounds can be finite or +/- MPSolver::infinity(). The MPSolver class
-    //     * assumes ownership of the constraint.
-    //     *
-    //     * @return a pointer to the newly created constraint.
-    //     */
-    //    MPConstraint* MakeRowConstraint( double lb, double ub );
+    /**
+     * Creates a linear constraint with given bounds.
+     * 
+     * Bounds can be finite or +/- MPSolver::infinity(). The MPSolver class
+     * assumes ownership of the constraint.
+     * 
+     * @return a pointer to the newly created constraint.
+     * 
+     * C++ MPConstraint* MakeRowConstraint( double lb, double ub );
+     */
+    MakeRowConstraint(lb: number, ub: number): MPConstraint;
 
-    //    /// Creates a constraint with -infinity and +infinity bounds.
-    //    MPConstraint* MakeRowConstraint();
+    /**
+     * Creates a constraint with -infinity and +infinity bounds.
+     * 
+     * C++ MPConstraint* MakeRowConstraint();
+     */
+    MakeRowConstraint(): MPConstraint;
 
-    //    /// Creates a named constraint with given bounds.
-    //    MPConstraint* MakeRowConstraint( double lb, double ub,
-    //                                     const std::string& name );
+    /**
+     * Creates a named constraint with given bounds.
+     * 
+     * C++ MPConstraint* MakeRowConstraint( double lb, double ub,
+     *                                     const std::string& name );
+     */
+    MakeRowConstraint(lb: number, ub: number, name: string): MPConstraint;
 
-    //    /// Creates a named constraint with -infinity and +infinity bounds.
-    //    MPConstraint* MakeRowConstraint( const std::string& name );
+    /**
+     * Creates a named constraint with -infinity and +infinity bounds.
+     * 
+     * C++ MPConstraint* MakeRowConstraint( const std::string& name );
+     */
+    MakeRowConstraint(name: string): MPConstraint;
 
-    //    /**
-    //     * Creates a constraint owned by MPSolver enforcing:
-    //     *     range.lower_bound() <= range.linear_expr() <= range.upper_bound()
-    //     */
-    //    MPConstraint* MakeRowConstraint( const LinearRange& range );
+    /**
+     * Creates a constraint owned by MPSolver enforcing:
+     *     range.lower_bound() <= range.linear_expr() <= range.upper_bound()
+     * 
+     * C++ MPConstraint* MakeRowConstraint( const LinearRange& range );
+     */
+    MakeRowConstraint(range: LinearRange): MPConstraint;
 
-    //    /// As above, but also names the constraint.
-    //    MPConstraint* MakeRowConstraint( const LinearRange& range,
-    //                                     const std::string& name );
+    /**
+     * As above, but also names the constraint.
+     * 
+     * C++ MPConstraint* MakeRowConstraint( const LinearRange& range,
+     *                                     const std::string& name );
+     */
+    MakeRowConstraint(range: LinearRange, name: string): MPConstraint;
 
     //    /**
     //     * Returns the objective object.
@@ -334,38 +381,19 @@ export class MPSolver
     //        return *objective_;
     //    }
 
-    //    /// Returns the mutable objective object.
-    //    MPObjective* MutableObjective()
-    //    {
-    //        return objective_.get();
-    //    }
+    /**
+     * Returns the mutable objective object.
+     * 
+     * C++ MPObjective* MutableObjective();
+     */
+    MutableObjective(): MPObjective;
 
-    //    /**
-    //     * The status of solving the problem. The straightforward translation to
-    //     * homonymous enum values of MPSolverResponseStatus (see
-    //     * ./linear_solver.proto) is guaranteed by ./enum_consistency_test.cc, you may
-    //     * rely on it.
-    //     */
-    //    enum ResultStatus
-    //    {
-    //        /// optimal.
-    //        OPTIMAL,
-    //        /// feasible, or stopped by limit.
-    //        FEASIBLE,
-    //        /// proven infeasible.
-    //        INFEASIBLE,
-    //        /// proven unbounded.
-    //        UNBOUNDED,
-    //        /// abnormal, i.e., error of some kind.
-    //        ABNORMAL,
-    //        /// the model is trivially invalid (NaN coefficients, etc).
-    //        MODEL_INVALID,
-    //        /// not been solved yet.
-    //        NOT_SOLVED = 6
-    //    };
-
-    //    /// Solves the problem using the default parameter values.
-    //    ResultStatus Solve();
+    /**
+     * Solves the problem using the default parameter values.
+     * 
+     * C++ ResultStatus Solve();
+     */
+    Solve(): MPSolver.ResultStatus;
 
     //    /// Solves the problem using the specified parameter values.
     //    ResultStatus Solve( const MPSolverParameters& param );
