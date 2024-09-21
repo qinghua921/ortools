@@ -5,8 +5,8 @@
 #include "ortools/base/logging.h"
 #include "ortools/init/init.h"
 
-#include "operations_research/MPSolver.hpp"
-#include "operations_research/MPVariable.hpp"
+// #include "operations_research/MPSolver.hpp"
+// #include "operations_research/MPVariable.hpp"
 
 Napi::Object Init( Napi::Env env, Napi::Object exports )
 {
@@ -16,8 +16,8 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     Napi::HandleScope scope( env );
 
     auto operations_research = Napi::Object::New( env );
-    operations_research::GMPSolver::Init( env, operations_research );
-    operations_research::GMPVariable::Init( env, operations_research );
+    // operations_research::GMPSolver::Init( env, operations_research );
+    // operations_research::GMPVariable::Init( env, operations_research );
     exports.Set( "operations_research", operations_research );
 
     return exports;
