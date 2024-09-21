@@ -57,30 +57,12 @@ public:
                 InstanceMethod( "MakeBoolVar", &GMPSolver::MakeBoolVar ),
                 InstanceMethod( "MakeRowConstraint", &GMPSolver::MakeRowConstraint ),
                 InstanceMethod( "MutableObjective", &GMPSolver::MutableObjective ),
-                InstanceMethod( "Solve", &GMPSolver::Solve ),
-
             } );
         constructor = Napi::Persistent( func );
         constructor.SuppressDestruct();
         exports.Set( Napi::String::New( env, "MPSolver" ), func );
         return exports;
     };
-
-    // ResultStatus Solve();
-    Napi::Value Solve( const Napi::CallbackInfo& info )
-    {
-        Napi::Env         env = info.Env();
-        Napi::HandleScope scope( env );
-
-        if ( info.Length() == 0 )
-        {
-            MPSolver::ResultStatus status = pMPSolver->Solve();
-            return Napi::Number::New( env, static_cast< int >( status ) );
-        }
-
-        Napi::TypeError::New( env, "operations_research::GMPSolver::Solve : Invalid arguments" ).ThrowAsJavaScriptException();
-        return env.Null();
-    }
 
     // MPObjective* MutableObjective();
     Napi::Value MutableObjective( const Napi::CallbackInfo& info )
@@ -97,7 +79,7 @@ public:
 
         Napi::TypeError::New( env, "operations_research::GMPSolver::MutableObjective : Invalid arguments" ).ThrowAsJavaScriptException();
         return env.Null();
-    }
+    };
 
     Napi::Value MakeRowConstraint( const Napi::CallbackInfo& info )
     {

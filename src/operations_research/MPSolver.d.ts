@@ -399,12 +399,6 @@ export namespace operations_research
         //     {
         //         return objective_.get();
         //     }
-        /**
-         * Returns the mutable objective object.
-         * 
-         * C++ MPObjective* MutableObjective();
-         */
-        MutableObjective(): MPObjective;
 
 
 
