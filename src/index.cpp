@@ -5,6 +5,8 @@
 #include "ortools/base/logging.h"
 #include "ortools/init/init.h"
 
+/****************************************************************************/
+
 #include "operations_research/Func.hpp"
 #include "operations_research/LinearExpr.hpp"
 #include "operations_research/LinearRange.hpp"
@@ -12,6 +14,14 @@
 #include "operations_research/MPObjective.hpp"
 #include "operations_research/MPSolver.hpp"
 #include "operations_research/MPVariable.hpp"
+
+/****************************************************************************/
+
+#include "operations_research/sat/BoolVar.hpp"
+#include "operations_research/sat/Constraint.hpp"
+#include "operations_research/sat/CpModelBuilder.hpp"
+#include "operations_research/sat/IntVar.hpp"
+#include "operations_research/sat/LinearExpr.hpp"
 
 Napi::Object Init( Napi::Env env, Napi::Object exports )
 {
@@ -21,6 +31,15 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     Napi::HandleScope scope( env );
 
     auto operations_research = Napi::Object::New( env );
+    {
+        auto sat = Napi::Object::New( env );
+        operations_research::sat::GBoolVar::Init( env, sat );
+        operations_research::sat::GCpModelBuilder::Init( env, sat );
+        operations_research::sat::GConstraint::Init( env, sat );
+        operations_research::sat::GIntVar::Init( env, sat );
+        operations_research::sat::GLinearExpr::Init( env, sat );
+        operations_research.Set( "sat", sat );
+    }
     operations_research::FuncInit( env, operations_research );
     operations_research::GLinearExpr::Init( env, operations_research );
     operations_research::GLinearRange::Init( env, operations_research );
