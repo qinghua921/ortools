@@ -1,8 +1,10 @@
 {
   "name": "ts-ortools",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "publishConfig": {
-    "tag": "windows-v9.11"
+    "tag": "windows-v9.11",
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
   },
   "repository": {
     "type": "git",
