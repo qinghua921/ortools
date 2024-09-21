@@ -2,7 +2,6 @@
 
 #include "napi.h"
 #include "ortools/linear_solver/linear_solver.h"
-#include "MPVariable.hpp"
 
 namespace operations_research
 {
@@ -34,6 +33,7 @@ public:
         Napi::Function    func = DefineClass(
             env, "MPConstraint",
             {
+                InstanceMethod( "name", &GMPConstraint::name ),
                 InstanceMethod( "SetCoefficient", &GMPConstraint::SetCoefficient ),
             } );
         constructor = Napi::Persistent( func );
@@ -42,7 +42,7 @@ public:
         return exports;
     };
 
-    // void SetCoefficient( const MPVariable* var, double coeff );
+    // void SetCoefficient( const MPVariable* var, double coeff )
     Napi::Value SetCoefficient( const Napi::CallbackInfo& info )
     {
         Napi::Env         env = info.Env();
@@ -55,10 +55,25 @@ public:
             auto   var   = GMPVariable::Unwrap( info[ 0 ].As< Napi::Object >() );
             double coeff = info[ 1 ].As< Napi::Number >().DoubleValue();
             pMPConstraint->SetCoefficient( var->pMPVariable, coeff );
-            return env.Null();
+            return env.Undefined();
         }
 
         Napi::TypeError::New( env, "operations_research::GMPConstraint::SetCoefficient : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    // const std::string& name() const
+    Napi::Value name( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            return Napi::String::New( env, pMPConstraint->name() );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPConstraint::name : Invalid arguments" ).ThrowAsJavaScriptException();
         return env.Null();
     };
 };

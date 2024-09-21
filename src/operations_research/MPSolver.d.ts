@@ -1,11 +1,37 @@
-declare namespace operations_research
+export namespace operations_research
 {
+    export namespace MPSolver
+    {
+        /**
+         * The status of solving the problem. The straightforward translation to
+         * homonymous enum values of MPSolverResponseStatus (see
+         * ./linear_solver.proto) is guaranteed by ./enum_consistency_test.cc, you may
+         * rely on it.
+         */
+        enum ResultStatus
+        {
+            /// optimal.
+            OPTIMAL,
+            /// feasible, or stopped by limit.
+            FEASIBLE,
+            /// proven infeasible.
+            INFEASIBLE,
+            /// proven unbounded.
+            UNBOUNDED,
+            /// abnormal, i.e., error of some kind.
+            ABNORMAL,
+            /// the model is trivially invalid (NaN coefficients, etc).
+            MODEL_INVALID,
+            /// not been solved yet.
+            NOT_SOLVED = 6
+        };
+    }
 
     /**
      * This mathematical programming (MP) solver class is the main class
      * though which users build and solve problems.
      */
-    declare class MPSolver
+    export class MPSolver
     {
         // public:
         //     /**
@@ -100,19 +126,18 @@ declare namespace operations_research
         //      *   - GLPK_MIXED_INTEGER_PROGRAMMING or GLPK or GLPK_MIP
         //      */
         //     static MPSolver* CreateSolver( const std::string& solver_id );
-
         /**
          * Recommended factory method to create a MPSolver instance, especially in
          * non C++ languages.
-         *
+         * 
          * It returns a newly created solver instance if successful, or a nullptr
          * otherwise. This can occur if the relevant interface is not linked in, or if
          * a needed license is not accessible for commercial solvers.
-         *
+         * 
          * Ownership of the solver is passed on to the caller of this method.
          * It will accept both string names of the OptimizationProblemType enum, as
          * well as a short version (i.e. "SCIP_MIXED_INTEGER_PROGRAMMING" or "SCIP").
-         *
+         * 
          * solver_id is case insensitive, and the following names are supported:
          *   - CLP_LINEAR_PROGRAMMING or CLP
          *   - CBC_MIXED_INTEGER_PROGRAMMING or CBC
@@ -131,22 +156,7 @@ declare namespace operations_research
          * 
          * C++ static MPSolver* CreateSolver( const std::string& solver_id );
          */
-        static CreateSolver(solver_id:
-            "CLP_LINEAR_PROGRAMMING" | "CLP" |
-            "CBC_MIXED_INTEGER_PROGRAMMING" | "CBC" |
-            "GLOP_LINEAR_PROGRAMMING" | "GLOP" |
-            "BOP_INTEGER_PROGRAMMING" | "BOP" |
-            "SAT_INTEGER_PROGRAMMING" | "SAT" | "CP_SAT" |
-            "SCIP_MIXED_INTEGER_PROGRAMMING" | "SCIP" |
-            "GUROBI_LINEAR_PROGRAMMING" | "GUROBI_LP" |
-            "GUROBI_MIXED_INTEGER_PROGRAMMING" | "GUROBI" | "GUROBI_MIP" |
-            "CPLEX_LINEAR_PROGRAMMING" | "CPLEX_LP" |
-            "CPLEX_MIXED_INTEGER_PROGRAMMING" | "CPLEX_MIP" |
-            "XPRESS_LINEAR_PROGRAMMING" | "XPRESS_LP" |
-            "XPRESS_MIXED_INTEGER_PROGRAMMING" | "XPRESS" | "XPRESS_MIP" |
-            "GLPK_LINEAR_PROGRAMMING" | "GLPK_LP" |
-            "GLPK_MIXED_INTEGER_PROGRAMMING" | "GLPK" | "GLPK_MIP"
-        ): MPSolver;
+        static CreateSolver(solver_id: string): MPSolver;
 
         //     /**
         //      * Whether the given problem type is supported (this will depend on the
@@ -238,7 +248,6 @@ declare namespace operations_research
 
         //     /// Creates a boolean variable.
         //     MPVariable* MakeBoolVar( const std::string& name );
-
         /**
          * Creates a boolean variable.
          * 
@@ -323,6 +332,8 @@ declare namespace operations_research
          * Bounds can be finite or +/- MPSolver::infinity(). The MPSolver class
          * assumes ownership of the constraint.
          * 
+         * @return a pointer to the newly created constraint.
+         * 
          * C++ MPConstraint* MakeRowConstraint( double lb, double ub );
          */
         MakeRowConstraint(lb: number, ub: number): MPConstraint;
@@ -345,9 +356,10 @@ declare namespace operations_research
          * Creates a named constraint with given bounds.
          * 
          * C++ MPConstraint* MakeRowConstraint( double lb, double ub, 
-         *                                      const std::string& name );
+         *                                       const std::string& name );
          */
         MakeRowConstraint(lb: number, ub: number, name: string): MPConstraint;
+
 
 
         //     /// Creates a named constraint with -infinity and +infinity bounds.
@@ -359,33 +371,17 @@ declare namespace operations_research
          */
         MakeRowConstraint(name: string): MPConstraint;
 
+
+
         //     /**
         //      * Creates a constraint owned by MPSolver enforcing:
         //      *     range.lower_bound() <= range.linear_expr() <= range.upper_bound()
         //      */
         //     MPConstraint* MakeRowConstraint( const LinearRange& range );
-        /**
-         * Creates a constraint owned by MPSolver enforcing:
-         *     range.lower_bound() <= range.linear_expr() <= range.upper_bound()
-         * 
-         * C++ MPConstraint* MakeRowConstraint( const LinearRange& range );
-         */
-        MakeRowConstraint(range: LinearRange): MPConstraint;
-
-
 
         //     /// As above, but also names the constraint.
         //     MPConstraint* MakeRowConstraint( const LinearRange& range,
         //                                      const std::string& name );
-        /**
-         * As above, but also names the constraint.
-         * 
-         * C++ MPConstraint* MakeRowConstraint( const LinearRange& range,
-         *                                      const std::string& name );
-         */
-        MakeRowConstraint(range: LinearRange, name: string): MPConstraint;
-
-
 
         //     /**
         //      * Returns the objective object.
@@ -410,32 +406,16 @@ declare namespace operations_research
          */
         MutableObjective(): MPObjective;
 
-        //     /**
-        //      * The status of solving the problem. The straightforward translation to
-        //      * homonymous enum values of MPSolverResponseStatus (see
-        //      * ./linear_solver.proto) is guaranteed by ./enum_consistency_test.cc, you may
-        //      * rely on it.
-        //      */
-        //     enum ResultStatus
-        //     {
-        //         /// optimal.
-        //         OPTIMAL,
-        //         /// feasible, or stopped by limit.
-        //         FEASIBLE,
-        //         /// proven infeasible.
-        //         INFEASIBLE,
-        //         /// proven unbounded.
-        //         UNBOUNDED,
-        //         /// abnormal, i.e., error of some kind.
-        //         ABNORMAL,
-        //         /// the model is trivially invalid (NaN coefficients, etc).
-        //         MODEL_INVALID,
-        //         /// not been solved yet.
-        //         NOT_SOLVED = 6
-        //     };
+
 
         //     /// Solves the problem using the default parameter values.
         //     ResultStatus Solve();
+        /**
+         * Solves the problem using the default parameter values.
+         * 
+         * C++ ResultStatus Solve();
+         */
+        Solve(): MPSolver.ResultStatus;
 
         //     /// Solves the problem using the specified parameter values.
         //     ResultStatus Solve( const MPSolverParameters& param );

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "napi.h"
-#include "ortools/linear_solver/linear_expr.h"
+#include "ortools/linear_solver/linear_solver.h"
 #include "MPVariable.hpp"
 
 namespace operations_research
@@ -23,6 +23,13 @@ public:
             auto external = info[ 0 ].As< Napi::External< LinearExpr > >();
             pLinearExpr   = dynamic_cast< LinearExpr* >( external.Data() );
             if ( pLinearExpr ) return;
+        }
+
+        // LinearExpr();
+        if ( info.Length() == 0 )
+        {
+            pLinearExpr = new LinearExpr();
+            return;
         }
 
         Napi::TypeError::New( env, "operations_research::GLinearExpr::GLinearExpr : Invalid arguments" ).ThrowAsJavaScriptException();
