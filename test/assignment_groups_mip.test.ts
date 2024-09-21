@@ -1,4 +1,4 @@
-import {  } from '../src';
+import { operations_research } from '../src';
 
 test('ts-ortools', () =>
 {
