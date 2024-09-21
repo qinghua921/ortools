@@ -1,4 +1,4 @@
-import { operations_research } from "../../src";
+import { operations_research } from '../src';
 
 test('ts-ortools', () =>
 {
@@ -29,7 +29,7 @@ test('ts-ortools', () =>
     let solver = operations_research.MPSolver.CreateSolver("SCIP")
     expect(solver).not.toBeUndefined();
 
-    let x = [];
+    let x: operations_research.MPVariable[][] = [];
     for (let worker of all_workers)
     {
         let row = [];
@@ -48,7 +48,7 @@ test('ts-ortools', () =>
         {
             worker_sum.operator_plus_equals(x[worker][task]);
         }
-        solver.MakeRowConstraint(operations_research.operator_less_equals(worker_sum, 1.0));
+        solver.MakeRowConstraint(operations_research.operator_le(worker_sum, 1.0));
     }
 
     for (let task of all_tasks)
@@ -58,7 +58,7 @@ test('ts-ortools', () =>
         {
             task_sum.operator_plus_equals(x[worker][task]);
         }
-        solver.MakeRowConstraint(operations_research.operator_equals(task_sum, 1.0));
+        solver.MakeRowConstraint(operations_research.operator_eq(task_sum, 1.0));
     }
 
     let work = [];
@@ -75,7 +75,7 @@ test('ts-ortools', () =>
         {
             worker_sum.operator_plus_equals(x[worker][task]);
         }
-        solver.MakeRowConstraint(operations_research.operator_equals(work[worker], worker_sum));
+        solver.MakeRowConstraint(operations_research.operator_eq(work[worker], worker_sum));
     }
 
     let g1 = solver.MakeRowConstraint(1, 1);

@@ -28,8 +28,7 @@ target_include_directories(
   ${CMAKE_JS_INC}
   ${PROJECT_SOURCE_DIR}/node_modules/node-addon-api
   ${PROJECT_SOURCE_DIR}/node_modules/node-api-headers/include
-  ${PROJECT_SOURCE_DIR}/cmake/or-tools_x64_VisualStudio2019_cpp_v9.6.2534/include
-  ${PROJECT_SOURCE_DIR}/src
+  ${PROJECT_SOURCE_DIR}/cmake/or-tools_x64_VisualStudio2022_cpp_v9.11.4210/include
 )
 
 set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
@@ -37,7 +36,8 @@ set_target_properties(${PROJECT_NAME} PROPERTIES PREFIX "" SUFFIX ".node")
 target_link_libraries(
   ${PROJECT_NAME}
   ${CMAKE_JS_LIB}
-  ${PROJECT_SOURCE_DIR}/cmake/or-tools_x64_VisualStudio2019_cpp_v9.6.2534/lib/ortools_full.lib
+  ${PROJECT_SOURCE_DIR}/cmake/or-tools_x64_VisualStudio2022_cpp_v9.11.4210/lib/ortools_full.lib
+  ${PROJECT_SOURCE_DIR}/cmake/or-tools_x64_VisualStudio2022_cpp_v9.11.4210/lib/utf8_validity.lib
 )
 
 if(MSVC)
