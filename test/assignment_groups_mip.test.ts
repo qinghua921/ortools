@@ -27,7 +27,7 @@ test('ts-ortools', () =>
     let solver = operations_research.MPSolver.CreateSolver("SCIP")
     expect(solver).not.toBeUndefined();
 
-    let x = [];
+    let x: operations_research.MPVariable[][] = [];
     for (let worker of all_workers)
     {
         let row = [];

@@ -26,8 +26,11 @@ public:
         Napi::TypeError::New( env, "operations_research::GDemo::GDemo : Invalid arguments" ).ThrowAsJavaScriptException();
     };
 
+    // TODO delete pDemo or not ?
     // ~GDemo()
-    // TODO  delete pDemo or not ?
+    // {
+    //     if ( pDemo ) delete pDemo;
+    // };
 
     static Napi::Object Init( Napi::Env env, Napi::Object exports )
     {
