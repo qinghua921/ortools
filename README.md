@@ -30,7 +30,7 @@ The codebase is large, and the priority is to implement the code in the examples
 
 - assignment_groups_mip - 🆗
 - assignment_groups_sat - 🆗
-- assignment_linear_sum_assignment
+- assignment_linear_sum_assignment - 🆗
 - assignment_min_flow
 - assignment_mip
 - assignment_sat

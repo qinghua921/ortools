@@ -1,9 +1,26 @@
+export namespace SimpleLinearSumAssignment
+{
+    export enum Status
+    {
+        OPTIMAL,            // The algorithm found a minimum-cost perfect matching.
+        INFEASIBLE,         // The given problem admits no perfect matching.
+        POSSIBLE_OVERFLOW,  // Some cost magnitude is too large.
+    };
+}
+
 export class SimpleLinearSumAssignment
 {
     //public:
     //    // The constructor takes no size.
     //    // New node indices will be created lazily by AddArcWithCost().
     //    SimpleLinearSumAssignment();
+    /**
+     * The constructor takes no size.
+     * New node indices will be created lazily by AddArcWithCost().
+     * 
+     * C++ SimpleLinearSumAssignment();
+     */
+    constructor();
 
     //    // Adds an arc from a left node to a right node with a given cost.
     //    // * Node indices must be non-negative (>= 0). For a perfect
@@ -42,13 +59,14 @@ export class SimpleLinearSumAssignment
 
     //    // Solves the problem (finds the perfect matching that minimizes the
     //    // cost) and returns the solver status.
-    //    enum Status
-    //    {
-    //        OPTIMAL,            // The algorithm found a minimum-cost perfect matching.
-    //        INFEASIBLE,         // The given problem admits no perfect matching.
-    //        POSSIBLE_OVERFLOW,  // Some cost magnitude is too large.
-    //    };
     //    Status Solve();
+    /**
+     * Solves the problem (finds the perfect matching that minimizes the
+     * cost) and returns the solver status.
+     * 
+     * C++ Status Solve();
+     */
+    Solve(): SimpleLinearSumAssignment.Status;
 
     //    // Returns the cost of an assignment with minimal cost.
     //    // This is 0 if the last Solve() didn't return OPTIMAL.
