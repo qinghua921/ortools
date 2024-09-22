@@ -7,6 +7,7 @@
 
 /****************************************************************************/
 
+#include "operations_research/Domain.hpp"
 #include "operations_research/Func.hpp"
 #include "operations_research/LinearExpr.hpp"
 #include "operations_research/LinearRange.hpp"
@@ -52,6 +53,7 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
         operations_research::sat::GTableConstraint::Init( env, sat );
         operations_research.Set( "sat", sat );
     }
+    operations_research::GDomain::Init( env, operations_research );
     operations_research::FuncInit( env, operations_research );
     operations_research::GLinearExpr::Init( env, operations_research );
     operations_research::GLinearRange::Init( env, operations_research );

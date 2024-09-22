@@ -1,6 +1,7 @@
 ﻿
 /************************************************************************/
 
+import { Domain as operations_research_Domain } from './operations_research/Domain'
 import
 {
     operator_eq as operations_research_operator_eq,
@@ -45,6 +46,8 @@ export namespace operations_research
 {
     export
     {
+        operations_research_Domain as Domain,
+        
         operations_research_operator_eq as operator_eq,
         operations_research_operator_ge as operator_ge,
         operations_research_operator_le as operator_le,
