@@ -14,6 +14,7 @@
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "scripts": {
+    "all": "npm run cppbuild && npm run jest",
     "cppbuild": "cmake-js compile",
     "jest": "set NODE_OPTIONS=--abort-on-uncaught-exception && jest --detectOpenHandles"
   },

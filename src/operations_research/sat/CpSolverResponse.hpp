@@ -29,23 +29,39 @@ namespace sat
             Napi::TypeError::New( env, "operations_research::GCpSolverResponse::GCpSolverResponse : Invalid arguments" ).ThrowAsJavaScriptException();
         };
 
-        // TODO delete pCpSolverResponse or not ?
-        // ~GCpSolverResponse()
-        // {
-        //     if ( pCpSolverResponse ) delete pCpSolverResponse;
-        // };
+        ~GCpSolverResponse()
+        {
+            if ( pCpSolverResponse ) delete pCpSolverResponse;
+        };
 
         static Napi::Object Init( Napi::Env env, Napi::Object exports )
         {
             Napi::HandleScope scope( env );
             Napi::Function    func = DefineClass(
                 env, "CpSolverResponse",
-                {} );
+                {
+                    InstanceMethod( "status", &GCpSolverResponse::status )
+                } );
             constructor = Napi::Persistent( func );
             constructor.SuppressDestruct();
             exports.Set( Napi::String::New( env, "CpSolverResponse" ), func );
             return exports;
         };
+
+        // ::operations_research::sat::CpSolverStatus status() const;
+        Napi::Value status( const Napi::CallbackInfo& info )
+        {
+            Napi::Env         env = info.Env();
+            Napi::HandleScope scope( env );
+
+            if ( info.Length() == 0 )
+            {
+                return Napi::Number::New( env, pCpSolverResponse->status() );
+            }
+
+            Napi::TypeError::New( env, "operations_research::sat::GCpSolverResponse::status : Invalid arguments" ).ThrowAsJavaScriptException();
+            return env.Null();
+        }
     };
 }  // namespace sat
 

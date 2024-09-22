@@ -1,3 +1,4 @@
+import { CpSolverStatus } from "./Enum";
 
 export class CpSolverResponse // final : public ::google::protobuf::Message
 {
@@ -111,10 +112,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //            CpSolverResponse::MergeImpl( *this, from );
     //        }
 
-    //    private:
-    //        static void MergeImpl(
-    //            ::google::protobuf::MessageLite&       to_msg,
-    //            const ::google::protobuf::MessageLite& from_msg );
 
     //    public:
     //        ABSL_ATTRIBUTE_REINITIALIZES void Clear() final;
@@ -130,28 +127,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //            return _impl_._cached_size_.Get();
     //        }
 
-    //    private:
-    //        void SharedCtor( ::google::protobuf::Arena* arena );
-    //        void SharedDtor();
-    //        void InternalSwap( CpSolverResponse* other );
-
-    //    private:
-    //        friend class ::google::protobuf::internal::AnyMetadata;
-    //        static ::absl::string_view FullMessageName()
-    //        {
-    //            return "operations_research.sat.CpSolverResponse";
-    //        }
-
-    //    protected:
-    //        explicit CpSolverResponse( ::google::protobuf::Arena* arena );
-    //        CpSolverResponse( ::google::protobuf::Arena* arena, const CpSolverResponse& from );
-    //        CpSolverResponse( ::google::protobuf::Arena* arena, CpSolverResponse&& from ) noexcept
-    //            : CpSolverResponse( arena )
-    //        {
-    //            *this = ::std::move( from );
-    //        }
-    //        const ::google::protobuf::MessageLite::ClassData* GetClassData()
-    //            const final;
 
     //    public:
     //        ::google::protobuf::Metadata GetMetadata() const final;
@@ -187,8 +162,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        // repeated int64 solution = 2;
     //        int solution_size() const;
 
-    //    private:
-    //        int _internal_solution_size() const;
 
     //    public:
     //        void                                                  clear_solution();
@@ -198,25 +171,17 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        const ::google::protobuf::RepeatedField< ::int64_t >& solution() const;
     //        ::google::protobuf::RepeatedField< ::int64_t >*       mutable_solution();
 
-    //    private:
-    //        const ::google::protobuf::RepeatedField< ::int64_t >& _internal_solution() const;
-    //        ::google::protobuf::RepeatedField< ::int64_t >*       _internal_mutable_solution();
 
     //    public:
     //        // repeated .operations_research.sat.IntegerVariableProto tightened_variables = 21;
     //        int tightened_variables_size() const;
 
-    //    private:
-    //        int _internal_tightened_variables_size() const;
 
     //    public:
     //        void                                                                                      clear_tightened_variables();
     //        ::operations_research::sat::IntegerVariableProto*                                         mutable_tightened_variables( int index );
     //        ::google::protobuf::RepeatedPtrField< ::operations_research::sat::IntegerVariableProto >* mutable_tightened_variables();
 
-    //    private:
-    //        const ::google::protobuf::RepeatedPtrField< ::operations_research::sat::IntegerVariableProto >& _internal_tightened_variables() const;
-    //        ::google::protobuf::RepeatedPtrField< ::operations_research::sat::IntegerVariableProto >*       _internal_mutable_tightened_variables();
 
     //    public:
     //        const ::operations_research::sat::IntegerVariableProto&                                         tightened_variables( int index ) const;
@@ -225,8 +190,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        // repeated int32 sufficient_assumptions_for_infeasibility = 23;
     //        int sufficient_assumptions_for_infeasibility_size() const;
 
-    //    private:
-    //        int _internal_sufficient_assumptions_for_infeasibility_size() const;
 
     //    public:
     //        void                                                  clear_sufficient_assumptions_for_infeasibility();
@@ -236,25 +199,17 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        const ::google::protobuf::RepeatedField< ::int32_t >& sufficient_assumptions_for_infeasibility() const;
     //        ::google::protobuf::RepeatedField< ::int32_t >*       mutable_sufficient_assumptions_for_infeasibility();
 
-    //    private:
-    //        const ::google::protobuf::RepeatedField< ::int32_t >& _internal_sufficient_assumptions_for_infeasibility() const;
-    //        ::google::protobuf::RepeatedField< ::int32_t >*       _internal_mutable_sufficient_assumptions_for_infeasibility();
 
     //    public:
     //        // repeated .operations_research.sat.CpSolverSolution additional_solutions = 27;
     //        int additional_solutions_size() const;
 
-    //    private:
-    //        int _internal_additional_solutions_size() const;
 
     //    public:
     //        void                                                                                  clear_additional_solutions();
     //        ::operations_research::sat::CpSolverSolution*                                         mutable_additional_solutions( int index );
     //        ::google::protobuf::RepeatedPtrField< ::operations_research::sat::CpSolverSolution >* mutable_additional_solutions();
 
-    //    private:
-    //        const ::google::protobuf::RepeatedPtrField< ::operations_research::sat::CpSolverSolution >& _internal_additional_solutions() const;
-    //        ::google::protobuf::RepeatedPtrField< ::operations_research::sat::CpSolverSolution >*       _internal_mutable_additional_solutions();
 
     //    public:
     //        const ::operations_research::sat::CpSolverSolution&                                         additional_solutions( int index ) const;
@@ -269,11 +224,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        PROTOBUF_NODISCARD std::string* release_solution_info();
     //        void                            set_allocated_solution_info( std::string* value );
 
-    //    private:
-    //        const std::string&                 _internal_solution_info() const;
-    //        inline PROTOBUF_ALWAYS_INLINE void _internal_set_solution_info(
-    //            const std::string& value );
-    //        std::string* _internal_mutable_solution_info();
 
     //    public:
     //        // string solve_log = 26;
@@ -285,11 +235,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        PROTOBUF_NODISCARD std::string* release_solve_log();
     //        void                            set_allocated_solve_log( std::string* value );
 
-    //    private:
-    //        const std::string&                 _internal_solve_log() const;
-    //        inline PROTOBUF_ALWAYS_INLINE void _internal_set_solve_log(
-    //            const std::string& value );
-    //        std::string* _internal_mutable_solve_log();
 
     //    public:
     //        // .operations_research.sat.CpObjectiveProto integer_objective = 28;
@@ -302,9 +247,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        void                                                             unsafe_arena_set_allocated_integer_objective( ::operations_research::sat::CpObjectiveProto* value );
     //        ::operations_research::sat::CpObjectiveProto*                    unsafe_arena_release_integer_objective();
 
-    //    private:
-    //        const ::operations_research::sat::CpObjectiveProto& _internal_integer_objective() const;
-    //        ::operations_research::sat::CpObjectiveProto*       _internal_mutable_integer_objective();
 
     //    public:
     //        // double objective_value = 3;
@@ -312,9 +254,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        double objective_value() const;
     //        void   set_objective_value( double value );
 
-    //    private:
-    //        double _internal_objective_value() const;
-    //        void   _internal_set_objective_value( double value );
 
     //    public:
     //        // double best_objective_bound = 4;
@@ -322,9 +261,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        double best_objective_bound() const;
     //        void   set_best_objective_bound( double value );
 
-    //    private:
-    //        double _internal_best_objective_bound() const;
-    //        void   _internal_set_best_objective_bound( double value );
 
     //    public:
     //        // int64 num_booleans = 10;
@@ -332,9 +268,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        ::int64_t num_booleans() const;
     //        void      set_num_booleans( ::int64_t value );
 
-    //    private:
-    //        ::int64_t _internal_num_booleans() const;
-    //        void      _internal_set_num_booleans( ::int64_t value );
 
     //    public:
     //        // int64 num_conflicts = 11;
@@ -342,9 +275,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        ::int64_t num_conflicts() const;
     //        void      set_num_conflicts( ::int64_t value );
 
-    //    private:
-    //        ::int64_t _internal_num_conflicts() const;
-    //        void      _internal_set_num_conflicts( ::int64_t value );
 
     //    public:
     //        // int64 num_branches = 12;
@@ -352,9 +282,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        ::int64_t num_branches() const;
     //        void      set_num_branches( ::int64_t value );
 
-    //    private:
-    //        ::int64_t _internal_num_branches() const;
-    //        void      _internal_set_num_branches( ::int64_t value );
 
     //    public:
     //        // int64 num_binary_propagations = 13;
@@ -362,9 +289,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        ::int64_t num_binary_propagations() const;
     //        void      set_num_binary_propagations( ::int64_t value );
 
-    //    private:
-    //        ::int64_t _internal_num_binary_propagations() const;
-    //        void      _internal_set_num_binary_propagations( ::int64_t value );
 
     //    public:
     //        // int64 num_integer_propagations = 14;
@@ -372,9 +296,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        ::int64_t num_integer_propagations() const;
     //        void      set_num_integer_propagations( ::int64_t value );
 
-    //    private:
-    //        ::int64_t _internal_num_integer_propagations() const;
-    //        void      _internal_set_num_integer_propagations( ::int64_t value );
 
     //    public:
     //        // double wall_time = 15;
@@ -382,9 +303,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        double wall_time() const;
     //        void   set_wall_time( double value );
 
-    //    private:
-    //        double _internal_wall_time() const;
-    //        void   _internal_set_wall_time( double value );
 
     //    public:
     //        // double user_time = 16;
@@ -392,9 +310,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        double user_time() const;
     //        void   set_user_time( double value );
 
-    //    private:
-    //        double _internal_user_time() const;
-    //        void   _internal_set_user_time( double value );
 
     //    public:
     //        // double deterministic_time = 17;
@@ -402,9 +317,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        double deterministic_time() const;
     //        void   set_deterministic_time( double value );
 
-    //    private:
-    //        double _internal_deterministic_time() const;
-    //        void   _internal_set_deterministic_time( double value );
 
     //    public:
     //        // double gap_integral = 22;
@@ -412,9 +324,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        double gap_integral() const;
     //        void   set_gap_integral( double value );
 
-    //    private:
-    //        double _internal_gap_integral() const;
-    //        void   _internal_set_gap_integral( double value );
 
     //    public:
     //        // int64 num_restarts = 24;
@@ -422,9 +331,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        ::int64_t num_restarts() const;
     //        void      set_num_restarts( ::int64_t value );
 
-    //    private:
-    //        ::int64_t _internal_num_restarts() const;
-    //        void      _internal_set_num_restarts( ::int64_t value );
 
     //    public:
     //        // int64 num_lp_iterations = 25;
@@ -432,9 +338,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        ::int64_t num_lp_iterations() const;
     //        void      set_num_lp_iterations( ::int64_t value );
 
-    //    private:
-    //        ::int64_t _internal_num_lp_iterations() const;
-    //        void      _internal_set_num_lp_iterations( ::int64_t value );
 
     //    public:
     //        // int64 inner_objective_lower_bound = 29;
@@ -442,9 +345,6 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        ::int64_t inner_objective_lower_bound() const;
     //        void      set_inner_objective_lower_bound( ::int64_t value );
 
-    //    private:
-    //        ::int64_t _internal_inner_objective_lower_bound() const;
-    //        void      _internal_set_inner_objective_lower_bound( ::int64_t value );
 
     //    public:
     //        // int64 num_integers = 30;
@@ -452,19 +352,17 @@ export class CpSolverResponse // final : public ::google::protobuf::Message
     //        ::int64_t num_integers() const;
     //        void      set_num_integers( ::int64_t value );
 
-    //    private:
-    //        ::int64_t _internal_num_integers() const;
-    //        void      _internal_set_num_integers( ::int64_t value );
-
     //    public:
     //        // .operations_research.sat.CpSolverStatus status = 1;
     //        void                                       clear_status();
     //        ::operations_research::sat::CpSolverStatus status() const;
+    /**
+     * C++ ::operations_research::sat::CpSolverStatus status() const;
+     */
+    status(): CpSolverStatus;
+
     //        void                                       set_status( ::operations_research::sat::CpSolverStatus value );
 
-    //    private:
-    //        ::operations_research::sat::CpSolverStatus _internal_status() const;
-    //        void                                       _internal_set_status( ::operations_research::sat::CpSolverStatus value );
 
     //    public:
     //        // @@protoc_insertion_point(class_scope:operations_research.sat.CpSolverResponse)

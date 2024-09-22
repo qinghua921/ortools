@@ -13,17 +13,15 @@ namespace sat
         Napi::Env         env = info.Env();
         Napi::HandleScope scope( env );
 
-        if ( info.Length() == 2 && info[ 0 ].IsObject()
-             && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() )
-             && info[ 1 ].IsNumber() )
+        LinearExpr expr;
+        if ( info.Length() == 2 && GLinearExpr::ToLinearExpr( info[ 0 ], expr ) && info[ 1 ].IsNumber() )
         {
-            auto    expr   = GLinearExpr::Unwrap( info[ 0 ].As< Napi::Object >() );
             int64_t factor = info[ 1 ].As< Napi::Number >().Int64Value();
-            auto    result = *expr->pLinearExpr * factor;
+            auto    result = expr * factor;
             return GLinearExpr::constructor.New( { Napi::External< LinearExpr >::New( env, new LinearExpr( result ) ) } );
         }
 
-        Napi::TypeError::New( env, "operations_research::operator_multiply : Invalid arguments" ).ThrowAsJavaScriptException();
+        Napi::TypeError::New( env, "operations_research::sat::operator_multiply : Invalid arguments" ).ThrowAsJavaScriptException();
         return env.Null();
     }
 

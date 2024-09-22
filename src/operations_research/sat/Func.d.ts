@@ -1,3 +1,6 @@
+import { CpSolverResponse } from "./CpSolverResponse";
+import { CanAsLinearExpr, LinearExpr } from "./LinearExpr";
+
 /// Solves the given CpModelProto and returns an instance of CpSolverResponse.
 //CpSolverResponse Solve( const CpModelProto& model_proto );
 /**
@@ -66,7 +69,7 @@ export function GSolve(model_proto: CpModelProto): CpSolverResponse;
 //}
 
 //inline LinearExpr operator*( LinearExpr expr, int64_t factor )
-export function Goperator_multiply(expr: LinearExpr, factor: number): LinearExpr;
+export function Goperator_multiply(expr: CanAsLinearExpr, factor: number): LinearExpr;
 
 //inline LinearExpr operator*( int64_t factor, LinearExpr expr )
 //{

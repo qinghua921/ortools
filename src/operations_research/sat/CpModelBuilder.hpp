@@ -55,6 +55,7 @@ namespace sat
                     InstanceMethod( "AddExactlyOne", &GCpModelBuilder::AddExactlyOne ),
                     InstanceMethod( "AddAllowedAssignments", &GCpModelBuilder::AddAllowedAssignments ),
                     InstanceMethod( "Minimize", &GCpModelBuilder::Minimize ),
+                    InstanceMethod( "Build", &GCpModelBuilder::Build ),
                     InstanceMethod( "AddEquality", &GCpModelBuilder::AddEquality ),
                 } );
             constructor = Napi::Persistent( func );

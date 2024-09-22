@@ -29,22 +29,45 @@ namespace sat
             Napi::TypeError::New( env, "operations_research::GTableConstraint::GTableConstraint : Invalid arguments" ).ThrowAsJavaScriptException();
         };
 
-        // TODO delete pTableConstraint or not ?
-        // ~GTableConstraint()
-        // {
-        //     if ( pTableConstraint ) delete pTableConstraint;
-        // };
+        ~GTableConstraint()
+        {
+            if ( pTableConstraint ) delete pTableConstraint;
+        };
 
         static Napi::Object Init( Napi::Env env, Napi::Object exports )
         {
             Napi::HandleScope scope( env );
             Napi::Function    func = DefineClass(
                 env, "TableConstraint",
-                {} );
+                {
+                    InstanceMethod( "AddTuple", &GTableConstraint::AddTuple ),
+                } );
             constructor = Napi::Persistent( func );
             constructor.SuppressDestruct();
             exports.Set( Napi::String::New( env, "TableConstraint" ), func );
             return exports;
+        };
+
+        // void AddTuple( absl::Span< const int64_t > tuple );
+        Napi::Value AddTuple( const Napi::CallbackInfo& info )
+        {
+            Napi::Env         env = info.Env();
+            Napi::HandleScope scope( env );
+
+            if ( info.Length() == 1 && info[ 0 ].IsArray() )
+            {
+                Napi::Array            arr = info[ 0 ].As< Napi::Array >();
+                std::vector< int64_t > tuple;
+                for ( int i = 0; i < arr.Length(); i++ )
+                {
+                    tuple.push_back( arr.Get( i ).As< Napi::Number >().Int64Value() );
+                }
+                pTableConstraint->AddTuple( tuple );
+                return env.Undefined();
+            }
+
+            Napi::TypeError::New( env, "operations_research::GTableConstraint::AddTuple : Invalid arguments" ).ThrowAsJavaScriptException();
+            return env.Undefined();
         };
     };
 }  // namespace sat

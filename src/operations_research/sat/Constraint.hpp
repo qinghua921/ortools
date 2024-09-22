@@ -29,11 +29,10 @@ namespace sat
             Napi::TypeError::New( env, "operations_research::GConstraint::GConstraint : Invalid arguments" ).ThrowAsJavaScriptException();
         };
 
-        // TODO delete pConstraint or not ?
-        // ~GConstraint()
-        // {
-        //     if ( pConstraint ) delete pConstraint;
-        // };
+        ~GConstraint()
+        {
+            if ( pConstraint ) delete pConstraint;
+        };
 
         static Napi::Object Init( Napi::Env env, Napi::Object exports )
         {

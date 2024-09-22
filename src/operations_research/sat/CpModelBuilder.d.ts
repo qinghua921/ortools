@@ -1,6 +1,7 @@
 import { CanAsLinearExpr } from "../LinearExpr";
 import { BoolVar } from "./BoolVar";
 import { LinearExpr } from "./LinearExpr";
+import { TableConstraint } from "./TableConstraint";
 
 /**
  * Wrapper class around the cp_model proto.
