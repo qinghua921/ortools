@@ -29,8 +29,8 @@ Some C++ classes are not yet implemented, and some classes are not defined. The 
 The codebase is large, and the priority is to implement the code in the examples directory.
 
 - assignment_groups_mip - 🆗
-- assignment_groups_sat
-- assignment_linear_sum_assignment
+- assignment_groups_sat - 🆗
+- assignment_linear_sum_assignment - 🆗
 - assignment_min_flow
 - assignment_mip
 - assignment_sat
