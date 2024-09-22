@@ -32,12 +32,12 @@ The codebase is large, and the priority is to implement the code in the examples
 - assignment_groups_sat - 🆗
 - assignment_linear_sum_assignment - 🆗
 - assignment_min_flow - 🆗
-- assignment_mip
-- assignment_sat
-- assignment_task_sizes_mip
-- assignment_task_sizes_sat
-- assignment_teams_mip
-- assignment_teams_sat
+- assignment_mip - 🆗
+- assignment_sat - 🆗
+- assignment_task_sizes_mip - 🆗
+- assignment_task_sizes_sat - 🆗
+- assignment_teams_mip - 🆗
+- assignment_teams_sat - 🆗
 - assumptions_sample_sat
 - balance_min_flow
 - basic_example

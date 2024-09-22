@@ -46,7 +46,7 @@ test('ts-ortools', () =>
     {
       worker_sum.operator_plus_equals(new operations_research.LinearExpr(x[worker][task]).operator_times_equals(task_sizes[task]));
     }
-    solver.MakeRowConstraint(operations_research.operator_less_equals(worker_sum, total_size_max));
+    solver.MakeRowConstraint(operations_research.operator_le(worker_sum, total_size_max));
   }
 
   for (let task of all_tasks)
@@ -56,7 +56,7 @@ test('ts-ortools', () =>
     {
       task_sum.operator_plus_equals(x[worker][task]);
     }
-    solver.MakeRowConstraint(operations_research.operator_equals(task_sum, 1));
+    solver.MakeRowConstraint(operations_research.operator_eq(task_sum, 1));
   }
 
   let objective = solver.MutableObjective();

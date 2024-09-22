@@ -8,7 +8,7 @@ namespace operations_research
 namespace sat
 {
     // inline LinearExpr operator*( LinearExpr expr, int64_t factor )
-    Napi::Value Goperator_multiply( const Napi::CallbackInfo& info )
+    Napi::Value Goperator_times( const Napi::CallbackInfo& info )
     {
         Napi::Env         env = info.Env();
         Napi::HandleScope scope( env );
@@ -21,7 +21,7 @@ namespace sat
             return GLinearExpr::constructor.New( { Napi::External< LinearExpr >::New( env, new LinearExpr( result ) ) } );
         }
 
-        Napi::TypeError::New( env, "operations_research::sat::operator_multiply : Invalid arguments" ).ThrowAsJavaScriptException();
+        Napi::TypeError::New( env, "operations_research::sat::operator_times : Invalid arguments" ).ThrowAsJavaScriptException();
         return env.Null();
     }
 
@@ -48,7 +48,7 @@ namespace sat
     {
         Napi::HandleScope scope( env );
 
-        exports.Set( "operator_multiply", Napi::Function::New( env, Goperator_multiply ) );
+        exports.Set( "operator_times", Napi::Function::New( env, Goperator_times ) );
         exports.Set( "Solve", Napi::Function::New( env, GSolve ) );
 
         return exports;

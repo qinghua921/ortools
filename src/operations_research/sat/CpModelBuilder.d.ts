@@ -1,5 +1,6 @@
 import { CanAsLinearExpr } from "../LinearExpr";
 import { BoolVar } from "./BoolVar";
+import { Constraint } from "./Constraint";
 import { LinearExpr } from "./LinearExpr";
 import { TableConstraint } from "./TableConstraint";
 
@@ -132,6 +133,12 @@ export class CpModelBuilder
 
     //    /// Adds left <= right.
     //    Constraint AddLessOrEqual( const LinearExpr& left, const LinearExpr& right );
+    /**
+     * Adds left <= right.
+     * 
+     * C++ Constraint AddLessOrEqual( const LinearExpr& left, const LinearExpr& right );
+     */
+    AddLessOrEqual(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
     //    /// Adds left < right.
     //    Constraint AddLessThan( const LinearExpr& left, const LinearExpr& right );

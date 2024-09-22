@@ -32,6 +32,22 @@ public:
             return;
         }
 
+        // LinearExpr( double constant );  // NOLINT
+        if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+        {
+            double constant = info[ 0 ].As< Napi::Number >().DoubleValue();
+            pLinearExpr = new LinearExpr( constant );
+            return;
+        }
+
+        // LinearExpr( const MPVariable* var );  // NOLINT
+        if ( info.Length() == 1 && info[ 0 ].IsObject() && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
+        {
+            MPVariable* var = GMPVariable::Unwrap( info[ 0 ].As< Napi::Object >() )->pMPVariable;
+            pLinearExpr = new LinearExpr( var );
+            return;
+        }
+
         Napi::TypeError::New( env, "operations_research::GLinearExpr::GLinearExpr : Invalid arguments" ).ThrowAsJavaScriptException();
     };
 
@@ -47,11 +63,29 @@ public:
             env, "LinearExpr",
             {
                 InstanceMethod( "operator_plus_equals", &GLinearExpr::operator_plus_equals ),
+                InstanceMethod( "operator_times_equals", &GLinearExpr::operator_times_equals ),
             } );
         constructor = Napi::Persistent( func );
         constructor.SuppressDestruct();
         exports.Set( Napi::String::New( env, "LinearExpr" ), func );
         return exports;
+    };
+
+    // LinearExpr& operator*=( double rhs );
+    Napi::Value operator_times_equals( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+        {
+            double rhs = info[ 0 ].As< Napi::Number >().DoubleValue();
+            *pLinearExpr *= rhs;
+            return this->Value();
+        }
+
+        Napi::TypeError::New( env, "LinearExpr::operator*= : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
     };
 
     // LinearExpr& operator+=( const LinearExpr& rhs );

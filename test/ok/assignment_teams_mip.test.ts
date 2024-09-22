@@ -47,7 +47,7 @@ test('ts-ortools', () =>
             worker_sum.operator_plus_equals(x[worker][task]);
 
         }
-        solver.MakeRowConstraint(operations_research.operator_less_equals(worker_sum, 1.0));
+        solver.MakeRowConstraint(operations_research.operator_le(worker_sum, 1.0));
     }
     for (let task of all_tasks)
     {
@@ -56,7 +56,7 @@ test('ts-ortools', () =>
         {
             task_sum.operator_plus_equals(x[worker][task]);
         }
-        solver.MakeRowConstraint(operations_research.operator_equals(task_sum, 1.0));
+        solver.MakeRowConstraint(operations_research.operator_eq(task_sum, 1.0));
     }
 
     let team1_tasks = new operations_research.LinearExpr();
@@ -67,7 +67,7 @@ test('ts-ortools', () =>
             team1_tasks.operator_plus_equals(x[worker][task]);
         }
     }
-    solver.MakeRowConstraint(operations_research.operator_less_equals(team1_tasks, team_max));
+    solver.MakeRowConstraint(operations_research.operator_le(team1_tasks, team_max));
 
     let team2_tasks = new operations_research.LinearExpr();
     for (let worker of team2)
@@ -77,7 +77,7 @@ test('ts-ortools', () =>
             team2_tasks.operator_plus_equals(x[worker][task]);
         }
     }
-    solver.MakeRowConstraint(operations_research.operator_less_equals(team2_tasks, team_max));
+    solver.MakeRowConstraint(operations_research.operator_le(team2_tasks, team_max));
 
 
     let objective = solver.MutableObjective();
