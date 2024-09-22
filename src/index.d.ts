@@ -17,6 +17,7 @@ import { MPConstraint as operations_research_MPConstraint } from './operations_r
 import { MPObjective as operations_research_MPObjective } from './operations_research/MPObjective'
 import { MPSolver as operations_research_MPSolver } from './operations_research/MPSolver'
 import { MPVariable as operations_research_MPVariable } from './operations_research/MPVariable'
+import { SimpleLinearSumAssignment as operations_research_SimpleLinearSumAssignment } from './operations_research/SimpleLinearSumAssignment'
 
 /************************************************************************/
 
@@ -46,6 +47,7 @@ export namespace operations_research
         operations_research_operator_eq as operator_eq,
         operations_research_operator_ge as operator_ge,
         operations_research_operator_le as operator_le,
+
         operations_research_LinearExpr as LinearExpr,
         operations_research_CanAsLinearExpr as CanAsLinearExpr,
         operations_research_LinearRange as LinearRange,
@@ -53,6 +55,7 @@ export namespace operations_research
         operations_research_MPObjective as MPObjective,
         operations_research_MPSolver as MPSolver,
         operations_research_MPVariable as MPVariable,
+        operations_research_SimpleLinearSumAssignment as SimpleLinearSumAssignment,
     }
 
     export namespace sat
