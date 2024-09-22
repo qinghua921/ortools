@@ -20,8 +20,13 @@
 #include "operations_research/sat/BoolVar.hpp"
 #include "operations_research/sat/Constraint.hpp"
 #include "operations_research/sat/CpModelBuilder.hpp"
+#include "operations_research/sat/CpModelProto.hpp"
+#include "operations_research/sat/CpSolverResponse.hpp"
+#include "operations_research/sat/Enum.hpp"
+#include "operations_research/sat/Func.hpp"
 #include "operations_research/sat/IntVar.hpp"
 #include "operations_research/sat/LinearExpr.hpp"
+#include "operations_research/sat/TableConstraint.hpp"
 
 Napi::Object Init( Napi::Env env, Napi::Object exports )
 {
@@ -35,9 +40,14 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
         auto sat = Napi::Object::New( env );
         operations_research::sat::GBoolVar::Init( env, sat );
         operations_research::sat::GCpModelBuilder::Init( env, sat );
+        operations_research::sat::GCpModelProto::Init( env, sat );
         operations_research::sat::GConstraint::Init( env, sat );
+        operations_research::sat::GCpSolverResponse::Init( env, sat );
+        operations_research::sat::EnumInit( env, sat );
+        operations_research::sat::FuncInit( env, sat );
         operations_research::sat::GIntVar::Init( env, sat );
         operations_research::sat::GLinearExpr::Init( env, sat );
+        operations_research::sat::GTableConstraint::Init( env, sat );
         operations_research.Set( "sat", sat );
     }
     operations_research::FuncInit( env, operations_research );
