@@ -9,8 +9,8 @@ import
 } from "./operations_research/Func"
 import
 {
-    LinearExpr as operations_research_LinearExpr,
     CanAsLinearExpr as operations_research_CanAsLinearExpr,
+    LinearExpr as operations_research_LinearExpr,
 } from './operations_research/LinearExpr'
 import { LinearRange as operations_research_LinearRange } from './operations_research/LinearRange'
 import { MPConstraint as operations_research_MPConstraint } from './operations_research/MPConstraint'
@@ -23,12 +23,21 @@ import { MPVariable as operations_research_MPVariable } from './operations_resea
 import { BoolVar as operations_research_sat_BoolVar } from './operations_research/sat/BoolVar'
 import { Constraint as operations_research_sat_Constraint } from './operations_research/sat/Constraint'
 import { CpModelBuilder as operations_research_sat_CpModelBuilder } from './operations_research/sat/CpModelBuilder'
+import { CpModelProto as operations_research_sat_CpModelProto } from './operations_research/sat/CpModelProto'
+import { CpSolverResponse as operations_research_sat_CpSolverResponse } from './operations_research/sat/CpSolverResponse'
+import { CpSolverStatus as operations_research_sat_CpSolverStatus } from './operations_research/sat/Enum'
+import
+{
+    Goperator_multiply as operations_research_sat_operator_multiply,
+    GSolve as operations_research_sat_Solve
+} from './operations_research/sat/Func'
 import { IntVar as operations_research_sat_IntVar } from './operations_research/sat/IntVar'
 import
 {
-    LinearExpr as operations_research_sat_LinearExpr,
     CanAsLinearExpr as operations_research_sat_CanAsLinearExpr,
+    LinearExpr as operations_research_sat_LinearExpr,
 } from './operations_research/sat/LinearExpr'
+import { TableConstraint as operations_research_sat_TableConstraint } from './operations_research/sat/TableConstraint'
 
 export namespace operations_research
 {
@@ -53,9 +62,18 @@ export namespace operations_research
             operations_research_sat_BoolVar as BoolVar,
             operations_research_sat_Constraint as Constraint,
             operations_research_sat_CpModelBuilder as CpModelBuilder,
+            operations_research_sat_CpModelProto as CpModelProto,
+            operations_research_sat_CpSolverResponse as CpSolverResponse,
+
+            operations_research_sat_CpSolverStatus as CpSolverStatus,
+
+            operations_research_sat_operator_multiply as operator_multiply,
+            operations_research_sat_Solve as Solve,
+
             operations_research_sat_IntVar as IntVar,
             operations_research_sat_LinearExpr as LinearExpr,
             operations_research_sat_CanAsLinearExpr as CanAsLinearExpr,
+            operations_research_sat_TableConstraint as TableConstraint,
         }
     }
 }

@@ -1,4 +1,6 @@
+import { CanAsLinearExpr } from "../LinearExpr";
 import { BoolVar } from "./BoolVar";
+import { LinearExpr } from "./LinearExpr";
 
 /**
  * Wrapper class around the cp_model proto.
@@ -119,7 +121,7 @@ export class CpModelBuilder
      * 
      * C++ Constraint AddEquality( const LinearExpr& left, const LinearExpr& right );
      */
-    AddEquality(left: LinearExpr, right: LinearExpr): Constraint;
+    AddEquality(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
     //    /// Adds left >= right.
     //    Constraint AddGreaterOrEqual( const LinearExpr& left, const LinearExpr& right );
@@ -202,6 +204,20 @@ export class CpModelBuilder
     //     * construction.
     //     */
     //    TableConstraint AddAllowedAssignments( absl::Span< const IntVar > vars );
+    /**
+     * Adds an allowed assignments constraint.
+     * 
+     * An AllowedAssignments constraint is a constraint on an array of variables
+     * that forces, when all variables are fixed to a single value, that the
+     * corresponding list of values is equal to one of the tuples added to the
+     * constraint.
+     * 
+     * It returns a table constraint that allows adding tuples incrementally after
+     * construction.
+     * 
+     * C++ TableConstraint AddAllowedAssignments( absl::Span< const IntVar > vars );
+     */
+    AddAllowedAssignments(vars: IntVar[]): TableConstraint;
 
     //    /**
     //     * Adds an forbidden assignments constraint.
@@ -349,6 +365,12 @@ export class CpModelBuilder
 
     //    /// Adds a linear minimization objective.
     //    void Minimize( const LinearExpr& expr );
+    /**
+     * Adds a linear minimization objective.
+     * 
+     * C++ void Minimize( const LinearExpr& expr );
+     */
+    Minimize(expr: LinearExpr): void;
 
     //    /// Adds a linear floating point minimization objective.
     //    /// Note that the coefficients will be internally scaled to integer.
@@ -413,6 +435,11 @@ export class CpModelBuilder
     //    {
     //        return cp_model_;
     //    }
+    /**
+     * C++ const CpModelProto& Build() const;
+     */
+    Build(): CpModelProto;
+
     //    const CpModelProto& Proto() const
     //    {
     //        return cp_model_;

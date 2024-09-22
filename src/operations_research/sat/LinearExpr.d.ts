@@ -38,18 +38,40 @@ export class LinearExpr
     //   public:
     //       /// Creates an empty linear expression with value zero.
     //       LinearExpr() = default;
-
-    //       // NOLINTBEGIN(google-explicit-constructor)
+    /**
+     * Creates an empty linear expression with value zero.
+     * 
+     * C++ LinearExpr() = default;
+     */
+    constructor();
 
     //       /// Constructs a linear expression from a Boolean variable.
     //       /// It deals with logical negation correctly.
     //       LinearExpr( BoolVar var );
+    /**
+     * Constructs a linear expression from a Boolean variable.
+     * 
+     * C++ LinearExpr( BoolVar var );
+     */
+    constructor(var_: BoolVar);
 
     //       /// Constructs a linear expression from an integer variable.
     //       LinearExpr( IntVar var );
+    /**
+     * Constructs a linear expression from an integer variable.
+     * 
+     * C++ LinearExpr( IntVar var );
+     */
+    constructor(var_: IntVar);
 
     //       /// Constructs a constant linear expression.
     //       LinearExpr( int64_t constant );
+    /**
+     * Constructs a constant linear expression.
+     * 
+     * C++ LinearExpr( int64_t constant );
+     */
+    constructor(constant: number);
 
     //       // NOLINTEND(google-explicit-constructor)
 

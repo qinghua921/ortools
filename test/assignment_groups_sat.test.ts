@@ -116,12 +116,12 @@ test('ts-ortools', () =>
     {
         for (let task of all_tasks)
         {
-            total_cost.operator_plus_equals(operations_research.sat.operator_times(x[worker][task], costs[worker][task]))
+            total_cost.operator_plus_equals(operations_research.sat.operator_multiply(x[worker][task], costs[worker][task]))
         }
     }
     cp_model.Minimize(total_cost);
     let x1 = cp_model.Build();
-    // let response = operations_research.sat.Solve(x1);
+     let response = operations_research.sat.Solve(x1);
 
-    // expect(response.status()).toBe(operations_research.sat.CpSolverStatus.OPTIMAL)
+     expect(response.status()).toBe(operations_research.sat.CpSolverStatus.OPTIMAL)
 });
