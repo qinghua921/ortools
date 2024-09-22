@@ -1,6 +1,8 @@
+import { Domain } from "../Domain";
 import { CanAsLinearExpr } from "../LinearExpr";
 import { BoolVar } from "./BoolVar";
 import { Constraint } from "./Constraint";
+import { IntVar } from "./IntVar";
 import { LinearExpr } from "./LinearExpr";
 import { TableConstraint } from "./TableConstraint";
 
@@ -19,6 +21,14 @@ export class CpModelBuilder
 
     //    /// Creates an integer variable with the given domain.
     //    IntVar NewIntVar( const Domain& domain );
+    /**
+     * Creates an integer variable with the given domain.
+     * 
+     * C++ IntVar NewIntVar( const Domain& domain );
+     */
+    NewIntVar(domain: Domain): IntVar;
+
+
 
     //    /// Creates a Boolean variable.
     //    BoolVar NewBoolVar();
@@ -130,6 +140,12 @@ export class CpModelBuilder
 
     //    /// Adds left > right.
     //    Constraint AddGreaterThan( const LinearExpr& left, const LinearExpr& right );
+    /**
+     * Adds left > right.
+     * 
+     * C++ Constraint AddGreaterThan( const LinearExpr& left, const LinearExpr& right );
+     */
+    AddGreaterThan(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
     //    /// Adds left <= right.
     //    Constraint AddLessOrEqual( const LinearExpr& left, const LinearExpr& right );
@@ -435,6 +451,12 @@ export class CpModelBuilder
 
     //    /// Adds multiple literals to the model as assumptions.
     //    void AddAssumptions( absl::Span< const BoolVar > literals );
+    /**
+     * Adds multiple literals to the model as assumptions.
+     * 
+     * C++ void AddAssumptions( absl::Span< const BoolVar > literals );
+     */
+    AddAssumptions(literals: BoolVar[]): void;
 
     //    /// Remove all assumptions from the model.
     //    void ClearAssumptions();

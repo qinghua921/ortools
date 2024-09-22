@@ -55,11 +55,30 @@ namespace sat
             Napi::HandleScope scope( env );
             Napi::Function    func = DefineClass(
                 env, "IntVar",
-                {} );
+                {
+                    InstanceMethod( "WithName", &GIntVar::WithName ),
+                } );
             constructor = Napi::Persistent( func );
             constructor.SuppressDestruct();
             exports.Set( Napi::String::New( env, "IntVar" ), func );
             return exports;
+        };
+
+        // IntVar WithName( absl::string_view name );
+        Napi::Value WithName( const Napi::CallbackInfo& info )
+        {
+            Napi::Env         env = info.Env();
+            Napi::HandleScope scope( env );
+
+            if ( info.Length() == 1 && info[ 0 ].IsString() )
+            {
+                std::string name = info[ 0 ].As< Napi::String >().Utf8Value();
+                pIntVar->WithName( name );
+                return this->Value();
+            }
+
+            Napi::TypeError::New( env, "operations_research::sat::GIntVar::WithName : Invalid arguments" ).ThrowAsJavaScriptException();
+            return env.Null();
         };
     };
 }  // namespace sat

@@ -58,11 +58,81 @@ namespace sat
                     InstanceMethod( "Build", &GCpModelBuilder::Build ),
                     InstanceMethod( "AddEquality", &GCpModelBuilder::AddEquality ),
                     InstanceMethod( "AddLessOrEqual", &GCpModelBuilder::AddLessOrEqual ),
+                    InstanceMethod( "NewIntVar", &GCpModelBuilder::NewIntVar ),
+                    InstanceMethod( "AddGreaterThan", &GCpModelBuilder::AddGreaterThan ),
+                    InstanceMethod( "AddAssumptions", &GCpModelBuilder::AddAssumptions ),
                 } );
             constructor = Napi::Persistent( func );
             constructor.SuppressDestruct();
             exports.Set( Napi::String::New( env, "CpModelBuilder" ), func );
             return exports;
+        };
+
+        // void AddAssumptions( absl::Span< const BoolVar > literals );
+        Napi::Value AddAssumptions( const Napi::CallbackInfo& info )
+        {
+            Napi::Env         env = info.Env();
+            Napi::HandleScope scope( env );
+
+            if ( info.Length() == 1 && info[ 0 ].IsArray() )
+            {
+                auto                   array = info[ 0 ].As< Napi::Array >();
+                std::vector< BoolVar > literals;
+                for ( int i = 0; i < array.Length(); i++ )
+                {
+                    if ( array.Get( i ).IsObject() && array.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+                    {
+                        auto boolVar = GBoolVar::Unwrap( array.Get( i ).As< Napi::Object >() );
+                        literals.push_back( *boolVar->pBoolVar );
+                    }
+                    else
+                    {
+                        Napi::TypeError::New( env, "operations_research::GCpModelBuilder::AddAssumptions : Invalid arguments" ).ThrowAsJavaScriptException();
+                        return env.Null();
+                    }
+                }
+                pCpModelBuilder->AddAssumptions( literals );
+                return env.Undefined();
+            }
+
+            Napi::TypeError::New( env, "operations_research::GCpModelBuilder::AddAssumptions : Invalid arguments" ).ThrowAsJavaScriptException();
+            return env.Null();
+        };
+
+        // Constraint AddGreaterThan( const LinearExpr& left, const LinearExpr& right );
+        Napi::Value AddGreaterThan( const Napi::CallbackInfo& info )
+        {
+            Napi::Env         env = info.Env();
+            Napi::HandleScope scope( env );
+
+            LinearExpr left, right;
+            if ( info.Length() == 2 && GLinearExpr::ToLinearExpr( info[ 0 ], left ) && GLinearExpr::ToLinearExpr( info[ 1 ], right ) )
+            {
+                auto result = pCpModelBuilder->AddGreaterThan( left, right );
+                return GConstraint::constructor.New( { Napi::External< Constraint >::New( env, new Constraint( result ) ) } );
+            }
+
+            Napi::TypeError::New( env, "operations_research::GCpModelBuilder::AddGreaterThan : Invalid arguments" ).ThrowAsJavaScriptException();
+            return env.Null();
+        };
+
+        // IntVar NewIntVar( const Domain& domain );
+        Napi::Value NewIntVar( const Napi::CallbackInfo& info )
+        {
+            Napi::Env         env = info.Env();
+            Napi::HandleScope scope( env );
+
+            if ( info.Length() == 1 && info[ 0 ].IsObject()
+                 && info[ 0 ].As< Napi::Object >().InstanceOf( GDomain::constructor.Value() ) )
+            {
+                auto domain   = GDomain::Unwrap( info[ 0 ].As< Napi::Object >() );
+                auto result   = pCpModelBuilder->NewIntVar( *domain->pDomain );
+                auto external = Napi::External< IntVar >::New( env, new IntVar( result ) );
+                return GIntVar::constructor.New( { external } );
+            }
+
+            Napi::TypeError::New( env, "operations_research::GCpModelBuilder::NewIntVar : Invalid arguments" ).ThrowAsJavaScriptException();
+            return env.Null();
         };
 
         // Constraint AddLessOrEqual( const LinearExpr& left, const LinearExpr& right );

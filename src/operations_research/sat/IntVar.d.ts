@@ -52,6 +52,12 @@ export class IntVar
 
     //    /// Sets the name of the variable.
     //    IntVar WithName( absl::string_view name );
+    /**
+     * Sets the name of the variable.
+     * 
+     * C++ IntVar WithName( absl::string_view name );
+     */
+    WithName(name: string): IntVar;
 
     //    /// Returns the name of the variable (or the empty string if not set).
     //    std::string Name() const;
