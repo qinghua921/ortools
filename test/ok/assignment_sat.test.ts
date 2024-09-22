@@ -47,7 +47,7 @@ test('ts-ortools', () =>
   {
     for (let j = 0; j < num_tasks; j++)
     {
-      total_cost.operator_plus_equals(operations_research.sat.operator_multiply(x[i][j], costs[i][j]));
+      total_cost.operator_plus_equals(operations_research.sat.operator_times(x[i][j], costs[i][j]));
     }
   }
 

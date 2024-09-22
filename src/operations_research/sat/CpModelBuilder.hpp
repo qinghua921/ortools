@@ -57,11 +57,29 @@ namespace sat
                     InstanceMethod( "Minimize", &GCpModelBuilder::Minimize ),
                     InstanceMethod( "Build", &GCpModelBuilder::Build ),
                     InstanceMethod( "AddEquality", &GCpModelBuilder::AddEquality ),
+                    InstanceMethod( "AddLessOrEqual", &GCpModelBuilder::AddLessOrEqual ),
                 } );
             constructor = Napi::Persistent( func );
             constructor.SuppressDestruct();
             exports.Set( Napi::String::New( env, "CpModelBuilder" ), func );
             return exports;
+        };
+
+        // Constraint AddLessOrEqual( const LinearExpr& left, const LinearExpr& right );
+        Napi::Value AddLessOrEqual( const Napi::CallbackInfo& info )
+        {
+            Napi::Env         env = info.Env();
+            Napi::HandleScope scope( env );
+
+            LinearExpr left, right;
+            if ( info.Length() == 2 && GLinearExpr::ToLinearExpr( info[ 0 ], left ) && GLinearExpr::ToLinearExpr( info[ 1 ], right ) )
+            {
+                auto result = pCpModelBuilder->AddLessOrEqual( left, right );
+                return GConstraint::constructor.New( { Napi::External< Constraint >::New( env, new Constraint( result ) ) } );
+            }
+
+            Napi::TypeError::New( env, "operations_research::GCpModelBuilder::AddLessOrEqual : Invalid arguments" ).ThrowAsJavaScriptException();
+            return env.Null();
         };
 
         // Constraint AddEquality( const LinearExpr& left, const LinearExpr& right );

@@ -30,7 +30,7 @@ import { CpSolverResponse as operations_research_sat_CpSolverResponse } from './
 import { CpSolverStatus as operations_research_sat_CpSolverStatus } from './operations_research/sat/Enum'
 import
 {
-    Goperator_multiply as operations_research_sat_operator_multiply,
+    Goperator_times as operations_research_sat_operator_times,
     GSolve as operations_research_sat_Solve
 } from './operations_research/sat/Func'
 import { IntVar as operations_research_sat_IntVar } from './operations_research/sat/IntVar'
@@ -72,7 +72,7 @@ export namespace operations_research
 
             operations_research_sat_CpSolverStatus as CpSolverStatus,
 
-            operations_research_sat_operator_multiply as operator_multiply,
+            operations_research_sat_operator_times as operator_times,
             operations_research_sat_Solve as Solve,
 
             operations_research_sat_IntVar as IntVar,

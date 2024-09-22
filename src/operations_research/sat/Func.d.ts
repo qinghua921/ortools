@@ -69,7 +69,7 @@ export function GSolve(model_proto: CpModelProto): CpSolverResponse;
 //}
 
 //inline LinearExpr operator*( LinearExpr expr, int64_t factor )
-export function Goperator_multiply(expr: CanAsLinearExpr, factor: number): LinearExpr;
+export function Goperator_times(expr: CanAsLinearExpr, factor: number): LinearExpr;
 
 //inline LinearExpr operator*( int64_t factor, LinearExpr expr )
 //{

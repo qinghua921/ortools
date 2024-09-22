@@ -72,6 +72,6 @@ test('ts-ortools', () =>
     }
     cp_model.Minimize(total_cost);
 
-    let response=operations_research.sat.Solve(cp_model.Build());
+    let response = operations_research.sat.Solve(cp_model.Build());
     expect(response.status()).toBe(operations_research.sat.CpSolverStatus.OPTIMAL);
 });
