@@ -34,6 +34,12 @@ export class LinearExpr
 
     //    /// Possible implicit conversions are intentional.
     //    LinearExpr( double constant );  // NOLINT
+    /**
+     * Possible implicit conversions are intentional.
+     * 
+     * C++ LinearExpr( double constant );  // NOLINT
+     */
+    constructor(constant: number);
 
     //    /***
     //     * Possible implicit conversions are intentional.
@@ -41,6 +47,14 @@ export class LinearExpr
     //     * Warning: var is not owned.
     //     */
     //    LinearExpr( const MPVariable* var );  // NOLINT
+    /**
+     * Possible implicit conversions are intentional.
+     * 
+     * Warning: var is not owned.
+     * 
+     * C++ LinearExpr( const MPVariable* var );  // NOLINT
+     */
+    constructor(var_: MPVariable);
 
     //    /**
     //     * Returns 1-var.
@@ -58,7 +72,13 @@ export class LinearExpr
     operator_plus_equals(rhs: CanAsLinearExpr): LinearExpr;
 
     //    LinearExpr& operator-=( const LinearExpr& rhs );
+
     //    LinearExpr& operator*=( double rhs );
+    /**
+     * C++ LinearExpr& operator*=( double rhs );
+     */
+    operator_times_equals(rhs: number): LinearExpr;
+
     //    LinearExpr& operator/=( double rhs );
     //    LinearExpr  operator-() const;
 
