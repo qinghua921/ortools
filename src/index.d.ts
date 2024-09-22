@@ -18,6 +18,7 @@ import { MPObjective as operations_research_MPObjective } from './operations_res
 import { MPSolver as operations_research_MPSolver } from './operations_research/MPSolver'
 import { MPVariable as operations_research_MPVariable } from './operations_research/MPVariable'
 import { SimpleLinearSumAssignment as operations_research_SimpleLinearSumAssignment } from './operations_research/SimpleLinearSumAssignment'
+import { SimpleMinCostFlow as operations_research_SimpleMinCostFlow } from './operations_research/SimpleMinCostFlow'
 
 /************************************************************************/
 
@@ -56,6 +57,7 @@ export namespace operations_research
         operations_research_MPSolver as MPSolver,
         operations_research_MPVariable as MPVariable,
         operations_research_SimpleLinearSumAssignment as SimpleLinearSumAssignment,
+        operations_research_SimpleMinCostFlow as SimpleMinCostFlow,
     }
 
     export namespace sat
