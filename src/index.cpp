@@ -15,6 +15,7 @@
 #include "operations_research/MPSolver.hpp"
 #include "operations_research/MPVariable.hpp"
 #include "operations_research/SimpleLinearSumAssignment.hpp"
+#include "operations_research/SimpleMinCostFlow.hpp"
 
 /****************************************************************************/
 
@@ -59,6 +60,7 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research::GMPSolver::Init( env, operations_research );
     operations_research::GMPVariable::Init( env, operations_research );
     operations_research::GSimpleLinearSumAssignment::Init( env, operations_research );
+    operations_research::GSimpleMinCostFlow::Init( env, operations_research );
     exports.Set( "operations_research", operations_research );
 
     return exports;
