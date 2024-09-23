@@ -48,7 +48,7 @@ export namespace operations_research
     export
     {
         operations_research_Domain as Domain,
-        
+
         operations_research_operator_eq as operator_eq,
         operations_research_operator_ge as operator_ge,
         operations_research_operator_le as operator_le,
@@ -84,6 +84,14 @@ export namespace operations_research
             operations_research_sat_LinearExpr as LinearExpr,
             operations_research_sat_CanAsLinearExpr as CanAsLinearExpr,
             operations_research_sat_TableConstraint as TableConstraint,
+        }
+    }
+
+    export namespace graph
+    {
+        export
+        {
+
         }
     }
 }

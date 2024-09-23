@@ -6,7 +6,6 @@ namespace operations_research
 {
 namespace sat
 {
-
     class GDemo : public Napi::ObjectWrap< GDemo >
     {
     public:
