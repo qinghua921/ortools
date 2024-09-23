@@ -61,11 +61,42 @@ namespace sat
                     InstanceMethod( "NewIntVar", &GCpModelBuilder::NewIntVar ),
                     InstanceMethod( "AddGreaterThan", &GCpModelBuilder::AddGreaterThan ),
                     InstanceMethod( "AddAssumptions", &GCpModelBuilder::AddAssumptions ),
+                    InstanceMethod( "AddBoolOr", &GCpModelBuilder::AddBoolOr ),
                 } );
             constructor = Napi::Persistent( func );
             constructor.SuppressDestruct();
             exports.Set( Napi::String::New( env, "CpModelBuilder" ), func );
             return exports;
+        };
+        // Constraint AddBoolOr( absl::Span< const BoolVar > literals );
+        Napi::Value AddBoolOr( const Napi::CallbackInfo& info )
+        {
+            Napi::Env         env = info.Env();
+            Napi::HandleScope scope( env );
+
+            if ( info.Length() == 1 && info[ 0 ].IsArray() )
+            {
+                auto                   array = info[ 0 ].As< Napi::Array >();
+                std::vector< BoolVar > literals;
+                for ( int i = 0; i < array.Length(); i++ )
+                {
+                    if ( array.Get( i ).IsObject() && array.Get( i ).As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+                    {
+                        auto boolVar = GBoolVar::Unwrap( array.Get( i ).As< Napi::Object >() );
+                        literals.push_back( *boolVar->pBoolVar );
+                    }
+                    else
+                    {
+                        Napi::TypeError::New( env, "operations_research::GCpModelBuilder::AddBoolOr : Invalid arguments" ).ThrowAsJavaScriptException();
+                        return env.Null();
+                    }
+                }
+                auto result = pCpModelBuilder->AddBoolOr( literals );
+                return GConstraint::constructor.New( { Napi::External< Constraint >::New( env, new Constraint( result ) ) } );
+            }
+
+            Napi::TypeError::New( env, "operations_research::GCpModelBuilder::AddBoolOr : Invalid arguments" ).ThrowAsJavaScriptException();
+            return env.Null();
         };
 
         // void AddAssumptions( absl::Span< const BoolVar > literals );

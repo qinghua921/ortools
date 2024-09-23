@@ -67,10 +67,9 @@ export class BoolVar
     //        return other.builder_ != builder_ || other.index_ != index_;
     //    }
 
-    //    BoolVar operator~() const
-    //    {
-    //        return Not();
-    //    }
+    /**
+     * C++ BoolVar operator~() const
+     */
 
     //    std::string DebugString() const;
 

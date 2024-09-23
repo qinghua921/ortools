@@ -85,6 +85,12 @@ export class CpModelBuilder
 
     //    /// Adds the constraint that at least one of the literals must be true.
     //    Constraint AddBoolOr( absl::Span< const BoolVar > literals );
+    /**
+     * Adds the constraint that at least one of the literals must be true.
+     * 
+     * C++ Constraint AddBoolOr( absl::Span< const BoolVar > literals );
+     */
+    AddBoolOr(literals: BoolVar[]): Constraint;
 
     //    /// Same as AddBoolOr(). Sum literals >= 1.
     //    Constraint AddAtLeastOne( absl::Span< const BoolVar > literals );

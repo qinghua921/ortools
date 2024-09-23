@@ -180,3 +180,11 @@ export function Goperator_times(expr: CanAsLinearExpr, factor: number): LinearEx
 //    expr *= factor;
 //    return expr;
 //}
+
+/**
+ * A convenient wrapper so we can write Not(x) instead of x.Not() which is
+ * sometimes clearer.
+ * 
+ * C++ BoolVar Not( BoolVar x );
+ */
+export function GNot(x: BoolVar): BoolVar;
