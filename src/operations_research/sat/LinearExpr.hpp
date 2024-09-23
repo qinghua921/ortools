@@ -74,12 +74,45 @@ namespace sat
                 env, "LinearExpr",
                 {
                     InstanceMethod( "operator_plus_equals", &GLinearExpr::operator_plus_equals ),
+                    StaticMethod( "Sum", &GLinearExpr::Sum ),
                 } );
             constructor = Napi::Persistent( func );
             constructor.SuppressDestruct();
             exports.Set( Napi::String::New( env, "LinearExpr" ), func );
             return exports;
         };
+
+        // static LinearExpr Sum( absl::Span< const IntVar > vars );
+        static Napi::Value Sum( const Napi::CallbackInfo& info )
+        {
+            Napi::Env         env = info.Env();
+            Napi::HandleScope scope( env );
+
+            std::vector< IntVar > vars;
+            if ( info.Length() == 1 && info[ 0 ].IsArray() )
+            {
+                Napi::Array arr = info[ 0 ].As< Napi::Array >();
+                for ( int i = 0; i < arr.Length(); i++ )
+                {
+                    if ( arr.Get( i ).IsObject() && arr.Get( i ).As< Napi::Object >().InstanceOf( GIntVar::constructor.Value() ) )
+                    {
+                        auto var = GIntVar::Unwrap( arr.Get( i ).As< Napi::Object >() );
+                        vars.push_back( *var->pIntVar );
+                    }
+                    else
+                    {
+                        Napi::TypeError::New( env, "operations_research::sat::GLinearExpr::Sum : Invalid arguments" ).ThrowAsJavaScriptException();
+                        return env.Null();
+                    }
+                }
+
+                LinearExpr expr = LinearExpr::Sum( vars );
+                return GLinearExpr::constructor.New( { Napi::External< LinearExpr >::New( env, new LinearExpr( expr ) ) } );
+            }
+
+            Napi::TypeError::New( env, "operations_research::sat::GLinearExpr::Sum : Invalid arguments" ).ThrowAsJavaScriptException();
+            return env.Null();
+        }
 
         // LinearExpr& operator+=( const LinearExpr& other );
         Napi::Value operator_plus_equals( const Napi::CallbackInfo& info )

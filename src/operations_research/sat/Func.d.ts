@@ -1,5 +1,7 @@
+import { CpModelProto } from "./CpModelProto";
 import { CpSolverResponse } from "./CpSolverResponse";
 import { CanAsLinearExpr, LinearExpr } from "./LinearExpr";
+import { SatParameters } from "./SatParameters";
 
 /// Solves the given CpModelProto and returns an instance of CpSolverResponse.
 //CpSolverResponse Solve( const CpModelProto& model_proto );
@@ -188,3 +190,11 @@ export function Goperator_times(expr: CanAsLinearExpr, factor: number): LinearEx
  * C++ BoolVar Not( BoolVar x );
  */
 export function GNot(x: BoolVar): BoolVar;
+
+/**
+ * Solves the given CpModelProto with the given parameters.
+ * 
+ * C++ CpSolverResponse SolveWithParameters( const CpModelProto&  model_proto,
+ *                                            const SatParameters& params );
+ */
+export function GSolveWithParameters(model_proto: CpModelProto, params: SatParameters): CpSolverResponse;

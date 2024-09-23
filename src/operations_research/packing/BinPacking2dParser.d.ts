@@ -1,3 +1,5 @@
+import { MultipleDimensionsBinPackingProblem } from "./MultipleDimensionsBinPackingProblem";
+
 /**
  * A BinPacking parser.
  * It supports the following file format:

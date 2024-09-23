@@ -26,6 +26,7 @@ import { SimpleMinCostFlow as operations_research_SimpleMinCostFlow } from './op
 /*** operations_research::packing *********************************************************************/
 
 import { BinPacking2dParser as operations_research_packing_BinPacking2dParser } from './operations_research/packing/BinPacking2dParser'
+import { MultipleDimensionsBinPackingProblem as operations_research_packing_MultipleDimensionsBinPackingProblem } from './operations_research/packing/MultipleDimensionsBinPackingProblem'
 
 /*** operations_research::sat *********************************************************************/
 
@@ -40,13 +41,17 @@ import
     Goperator_times as operations_research_sat_operator_times,
     GSolve as operations_research_sat_Solve,
     GNot as operations_research_sat_Not,
+    GSolveWithParameters as operations_research_sat_SolveWithParameters,
 } from './operations_research/sat/Func'
+import { IntervalVar as operations_research_sat_IntervalVar } from './operations_research/sat/IntervalVar'
 import { IntVar as operations_research_sat_IntVar } from './operations_research/sat/IntVar'
 import
 {
     CanAsLinearExpr as operations_research_sat_CanAsLinearExpr,
     LinearExpr as operations_research_sat_LinearExpr,
 } from './operations_research/sat/LinearExpr'
+import { NoOverlap2DConstraint as operations_research_sat_NoOverlap2DConstraint } from './operations_research/sat/NoOverlap2DConstraint'
+import { SatParameters as operations_research_sat_SatParameters } from './operations_research/sat/SatParameters'
 import { TableConstraint as operations_research_sat_TableConstraint } from './operations_research/sat/TableConstraint'
 
 export namespace operations_research
@@ -77,6 +82,7 @@ export namespace operations_research
         export
         {
             operations_research_packing_BinPacking2dParser as BinPacking2dParser,
+            operations_research_packing_MultipleDimensionsBinPackingProblem as MultipleDimensionsBinPackingProblem,
         }
     }
 
@@ -95,10 +101,14 @@ export namespace operations_research
             operations_research_sat_operator_times as operator_times,
             operations_research_sat_Solve as Solve,
             operations_research_sat_Not as Not,
+            operations_research_sat_SolveWithParameters as SolveWithParameters,
 
+            operations_research_sat_IntervalVar as IntervalVar,
             operations_research_sat_IntVar as IntVar,
             operations_research_sat_LinearExpr as LinearExpr,
             operations_research_sat_CanAsLinearExpr as CanAsLinearExpr,
+            operations_research_sat_NoOverlap2DConstraint as NoOverlap2DConstraint,
+            operations_research_sat_SatParameters as SatParameters,
             operations_research_sat_TableConstraint as TableConstraint,
         }
     }

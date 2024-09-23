@@ -2,6 +2,7 @@
 
 #include "napi.h"
 #include "ortools/packing/binpacking_2d_parser.h"
+#include "MultipleDimensionsBinPackingProblem.hpp"
 
 namespace operations_research
 {
@@ -46,7 +47,8 @@ namespace packing
             Napi::Function    func = DefineClass(
                 env, "BinPacking2dParser",
                 {
-                    InstanceMethod( "Load2BPFile", &GBinPacking2dParser::Load2BPFile )
+                    InstanceMethod( "Load2BPFile", &GBinPacking2dParser::Load2BPFile ),
+                    InstanceMethod( "problem", &GBinPacking2dParser::problem ),
                 } );
             constructor = Napi::Persistent( func );
             constructor.SuppressDestruct();
@@ -62,7 +64,9 @@ namespace packing
 
             if ( info.Length() == 0 )
             {
-                return Napi::External< MultipleDimensionsBinPackingProblem >::New( env, pBinPacking2dParser->problem() );
+                auto problem  = pBinPacking2dParser->problem();
+                auto external = Napi::External< MultipleDimensionsBinPackingProblem >::New( env, new MultipleDimensionsBinPackingProblem( problem ) );
+                return GMultipleDimensionsBinPackingProblem::constructor.New( { external } );
             }
 
             Napi::TypeError::New( env, "operations_research::GBinPacking2dParser::problem : Invalid arguments" ).ThrowAsJavaScriptException();

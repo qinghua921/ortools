@@ -2,6 +2,7 @@
 
 #include "napi.h"
 #include "LinearExpr.hpp"
+#include "SatParameters.hpp"
 
 namespace operations_research
 {
@@ -53,7 +54,7 @@ namespace sat
         if ( info.Length() == 1 && info[ 0 ].IsObject()
              && info[ 0 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
         {
-            auto x = GBoolVar::Unwrap( info[ 0 ].As< Napi::Object >() );
+            auto x      = GBoolVar::Unwrap( info[ 0 ].As< Napi::Object >() );
             auto result = Not( *x->pBoolVar );
             return GBoolVar::constructor.New( { Napi::External< BoolVar >::New( env, new BoolVar( result ) ) } );
         }
@@ -62,10 +63,34 @@ namespace sat
         return env.Null();
     }
 
+    // CpSolverResponse SolveWithParameters( const CpModelProto&  model_proto,
+    //                                        const SatParameters& params );
+    Napi::Value GSolveWithParameters( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+        if ( info.Length() == 2
+             && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GCpModelProto::constructor.Value() )
+             && info[ 1 ].IsObject()
+             && info[ 1 ].As< Napi::Object >().InstanceOf( GSatParameters::constructor.Value() ) )
+        {
+            auto model_proto       = GCpModelProto::Unwrap( info[ 0 ].As< Napi::Object >() );
+            auto params            = GSatParameters::Unwrap( info[ 1 ].As< Napi::Object >() );
+            auto response          = SolveWithParameters( *model_proto->pCpModelProto, *params->pSatParameters );
+            auto external_response = Napi::External< CpSolverResponse >::New( env, new CpSolverResponse( response ) );
+            return GCpSolverResponse::constructor.New( { external_response } );
+        }
+
+        Napi::TypeError::New( env, "operations_research::SolveWithParameters : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
     static Napi::Object FuncInit( Napi::Env env, Napi::Object exports )
     {
         Napi::HandleScope scope( env );
 
+        exports.Set( "SolveWithParameters", Napi::Function::New( env, GSolveWithParameters ) );
         exports.Set( "Not", Napi::Function::New( env, GNot ) );
         exports.Set( "Solve", Napi::Function::New( env, GSolve ) );
         exports.Set( "operator_times", Napi::Function::New( env, Goperator_times ) );
