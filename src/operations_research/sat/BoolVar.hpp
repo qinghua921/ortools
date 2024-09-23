@@ -48,11 +48,63 @@ namespace sat
                 env, "BoolVar",
                 {
                     InstanceMethod( "WithName", &GBoolVar::WithName ),
+                    InstanceMethod( "Name", &GBoolVar::Name ),
+                    InstanceMethod( "Not", &GBoolVar::Not ),
+                    InstanceMethod( "operator_eq", &GBoolVar::operator_eq ),
                 } );
             constructor = Napi::Persistent( func );
             constructor.SuppressDestruct();
             exports.Set( Napi::String::New( env, "BoolVar" ), func );
             return exports;
+        };
+
+        // bool operator==( const BoolVar& other ) const
+        Napi::Value operator_eq( const Napi::CallbackInfo& info )
+        {
+            Napi::Env         env = info.Env();
+            Napi::HandleScope scope( env );
+
+            if ( info.Length() == 1 && info[ 0 ].IsObject()
+                 && info[ 0 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+            {
+                auto other = GBoolVar::Unwrap( info[ 0 ].As< Napi::Object >() );
+                return Napi::Boolean::New( env, *pBoolVar == *other->pBoolVar );
+            }
+
+            Napi::TypeError::New( env, "operations_research::GBoolVar::operator== : Invalid arguments" ).ThrowAsJavaScriptException();
+            return env.Null();
+        };
+
+        // BoolVar Not() const
+        Napi::Value Not( const Napi::CallbackInfo& info )
+        {
+            Napi::Env         env = info.Env();
+            Napi::HandleScope scope( env );
+
+            if ( info.Length() == 0 )
+            {
+                auto bool_var = pBoolVar->Not();
+                auto external = Napi::External< BoolVar >::New( env, new BoolVar( bool_var ) );
+                return GBoolVar::constructor.New( { external } );
+            }
+
+            Napi::TypeError::New( env, "operations_research::GBoolVar::Not : Invalid arguments" ).ThrowAsJavaScriptException();
+            return env.Null();
+        };
+
+        // std::string Name() const
+        Napi::Value Name( const Napi::CallbackInfo& info )
+        {
+            Napi::Env         env = info.Env();
+            Napi::HandleScope scope( env );
+
+            if ( info.Length() == 0 )
+            {
+                return Napi::String::New( env, pBoolVar->Name() );
+            }
+
+            Napi::TypeError::New( env, "operations_research::GBoolVar::Name : Invalid arguments" ).ThrowAsJavaScriptException();
+            return env.Null();
         };
 
         // BoolVar WithName( absl::string_view name )
