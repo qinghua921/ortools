@@ -1,5 +1,6 @@
 import { MPConstraint } from './MPConstraint'
 import { MPObjective } from './MPObjective';
+import { MPVariable } from './MPVariable';
 
 export namespace MPSolver
 {
@@ -204,9 +205,14 @@ export class MPSolver
 
     //    /// Returns the number of variables.
     //    int NumVariables() const
-    //    {
-    //        return variables_.size();
-    //    }
+    /**
+     * Returns the number of variables.
+     * 
+     * C++ int NumVariables() const;
+     */
+    NumVariables(): number;
+
+
 
     //    /**
     //     * Returns the array of variables handled by the MPSolver. (They are listed in
@@ -244,6 +250,12 @@ export class MPSolver
 
     //    /// Creates a continuous variable.
     //    MPVariable* MakeNumVar( double lb, double ub, const std::string& name );
+    /**
+     * Creates a continuous variable.
+     * 
+     * C++ MPVariable* MakeNumVar( double lb, double ub, const std::string& name );
+     */
+    MakeNumVar(lb: number, ub: number, name: string): MPVariable;
 
     //    /// Creates an integer variable.
     //    MPVariable* MakeIntVar( double lb, double ub, const std::string& name );
@@ -680,6 +692,16 @@ export class MPSolver
     //    {
     //        return std::numeric_limits< double >::infinity();
     //    }
+    /**
+     * Infinity.
+     * 
+     * You can use -MPSolver::infinity() for negative infinity.
+     * 
+     * C++ static double infinity()
+     */
+    static infinity(): number;
+
+
     //    double solver_infinity();
 
     //    /**
