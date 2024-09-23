@@ -1,4 +1,4 @@
-// Copyright 2010-2024 Google LLC
+// Copyright 2010-2022 Google LLC
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
 // You may obtain a copy of the License at
@@ -11,72 +11,62 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Minimal example to call the GLOP solver.
 // [START program]
 // [START import]
-#include <stdlib.h>
-
-#include "absl/types/span.h"
-#include "ortools/base/logging.h"
-#include "ortools/sat/cp_model.h"
-#include "ortools/sat/cp_model.pb.h"
-#include "ortools/sat/cp_model_solver.h"
-#include "ortools/util/sorted_interval_list.h"
-
+#include "ortools/linear_solver/linear_solver.h"
 // [END import]
+
 namespace operations_research
 {
-namespace sat
+void BasicExample()
 {
+    // [START solver]
+    // Create the linear solver with the GLOP backend.
+    std::unique_ptr< MPSolver > solver( MPSolver::CreateSolver( "GLOP" ) );
+    // [END solver]
 
-    void AssumptionsSampleSat()
-    {
-        // [START model]
-        CpModelBuilder cp_model;
-        // [END model]
+    // [START variables]
+    // Create the variables x and y.
+    MPVariable* const x = solver->MakeNumVar( 0.0, 1, "x" );
+    MPVariable* const y = solver->MakeNumVar( 0.0, 2, "y" );
 
-        // [START variables]
-        const Domain  domain( 0, 10 );
-        const IntVar  x = cp_model.NewIntVar( domain ).WithName( "x" );
-        const IntVar  y = cp_model.NewIntVar( domain ).WithName( "y" );
-        const IntVar  z = cp_model.NewIntVar( domain ).WithName( "z" );
-        const BoolVar a = cp_model.NewBoolVar().WithName( "a" );
-        const BoolVar b = cp_model.NewBoolVar().WithName( "b" );
-        const BoolVar c = cp_model.NewBoolVar().WithName( "c" );
-        // [END variables]
+    LOG( INFO ) << "Number of variables = " << solver->NumVariables();
+    // [END variables]
 
-        // [START constraints]
-        cp_model.AddGreaterThan( x, y ).OnlyEnforceIf( a );
-        cp_model.AddGreaterThan( y, z ).OnlyEnforceIf( b );
-        cp_model.AddGreaterThan( z, x ).OnlyEnforceIf( c );
-        // [END constraints]
+    // [START constraints]
+    // Create a linear constraint, 0 <= x + y <= 2.
+    MPConstraint* const ct = solver->MakeRowConstraint( 0.0, 2.0, "ct" );
+    ct->SetCoefficient( x, 1 );
+    ct->SetCoefficient( y, 1 );
 
-        // Add assumptions
-        cp_model.AddAssumptions( { a, b, c } );
+    LOG( INFO ) << "Number of constraints = " << solver->NumConstraints();
+    // [END constraints]
 
-        // Solving part.
-        // [START solve]
-        const CpSolverResponse response = Solve( cp_model.Build() );
-        // [END solve]
+    // [START objective]
+    // Create the objective function, 3 * x + y.
+    MPObjective* const objective = solver->MutableObjective();
+    objective->SetCoefficient( x, 3 );
+    objective->SetCoefficient( y, 1 );
+    objective->SetMaximization();
+    // [END objective]
 
-        // Print solution.
-        // [START print_solution]
-        LOG( INFO ) << CpSolverResponseStats( response );
-        if ( response.status() == CpSolverStatus::INFEASIBLE )
-        {
-            for ( const int index :
-                  response.sufficient_assumptions_for_infeasibility() )
-            {
-                LOG( INFO ) << index;
-            }
-        }
-        // [END print_solution]
-    }
-}  // namespace sat
+    // [START solve]
+    solver->Solve();
+    // [END solve]
+
+    // [START print_solution]
+    LOG( INFO ) << "Solution:" << std::endl;
+    LOG( INFO ) << "Objective value = " << objective->Value();
+    LOG( INFO ) << "x = " << x->solution_value();
+    LOG( INFO ) << "y = " << y->solution_value();
+    // [END print_solution]
+}
 }  // namespace operations_research
 
-int main( int argc, char** argv )
+int main()
 {
-    operations_research::sat::AssumptionsSampleSat();
+    operations_research::BasicExample();
     return EXIT_SUCCESS;
 }
 // [END program]
