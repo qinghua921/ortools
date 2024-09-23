@@ -64,6 +64,18 @@ export class LinearExpr
     //     * Passing by value is intentional, see the discussion on binary ops.
     //     */
     //    static LinearExpr NotVar( LinearExpr var );
+    /**
+     * Returns 1-var.
+     * 
+     * NOTE(user): if var is binary variable, this corresponds to the logical
+     * negation of var.
+     * Passing by value is intentional, see the discussion on binary ops.
+     * 
+     * C++ static LinearExpr NotVar( LinearExpr var );
+     */
+    static NotVar(var_: LinearExpr): LinearExpr;
+
+
 
     //    LinearExpr& operator+=( const LinearExpr& rhs );
     /**

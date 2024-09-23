@@ -36,7 +36,7 @@ public:
         if ( info.Length() == 1 && info[ 0 ].IsNumber() )
         {
             double constant = info[ 0 ].As< Napi::Number >().DoubleValue();
-            pLinearExpr = new LinearExpr( constant );
+            pLinearExpr     = new LinearExpr( constant );
             return;
         }
 
@@ -44,7 +44,7 @@ public:
         if ( info.Length() == 1 && info[ 0 ].IsObject() && info[ 0 ].As< Napi::Object >().InstanceOf( GMPVariable::constructor.Value() ) )
         {
             MPVariable* var = GMPVariable::Unwrap( info[ 0 ].As< Napi::Object >() )->pMPVariable;
-            pLinearExpr = new LinearExpr( var );
+            pLinearExpr     = new LinearExpr( var );
             return;
         }
 
@@ -64,11 +64,30 @@ public:
             {
                 InstanceMethod( "operator_plus_equals", &GLinearExpr::operator_plus_equals ),
                 InstanceMethod( "operator_times_equals", &GLinearExpr::operator_times_equals ),
+                StaticMethod( "NotVar", &GLinearExpr::NotVar ),
             } );
         constructor = Napi::Persistent( func );
         constructor.SuppressDestruct();
         exports.Set( Napi::String::New( env, "LinearExpr" ), func );
         return exports;
+    };
+
+    // static LinearExpr NotVar( LinearExpr var );
+    static Napi::Value NotVar( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 1 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GLinearExpr::constructor.Value() ) )
+        {
+            LinearExpr* pLinearExpr = GLinearExpr::Unwrap( info[ 0 ].As< Napi::Object >() )->pLinearExpr;
+            LinearExpr  result      = LinearExpr::NotVar( *pLinearExpr );
+            return GLinearExpr::constructor.New( { Napi::External< LinearExpr >::New( env, new LinearExpr( result ) ) } );
+        }
+
+        Napi::TypeError::New( env, "LinearExpr::NotVar : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
     };
 
     // LinearExpr& operator*=( double rhs );
