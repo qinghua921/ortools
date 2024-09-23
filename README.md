@@ -44,7 +44,7 @@ The codebase is large, and the priority is to implement the code in the examples
 - bfs_directed - ⏰ (deferred)
 - bfs_one_to_all - ⏰ (deferred)
 - bfs_undirected - ⏰ (deferred)
-- bin_packing_mip
+- bin_packing_mip - 🆗
 - binpacking_2d_sat
 - binpacking_problem_sat
 - bool_or_sample_sat

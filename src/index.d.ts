@@ -7,6 +7,7 @@ import
     operator_eq as operations_research_operator_eq,
     operator_ge as operations_research_operator_ge,
     operator_le as operations_research_operator_le,
+    operator_times as operations_research_operator_times,
 } from "./operations_research/Func"
 import
 {
@@ -52,6 +53,7 @@ export namespace operations_research
         operations_research_operator_eq as operator_eq,
         operations_research_operator_ge as operator_ge,
         operations_research_operator_le as operator_le,
+        operations_research_operator_times as operator_times,
 
         operations_research_LinearExpr as LinearExpr,
         operations_research_CanAsLinearExpr as CanAsLinearExpr,
