@@ -15,6 +15,7 @@
 #include "operations_research/MPObjective.hpp"
 #include "operations_research/MPSolver.hpp"
 #include "operations_research/MPVariable.hpp"
+#include "operations_research/OrToolsVersion.hpp"
 #include "operations_research/SimpleLinearSumAssignment.hpp"
 #include "operations_research/SimpleMinCostFlow.hpp"
 
@@ -34,7 +35,7 @@
 Napi::Object Init( Napi::Env env, Napi::Object exports )
 {
     google::InitGoogleLogging( "ortools_binding" );
-    absl::SetFlag( &FLAGS_stderrthreshold, 3 );
+    absl::SetFlag( &FLAGS_stderrthreshold, 0 );
 
     Napi::HandleScope scope( env );
 
@@ -61,6 +62,7 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     operations_research::GMPObjective::Init( env, operations_research );
     operations_research::GMPSolver::Init( env, operations_research );
     operations_research::GMPVariable::Init( env, operations_research );
+    operations_research::GOrToolsVersion::Init( env, operations_research );
     operations_research::GSimpleLinearSumAssignment::Init( env, operations_research );
     operations_research::GSimpleMinCostFlow::Init( env, operations_research );
     exports.Set( "operations_research", operations_research );

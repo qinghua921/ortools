@@ -39,12 +39,12 @@ The codebase is large, and the priority is to implement the code in the examples
 - assignment_teams_mip - 🆗
 - assignment_teams_sat - 🆗
 - assumptions_sample_sat - 🆗
-- balance_min_flow
-- basic_example
-- bfs_directed
-- bfs_one_to_all
-- bfs_undirected
-- bin_packing_mip
+- balance_min_flow - 🆗
+- basic_example - 🆗
+- bfs_directed - ⏰ (deferred)
+- bfs_one_to_all - ⏰ (deferred)
+- bfs_undirected - ⏰ (deferred)
+- bin_packing_mip - 🆗
 - binpacking_2d_sat
 - binpacking_problem_sat
 - bool_or_sample_sat

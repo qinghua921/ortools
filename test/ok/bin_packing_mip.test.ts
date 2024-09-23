@@ -51,7 +51,7 @@ test('ts-ortools', () =>
       weight.operator_plus_equals(operations_research.operator_times(data.weights[i], x[i][j]));
     }
     solver.MakeRowConstraint(
-      operations_research.operator_less_equals(
+      operations_research.operator_le(
         weight,
         operations_research.operator_times(y[j], data.bin_capacity)
       )

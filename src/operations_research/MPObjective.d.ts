@@ -62,11 +62,15 @@ export class MPObjective
     //    {
     //        OptimizeLinearExpr( linear_expr, true );
     //    }
+
     //    /// Resets the current objective to minimize linear_expr.
     //    void MinimizeLinearExpr( const LinearExpr& linear_expr )
-    //    {
-    //        OptimizeLinearExpr( linear_expr, false );
-    //    }
+    /**
+     * Resets the current objective to minimize linear_expr.
+     * 
+     * C++ void MinimizeLinearExpr( const LinearExpr& linear_expr );
+     */
+    MinimizeLinearExpr(linear_expr: LinearExpr): void;
 
     //    /// Adds linear_expr to the current objective, does not change the direction.
     //    void AddLinearExpr( const LinearExpr& linear_expr );
@@ -86,6 +90,12 @@ export class MPObjective
     //    {
     //        SetOptimizationDirection( true );
     //    }
+    /**
+     * Sets the optimization direction to maximize.
+     * 
+     * C++ void SetMaximization();
+     */
+    SetMaximization(): void;
 
     //    /// Is the optimization direction set to maximize?
     //    bool maximization() const;
@@ -105,6 +115,20 @@ export class MPObjective
     //     * your solution.
     //     */
     //    double Value() const;
+    /**
+     * Returns the objective value of the best solution found so far.
+     *
+     * It is the optimal objective value if the problem has been solved to
+     * optimality.
+     *
+     * Note: the objective value may be slightly different than what you could
+     * compute yourself using \c MPVariable::solution_value(); please use the
+     * --verify_solution flag to gain confidence about the numerical stability of
+     * your solution.
+     * 
+     * C++ double Value() const;
+     */
+    Value(): number;
 
     //    /**
     //     * Returns the best objective bound.
