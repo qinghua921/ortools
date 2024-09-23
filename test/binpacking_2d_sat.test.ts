@@ -1,6 +1,5 @@
 
-import { operations_research } from "../../src";
-import { BoolVar } from "../../src/operations_research/sat/GBoolVar";
+import { operations_research } from "../src";
 
 
 test('ts-ortools', () =>

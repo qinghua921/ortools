@@ -23,6 +23,10 @@ import { OrToolsVersion as operations_research_OrToolsVersion } from './operatio
 import { SimpleLinearSumAssignment as operations_research_SimpleLinearSumAssignment } from './operations_research/SimpleLinearSumAssignment'
 import { SimpleMinCostFlow as operations_research_SimpleMinCostFlow } from './operations_research/SimpleMinCostFlow'
 
+/*** operations_research::packing *********************************************************************/
+
+import { BinPacking2dParser as operations_research_packing_BinPacking2dParser } from './operations_research/packing/BinPacking2dParser'
+
 /*** operations_research::sat *********************************************************************/
 
 import { BoolVar as operations_research_sat_BoolVar } from './operations_research/sat/BoolVar'
@@ -66,6 +70,14 @@ export namespace operations_research
         operations_research_OrToolsVersion as OrToolsVersion,
         operations_research_SimpleLinearSumAssignment as SimpleLinearSumAssignment,
         operations_research_SimpleMinCostFlow as SimpleMinCostFlow,
+    }
+
+    export namespace packing
+    {
+        export
+        {
+            operations_research_packing_BinPacking2dParser as BinPacking2dParser,
+        }
     }
 
     export namespace sat
