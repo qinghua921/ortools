@@ -94,6 +94,10 @@ public:
                 InstanceMethod( "MakeNumVar", &GMPSolver::MakeNumVar ),
                 InstanceMethod( "NumVariables", &GMPSolver::NumVariables ),
                 StaticMethod( "infinity", &GMPSolver::infinity ),
+                InstanceMethod( "NumConstraints", &GMPSolver::NumConstraints ),
+                InstanceMethod( "SolverVersion", &GMPSolver::SolverVersion ),
+                InstanceMethod( "wall_time", &GMPSolver::wall_time ),
+                InstanceMethod( "iterations", &GMPSolver::iterations ),
             } );
         constructor = Napi::Persistent( func );
         constructor.SuppressDestruct();
@@ -101,8 +105,67 @@ public:
         return exports;
     };
 
-    // static double infinity()
+    // int64_t iterations() const
+    Napi::Value iterations( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
 
+        if ( info.Length() == 0 )
+        {
+            return Napi::Number::New( env, pMPSolver->iterations() );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::iterations : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    // int64_t wall_time() const
+    Napi::Value wall_time( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            return Napi::Number::New( env, pMPSolver->wall_time() );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::wall_time : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    // std::string SolverVersion() const
+    Napi::Value SolverVersion( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            return Napi::String::New( env, pMPSolver->SolverVersion() );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::SolverVersion : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    // int NumConstraints() const
+    Napi::Value NumConstraints( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            return Napi::Number::New( env, pMPSolver->NumConstraints() );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::NumConstraints : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    // static double infinity()
     static Napi::Value infinity( const Napi::CallbackInfo& info )
     {
         Napi::Env         env = info.Env();

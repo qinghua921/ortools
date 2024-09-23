@@ -36,11 +36,44 @@ public:
                 InstanceMethod( "Clear", &GMPObjective::Clear ),
                 InstanceMethod( "SetCoefficient", &GMPObjective::SetCoefficient ),
                 InstanceMethod( "SetMinimization", &GMPObjective::SetMinimization ),
+                InstanceMethod( "SetMaximization", &GMPObjective::SetMaximization ),
+                InstanceMethod( "Value", &GMPObjective::Value ),
             } );
         constructor = Napi::Persistent( func );
         constructor.SuppressDestruct();
         exports.Set( Napi::String::New( env, "MPObjective" ), func );
         return exports;
+    };
+
+    // double Value() const;
+    Napi::Value Value( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            return Napi::Number::New( env, pMPObjective->Value() );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPObjective::Value : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    // void SetMaximization();
+    Napi::Value SetMaximization( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            pMPObjective->SetMaximization();
+            return env.Null();
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPObjective::SetMaximization : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
     };
 
     // void SetMinimization();

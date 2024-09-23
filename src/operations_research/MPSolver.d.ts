@@ -310,9 +310,12 @@ export class MPSolver
 
     //    /// Returns the number of constraints.
     //    int NumConstraints() const
-    //    {
-    //        return constraints_.size();
-    //    }
+    /**
+     * Returns the number of constraints.
+     * 
+     * C++ int NumConstraints() const;
+     */
+    NumConstraints(): number;
 
     //    /**
     //     * Returns the array of constraints handled by the MPSolver.
@@ -737,6 +740,14 @@ export class MPSolver
 
     //    /// Returns the number of simplex iterations.
     //    int64_t iterations() const;
+    /**
+     * Returns the number of simplex iterations.
+     * 
+     * C++ int64_t iterations() const
+     */
+    iterations(): number;
+
+
 
     //    /**
     //     * Returns the number of branch-and-bound nodes evaluated during the solve.
@@ -747,6 +758,12 @@ export class MPSolver
 
     //    /// Returns a string describing the underlying solver and its version.
     //    std::string SolverVersion() const;
+    /**
+     * Returns a string describing the underlying solver and its version.
+     * 
+     * C++ std::string SolverVersion() const
+     */
+    SolverVersion(): string;
 
     //    /**
     //     * Advanced usage: returns the underlying solver.
@@ -839,25 +856,12 @@ export class MPSolver
 
     //    // DEPRECATED: Use DurationSinceConstruction() instead.
     //    int64_t wall_time() const
-    //    {
-    //        return absl::ToInt64Milliseconds( DurationSinceConstruction() );
-    //    }
-
-    //    friend class GLPKInterface;
-    //    friend class CLPInterface;
-    //    friend class CBCInterface;
-    //    friend class SCIPInterface;
-    //    friend class GurobiInterface;
-    //    friend class CplexInterface;
-    //    friend class XpressInterface;
-    //    friend class SLMInterface;
-    //    friend class MPSolverInterface;
-    //    friend class GLOPInterface;
-    //    friend class BopInterface;
-    //    friend class SatInterface;
-    //    friend class PdlpInterface;
-    //    friend class HighsInterface;
-    //    friend class KnapsackInterface;
+    /**
+     * DEPRECATED: Use DurationSinceConstruction() instead.
+     * 
+     * C++ int64_t wall_time() const
+     */
+    wall_time(): number;
 
     //    // Debugging: verify that the given MPVariable* belongs to this solver.
     //    bool OwnsVariable( const MPVariable* var ) const;
