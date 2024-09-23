@@ -37,27 +37,39 @@ export class BoolVar
 
     //    /// Returns the name of the variable.
     //    std::string Name() const;
+    /**
+     * Returns the name of the variable.
+     * 
+     * C++ std::string Name() const
+     */
+    Name(): string;
+
 
     //    /// Returns the logical negation of the current Boolean variable.
     //    BoolVar Not() const
-    //    {
-    //        return BoolVar( NegatedRef( index_ ), builder_ );
-    //    }
+    /**
+     * Returns the logical negation of the current Boolean variable.
+     * 
+     * C++ BoolVar Not() const
+     */
+    Not(): BoolVar;
+
+
 
     //    bool operator==( const BoolVar& other ) const
-    //    {
-    //        return other.builder_ == builder_ && other.index_ == index_;
-    //    }
+    /**
+     * C++ bool operator==( const BoolVar& other ) const
+     */
+    operator_eq(other: BoolVar): boolean;
 
     //    bool operator!=( const BoolVar& other ) const
     //    {
     //        return other.builder_ != builder_ || other.index_ != index_;
     //    }
 
-    //    BoolVar operator~() const
-    //    {
-    //        return Not();
-    //    }
+    /**
+     * C++ BoolVar operator~() const
+     */
 
     //    std::string DebugString() const;
 

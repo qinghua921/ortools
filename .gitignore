@@ -1,7 +1,6 @@
 ﻿.vscode
 build
 cmake/*
-!cmake/Findortools.cmake
 dist
 node_modules
 tsconfig.tsbuildinfo

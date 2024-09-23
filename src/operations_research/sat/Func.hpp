@@ -44,12 +44,31 @@ namespace sat
         return env.Null();
     }
 
+    // BoolVar Not( BoolVar x );
+    Napi::Value GNot( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 1 && info[ 0 ].IsObject()
+             && info[ 0 ].As< Napi::Object >().InstanceOf( GBoolVar::constructor.Value() ) )
+        {
+            auto x = GBoolVar::Unwrap( info[ 0 ].As< Napi::Object >() );
+            auto result = Not( *x->pBoolVar );
+            return GBoolVar::constructor.New( { Napi::External< BoolVar >::New( env, new BoolVar( result ) ) } );
+        }
+
+        Napi::TypeError::New( env, "operations_research::Not : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
     static Napi::Object FuncInit( Napi::Env env, Napi::Object exports )
     {
         Napi::HandleScope scope( env );
 
-        exports.Set( "operator_times", Napi::Function::New( env, Goperator_times ) );
+        exports.Set( "Not", Napi::Function::New( env, GNot ) );
         exports.Set( "Solve", Napi::Function::New( env, GSolve ) );
+        exports.Set( "operator_times", Napi::Function::New( env, Goperator_times ) );
 
         return exports;
     };

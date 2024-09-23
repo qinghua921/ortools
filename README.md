@@ -47,7 +47,7 @@ The codebase is large, and the priority is to implement the code in the examples
 - bin_packing_mip - 🆗
 - binpacking_2d_sat
 - binpacking_problem_sat
-- bool_or_sample_sat
+- bool_or_sample_sat - 🆗
 - channeling_sample_sat
 - clone_model_sample_sat
 - constraint_programming_cp

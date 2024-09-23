@@ -61,11 +61,60 @@ public:
         Napi::HandleScope scope( env );
         Napi::Function    func = DefineClass(
             env, "Domain",
-            {} );
+            {
+                StaticMethod( "AllValues", &GDomain::AllValues ),
+                StaticMethod( "FromValues", &GDomain::FromValues ),
+            } );
         constructor = Napi::Persistent( func );
         constructor.SuppressDestruct();
         exports.Set( Napi::String::New( env, "Domain" ), func );
         return exports;
+    };
+
+    // static Domain FromValues( std::vector< int64_t > values );
+    static Napi::Value FromValues( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 1 && info[ 0 ].IsArray() )
+        {
+            Napi::Array            values = info[ 0 ].As< Napi::Array >();
+            std::vector< int64_t > vec;
+            for ( int i = 0; i < values.Length(); i++ )
+            {
+                if ( !values.Get( i ).IsNumber() )
+                {
+                    Napi::TypeError::New( env, "operations_research::GDomain::FromValues : Invalid arguments" ).ThrowAsJavaScriptException();
+                    return env.Null();
+                }
+
+                vec.push_back( values.Get( i ).As< Napi::Number >().Int64Value() );
+            }
+            Domain domain  = Domain::FromValues( vec );
+            auto    external = Napi::External< Domain >::New( env, new Domain( domain ) );
+            return GDomain::constructor.New( { external } );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GDomain::FromValues : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    // static Domain AllValues();
+    static Napi::Value AllValues( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            Domain* pDomain  = new Domain( Domain::AllValues() );
+            auto    external = Napi::External< Domain >::New( env, pDomain );
+            return GDomain::constructor.New( { external } );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GDomain::AllValues : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
     };
 };
 

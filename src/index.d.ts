@@ -1,5 +1,5 @@
 ﻿
-/************************************************************************/
+/*** operations_research *********************************************************************/
 
 import { Domain as operations_research_Domain } from './operations_research/Domain'
 import
@@ -23,7 +23,7 @@ import { OrToolsVersion as operations_research_OrToolsVersion } from './operatio
 import { SimpleLinearSumAssignment as operations_research_SimpleLinearSumAssignment } from './operations_research/SimpleLinearSumAssignment'
 import { SimpleMinCostFlow as operations_research_SimpleMinCostFlow } from './operations_research/SimpleMinCostFlow'
 
-/************************************************************************/
+/*** operations_research::sat *********************************************************************/
 
 import { BoolVar as operations_research_sat_BoolVar } from './operations_research/sat/BoolVar'
 import { Constraint as operations_research_sat_Constraint } from './operations_research/sat/Constraint'
@@ -34,7 +34,8 @@ import { CpSolverStatus as operations_research_sat_CpSolverStatus } from './oper
 import
 {
     Goperator_times as operations_research_sat_operator_times,
-    GSolve as operations_research_sat_Solve
+    GSolve as operations_research_sat_Solve,
+    GNot as operations_research_sat_Not,
 } from './operations_research/sat/Func'
 import { IntVar as operations_research_sat_IntVar } from './operations_research/sat/IntVar'
 import
@@ -81,6 +82,7 @@ export namespace operations_research
 
             operations_research_sat_operator_times as operator_times,
             operations_research_sat_Solve as Solve,
+            operations_research_sat_Not as Not,
 
             operations_research_sat_IntVar as IntVar,
             operations_research_sat_LinearExpr as LinearExpr,
