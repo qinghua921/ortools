@@ -12,8 +12,6 @@
 export class Domain
 {
     // public:
-    //     /// By default, Domain will be empty.
-    //     Domain() {}
     /**
      * By default, Domain will be empty.
      * 
@@ -21,8 +19,6 @@ export class Domain
      */
     constructor();
 
-    //     /// Constructor for the common case of a singleton domain.
-    //     explicit Domain( int64_t value );
     /**
      * Constructor for the common case of a singleton domain.
      * 
@@ -30,13 +26,6 @@ export class Domain
      */
     constructor(value: number);
 
-
-
-    //     /**
-    //      * Constructor for the common case of a single interval [left, right].
-    //      * If left > right, this will result in the empty domain.
-    //      */
-    //     Domain( int64_t left, int64_t right );
     /**
      * Constructor for the common case of a single interval [left, right].
      * If left > right, this will result in the empty domain.
@@ -45,12 +34,6 @@ export class Domain
      */
     constructor(left: number, right: number);
 
-
-
-    //     /**
-    //      * Returns the full domain Int64.
-    //      */
-    //     static Domain AllValues();
     /**
      * Returns the full domain Int64.
      * 
@@ -58,12 +41,6 @@ export class Domain
      */
     static AllValues(): Domain;
 
-
-    //     /**
-    //      * Creates a domain from the union of an unsorted list of integer values.
-    //      * Input values may be repeated, with no consequence on the output
-    //      */
-    //     static Domain FromValues( std::vector< int64_t > values );
     /**
      * Creates a domain from the union of an unsorted list of integer values.
      * Input values may be repeated, with no consequence on the output
@@ -109,86 +86,6 @@ export class Domain
     //      * a python list of integers).
     //      */
     //     std::vector< int64_t > FlattenedIntervals() const;
-
-    // #if !defined( SWIG )
-    //     /**
-    //      * Allows to iterate over all values of a domain in order with
-    //      * for (const int64_t v : domain.Values()) { ... }
-    //      *
-    //      * Note that this shouldn't be used in another context !!
-    //      * We don't implement full fledged iterator APIs.
-    //      */
-    //     class DomainIterator
-    //     {
-    //     public:
-    //         explicit DomainIterator(
-    //             const absl::InlinedVector< ClosedInterval, 1 >& intervals )
-    //             : value_( intervals.empty() ? int64_t{ 0 } : intervals.front().start ),
-    //               it_( intervals.begin() ),
-    //               end_( intervals.end() ) {}
-
-    //         int64_t operator*() const
-    //         {
-    //             return value_;
-    //         }
-
-    //         void operator++()
-    //         {
-    //             if ( value_ == it_->end )
-    //             {
-    //                 ++it_;
-    //                 if ( it_ != end_ ) value_ = it_->start;
-    //             }
-    //             else
-    //             {
-    //                 ++value_;
-    //             }
-    //         }
-
-    //         bool operator!=(
-    //             absl::InlinedVector< ClosedInterval, 1 >::const_iterator end ) const
-    //         {
-    //             return it_ != end;
-    //         }
-
-    //     private:
-    //         int64_t                                                  value_;
-    //         absl::InlinedVector< ClosedInterval, 1 >::const_iterator it_;
-    //         absl::InlinedVector< ClosedInterval, 1 >::const_iterator end_;
-    //     };
-    //     struct DomainIteratorBeginEnd
-    //     {
-    //         DomainIterator begin() const
-    //         {
-    //             return DomainIterator( intervals );
-    //         }
-    //         absl::InlinedVector< ClosedInterval, 1 >::const_iterator end() const
-    //         {
-    //             return intervals.end();
-    //         }
-    //         const absl::InlinedVector< ClosedInterval, 1 >& intervals;
-    //     };
-    //     struct DomainIteratorBeginEndWithOwnership
-    //     {
-    //         DomainIterator begin() const
-    //         {
-    //             return DomainIterator( intervals );
-    //         }
-    //         absl::InlinedVector< ClosedInterval, 1 >::const_iterator end() const
-    //         {
-    //             return intervals.end();
-    //         }
-    //         absl::InlinedVector< ClosedInterval, 1 > intervals;
-    //     };
-    //     DomainIteratorBeginEnd Values() const&
-    //     {
-    //         return { this->intervals_ };
-    //     }
-    //     DomainIteratorBeginEndWithOwnership Values() const&&
-    //     {
-    //         return { std::move( this->intervals_ ) };
-    //     }
-    // #endif  // !defined(SWIG)
 
     //     /**
     //      * Returns true if this is the empty set.
