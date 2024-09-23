@@ -51,12 +51,28 @@ export class Domain
     //      * Returns the full domain Int64.
     //      */
     //     static Domain AllValues();
+    /**
+     * Returns the full domain Int64.
+     * 
+     * C++ static Domain AllValues();
+     */
+    static AllValues(): Domain;
+
 
     //     /**
     //      * Creates a domain from the union of an unsorted list of integer values.
     //      * Input values may be repeated, with no consequence on the output
     //      */
     //     static Domain FromValues( std::vector< int64_t > values );
+    /**
+     * Creates a domain from the union of an unsorted list of integer values.
+     * Input values may be repeated, with no consequence on the output
+     * 
+     * C++ static Domain FromValues( std::vector< int64_t > values );
+     */
+    static FromValues(values: number[]): Domain;
+
+
 
     //     /**
     //      * Creates a domain from the union of an unsorted list of intervals.
