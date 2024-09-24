@@ -27,6 +27,7 @@ import { SimpleMinCostFlow as operations_research_SimpleMinCostFlow } from './op
 
 import { BinPacking2dParser as operations_research_packing_BinPacking2dParser } from './operations_research/packing/BinPacking2dParser'
 import { MultipleDimensionsBinPackingProblem as operations_research_packing_MultipleDimensionsBinPackingProblem } from './operations_research/packing/MultipleDimensionsBinPackingProblem'
+import { MultipleDimensionsBinPackingShape as operations_research_packing_MultipleDimensionsBinPackingShape } from './operations_research/packing/MultipleDimensionsBinPackingShape'
 
 /*** operations_research::sat *********************************************************************/
 
@@ -83,6 +84,7 @@ export namespace operations_research
         {
             operations_research_packing_BinPacking2dParser as BinPacking2dParser,
             operations_research_packing_MultipleDimensionsBinPackingProblem as MultipleDimensionsBinPackingProblem,
+            operations_research_packing_MultipleDimensionsBinPackingShape as MultipleDimensionsBinPackingShape,
         }
     }
 

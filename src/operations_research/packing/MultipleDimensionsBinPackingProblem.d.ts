@@ -2,9 +2,13 @@
 export class MultipleDimensionsBinPackingProblem // final : public ::google::protobuf::Message
 {
     //    public:
-    //        inline MultipleDimensionsBinPackingProblem()
-    //            : MultipleDimensionsBinPackingProblem( nullptr ) {}
-    //        ~MultipleDimensionsBinPackingProblem() override;
+
+    /**
+     * C++ inline MultipleDimensionsBinPackingProblem()
+     *     : MultipleDimensionsBinPackingProblem( nullptr ) {}
+     */
+    constructor();
+
     //        template < typename = void >
     //        explicit PROTOBUF_CONSTEXPR MultipleDimensionsBinPackingProblem(
     //            ::google::protobuf::internal::ConstantInitialized );
@@ -111,11 +115,6 @@ export class MultipleDimensionsBinPackingProblem // final : public ::google::pro
     //            MultipleDimensionsBinPackingProblem::MergeImpl( *this, from );
     //        }
 
-    //    private:
-    //        static void MergeImpl(
-    //            ::google::protobuf::MessageLite&       to_msg,
-    //            const ::google::protobuf::MessageLite& from_msg );
-
     //    public:
     //        ABSL_ATTRIBUTE_REINITIALIZES void Clear() final;
     //        bool                              IsInitialized() const final;
@@ -130,28 +129,7 @@ export class MultipleDimensionsBinPackingProblem // final : public ::google::pro
     //            return _impl_._cached_size_.Get();
     //        }
 
-    //    private:
-    //        void SharedCtor( ::google::protobuf::Arena* arena );
-    //        void SharedDtor();
-    //        void InternalSwap( MultipleDimensionsBinPackingProblem* other );
 
-    //    private:
-    //        friend class ::google::protobuf::internal::AnyMetadata;
-    //        static ::absl::string_view FullMessageName()
-    //        {
-    //            return "operations_research.packing.MultipleDimensionsBinPackingProblem";
-    //        }
-
-    //    protected:
-    //        explicit MultipleDimensionsBinPackingProblem( ::google::protobuf::Arena* arena );
-    //        MultipleDimensionsBinPackingProblem( ::google::protobuf::Arena* arena, const MultipleDimensionsBinPackingProblem& from );
-    //        MultipleDimensionsBinPackingProblem( ::google::protobuf::Arena* arena, MultipleDimensionsBinPackingProblem&& from ) noexcept
-    //            : MultipleDimensionsBinPackingProblem( arena )
-    //        {
-    //            *this = ::std::move( from );
-    //        }
-    //        const ::google::protobuf::MessageLite::ClassData* GetClassData()
-    //            const final;
 
     //    public:
     //        ::google::protobuf::Metadata GetMetadata() const final;
@@ -163,11 +141,16 @@ export class MultipleDimensionsBinPackingProblem // final : public ::google::pro
     //            kItemsFieldNumber    = 2,
     //            kBoxShapeFieldNumber = 1,
     //        };
+
     //        // repeated .operations_research.packing.MultipleDimensionsBinPackingItem items = 2;
     //        int items_size() const;
+    /**
+     * repeated .operations_research.packing.MultipleDimensionsBinPackingItem items = 2;
+     * 
+     * C++ int items_size() const;
+     */
+    items_size(): number;
 
-    //    private:
-    //        int _internal_items_size() const;
 
     //    public:
     //        void                                                                                                      clear_items();
@@ -182,52 +165,21 @@ export class MultipleDimensionsBinPackingProblem // final : public ::google::pro
     //        const ::operations_research::packing::MultipleDimensionsBinPackingItem&                                         items( int index ) const;
     //        ::operations_research::packing::MultipleDimensionsBinPackingItem*                                               add_items();
     //        const ::google::protobuf::RepeatedPtrField< ::operations_research::packing::MultipleDimensionsBinPackingItem >& items() const;
+
     //        // .operations_research.packing.MultipleDimensionsBinPackingShape box_shape = 1;
     //        bool                                                                                  has_box_shape() const;
     //        void                                                                                  clear_box_shape();
-    //        const ::operations_research::packing::MultipleDimensionsBinPackingShape&              box_shape() const;
+
+    /**
+     * C++ const ::operations_research::packing::MultipleDimensionsBinPackingShape& box_shape() const;
+     */
+    box_shape(): readonly MultipleDimensionsBinPackingShape;
+
     //        PROTOBUF_NODISCARD ::operations_research::packing::MultipleDimensionsBinPackingShape* release_box_shape();
     //        ::operations_research::packing::MultipleDimensionsBinPackingShape*                    mutable_box_shape();
     //        void                                                                                  set_allocated_box_shape( ::operations_research::packing::MultipleDimensionsBinPackingShape* value );
     //        void                                                                                  unsafe_arena_set_allocated_box_shape( ::operations_research::packing::MultipleDimensionsBinPackingShape* value );
     //        ::operations_research::packing::MultipleDimensionsBinPackingShape*                    unsafe_arena_release_box_shape();
 
-    //    private:
-    //        const ::operations_research::packing::MultipleDimensionsBinPackingShape& _internal_box_shape() const;
-    //        ::operations_research::packing::MultipleDimensionsBinPackingShape*       _internal_mutable_box_shape();
 
-    //    public:
-    //        // @@protoc_insertion_point(class_scope:operations_research.packing.MultipleDimensionsBinPackingProblem)
-    //    private:
-    //        class _Internal;
-    //        friend class ::google::protobuf::internal::TcParser;
-    //        static const ::google::protobuf::internal::TcParseTable<
-    //            1, 2, 2,
-    //            0, 2 >
-    //            _table_;
-    //        friend class ::google::protobuf::MessageLite;
-    //        friend class ::google::protobuf::Arena;
-    //        template < typename T >
-    //        friend class ::google::protobuf::Arena::InternalHelper;
-    //        using InternalArenaConstructable_ = void;
-    //        using DestructorSkippable_        = void;
-    //        struct Impl_
-    //        {
-    //            inline explicit constexpr Impl_(
-    //                ::google::protobuf::internal::ConstantInitialized ) noexcept;
-    //            inline explicit Impl_( ::google::protobuf::internal::InternalVisibility visibility,
-    //                                   ::google::protobuf::Arena*                       arena );
-    //            inline explicit Impl_( ::google::protobuf::internal::InternalVisibility visibility,
-    //                                   ::google::protobuf::Arena* arena, const Impl_& from );
-    //            ::google::protobuf::internal::HasBits< 1 >                                                               _has_bits_;
-    //            mutable ::google::protobuf::internal::CachedSize                                                         _cached_size_;
-    //            ::google::protobuf::RepeatedPtrField< ::operations_research::packing::MultipleDimensionsBinPackingItem > items_;
-    //            ::operations_research::packing::MultipleDimensionsBinPackingShape*                                       box_shape_;
-    //            PROTOBUF_TSAN_DECLARE_MEMBER
-    //        };
-    //        union
-    //        {
-    //            Impl_ _impl_;
-    //        };
-    //        friend struct ::TableStruct_ortools_2fpacking_2fmultiple_5fdimensions_5fbin_5fpacking_2eproto;
 };
