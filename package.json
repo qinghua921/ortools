@@ -14,17 +14,11 @@
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "scripts": {
-    "all": "npm run cppbuild && npm run jest",
-    "cppbuild": "cmake-js compile",
-    "jest": "set NODE_OPTIONS=--abort-on-uncaught-exception && jest --detectOpenHandles"
+    "cppbuild": "cmake-js compile"
   },
   "devDependencies": {
     "cmake-js": "7.3.0",
-    "node-addon-api": "8.1.0",
-    "@types/jest": "29.5.12",
-    "jest": "29.7.0",
-    "ts-jest": "29.2.5",
-    "typescript": "^5.5.4"
+    "node-addon-api": "8.1.0"
   },
   "keywords": [
     "ortools",
