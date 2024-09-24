@@ -1,4 +1,5 @@
 import { CanAsLinearExpr, LinearExpr } from "./LinearExpr";
+import { LinearRange } from "./LinearRange";
 
 //LinearRange operator<=( const LinearExpr& lhs, const LinearExpr& rhs );
 export function operator_le(lhs: LinearExpr, rhs: LinearExpr): LinearRange;

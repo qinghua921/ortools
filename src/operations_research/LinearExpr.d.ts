@@ -75,17 +75,16 @@ export class LinearExpr
      */
     static NotVar(var_: LinearExpr): LinearExpr;
 
-
-
-    //    LinearExpr& operator+=( const LinearExpr& rhs );
     /**
      * C++ LinearExpr& operator+=( const LinearExpr& rhs );
      */
     operator_plus_equals(rhs: CanAsLinearExpr): LinearExpr;
 
-    //    LinearExpr& operator-=( const LinearExpr& rhs );
+    /**
+     * C++ LinearExpr& operator-=( const LinearExpr& rhs );
+     */
+    operator_minus_equals(rhs: CanAsLinearExpr): LinearExpr;
 
-    //    LinearExpr& operator*=( double rhs );
     /**
      * C++ LinearExpr& operator*=( double rhs );
      */
