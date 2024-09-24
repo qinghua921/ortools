@@ -1,3 +1,4 @@
+import { MultipleDimensionsBinPackingItem } from "./MultipleDimensionsBinPackingItem";
 import { MultipleDimensionsBinPackingShape } from "./MultipleDimensionsBinPackingShape";
 
 export class MultipleDimensionsBinPackingProblem // final : public ::google::protobuf::Message
