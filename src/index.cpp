@@ -22,6 +22,7 @@
 /*** operations_research::packing *************************************************************************/
 
 #include "operations_research/packing/BinPacking2dParser.hpp"
+#include "operations_research/packing/MultipleDimensionsBinPackingItem.hpp"
 #include "operations_research/packing/MultipleDimensionsBinPackingProblem.hpp"
 #include "operations_research/packing/MultipleDimensionsBinPackingShape.hpp"
 
@@ -52,6 +53,7 @@ Napi::Object Init( Napi::Env env, Napi::Object exports )
     {
         auto packing = Napi::Object::New( env );
         operations_research::packing::GBinPacking2dParser::Init( env, packing );
+        operations_research::packing::GMultipleDimensionsBinPackingItem::Init( env, packing );
         operations_research::packing::GMultipleDimensionsBinPackingProblem::Init( env, packing );
         operations_research::packing::GMultipleDimensionsBinPackingShape::Init( env, packing );
         operations_research.Set( "packing", packing );

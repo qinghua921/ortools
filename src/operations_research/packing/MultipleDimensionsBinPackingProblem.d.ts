@@ -161,11 +161,24 @@ export class MultipleDimensionsBinPackingProblem // final : public ::google::pro
     //    public:
     //        const ::operations_research::packing::MultipleDimensionsBinPackingItem&                                         items( int index ) const;
     //        ::operations_research::packing::MultipleDimensionsBinPackingItem*                                               add_items();
-    //        const ::google::protobuf::RepeatedPtrField< ::operations_research::packing::MultipleDimensionsBinPackingItem >& items() const;
+
+    /**
+     * C++ const RepeatedPtrField<MultipleDimensionsBinPackingItem >& items() const;
+     */
+    items(): Array<MultipleDimensionsBinPackingItem>;
+
 
     //        // .operations_research.packing.MultipleDimensionsBinPackingShape box_shape = 1;
-    //        bool                                                                                  has_box_shape() const;
-    //        void                                                                                  clear_box_shape();
+    
+    /**
+     * C++ void clear_box_shape();
+     */
+    clear_box_shape(): void;
+
+    /**
+     * C++ bool has_box_shape() const;
+     */
+    has_box_shape(): boolean;
 
     /**
      * C++ const ::operations_research::packing::MultipleDimensionsBinPackingShape& box_shape() const;
