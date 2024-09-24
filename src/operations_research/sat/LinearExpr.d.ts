@@ -45,18 +45,14 @@ export class LinearExpr
      */
     constructor();
 
-    //       /// Constructs a linear expression from a Boolean variable.
-    //       /// It deals with logical negation correctly.
-    //       LinearExpr( BoolVar var );
     /**
      * Constructs a linear expression from a Boolean variable.
+     * It deals with logical negation correctly.
      * 
      * C++ LinearExpr( BoolVar var );
      */
     constructor(var_: BoolVar);
 
-    //       /// Constructs a linear expression from an integer variable.
-    //       LinearExpr( IntVar var );
     /**
      * Constructs a linear expression from an integer variable.
      * 
@@ -64,8 +60,6 @@ export class LinearExpr
      */
     constructor(var_: IntVar);
 
-    //       /// Constructs a constant linear expression.
-    //       LinearExpr( int64_t constant );
     /**
      * Constructs a constant linear expression.
      * 
@@ -73,10 +67,13 @@ export class LinearExpr
      */
     constructor(constant: number);
 
-    //       // NOLINTEND(google-explicit-constructor)
 
-    //       /// Constructs the sum of a list of variables.
-    //       static LinearExpr Sum( absl::Span< const IntVar > vars );
+    /**
+     * Constructs the sum of a list of variables.
+     * 
+     * C++ static LinearExpr Sum( absl::Span< const IntVar > vars );
+     */
+    static Sum(vars: IntVar[]): LinearExpr;
 
     //       /// Constructs the sum of a list of Boolean variables.
     //       static LinearExpr Sum( absl::Span< const BoolVar > vars );

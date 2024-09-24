@@ -1,5 +1,5 @@
 import { Domain } from "../Domain";
-import { CanAsLinearExpr } from "../LinearExpr";
+import { CanAsLinearExpr } from "./LinearExpr";
 import { BoolVar } from "./BoolVar";
 import { Constraint } from "./Constraint";
 import { IntVar } from "./IntVar";
@@ -67,9 +67,14 @@ export class CpModelBuilder
     //                                        const LinearExpr& size,
     //                                        const LinearExpr& end, BoolVar presence );
 
-    //    /// Creates an optional interval variable with a fixed size.
-    //    IntervalVar NewOptionalFixedSizeIntervalVar( const LinearExpr& start,
-    //                                                 int64_t size, BoolVar presence );
+
+    /**
+     * Creates an optional interval variable with a fixed size.
+     * 
+     * C++ IntervalVar NewOptionalFixedSizeIntervalVar( const LinearExpr& start,
+     *                                                  int64_t size, BoolVar presence );
+     */
+    NewOptionalFixedSizeIntervalVar(start: CanAsLinearExpr, size: number, presence: BoolVar): IntervalVar;
 
     //    /// It is sometime convenient when building a model to create a bunch of
     //    /// variables that will later be fixed. Instead of doing AddEquality(var,
@@ -119,18 +124,20 @@ export class CpModelBuilder
     //    /// Adds the constraint that an odd number of literals is true.
     //    Constraint AddBoolXor( absl::Span< const BoolVar > literals );
 
-    //    /// Adds a => b.
-    //    Constraint AddImplication( BoolVar a, BoolVar b )
-    //    {
-    //        return AddBoolOr( { a.Not(), b } );
-    //    }
+    /**
+     * Adds a => b.
+     * 
+     * C++ Constraint AddImplication( BoolVar a, BoolVar b );
+     */
+    AddImplication(a: BoolVar, b: BoolVar): Constraint;
 
-    //    /// Adds implication: if all lhs vars are true then all rhs vars must be true.
-    //    Constraint AddImplication( absl::Span< const BoolVar > lhs,
-    //                               absl::Span< const BoolVar > rhs )
-    //    {
-    //        return AddBoolAnd( rhs ).OnlyEnforceIf( lhs );
-    //    }
+    /**
+     * Adds implication: if all lhs vars are true then all rhs vars must be true.
+     * 
+     * C++ Constraint AddImplication( absl::Span< const BoolVar > lhs,
+     *                               absl::Span< const BoolVar > rhs )
+     */
+    AddImplication(lhs: BoolVar[], rhs: BoolVar[]): Constraint;
 
     //    /// Adds left == right.
     //    Constraint AddEquality( const LinearExpr& left, const LinearExpr& right );
@@ -141,8 +148,12 @@ export class CpModelBuilder
      */
     AddEquality(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
-    //    /// Adds left >= right.
-    //    Constraint AddGreaterOrEqual( const LinearExpr& left, const LinearExpr& right );
+    /**
+     * Adds left >= right.
+     * 
+     * C++ Constraint AddGreaterOrEqual( const LinearExpr& left, const LinearExpr& right );
+     */
+    AddGreaterOrEqual(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
     //    /// Adds left > right.
     //    Constraint AddGreaterThan( const LinearExpr& left, const LinearExpr& right );
@@ -380,10 +391,12 @@ export class CpModelBuilder
     //     */
     //    Constraint AddNoOverlap( absl::Span< const IntervalVar > vars );
 
-    //    /**
-    //     * The no_overlap_2d constraint prevents a set of boxes from overlapping.
-    //     */
-    //    NoOverlap2DConstraint AddNoOverlap2D();
+    /**
+     * The no_overlap_2d constraint prevents a set of boxes from overlapping.
+     * 
+     * C++ NoOverlap2DConstraint AddNoOverlap2D();
+     */
+    AddNoOverlap2D(): NoOverlap2DConstraint;
 
     //    /**
     //     * The cumulative constraint
@@ -400,7 +413,7 @@ export class CpModelBuilder
      * 
      * C++ void Minimize( const LinearExpr& expr );
      */
-    Minimize(expr: LinearExpr): void;
+    Minimize(expr: CanAsLinearExpr): void;
 
     //    /// Adds a linear floating point minimization objective.
     //    /// Note that the coefficients will be internally scaled to integer.

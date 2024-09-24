@@ -4,7 +4,7 @@
 
 namespace operations_research
 {
-namespace graph
+namespace packing
 {
     class GDemo : public Napi::ObjectWrap< GDemo >
     {

@@ -1,6 +1,5 @@
 
-import { operations_research } from "../../src";
-import { BoolVar } from "../../src/operations_research/sat/GBoolVar";
+import { operations_research } from "../src";
 
 
 test('ts-ortools', () =>
@@ -60,8 +59,8 @@ test('ts-ortools', () =>
     expect(num_shapes).toBe(1);
   }
 
-  // Create one Boolean variable per item and per bin.
-  const item_to_bin: BoolVar[][] = new Array(num_items);
+    // Create one Boolean variable per item and per bin.
+    const item_to_bin: operations_research.sat.BoolVar[][] = new Array(num_items);
   for (let item = 0; item < num_items; ++item)
   {
     item_to_bin[item] = new Array(max_bins);
