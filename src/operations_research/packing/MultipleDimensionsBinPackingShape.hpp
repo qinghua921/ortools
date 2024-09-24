@@ -38,12 +38,35 @@ namespace packing
             Napi::HandleScope scope( env );
             Napi::Function    func = DefineClass(
                 env, "MultipleDimensionsBinPackingShape",
-                {} );
+                {
+                    InstanceMethod( "dimensions", &GMultipleDimensionsBinPackingShape::dimensions )
+                } );
             constructor = Napi::Persistent( func );
             constructor.SuppressDestruct();
             exports.Set( Napi::String::New( env, "MultipleDimensionsBinPackingShape" ), func );
             return exports;
         };
+
+        //     const ::google::protobuf::RepeatedField< ::int64_t >& dimensions() const;
+        Napi::Value dimensions( const Napi::CallbackInfo& info )
+        {
+            Napi::Env         env = info.Env();
+            Napi::HandleScope scope( env );
+
+            if ( info.Length() == 0 )
+            {
+                auto        dimensions = pMultipleDimensionsBinPackingShape->dimensions();
+                Napi::Array arr        = Napi::Array::New( env, dimensions.size() );
+                for ( int i = 0; i < dimensions.size(); i++ )
+                {
+                    arr[ i ] = dimensions[ i ];
+                }
+                return arr;
+            }
+
+            Napi::TypeError::New( env, "operations_research::packing::GMultipleDimensionsBinPackingShape::dimensions : Invalid arguments" ).ThrowAsJavaScriptException();
+            return env.Null();
+        }
     };
 }  // namespace packing
 

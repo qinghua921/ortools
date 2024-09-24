@@ -173,7 +173,12 @@ export class MultipleDimensionsBinPackingShape // final : public ::google::proto
     //     ::int64_t                                             dimensions( int index ) const;
     //     void                                                  set_dimensions( int index, ::int64_t value );
     //     void                                                  add_dimensions( ::int64_t value );
-    //     const ::google::protobuf::RepeatedField< ::int64_t >& dimensions() const;
+
+    /**
+     * C++ const ::google::protobuf::RepeatedField< ::int64_t >& dimensions() const;
+     */
+    dimensions(): number[];
+
     //     ::google::protobuf::RepeatedField< ::int64_t >*       mutable_dimensions();
 
     // private:

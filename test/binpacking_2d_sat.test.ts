@@ -25,13 +25,13 @@ test('ts-ortools', () =>
   console.log("Instance has " + problem.items_size() + " items");
 
   const box_dimensions = problem.box_shape().dimensions();
-  const num_dimensions = box_dimensions.size();
+  const num_dimensions = box_dimensions.length;
   const num_items = problem.items_size();
 
-  const area_of_one_bin = box_dimensions.operator_get(0) * box_dimensions.operator_get(1);
+  const area_of_one_bin = box_dimensions[0] * box_dimensions[1];
   let sum_of_items_area = 0;
 
-  for (let i = 0; i < problem.items().size(); ++i)
+  for (let i = 0; i < problem.items().length; ++i)
   {
     let item = problem.items(i);
     expect(item.shapes_size()).toBe(1);
@@ -59,8 +59,8 @@ test('ts-ortools', () =>
     expect(num_shapes).toBe(1);
   }
 
-    // Create one Boolean variable per item and per bin.
-    const item_to_bin: operations_research.sat.BoolVar[][] = new Array(num_items);
+  // Create one Boolean variable per item and per bin.
+  const item_to_bin: operations_research.sat.BoolVar[][] = new Array(num_items);
   for (let item = 0; item < num_items; ++item)
   {
     item_to_bin[item] = new Array(max_bins);
@@ -85,7 +85,7 @@ test('ts-ortools', () =>
       interval_by_item_bin_dimension[item][b] = new Array(2);
       for (let dim = 0; dim < num_dimensions; ++dim)
       {
-        const dimension = box_dimensions.operator_get(dim);
+        const dimension = box_dimensions[dim];
         const size = problem.items(item).shapes(0).dimensions(dim);
         const start = cp_model.NewIntVar(new operations_research.Domain(0, dimension - size));
         interval_by_item_bin_dimension[item][b][dim] = cp_model.NewOptionalFixedSizeIntervalVar(start, size, item_to_bin[item][b]);
@@ -101,7 +101,7 @@ test('ts-ortools', () =>
   }
   else if (num_dimensions == 2)
   {
-    console.log("Box size: " + box_dimensions.operator_get(0) + "*" + box_dimensions.operator_get(1));
+    console.log("Box size: " + box_dimensions[0] + "*" + box_dimensions[1]);
     for (let b = 0; b < max_bins; ++b)
     {
       const no_overlap_2d = cp_model.AddNoOverlap2D();
@@ -193,5 +193,7 @@ test('ts-ortools', () =>
   parameters.set_use_energetic_reasoning_in_no_overlap_2d(true);
 
   let response = operations_research.sat.SolveWithParameters(cp_model.Build(), parameters);
+  console.log(response.status());
+  
 
 });
