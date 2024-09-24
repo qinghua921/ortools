@@ -157,9 +157,6 @@ export class MultipleDimensionsBinPackingProblem // final : public ::google::pro
     //        ::operations_research::packing::MultipleDimensionsBinPackingItem*                                         mutable_items( int index );
     //        ::google::protobuf::RepeatedPtrField< ::operations_research::packing::MultipleDimensionsBinPackingItem >* mutable_items();
 
-    //    private:
-    //        const ::google::protobuf::RepeatedPtrField< ::operations_research::packing::MultipleDimensionsBinPackingItem >& _internal_items() const;
-    //        ::google::protobuf::RepeatedPtrField< ::operations_research::packing::MultipleDimensionsBinPackingItem >*       _internal_mutable_items();
 
     //    public:
     //        const ::operations_research::packing::MultipleDimensionsBinPackingItem&                                         items( int index ) const;
