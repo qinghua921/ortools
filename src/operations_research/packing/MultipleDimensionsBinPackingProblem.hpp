@@ -92,12 +92,12 @@ namespace packing
             return env.Null();
         };
 
-        // const RepeatedPtrField<MultipleDimensionsBinPackingItem >& items() const;
         Napi::Value items( const Napi::CallbackInfo& info )
         {
             Napi::Env         env = info.Env();
             Napi::HandleScope scope( env );
 
+            // const RepeatedPtrField<MultipleDimensionsBinPackingItem >& items() const;
             if ( info.Length() == 0 )
             {
                 Napi::Array items = Napi::Array::New( env, pMultipleDimensionsBinPackingProblem->items_size() );
@@ -108,6 +108,20 @@ namespace packing
                     items.Set( i, GMultipleDimensionsBinPackingItem::constructor.New( { external } ) );
                 }
                 return items;
+            }
+
+            // const MultipleDimensionsBinPackingItem& items( int index ) const;
+            if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+            {
+                int index = info[ 0 ].As< Napi::Number >().Int32Value();
+                if ( index < 0 || index >= pMultipleDimensionsBinPackingProblem->items_size() )
+                {
+                    Napi::TypeError::New( env, "operations_research::GMultipleDimensionsBinPackingProblem::items : Invalid index" ).ThrowAsJavaScriptException();
+                    return env.Null();
+                }
+                auto external = Napi::External< MultipleDimensionsBinPackingItem >::New(
+                    env, new MultipleDimensionsBinPackingItem( pMultipleDimensionsBinPackingProblem->items( index ) ) );
+                return GMultipleDimensionsBinPackingItem::constructor.New( { external } );
             }
 
             Napi::TypeError::New( env, "operations_research::GMultipleDimensionsBinPackingProblem::items : Invalid arguments" ).ThrowAsJavaScriptException();

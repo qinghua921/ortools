@@ -8,7 +8,7 @@ namespace operations_research
 {
 
 // LinearRange operator>=( const LinearExpr& lhs, const LinearExpr& rhs );
-Napi::Value operator_ge( const Napi::CallbackInfo& info )
+Napi::Value Goperator_ge( const Napi::CallbackInfo& info )
 {
     Napi::Env         env = info.Env();
     Napi::HandleScope scope( env );
@@ -28,7 +28,7 @@ Napi::Value operator_ge( const Napi::CallbackInfo& info )
 };
 
 // LinearRange operator==( const LinearExpr& lhs, const LinearExpr& rhs );
-Napi::Value operator_eq( const Napi::CallbackInfo& info )
+Napi::Value Goperator_eq( const Napi::CallbackInfo& info )
 {
     Napi::Env         env = info.Env();
     Napi::HandleScope scope( env );
@@ -48,7 +48,7 @@ Napi::Value operator_eq( const Napi::CallbackInfo& info )
 };
 
 // LinearRange operator<=( const LinearExpr& lhs, const LinearExpr& rhs );
-Napi::Value operator_le( const Napi::CallbackInfo& info )
+Napi::Value G( const Napi::CallbackInfo& info )
 {
     Napi::Env         env = info.Env();
     Napi::HandleScope scope( env );
@@ -67,7 +67,7 @@ Napi::Value operator_le( const Napi::CallbackInfo& info )
     return env.Null();
 };
 
-Napi::Value operator_times( const Napi::CallbackInfo& info )
+Napi::Value Goperator_times( const Napi::CallbackInfo& info )
 {
     Napi::Env         env = info.Env();
     Napi::HandleScope scope( env );
@@ -102,10 +102,10 @@ static Napi::Object FuncInit( Napi::Env env, Napi::Object exports )
 {
     Napi::HandleScope scope( env );
 
-    exports.Set( "operator_ge", Napi::Function::New( env, operator_ge ) );
-    exports.Set( "operator_eq", Napi::Function::New( env, operator_eq ) );
-    exports.Set( "operator_le", Napi::Function::New( env, operator_le ) );
-    exports.Set( "operator_times", Napi::Function::New( env, operator_times ) );
+    exports.Set( "operator_ge", Napi::Function::New( env, Goperator_ge ) );
+    exports.Set( "operator_eq", Napi::Function::New( env, Goperator_eq ) );
+    exports.Set( "operator_le", Napi::Function::New( env, G ) );
+    exports.Set( "operator_times", Napi::Function::New( env, Goperator_times ) );
 
     return exports;
 };

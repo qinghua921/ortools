@@ -1,10 +1,16 @@
+import { MultipleDimensionsBinPackingShape } from "./MultipleDimensionsBinPackingShape";
 
 class MultipleDimensionsBinPackingItem // final : public ::google::protobuf::Message
 {
     // public:
     //     inline MultipleDimensionsBinPackingItem()
     //         : MultipleDimensionsBinPackingItem( nullptr ) {}
-    //     ~MultipleDimensionsBinPackingItem() override;
+    /**
+     * C++ inline MultipleDimensionsBinPackingItem()
+     *     : MultipleDimensionsBinPackingItem( nullptr ) {}
+     */
+    constructor();
+
     //     template < typename = void >
     //     explicit PROTOBUF_CONSTEXPR MultipleDimensionsBinPackingItem(
     //         ::google::protobuf::internal::ConstantInitialized );
@@ -138,19 +144,29 @@ class MultipleDimensionsBinPackingItem // final : public ::google::protobuf::Mes
     //         kValueFieldNumber  = 2,
     //     };
     //     // repeated .operations_research.packing.MultipleDimensionsBinPackingShape shapes = 1;
+
     //     int shapes_size() const;
+    /**
+     * C++ int shapes_size() const
+     */
+    shapes_size(): number;
 
 
     // public:
     //     void                                                                                                       clear_shapes();
-    //     ::operations_research::packing::MultipleDimensionsBinPackingShape*                                         mutable_shapes( int index );
-    //     ::google::protobuf::RepeatedPtrField< ::operations_research::packing::MultipleDimensionsBinPackingShape >* mutable_shapes();
+    //     MultipleDimensionsBinPackingShape*                                         mutable_shapes( int index );
+    //     ::google::protobuf::RepeatedPtrField< MultipleDimensionsBinPackingShape >* mutable_shapes();
 
 
-    // public:
-    //     const ::operations_research::packing::MultipleDimensionsBinPackingShape&                                         shapes( int index ) const;
-    //     ::operations_research::packing::MultipleDimensionsBinPackingShape*                                               add_shapes();
-    //     const ::google::protobuf::RepeatedPtrField< ::operations_research::packing::MultipleDimensionsBinPackingShape >& shapes() const;
+    /**
+     * C++ const MultipleDimensionsBinPackingShape& shapes( int index ) const
+     */
+    shapes(index: number): MultipleDimensionsBinPackingShape;
+
+
+
+    //     MultipleDimensionsBinPackingShape*                                               add_shapes();
+    //     const ::google::protobuf::RepeatedPtrField< MultipleDimensionsBinPackingShape >& shapes() const;
     //     // int64 value = 2;
     //     void      clear_value();
     //     ::int64_t value() const;

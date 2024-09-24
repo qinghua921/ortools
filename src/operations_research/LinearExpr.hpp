@@ -65,11 +65,29 @@ public:
                 InstanceMethod( "operator_plus_equals", &GLinearExpr::operator_plus_equals ),
                 InstanceMethod( "operator_times_equals", &GLinearExpr::operator_times_equals ),
                 StaticMethod( "NotVar", &GLinearExpr::NotVar ),
+                InstanceMethod( "operator_minus_equals", &GLinearExpr::operator_minus_equals ),
             } );
         constructor = Napi::Persistent( func );
         constructor.SuppressDestruct();
         exports.Set( Napi::String::New( env, "LinearExpr" ), func );
         return exports;
+    };
+    
+    // LinearExpr& operator-=( const LinearExpr& rhs );
+    Napi::Value operator_minus_equals( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        LinearExpr rhs;
+        if ( info.Length() == 1 && ToLinearExpr( info[ 0 ], rhs ) )
+        {
+            *pLinearExpr -= rhs;
+            return this->Value();
+        }
+
+        Napi::TypeError::New( env, "LinearExpr::operator-= : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
     };
 
     // static LinearExpr NotVar( LinearExpr var );

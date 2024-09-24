@@ -1,3 +1,5 @@
+import { MultipleDimensionsBinPackingItem } from "./MultipleDimensionsBinPackingItem";
+import { MultipleDimensionsBinPackingShape } from "./MultipleDimensionsBinPackingShape";
 
 export class MultipleDimensionsBinPackingProblem // final : public ::google::protobuf::Message
 {
@@ -158,18 +160,21 @@ export class MultipleDimensionsBinPackingProblem // final : public ::google::pro
     //        ::google::protobuf::RepeatedPtrField< ::operations_research::packing::MultipleDimensionsBinPackingItem >* mutable_items();
 
 
-    //    public:
-    //        const ::operations_research::packing::MultipleDimensionsBinPackingItem&                                         items( int index ) const;
+    /**
+     * C++ const MultipleDimensionsBinPackingItem& items( int index ) const;
+     */
+    items(index: number): MultipleDimensionsBinPackingItem;
+    
     //        ::operations_research::packing::MultipleDimensionsBinPackingItem*                                               add_items();
 
     /**
      * C++ const RepeatedPtrField<MultipleDimensionsBinPackingItem >& items() const;
      */
-    items(): Array<MultipleDimensionsBinPackingItem>;
+    items(): MultipleDimensionsBinPackingItem[];
 
 
     //        // .operations_research.packing.MultipleDimensionsBinPackingShape box_shape = 1;
-    
+
     /**
      * C++ void clear_box_shape();
      */
