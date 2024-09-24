@@ -1,3 +1,4 @@
+import { LinearRange } from './LinearRange';
 import { MPConstraint } from './MPConstraint'
 import { MPObjective } from './MPObjective';
 import { MPVariable } from './MPVariable';
@@ -54,7 +55,7 @@ export namespace MPSolver
         XPRESS_MIXED_INTEGER_PROGRAMMING = 102,
         COPT_LINEAR_PROGRAMMING = 103,
         COPT_MIXED_INTEGER_PROGRAMMING = 104,
-    };
+    }
 
     /**
      * The status of solving the problem. The straightforward translation to
@@ -78,7 +79,7 @@ export namespace MPSolver
         MODEL_INVALID,
         /// not been solved yet.
         NOT_SOLVED = 6
-    };
+    }
 }
 
 /**
@@ -833,4 +834,4 @@ export class MPSolver
     //    // Debugging: verify that the given MPVariable* belongs to this solver.
     //    bool OwnsVariable( const MPVariable* var ) const;
 
-};
+}

@@ -1,3 +1,5 @@
+import { MPVariable } from "./MPVariable";
+
 export type CanAsLinearExpr = LinearExpr | number | MPVariable;
 
 /**
@@ -115,4 +117,4 @@ export class LinearExpr
     //     */
     //    std::string ToString() const;
 
-};
+}
