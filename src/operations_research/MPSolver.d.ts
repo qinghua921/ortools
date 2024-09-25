@@ -131,7 +131,22 @@ export class MPSolver
      * 
      * C++ static MPSolver* CreateSolver( const std::string& solver_id );
      */
-    static CreateSolver(solver_id: string): MPSolver;
+    static CreateSolver(solver_id:
+        'CLP_LINEAR_PROGRAMMING' | 'CLP' |
+        'CBC_MIXED_INTEGER_PROGRAMMING' | 'CBC' |
+        'GLOP_LINEAR_PROGRAMMING' | 'GLOP' |
+        'BOP_INTEGER_PROGRAMMING' | 'BOP' |
+        'SAT_INTEGER_PROGRAMMING' | 'SAT' | 'CP_SAT' |
+        'SCIP_MIXED_INTEGER_PROGRAMMING' | 'SCIP' |
+        'GUROBI_LINEAR_PROGRAMMING' | 'GUROBI_LP' |
+        'GUROBI_MIXED_INTEGER_PROGRAMMING' | 'GUROBI' | 'GUROBI_MIP' |
+        'CPLEX_LINEAR_PROGRAMMING' | 'CPLEX_LP' |
+        'CPLEX_MIXED_INTEGER_PROGRAMMING' | 'CPLEX_MIP' |
+        'XPRESS_LINEAR_PROGRAMMING' | 'XPRESS_LP' |
+        'XPRESS_MIXED_INTEGER_PROGRAMMING' | 'XPRESS' | 'XPRESS_MIP' |
+        'GLPK_LINEAR_PROGRAMMING' | 'GLPK_LP' |
+        'GLPK_MIXED_INTEGER_PROGRAMMING' | 'GLPK' | 'GLPK_MIP'
+    ): MPSolver;
 
     //    /**
     //     * Whether the given problem type is supported (this will depend on the
