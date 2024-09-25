@@ -4,12 +4,6 @@ cmake_policy(SET CMP0042 NEW)
 
 set(CMAKE_CXX_STANDARD 20)
 
-# Transform all .proto files
-# file(GLOB_RECURSE PROTO_FILES "./cmake/or-tools-9.6/ortools/*.proto")
-# string(REPLACE ";" "\n" PROTO_FILES_LIST "${PROTO_FILES}")
-# message(STATUS ${PROTO_FILES_LIST})
-# .\cmake\protoc-21.12-win64\bin\protoc.exe --proto_path=.\cmake\or-tools-9.6 --cpp_out=.\src\ortools_proto
-#
 project(ortools_binding LANGUAGES CXX)
 
 add_library(${PROJECT_NAME} SHARED ./src/index.cpp ${CMAKE_JS_SRC})
