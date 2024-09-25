@@ -88,9 +88,7 @@ export namespace MPSolver
  */
 export class MPSolver
 {
-
     //public:
-
 
     //    /// Create a solver with the given name and underlying solver backend.
     //    MPSolver( const std::string& name, OptimizationProblemType problem_type );
@@ -148,50 +146,64 @@ export class MPSolver
         'GLPK_MIXED_INTEGER_PROGRAMMING' | 'GLPK' | 'GLPK_MIP'
     ): MPSolver;
 
-    //    /**
-    //     * Whether the given problem type is supported (this will depend on the
-    //     * targets that you linked).
-    //     */
-    //    static bool SupportsProblemType( OptimizationProblemType problem_type );
+    /**
+     * Whether the given problem type is supported (this will depend on the
+     * targets that you linked).
+     * 
+     * C++ static bool SupportsProblemType( OptimizationProblemType problem_type );
+     */
+    static SupportsProblemType(problem_type: MPSolver.OptimizationProblemType): boolean;
 
-    //    /**
-    //     * Parses the name of the solver. Returns true if the solver type is
-    //     * successfully parsed as one of the OptimizationProblemType.
-    //     * See the documentation of CreateSolver() for the list of supported names.
-    //     */
-    //    static bool ParseSolverType( absl::string_view        solver_id,
-    //                                 OptimizationProblemType* type );
+    /**
+     * Parses the name of the solver. Returns true if the solver type is
+     * successfully parsed as one of the OptimizationProblemType.
+     * See the documentation of CreateSolver() for the list of supported names.
+     * 
+     * C++ static bool ParseSolverType( absl::string_view        solver_id,
+     *                                  OptimizationProblemType* type );
+     */
+    static ParseSolverType(solver_id: string, type: MPSolver.OptimizationProblemType): boolean;
 
-    //    /**
-    //     * Parses the name of the solver and returns the correct optimization type or
-    //     * dies. Invariant: ParseSolverTypeOrDie(ToString(type)) = type.
-    //     */
-    //    static OptimizationProblemType ParseSolverTypeOrDie(
-    //        const std::string& solver_id );
+    /**
+     * Parses the name of the solver and returns the correct optimization type or
+     * dies. Invariant: ParseSolverTypeOrDie(ToString(type)) = type.
+     * 
+     * C++ static OptimizationProblemType ParseSolverTypeOrDie( const std::string& solver_id );
+     */
+    static ParseSolverTypeOrDie(solver_id: string): MPSolver.OptimizationProblemType;
 
-    //    bool IsMIP() const;
+    /**
+     * C++ bool IsMIP() const;
+     */
+    IsMIP(): boolean;
 
-    //    /// Returns the name of the model set at construction.
-    //    const std::string& Name() const
-    //    {
-    //        return name_;  // Set at construction.
-    //    }
+    /**
+     * Returns the name of the model set at construction.
+     * 
+     * C++ const std::string& Name() const;
+     */
+    Name(): string;
 
     //    /// Returns the optimization problem type set at construction.
-    //    virtual OptimizationProblemType ProblemType() const
     //    {
     //        return problem_type_;  // Set at construction.
     //    }
+    /**
+     * Returns the optimization problem type set at construction.
+     * 
+     * C++ OptimizationProblemType ProblemType() const;
+     */
+    ProblemType(): MPSolver.OptimizationProblemType;
 
-    //    /**
-    //     * Clears the objective (including the optimization direction), all variables
-    //     * and constraints. All the other properties of the MPSolver (like the time
-    //     * limit) are kept untouched.
-    //     */
-    //    void Clear();
+    /**
+     * Clears the objective (including the optimization direction), all variables
+     * and constraints. All the other properties of the MPSolver (like the time
+     * limit) are kept untouched.
+     * 
+     * C++ void Clear();
+     */
+    Clear(): void;
 
-    //    /// Returns the number of variables.
-    //    int NumVariables() const
     /**
      * Returns the number of variables.
      * 
@@ -199,24 +211,22 @@ export class MPSolver
      */
     NumVariables(): number;
 
+    /**
+     * Returns the array of variables handled by the MPSolver. (They are listed in
+     * the order in which they were created.)
+     * 
+     * C++ const std::vector< MPVariable* >& variables() const;
+     */
+    variables(): MPVariable[];
+
+    /**
+     * Returns the variable at position index.  
+     * 
+     * C++ MPVariable* variable( int index ) const;
+     */
+    variable(index: number): MPVariable;
 
 
-    //    /**
-    //     * Returns the array of variables handled by the MPSolver. (They are listed in
-    //     * the order in which they were created.)
-    //     */
-    //    const std::vector< MPVariable* >& variables() const
-    //    {
-    //        return variables_;
-    //    }
-
-    //    /**
-    //     * Returns the variable at position index.
-    //     */
-    //    MPVariable* variable( int index ) const
-    //    {
-    //        return variables_[ index ];
-    //    }
 
     //    /**
     //     * Looks up a variable by name, and returns nullptr if it does not exist. The

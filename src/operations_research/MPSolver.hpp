@@ -98,11 +98,173 @@ public:
                 InstanceMethod( "SolverVersion", &GMPSolver::SolverVersion ),
                 InstanceMethod( "wall_time", &GMPSolver::wall_time ),
                 InstanceMethod( "iterations", &GMPSolver::iterations ),
+                InstanceMethod( "Clear", &GMPSolver::Clear ),
+                StaticMethod( "SupportsProblemType", &GMPSolver::SupportsProblemType ),
+                StaticMethod( "ParseSolverType", &GMPSolver::ParseSolverType ),
+                StaticMethod( "ParseSolverTypeOrDie", &GMPSolver::ParseSolverTypeOrDie ),
+                InstanceMethod( "IsMIP", &GMPSolver::IsMIP ),
+                InstanceMethod( "Name", &GMPSolver::Name ),
+                InstanceMethod( "ProblemType", &GMPSolver::ProblemType ),
+                InstanceMethod( "variables", &GMPSolver::variables ),
+                InstanceMethod( "variable", &GMPSolver::variable ),
+
             } );
         constructor = Napi::Persistent( func );
         constructor.SuppressDestruct();
         exports.Set( Napi::String::New( env, "MPSolver" ), func );
         return exports;
+    };
+
+    //    MPVariable* variable( int index ) const
+    Napi::Value variable( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+        {
+            int index = info[ 0 ].As< Napi::Number >().Int32Value();
+            return GMPVariable::constructor.New( { Napi::External< MPVariable >::New( env, pMPSolver->variable( index ) ) } );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::variable : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    //    const std::vector< MPVariable* >& variables() const
+    Napi::Value variables( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            auto        variables = pMPSolver->variables();
+            Napi::Array array     = Napi::Array::New( env, variables.size() );
+            for ( int i = 0; i < variables.size(); i++ )
+            {
+                array.Set( i, GMPVariable::constructor.New( { Napi::External< MPVariable >::New( env, variables[ i ] ) } ) );
+            }
+            return array;
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::variables : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    //    virtual OptimizationProblemType ProblemType() const
+    Napi::Value ProblemType( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            return Napi::Number::New( env, static_cast< int >( pMPSolver->ProblemType() ) );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::ProblemType : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    //    const std::string& Name() const
+    Napi::Value Name( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            return Napi::String::New( env, pMPSolver->Name() );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::Name : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    //    bool IsMIP() const;
+    Napi::Value IsMIP( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            return Napi::Boolean::New( env, pMPSolver->IsMIP() );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::IsMIP : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    //    static OptimizationProblemType ParseSolverTypeOrDie(
+    //        const std::string& solver_id );
+    static Napi::Value ParseSolverTypeOrDie( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 1 && info[ 0 ].IsString() )
+        {
+            std::string                       solver_id = info[ 0 ].As< Napi::String >().Utf8Value();
+            MPSolver::OptimizationProblemType type      = MPSolver::ParseSolverTypeOrDie( solver_id );
+            return Napi::Number::New( env, static_cast< int >( type ) );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::ParseSolverTypeOrDie : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    //    static bool ParseSolverType( absl::string_view        solver_id,
+    //                                 OptimizationProblemType* type );
+    static Napi::Value ParseSolverType( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 2 && info[ 0 ].IsString() && info[ 1 ].IsNumber() )
+        {
+            std::string                        solver_id = info[ 0 ].As< Napi::String >().Utf8Value();
+            int                                type      = info[ 1 ].As< Napi::Number >().Int32Value();
+            MPSolver::OptimizationProblemType* pType     = new MPSolver::OptimizationProblemType( static_cast< MPSolver::OptimizationProblemType >( type ) );
+            bool                               success   = MPSolver::ParseSolverType( solver_id, pType );
+            return Napi::Boolean::New( env, success );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::ParseSolverType : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    //    static bool SupportsProblemType( OptimizationProblemType problem_type );
+    static Napi::Value SupportsProblemType( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 1 && info[ 0 ].IsNumber() )
+        {
+            int problem_type = info[ 0 ].As< Napi::Number >().Int32Value();
+            return Napi::Boolean::New( env, MPSolver::SupportsProblemType( static_cast< MPSolver::OptimizationProblemType >( problem_type ) ) );
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::SupportsProblemType : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    //    void Clear();
+    Napi::Value Clear( const Napi::CallbackInfo& info )
+    {
+        Napi::Env         env = info.Env();
+        Napi::HandleScope scope( env );
+
+        if ( info.Length() == 0 )
+        {
+            pMPSolver->Clear();
+            return env.Undefined();
+        }
+
+        Napi::TypeError::New( env, "operations_research::GMPSolver::Clear : Invalid arguments" ).ThrowAsJavaScriptException();
+        return env.Null();
     };
 
     // int64_t iterations() const
