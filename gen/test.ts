@@ -1,12 +1,13 @@
 import { CharStream, CommonTokenStream } from "antlr4ng";
-import { ExpressionLexer } from "./g4/.antlr/ExpressionLexer";
-import { ExpressionParser } from "./g4/.antlr/ExpressionParser";
+import { CPP14Lexer } from "./g4/.antlr/CPP14Lexer";
+import { CPP14Parser } from "./g4/.antlr/CPP14Parser";
 
 const input = "1 + 2 * 3";
 const inputStream = CharStream.fromString(input);
-const lexer = new ExpressionLexer(inputStream);
+const lexer = new CPP14Lexer(inputStream);
 const tokenStream = new CommonTokenStream(lexer);
-const parser = new ExpressionParser(tokenStream);
-const tree = parser.start();
+const parser = new CPP14Parser(tokenStream);
 
-console.log(tree.toStringTree(null));
+const tree = parser.expression();
+
+console.log(tree.toStringTree(parser));
