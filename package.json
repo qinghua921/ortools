@@ -14,12 +14,14 @@
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "scripts": {
-    "cppbuild": "cmake-js compile"
+    "cppbuild": "cmake-js compile",
+    "gen": "ts-node gen/test.ts"
   },
   "devDependencies": {
-    "antlr4": "^4.13.2",
+    "antlr4ng": "^3.0.5",
     "cmake-js": "7.3.0",
     "node-addon-api": "8.1.0",
+    "ts-node": "^10.9.2",
     "typescript": "^5.6.2"
   },
   "keywords": [
