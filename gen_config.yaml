@@ -1,3 +1,4 @@
-operators:
-  - name: "gen_config"
-    input_schema: "gen_config_input"
+files:
+  - .\gen\include\ortools\linear_solver\linear_solver.h
+namespaces:
+  - operations_research

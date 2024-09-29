@@ -581,7 +581,7 @@ class MPSolver {
    * from `MPSolver::Solve()` which by default sets the feasibility tolerance
    * and the gap limit (as of 2020/02/11, to 1e-7 and 0.0001, respectively).
    */
-  ABSL_DEPRECATED("Prefer SolveMPModel() from solve_mp_model.h.")
+  // ABSL_DEPRECATED("Prefer SolveMPModel() from solve_mp_model.h.")
   static void SolveWithProto(const MPModelRequest& model_request,
                              MPSolutionResponse* response,
                              std::atomic<bool>* interrupt = nullptr);
@@ -595,13 +595,13 @@ class MPSolver {
    * Note that we need a different name and can't just accept MPModelRequest&&
    * otherwise we have swig issues.
    */
-  ABSL_DEPRECATED("Prefer SolveMPModel() from solve_mp_model.h.")
+  // ABSL_DEPRECATED("Prefer SolveMPModel() from solve_mp_model.h.")
   static void SolveLazyMutableRequest(LazyMutableCopy<MPModelRequest> request,
                                       MPSolutionResponse* response,
                                       std::atomic<bool>* interrupt = nullptr);
 
-  ABSL_DEPRECATED(
-      "Prefer SolverTypeSupportsInterruption() from solve_mp_model.h.")
+  // ABSL_DEPRECATED(
+  //     "Prefer SolverTypeSupportsInterruption() from solve_mp_model.h.")
   static bool SolverTypeSupportsInterruption(
       const MPModelRequest::SolverType solver) {
     // Interruption requires that MPSolver::InterruptSolve is supported for the
@@ -715,7 +715,7 @@ class MPSolver {
 
   // Gives some brief (a few lines, at most) human-readable information about
   // the given request, suitable for debug logging.
-  ABSL_DEPRECATED("Prefer MPModelRequestLoggingInfo() from solve_mp_model.h.")
+  // ABSL_DEPRECATED("Prefer MPModelRequestLoggingInfo() from solve_mp_model.h.")
   static std::string GetMPModelRequestLoggingInfo(
       const MPModelRequest& request);
 

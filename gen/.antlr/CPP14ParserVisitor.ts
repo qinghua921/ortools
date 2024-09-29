@@ -203,8 +203,7 @@ import { LiteralContext } from "./CPP14Parser.js";
  * @param <Result> The return type of the visit operation. Use `void` for
  * operations with no return type.
  */
-export class CPP14ParserVisitor<Result> extends AbstractParseTreeVisitor<Result>
-{
+export class CPP14ParserVisitor<Result> extends AbstractParseTreeVisitor<Result> {
     /**
      * Visit a parse tree produced by `CPP14Parser.translationUnit`.
      * @param ctx the parse tree

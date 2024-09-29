@@ -1,25 +1,47 @@
 import fs from "fs";
+import YAML from 'yaml'
 import { CharStream, CommonTokenStream } from "antlr4ng";
 import { CPP14Lexer } from "./.antlr/CPP14Lexer";
 import { CPP14ParserVisitor } from "./.antlr/CPP14ParserVisitor";
-import { CPP14Parser, NamespaceDefinitionContext } from "./.antlr/CPP14Parser";
+import { ClassHeadContext, ClassOrDeclTypeContext, ClassSpecifierContext, CPP14Parser, NamespaceDefinitionContext } from "./.antlr/CPP14Parser";
 
-class Info { }
-
-const info = new Info();
+class Info
+{
+    gen_config!: GenConfig;
+}
 
 class MyVisitor extends CPP14ParserVisitor<Info>
 {
     visitNamespaceDefinition = (ctx: NamespaceDefinitionContext) =>
     {
-        if (ctx.Identifier())
+        let identifier = ctx.Identifier();
+        if (identifier && info.gen_config.namespaces.includes(identifier.getText()))
         {
             console.log("namespace name: " + ctx.Identifier());
         }
 
         return info;
     };
+
+    visitClassHead = (ctx: ClassHeadContext) =>
+    {
+        let className = ctx.classHeadName();
+        if (className)
+        {
+            console.log("class name: " + className.getText());
+        }
+
+        return info;
+    }
 }
+
+interface GenConfig
+{
+    files: string[];
+    namespaces: string[];
+}
+
+const info = new Info();
 
 /***********************************************************************************
  * Script entry point.
@@ -27,21 +49,23 @@ class MyVisitor extends CPP14ParserVisitor<Info>
 
 function main()
 {
-    const gen_config = fs.readFileSync('./gen_config.yaml', 'utf-8')
+    const gen_config_file = fs.readFileSync('./gen_config.yaml', 'utf-8')
+    const gen_config: GenConfig = YAML.parse(gen_config_file)
+    info.gen_config = gen_config
 
-    const input = fs.readFileSync(
-        "D:\\Code\\ortools\\cmake\\or-tools_x64_VisualStudio2022_cpp_v9.11.4210\\include\\ortools\\linear_solver\\linear_solver.h"
-        , { encoding: "utf8" }
-    )
-    const inputStream = CharStream.fromString(input);
-    const lexer = new CPP14Lexer(inputStream);
-    const tokenStream = new CommonTokenStream(lexer);
-    const parser = new CPP14Parser(tokenStream);
+    function visitFile(file: string)
+    {
+        const input = fs.readFileSync(file, { encoding: "utf8" })
+        const inputStream = CharStream.fromString(input);
+        const lexer = new CPP14Lexer(inputStream);
+        const tokenStream = new CommonTokenStream(lexer);
+        const parser = new CPP14Parser(tokenStream);
 
-    const visitor = new MyVisitor();
-    const result = visitor.visit(parser.translationUnit());
-    console.log(result);
+        const visitor = new MyVisitor();
+        visitor.visit(parser.translationUnit());
+    }
 
+    gen_config.files.forEach(visitFile)
 }
 
 main()
