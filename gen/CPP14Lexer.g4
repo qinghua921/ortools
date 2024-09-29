@@ -10,7 +10,7 @@ IntegerLiteral:
     | HexadecimalLiteral Integersuffix?
     | BinaryLiteral Integersuffix?
 ;
-           
+
 CharacterLiteral: ('u' | 'U' | 'L')? '\'' Cchar+ '\'';
 
 FloatingLiteral:

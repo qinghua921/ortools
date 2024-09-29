@@ -1,11 +1,11 @@
 // Generated from d:/Code/ortools/gen/CPP14Parser.g4 by ANTLR 4.13.1
 
 import * as antlr from "antlr4ng";
+import { Token } from "antlr4ng";
 
-import { CPP14ParserListener } from "./CPP14ParserListener";
-import { CPP14ParserVisitor } from "./CPP14ParserVisitor";
-import CPP14ParserBase from "../CPP14ParserBase";
-
+import { CPP14ParserListener } from "./CPP14ParserListener.js";
+import { CPP14ParserVisitor } from "./CPP14ParserVisitor.js";
+import CPP14ParserBase from "../CPP14ParserBase.js"
 // for running tests with parameters, TODO: discuss strategy for typed parameters in CI
 // eslint-disable-next-line no-unused-vars
 type int = number;
