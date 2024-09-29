@@ -1,7 +1,7 @@
 {
     "antlr4.generation": {
         "language": "TypeScript",
-        "mode": "external",
+        "mode": "none",
         "listeners": true,
         "visitors": true,
         "outputDir": "./.antlr",

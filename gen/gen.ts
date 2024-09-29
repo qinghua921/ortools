@@ -3,7 +3,7 @@ import YAML from 'yaml'
 import { CharStream, CommonTokenStream } from "antlr4ng";
 import { CPP14Lexer } from "./.antlr/CPP14Lexer";
 import { CPP14ParserVisitor } from "./.antlr/CPP14ParserVisitor";
-import { ClassHeadContext, ClassOrDeclTypeContext, ClassSpecifierContext, CPP14Parser, NamespaceDefinitionContext } from "./.antlr/CPP14Parser";
+import { ClassNameContext, ClassSpecifierContext, CPP14Parser, NamespaceDefinitionContext } from "./.antlr/CPP14Parser";
 
 class Info
 {
@@ -23,9 +23,25 @@ class MyVisitor extends CPP14ParserVisitor<Info>
         return info;
     };
 
-    visitClassHead = (ctx: ClassHeadContext) =>
+    visitClassSpecifier = (ctx: ClassSpecifierContext) =>
     {
-        let className = ctx.classHeadName();
+        let classHead = ctx.memberSpecification();
+        console.log('eeeeeeeeeeeeeeee');
+        
+        console.log("class name: " + classHead?.getText());
+        
+        if (classHead)
+        {
+            console.log("class name: " + classHead.getText());
+        }
+
+        return info;
+    }
+
+    visitClassName = (ctx: ClassNameContext) =>
+    {
+        let className = ctx.Identifier()
+        console.log("class name: " + className?.getText());
         if (className)
         {
             console.log("class name: " + className.getText());

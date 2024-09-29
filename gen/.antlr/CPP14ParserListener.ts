@@ -200,7 +200,8 @@ import { LiteralContext } from "./CPP14Parser";
  * This interface defines a complete listener for a parse tree produced by
  * `CPP14Parser`.
  */
-export class CPP14ParserListener implements ParseTreeListener {
+export class CPP14ParserListener implements ParseTreeListener
+{
     /**
      * Enter a parse tree produced by `CPP14Parser.translationUnit`.
      * @param ctx the parse tree
@@ -2112,9 +2113,9 @@ export class CPP14ParserListener implements ParseTreeListener {
      */
     exitLiteral?: (ctx: LiteralContext) => void;
 
-    visitTerminal(node: TerminalNode): void {}
-    visitErrorNode(node: ErrorNode): void {}
-    enterEveryRule(node: ParserRuleContext): void {}
-    exitEveryRule(node: ParserRuleContext): void {}
+    visitTerminal(node: TerminalNode): void { }
+    visitErrorNode(node: ErrorNode): void { }
+    enterEveryRule(node: ParserRuleContext): void { }
+    exitEveryRule(node: ParserRuleContext): void { }
 }
 
