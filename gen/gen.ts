@@ -174,9 +174,6 @@ function main()
     }
 
     gen_config.files.forEach(visitFile)
-
-    console.log(JSON.stringify(info, null, 2));
-
 }
 
 main()

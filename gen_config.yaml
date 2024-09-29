@@ -2,3 +2,5 @@ files:
   - .\gen\include\ortools\linear_solver\linear_solver.h
 namespaces:
   - operations_research
+      classs: 
+        - MPVariable
