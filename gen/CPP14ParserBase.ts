@@ -1,4 +1,4 @@
-import { Parser, Lexer, Token, TokenStream, ParserRuleContext } from "antlr4ng";
+import { Parser, TokenStream, ParserRuleContext } from "antlr4ng";
 
 export default abstract class CPP14ParserBase extends Parser
 {
@@ -13,7 +13,7 @@ export default abstract class CPP14ParserBase extends Parser
         try
         {
             var x = this.context; // memberDeclarator
-            var c = (x!.children[0] as ParserRuleContext).children[0] as ParserRuleContext;
+            var c = (x.children[0] as ParserRuleContext).children[0] as ParserRuleContext;
             var c2 = c.children[0] as ParserRuleContext;
             var p = c2.children[1] as ParserRuleContext;
             if (p == undefined)

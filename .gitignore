@@ -1,9 +1,7 @@
-﻿.vscode
-build
+﻿build
 cmake/*
 dist
 node_modules
 tsconfig.tsbuildinfo
 .vs
 out
-.antlr
