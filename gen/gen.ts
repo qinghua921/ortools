@@ -20,6 +20,7 @@ interface FunctionDefinitionInfo extends CPPInfo
 {
     type: 'FunctionDefinition';
     name: string;
+    return_type: string[];
 }
 
 interface ClassSpecifierInfo extends CPPInfo
@@ -39,8 +40,6 @@ interface EnumSpecifierInfo extends CPPInfo
     type: 'EnumSpecifier';
     name: string;
 }
-
-
 
 class Info
 {
@@ -66,18 +65,26 @@ class OrToolsVisit extends CPP14ParserVisitor<void>
 {
     visitFunctionDefinition = (ctx: FunctionDefinitionContext) =>
     {
-        const function_name = ctx.declarator().pointerDeclarator()?.noPointerDeclarator().attributeSpecifierSeq()
-        console.log(function_name);
-        
-        // info.push_path(function_name);
+        const dd = ctx.declarator().pointerDeclarator()?.noPointerDeclarator()?.noPointerDeclarator()
+            ?? ctx.declarator().noPointerDeclarator()?.noPointerDeclarator()
 
-        // info.cpp_info[info.current_path] = {
-        //     type: 'FunctionDefinition'
-        // } as CPPInfo;
+        const function_name = dd?.declaratorid()?.getText()
+        const return_type = ctx.declSpecifierSeq()?.declSpecifier().map((decl_spec) =>
+        {
+            return decl_spec.getText()
+        })
 
-        // this.visitChildren(ctx);
+        info.push_path(function_name);
 
-        // info.pop_path();
+        info.cpp_info[info.current_path] = {
+            type: 'FunctionDefinition',
+            name: function_name,
+            return_type: return_type
+        } as FunctionDefinitionInfo;
+
+        this.visitChildren(ctx);
+
+        info.pop_path();
     }
 
     visitMemberSpecification = (ctx: MemberSpecificationContext) =>
