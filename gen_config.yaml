@@ -1,0 +1,3 @@
+operators:
+  - name: "gen_config"
+    input_schema: "gen_config_input"

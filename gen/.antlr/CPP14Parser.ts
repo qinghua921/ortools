@@ -3,9 +3,9 @@
 import * as antlr from "antlr4ng";
 import { Token } from "antlr4ng";
 
-import { CPP14ParserListener } from "./CPP14ParserListener.js";
-import { CPP14ParserVisitor } from "./CPP14ParserVisitor.js";
-import CPP14ParserBase from "../CPP14ParserBase.js"
+import { CPP14ParserListener } from "./CPP14ParserListener";
+import { CPP14ParserVisitor } from "./CPP14ParserVisitor";
+import CPP14ParserBase from "../CPP14ParserBase"
 // for running tests with parameters, TODO: discuss strategy for typed parameters in CI
 // eslint-disable-next-line no-unused-vars
 type int = number;
