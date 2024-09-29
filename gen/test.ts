@@ -8,6 +8,4 @@ const lexer = new CPP14Lexer(inputStream);
 const tokenStream = new CommonTokenStream(lexer);
 const parser = new CPP14Parser(tokenStream);
 
-const tree = parser.expression();
-
-console.log(tree.toStringTree(parser));
+parser.translationUnit().
