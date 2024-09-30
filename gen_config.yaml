@@ -1,6 +1,6 @@
 files:
-  - .\gen\include\ortools\linear_solver\linear_solver.h
+  - .\temp\A.hpp
 namespaces:
-  - operations_research
-      classs: 
+  - operations_research:
+      classs:
         - MPVariable

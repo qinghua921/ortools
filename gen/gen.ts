@@ -21,6 +21,7 @@ interface FunctionDefinitionInfo extends CPPInfo
     type: 'FunctionDefinition';
     name: string;
     return_type: string[];
+    parameters: string[][];
 }
 
 interface ClassSpecifierInfo extends CPPInfo
@@ -51,11 +52,13 @@ class Info
     push_path(path: string | null | undefined)
     {
         this.current_path += "/" + path;
+        console.log("Current path: " + this.current_path);
     }
 
     pop_path()
     {
         this.current_path = this.current_path.substring(0, this.current_path.lastIndexOf('/'));
+        console.log("Current path: " + this.current_path);
     }
 }
 
@@ -65,21 +68,36 @@ class OrToolsVisit extends CPP14ParserVisitor<void>
 {
     visitFunctionDefinition = (ctx: FunctionDefinitionContext) =>
     {
-        const dd = ctx.declarator().pointerDeclarator()?.noPointerDeclarator()?.noPointerDeclarator()
+        console.log("visitFunctionDefinition");
+
+        const declarator = ctx.declarator().pointerDeclarator()?.noPointerDeclarator()?.noPointerDeclarator()
             ?? ctx.declarator().noPointerDeclarator()?.noPointerDeclarator()
 
-        const function_name = dd?.declaratorid()?.getText()
+        const function_name = declarator?.declaratorid()?.getText()
         const return_type = ctx.declSpecifierSeq()?.declSpecifier().map((decl_spec) =>
         {
             return decl_spec.getText()
         })
+        const parameters = ctx.declarator().pointerDeclarator()?.noPointerDeclarator()?.parametersAndQualifiers()
+            ?.parameterDeclarationClause()?.parameterDeclarationList()?.parameterDeclaration().map((decl) =>
+            {
+                const decl_spec = decl.declSpecifierSeq().declSpecifier().map((decl_spec) =>
+                {
+                    return decl_spec.getText()
+                })
+                const declarator = decl.declarator()?.pointerDeclarator()?.noPointerDeclarator()
+                    ?? decl.declarator()?.noPointerDeclarator()
+                const declarator_id = declarator?.declaratorid()?.getText()
+                return [decl_spec.join(' '), declarator_id]
+            })
 
         info.push_path(function_name);
 
         info.cpp_info[info.current_path] = {
             type: 'FunctionDefinition',
             name: function_name,
-            return_type: return_type
+            return_type: return_type,
+            parameters: parameters
         } as FunctionDefinitionInfo;
 
         this.visitChildren(ctx);
@@ -95,7 +113,7 @@ class OrToolsVisit extends CPP14ParserVisitor<void>
             if (member instanceof AccessSpecifierContext)
                 public_ = !!(member as AccessSpecifierContext).Public()
 
-            if (!public_) continue;
+            // if (!public_) continue;
 
             this.visitChildren(member)
         }
@@ -174,6 +192,9 @@ function main()
     }
 
     gen_config.files.forEach(visitFile)
+
+    console.log(info.cpp_info);
+
 }
 
 main()
