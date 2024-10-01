@@ -1,0 +1,1 @@
+java -cp ./temp;./temp/antlr-4.13.2-complete.jar org.antlr.v4.gui.TestRig CPP14 translationUnit -gui ./temp/A.hpp 
