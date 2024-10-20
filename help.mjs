@@ -14,8 +14,8 @@ function remove_comments(folder)
         } else
         {
             let data = fs.readFileSync(filePath, 'utf8');
-            data = data.replace(/\/\*[\s\S]*?\*\//g, '\n');
-            data = data.replace(/\/\/.*/g, '\n');
+            data = data.replace(/\/\*[\s\S]*?\*\//g, '');
+            data = data.replace(/\/\/.*/g, '');
             fs.writeFileSync(filePath, data, 'utf8');
         }
     }
@@ -23,7 +23,7 @@ function remove_comments(folder)
 
 function main()
 {
-    let folder = './test/examples';
+    let folder = './cmake/or-tools_x64_VisualStudio2022_cpp_v9.11.4210/include';
     remove_comments(folder);
 }
 
