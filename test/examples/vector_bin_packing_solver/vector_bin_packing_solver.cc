@@ -1,15 +1,27 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <numeric>
 #include <string>
@@ -50,7 +62,8 @@ void ParseAndSolve(const std::string& filename, absl::string_view solver,
     problem_name = problem_name.substr(found + 1);
   }
   if (absl::EndsWith(problem_name, ".vbp")) {
-    // TODO(user): Move naming code to parser.
+    
+
     problem_name.resize(problem_name.size() - 4);
   }
 
@@ -75,7 +88,8 @@ void ParseAndSolve(const std::string& filename, absl::string_view solver,
     LOG(INFO) << data;
   }
 
-  // Build optimization model.
+  
+
   MPSolver::OptimizationProblemType solver_type;
   MPSolver::ParseSolverType(solver, &solver_type);
   packing::vbp::VectorBinPackingSolution solution =
@@ -95,7 +109,8 @@ void ParseAndSolve(const std::string& filename, absl::string_view solver,
   }
 }
 
-}  // namespace operations_research
+}  
+
 
 int main(int argc, char** argv) {
   absl::SetFlag(&FLAGS_stderrthreshold, 0);

@@ -1,28 +1,52 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// Traveling Salesman Sample.
-//
-// This is a sample using the routing library to solve a Traveling Salesman
-// Problem.
-// The description of the problem can be found here:
-// http://en.wikipedia.org/wiki/Travelling_salesman_problem.
-// For small problems one can use the hamiltonian path library directly (cf
-// graph/hamiltonian_path.h).
-// The optimization engine uses local search to improve solutions, first
-// solutions being generated using a cheapest addition heuristic.
-// Optionally one can randomly forbid a set of random connections between nodes
-// (forbidden arcs).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <cstdint>
 #include <memory>
@@ -55,7 +79,8 @@ ABSL_FLAG(std::string, routing_search_parameters,
 
 namespace operations_research {
 
-// Random seed generator.
+
+
 int32_t GetSeed() {
   if (absl::GetFlag(FLAGS_tsp_use_deterministic_random_seed)) {
     return 0;
@@ -64,16 +89,21 @@ int32_t GetSeed() {
   }
 }
 
-// Cost/distance functions.
 
-// Sample function.
+
+
+
+
 int64_t MyDistance(RoutingIndexManager::NodeIndex from,
                    RoutingIndexManager::NodeIndex to) {
-  // Put your distance code here.
-  return (from + to).value();  // for instance
+  
+
+  return (from + to).value();  
+
 }
 
-// Random matrix.
+
+
 class RandomMatrix {
  public:
   explicit RandomMatrix(int size) : size_(size) {}
@@ -108,11 +138,16 @@ class RandomMatrix {
 
 void Tsp() {
   if (absl::GetFlag(FLAGS_tsp_size) > 0) {
-    // TSP of size absl::GetFlag(FLAGS_tsp_size).
-    // Second argument = 1 to build a single tour (it's a TSP).
-    // Nodes are indexed from 0 to absl::GetFlag(FLAGS_tsp_size) - 1, by default
-    // the start of
-    // the route is node 0.
+    
+
+    
+
+    
+
+    
+
+    
+
     RoutingIndexManager manager(absl::GetFlag(FLAGS_tsp_size), 1,
                                 RoutingIndexManager::NodeIndex(0));
     RoutingModel routing(manager);
@@ -120,10 +155,14 @@ void Tsp() {
     CHECK(google::protobuf::TextFormat::MergeFromString(
         absl::GetFlag(FLAGS_routing_search_parameters), &parameters));
 
-    // Setting the cost function.
-    // Put a permanent callback to the distance accessor here. The callback
-    // has the following signature: ResultCallback2<int64_t, int64_t, int64_t>.
-    // The two arguments are the from and to node indices.
+    
+
+    
+
+    
+
+    
+
     RandomMatrix matrix(absl::GetFlag(FLAGS_tsp_size));
     if (absl::GetFlag(FLAGS_tsp_use_random_matrix)) {
       matrix.Initialize();
@@ -140,7 +179,8 @@ void Tsp() {
           });
       routing.SetArcCostEvaluatorOfAllVehicles(vehicle_cost);
     }
-    // Forbid node connections (randomly).
+    
+
     random_engine_t randomizer(GetSeed());
     int64_t forbidden_connections = 0;
     while (forbidden_connections <
@@ -155,13 +195,17 @@ void Tsp() {
         ++forbidden_connections;
       }
     }
-    // Solve, returns a solution if any (owned by RoutingModel).
+    
+
     const Assignment* solution = routing.SolveWithParameters(parameters);
     if (solution != nullptr) {
-      // Solution cost.
+      
+
       LOG(INFO) << "Cost " << solution->ObjectiveValue();
-      // Inspect solution.
-      // Only one route here; otherwise iterate from 0 to routing.vehicles() - 1
+      
+
+      
+
       const int route_number = 0;
       std::string route;
       for (int64_t node = routing.Start(route_number); !routing.IsEnd(node);
@@ -179,7 +223,8 @@ void Tsp() {
     LOG(INFO) << "Specify an instance size greater than 0.";
   }
 }
-}  // namespace operations_research
+}  
+
 
 int main(int argc, char** argv) {
   absl::ParseCommandLine(argc, argv);

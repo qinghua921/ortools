@@ -1,15 +1,27 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <string>
 
@@ -36,25 +48,33 @@ void BuildLinearProgrammingMaxExample(MPSolver::OptimizationProblemType type) {
   MPModelProto model_proto;
   model_proto.set_name("Max_Example");
 
-  // Create variables and objective function
+  
+
   for (int j = 0; j < numVars; ++j) {
     MPVariableProto* x = model_proto.add_variable();
-    x->set_name(kVarName[j]);  // Could be skipped (optional).
+    x->set_name(kVarName[j]);  
+
     x->set_lower_bound(0.0);
-    x->set_upper_bound(infinity);  // Could be skipped (default value).
-    x->set_is_integer(false);      // Could be skipped (default value).
+    x->set_upper_bound(infinity);  
+
+    x->set_is_integer(false);      
+
     x->set_objective_coefficient(kObjCoef[j]);
   }
   model_proto.set_maximize(true);
 
-  // Create constraints
+  
+
   for (int i = 0; i < kNumConstraints; ++i) {
     MPConstraintProto* constraint_proto = model_proto.add_constraint();
-    constraint_proto->set_name(kConstraintName[i]);  // Could be skipped.
-    constraint_proto->set_lower_bound(-infinity);    // Could be skipped.
+    constraint_proto->set_name(kConstraintName[i]);  
+
+    constraint_proto->set_lower_bound(-infinity);    
+
     constraint_proto->set_upper_bound(kConstraintUb[i]);
     for (int j = 0; j < numVars; ++j) {
-      // These two lines may be skipped when the coefficient is zero.
+      
+
       constraint_proto->add_var_index(j);
       constraint_proto->add_coefficient(kConstraintCoef[i][j]);
     }
@@ -66,17 +86,20 @@ void BuildLinearProgrammingMaxExample(MPSolver::OptimizationProblemType type) {
   if (type == MPSolver::GLOP_LINEAR_PROGRAMMING) {
     model_request.set_solver_type(MPModelRequest::GLOP_LINEAR_PROGRAMMING);
   }
-#endif  // USE_GLOP
+#endif  
+
 #if defined(USE_CLP)
   if (type == MPSolver::CLP_LINEAR_PROGRAMMING) {
     model_request.set_solver_type(MPModelRequest::CLP_LINEAR_PROGRAMMING);
   }
-#endif  // USE_CLP
+#endif  
+
 
   MPSolutionResponse solution_response;
   MPSolver::SolveWithProto(model_request, &solution_response);
 
-  // The problem has an optimal solution.
+  
+
   CHECK_EQ(MPSOLVER_OPTIMAL, solution_response.status());
 
   LOG(INFO) << "objective = " << solution_response.objective_value();
@@ -90,13 +113,16 @@ void RunAllExamples() {
 #if defined(USE_GLOP)
   LOG(INFO) << "----- Running Max Example with GLOP -----";
   BuildLinearProgrammingMaxExample(MPSolver::GLOP_LINEAR_PROGRAMMING);
-#endif  // USE_GLOP
+#endif  
+
 #if defined(USE_CLP)
   LOG(INFO) << "----- Running Max Example with Coin LP -----";
   BuildLinearProgrammingMaxExample(MPSolver::CLP_LINEAR_PROGRAMMING);
-#endif  // USE_CLP
+#endif  
+
 }
-}  // namespace operations_research
+}  
+
 
 int main(int argc, char** argv) {
   InitGoogle(argv[0], &argc, &argv, true);

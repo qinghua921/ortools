@@ -1,58 +1,110 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// Demonstration of column generation using LP toolkit.
-//
-// Column generation is the technique of generating columns (aka
-// resource bundles aka variables) of the constraint matrix
-// incrementally guided by feedback from the constraint duals
-// (cost-of-resources).  Frequently this lets one solve large problems
-// efficiently, e.g. problems where the number of potential columns is
-// exponentially large.
-//
-// Solves a covering problem taken from ITA Software recruiting web
-// site:
-//
-// "Strawberries are growing in the cells of a rectangular field
-// (grid). You want to build greenhouses to enclose the
-// strawberries. Greenhouses are rectangular, axis-aligned with the
-// field (i.e., not diagonal), and may not overlap. The cost of each
-// greenhouse is $10 plus $1 per unit of area covered."
-//
-// Variables:
-//
-//    for each Box (greenhouse), continuous variable b{x1,y1,x2,y2} in [0,1]
-//
-// Constraints:
-//
-//   box limit:
-//     sum b{x1,y1,x2,y2) <= MAX_BOXES
-//   non-overlap (for each cell x,y):
-//     sum b{x1,y1,x2,y2} <= 1     (summed over containing x1<=x<=x2, y1<=y<=y2)
-//   coverage (for each cell x,y with a strawberry):
-//     sum b{x1,y1,x2,y2} = 1      (summed over containing x1<=x<=x2, y1<=y<=y2)
-//
-// Since the number of possible boxes is O(d^4) where d is the linear
-// dimension, starts from singleton column (box) covering entire grid,
-// ensuring solvability.  Then iteratively the problem is solved and
-// the constraint duals (aka reduced costs) used to guide the
-// generation of a single new column (box), until convergence or a
-// maximum number of iterations.
-//
-// No attempt is made to force integrality.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <cstdlib>
-#include <cstring>  // strlen
+#include <cstring>  
+
 #include <map>
 #include <memory>
 #include <ostream>
@@ -76,7 +128,8 @@ ABSL_FLAG(std::string, colgen_solver, "glop", "solver - glop (default) or clp");
 ABSL_FLAG(int, colgen_instance, -1, "Which instance to solve (0 - 9)");
 
 namespace operations_research {
-// ---------- Data Instances ----------
+
+
 struct Instance {
   int max_boxes;
   int width;
@@ -241,7 +294,8 @@ Instance kInstances[] = {{4, 22, 6,
 
 const int kInstanceCount = 10;
 
-// ---------- Box ---------
+
+
 
 class Box {
  public:
@@ -260,7 +314,8 @@ class Box {
   int y_min() const { return y_min_; }
   int y_max() const { return y_max_; }
 
-  // Lexicographic order
+  
+
   int Compare(const Box& box) const {
     int c;
     if ((c = (x_min() - box.x_min())) != 0) return c;
@@ -296,13 +351,17 @@ struct BoxLessThan {
   }
 };
 
-// ---------- Covering Problem ---------
+
+
 
 class CoveringProblem {
  public:
-  // Grid is a row-major string of length width*height with '@' for an
-  // occupied cell (strawberry) and '.' for an empty cell.  Solver is
-  // not owned.
+  
+
+  
+
+  
+
   CoveringProblem(MPSolver* const solver, const Instance& instance)
       : solver_(solver),
         max_boxes_(instance.max_boxes),
@@ -310,10 +369,13 @@ class CoveringProblem {
         height_(instance.height),
         grid_(instance.grid) {}
 
-  // Constructs initial variables and constraints.  Initial column
-  // (box) covers entire grid, ensuring feasibility.
+  
+
+  
+
   bool Init() {
-    // Check consistency.
+    
+
     int size = strlen(grid_);
     if (size != area()) {
       return false;
@@ -323,13 +385,18 @@ class CoveringProblem {
       if ((c != '@') && (c != '.')) return false;
     }
 
-    AddCellConstraints();     // sum for every cell is <=1 or =1
-    AddMaxBoxesConstraint();  // sum of box variables is <= max_boxes()
+    AddCellConstraints();     
+
+    AddMaxBoxesConstraint();  
+
     if (!absl::GetFlag(FLAGS_colgen_complete)) {
-      AddBox(Box(0, width() - 1, 0, height() - 1));  // grid-covering box
+      AddBox(Box(0, width() - 1, 0, height() - 1));  
+
     } else {
-      // Naive alternative to column generation - generate all boxes;
-      // works fine for smaller problems, too slow for big.
+      
+
+      
+
       for (int y_min = 0; y_min < height(); ++y_min) {
         for (int y_max = y_min; y_max < height(); ++y_max) {
           for (int x_min = 0; x_min < width(); ++x_min) {
@@ -350,32 +417,55 @@ class CoveringProblem {
 
   bool IsCellOccupied(int x, int y) const { return grid_[index(x, y)] == '@'; }
 
-  // Calculates reduced costs for each possible Box and if any is
-  // negative (improves cost), returns reduced cost and set target to
-  // the most-negative (steepest descent) one - otherwise returns 0..
-  //
-  // For a problem in standard form 'minimize c*x s.t. Ax<=b, x>=0'
-  // the reduced cost vector is c - transp(y) * A where y is the dual
-  // cost column vector.
-  //
-  // For this covering problem, in which all coefficients in A are 0
-  // or 1, this reduces to:
-  //
-  //   reduced_cost(box) =
-  //
-  //     box.Cost() - sum_{enclosed cell} cell_constraint->dual_value()
-  //                - max_boxes_constraint_->dual_value()
-  //
-  // Since there are O(d^4) boxes, we don't also want O(d^2) sum for
-  // each, so pre-calculate sums of cell duals for all rectangles with
-  // upper-left at 0, 0, and use these to calculate the sum in
-  // constant time using the standard inclusion-exclusion trick.
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
   double GetOptimalBox(Box* const target) {
-    // Cost change threshold for new Box
+    
+
     const double kCostChangeThreshold = -.01;
 
-    // Precomputes the sum of reduced costs for every upper-left
-    // rectangle.
+    
+
+    
+
     std::vector<double> upper_left_sums(area());
     ComputeUpperLeftSums(&upper_left_sums);
 
@@ -387,28 +477,41 @@ class CoveringProblem {
         for (int x_min = 0; x_min < width(); ++x_min) {
           for (int x_max = x_min; x_max < width(); ++x_max) {
             Box box(x_min, x_max, y_min, y_max);
-            const double cell_coverage_dual =  // inclusion-exclusion
+            const double cell_coverage_dual =  
+
                 +zero_access(upper_left_sums, x_max, y_max) -
                 zero_access(upper_left_sums, x_max, y_min - 1) -
                 zero_access(upper_left_sums, x_min - 1, y_max) +
                 zero_access(upper_left_sums, x_min - 1, y_min - 1);
 
-            // All coefficients for new column are 1, so no need to
-            // multiply constraint duals by any coefficients when
-            // computing the reduced cost.
+            
+
+            
+
+            
+
             const double reduced_cost =
                 box.Cost() - (cell_coverage_dual + max_boxes_dual);
 
             if (reduced_cost < best_reduced_cost) {
-              // Even with negative reduced cost, the box may already
-              // exist, and even be basic (part of solution)!  This
-              // counterintuitive situation is due to the problem's
-              // many redundant linear equality constraints: many
-              // steepest-edge pivot moves will be of zero-length.
-              // Ideally one would want to check the length of the
-              // move but that is difficult without access to the
-              // internals of the solver (e.g., access to B^-1 in the
-              // simplex algorithm).
+              
+
+              
+
+              
+
+              
+
+              
+
+              
+
+              
+
+              
+
+              
+
               if (boxes_.find(box) == boxes_.end()) {
                 best_reduced_cost = reduced_cost;
                 best_box = box;
@@ -428,8 +531,10 @@ class CoveringProblem {
     return 0;
   }
 
-  // Add continuous [0,1] box variable with box.Cost() as objective
-  // coefficient.  Add to cell constraint of all enclosed cells.
+  
+
+  
+
   MPVariable* AddBox(const Box& box) {
     CHECK(boxes_.find(box) == boxes_.end());
     MPVariable* const var = solver_->MakeNumVar(0., 1., box.DebugString());
@@ -455,10 +560,14 @@ class CoveringProblem {
     return output;
   }
 
-  // Prints covering - total cost, those variables with non-zero value,
-  // and graphical depiction of covering using upper case letters for
-  // integral coverage and lower case for coverage using combination
-  // of fractional boxes.
+  
+
+  
+
+  
+
+  
+
   std::string PrintCovering() const {
     static const double kTolerance = 1e-5;
     std::string output =
@@ -466,7 +575,8 @@ class CoveringProblem {
     std::unique_ptr<char[]> display(new char[(width_ + 1) * height_ + 1]);
     for (int y = 0; y < height_; ++y) {
       memcpy(display.get() + y * (width_ + 1), grid_ + width_ * y,
-             width_);  // Copy the original line.
+             width_);  
+
       display[y * (width_ + 1) + width_] = '\n';
     }
     display[height_ * (width_ + 1)] = '\0';
@@ -496,8 +606,10 @@ class CoveringProblem {
   MPConstraint* cell(int x, int y) { return cells_[index(x, y)]; }
   const MPConstraint* cell(int x, int y) const { return cells_[index(x, y)]; }
 
-  // Adds constraints that every cell is covered at most once, exactly
-  // once if occupied.
+  
+
+  
+
   void AddCellConstraints() {
     cells_.resize(area());
     for (int y = 0; y < height(); ++y) {
@@ -508,12 +620,14 @@ class CoveringProblem {
     }
   }
 
-  // Adds constraint on maximum number of boxes used to cover.
+  
+
   void AddMaxBoxesConstraint() {
     max_boxes_constraint_ = solver_->MakeRowConstraint(0., max_boxes());
   }
 
-  // Gets 2d array element, returning 0 if out-of-bounds.
+  
+
   double zero_access(absl::Span<const double> array, int x, int y) const {
     if (x < 0 || y < 0) {
       return 0;
@@ -521,8 +635,10 @@ class CoveringProblem {
     return array[index(x, y)];
   }
 
-  // Precomputes the sum of reduced costs for every upper-left
-  // rectangle.
+  
+
+  
+
   void ComputeUpperLeftSums(std::vector<double>* upper_left_sums) const {
     for (int y = 0; y < height(); ++y) {
       for (int x = 0; x < width(); ++x) {
@@ -535,7 +651,8 @@ class CoveringProblem {
   }
 
   typedef std::map<Box, MPVariable*, BoxLessThan> BoxTable;
-  MPSolver* const solver_;  // not owned
+  MPSolver* const solver_;  
+
   const int max_boxes_;
   const int width_;
   const int height_;
@@ -545,18 +662,23 @@ class CoveringProblem {
   MPConstraint* max_boxes_constraint_;
 };
 
-// ---------- Main Solve Method ----------
 
-// Solves iteratively using delayed column generation, up to maximum
-// number of steps.
+
+
+
+
+
+
 void SolveInstance(const Instance& instance,
                    MPSolver::OptimizationProblemType solver_type) {
-  // Prepares the solver.
+  
+
   MPSolver solver("ColumnGeneration", solver_type);
   solver.SuppressOutput();
   solver.MutableObjective()->SetMinimization();
 
-  // Construct problem.
+  
+
   CoveringProblem problem(&solver, instance);
   CHECK(problem.Init());
   LOG(INFO) << "Initial problem:\n" << problem.PrintGrid();
@@ -567,20 +689,23 @@ void SolveInstance(const Instance& instance,
       LOG(INFO) << "Step number " << step_number;
     }
 
-    // Solve with existing columns.
+    
+
     CHECK_EQ(MPSolver::OPTIMAL, solver.Solve());
     if (absl::GetFlag(FLAGS_colgen_verbose)) {
       LOG(INFO) << problem.PrintCovering();
     }
 
-    // Find optimal new column to add, or stop if none.
+    
+
     Box box;
     const double reduced_cost = problem.GetOptimalBox(&box);
     if (reduced_cost >= 0) {
       break;
     }
 
-    // Add new column to problem.
+    
+
     if (absl::GetFlag(FLAGS_colgen_verbose)) {
       LOG(INFO) << "Adding " << box.DebugString()
                 << ", reduced_cost =" << reduced_cost;
@@ -591,14 +716,16 @@ void SolveInstance(const Instance& instance,
   }
 
   if (step_number >= absl::GetFlag(FLAGS_colgen_max_iterations)) {
-    // Solve one last time with all generated columns.
+    
+
     CHECK_EQ(MPSolver::OPTIMAL, solver.Solve());
   }
 
   LOG(INFO) << step_number << " columns added";
   LOG(INFO) << "Final coverage: " << problem.PrintCovering();
 }
-}  // namespace operations_research
+}  
+
 
 int main(int argc, char** argv) {
   std::string usage = "column_generation\n";
@@ -616,7 +743,8 @@ int main(int argc, char** argv) {
     solver_type = operations_research::MPSolver::CLP_LINEAR_PROGRAMMING;
     found = true;
   }
-#endif  // USE_CLP
+#endif  
+
   if (absl::GetFlag(FLAGS_colgen_solver) == "glop") {
     solver_type = operations_research::MPSolver::GLOP_LINEAR_PROGRAMMING;
     found = true;
@@ -624,7 +752,8 @@ int main(int argc, char** argv) {
 #if defined(USE_XPRESS)
   if (absl::GetFlag(FLAGS_colgen_solver) == "xpress") {
     solver_type = operations_research::MPSolver::XPRESS_LINEAR_PROGRAMMING;
-    // solver_type = operations_research::MPSolver::CPLEX_LINEAR_PROGRAMMING;
+    
+
     found = true;
   }
 #endif

@@ -1,21 +1,38 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-//
-// N-queens problem
-//
-//  unique solutions: http://www.research.att.com/~njas/sequences/A000170
-//  distinct solutions: http://www.research.att.com/~njas/sequences/A002562
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <cstdint>
 #include <cstdio>
@@ -82,7 +99,8 @@ class NQueenSymmetry : public SymmetryBreaker {
   const int size_;
 };
 
-// Symmetry vertical axis.
+
+
 class SX : public NQueenSymmetry {
  public:
   SX(Solver* const s, const std::vector<IntVar*>& vars)
@@ -96,7 +114,8 @@ class SX : public NQueenSymmetry {
   }
 };
 
-// Symmetry horizontal axis.
+
+
 class SY : public NQueenSymmetry {
  public:
   SY(Solver* const s, const std::vector<IntVar*>& vars)
@@ -108,7 +127,8 @@ class SY : public NQueenSymmetry {
   }
 };
 
-// Symmetry first diagonal axis.
+
+
 class SD1 : public NQueenSymmetry {
  public:
   SD1(Solver* const s, const std::vector<IntVar*>& vars)
@@ -122,7 +142,8 @@ class SD1 : public NQueenSymmetry {
   }
 };
 
-// Symmetry second diagonal axis.
+
+
 class SD2 : public NQueenSymmetry {
  public:
   SD2(Solver* const s, const std::vector<IntVar*>& vars)
@@ -136,7 +157,8 @@ class SD2 : public NQueenSymmetry {
   }
 };
 
-// Rotate 1/4 turn.
+
+
 class R90 : public NQueenSymmetry {
  public:
   R90(Solver* const s, const std::vector<IntVar*>& vars)
@@ -150,7 +172,8 @@ class R90 : public NQueenSymmetry {
   }
 };
 
-// Rotate 1/2 turn.
+
+
 class R180 : public NQueenSymmetry {
  public:
   R180(Solver* const s, const std::vector<IntVar*>& vars)
@@ -164,7 +187,8 @@ class R180 : public NQueenSymmetry {
   }
 };
 
-// Rotate 3/4 turn.
+
+
 class R270 : public NQueenSymmetry {
  public:
   R270(Solver* const s, const std::vector<IntVar*>& vars)
@@ -198,7 +222,8 @@ void NQueens(int size) {
   CHECK_GE(size, 1);
   Solver s("nqueens");
 
-  // model
+  
+
   std::vector<IntVar*> queens;
   for (int i = 0; i < size; ++i) {
     queens.push_back(
@@ -246,7 +271,8 @@ void NQueens(int size) {
   }
 
   for (int loop = 0; loop < absl::GetFlag(FLAGS_nb_loops); ++loop) {
-    s.Solve(db, monitors);  // go!
+    s.Solve(db, monitors);  
+
     CheckNumberOfSolutions(size, solution_counter->solution_count());
   }
 
@@ -269,7 +295,8 @@ void NQueens(int size) {
   absl::PrintF("========= number of solutions:%d\n", num_solutions);
   absl::PrintF("          number of failures: %d\n", s.failures());
 }
-}  // namespace operations_research
+}  
+
 
 int main(int argc, char** argv) {
   InitGoogle(argv[0], &argc, &argv, true);

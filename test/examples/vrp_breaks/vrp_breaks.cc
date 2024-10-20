@@ -1,25 +1,45 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// Vehicle Routing Problem with Breaks.:
-// A description of the Vehicle Routing Problem can be found here:
-// http://en.wikipedia.org/wiki/Vehicle_routing_problem.
-// This variant also includes vehicle breaks which must happen during the day
-// with two alternate breaks schemes: either a long break in the middle of the
-// day or two smaller ones which can be taken during a longer period of the day.
 
-// [START program]
-// [START import]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <cstdint>
 #include <sstream>
 #include <vector>
@@ -29,10 +49,12 @@
 #include "ortools/constraint_solver/routing_enums.pb.h"
 #include "ortools/constraint_solver/routing_index_manager.h"
 #include "ortools/constraint_solver/routing_parameters.h"
-// [END import]
+
+
 
 namespace operations_research {
-// [START data_model]
+
+
 struct DataModel {
   const std::vector<std::vector<int64_t>> time_matrix{
       {0, 27, 38, 34, 29, 13, 25, 9, 15, 9, 26, 25, 19, 17, 23, 38, 33},
@@ -59,14 +81,21 @@ struct DataModel {
   const int num_vehicles = 4;
   const RoutingIndexManager::NodeIndex depot{0};
 };
-// [END data_model]
 
-//! @brief Print the solution.
-//! @param[in] data Data of the problem.
-//! @param[in] manager Index manager used.
-//! @param[in] routing Routing solver used.
-//! @param[in] solution Solution found by the solver.
-// [START solution_printer]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void PrintSolution(const RoutingIndexManager& manager,
                    const RoutingModel& routing, const Assignment& solution) {
   LOG(INFO) << "Objective: " << solution.ObjectiveValue();
@@ -106,55 +135,79 @@ void PrintSolution(const RoutingIndexManager& manager,
   LOG(INFO) << "";
   LOG(INFO) << "Problem solved in " << routing.solver()->wall_time() << "ms";
 }
-// [END solution_printer]
+
+
 
 void VrpBreaks() {
-  // Instantiate the data problem.
-  // [START data]
-  DataModel data;
-  // [END data]
+  
 
-  // Create Routing Index Manager
-  // [START index_manager]
+  
+
+  DataModel data;
+  
+
+
+  
+
+  
+
   RoutingIndexManager manager(data.time_matrix.size(), data.num_vehicles,
                               data.depot);
-  // [END index_manager]
+  
 
-  // Create Routing Model.
-  // [START routing_model]
+
+  
+
+  
+
   RoutingModel routing(manager);
-  // [END routing_model]
+  
 
-  // Create and register a transit callback.
-  // [START transit_callback]
+
+  
+
+  
+
   const int transit_callback_index = routing.RegisterTransitCallback(
       [&data, &manager](const int64_t from_index,
                         const int64_t to_index) -> int64_t {
-        // Convert from routing variable Index to distance matrix NodeIndex.
+        
+
         const int from_node = manager.IndexToNode(from_index).value();
         const int to_node = manager.IndexToNode(to_index).value();
         return data.time_matrix[from_node][to_node] +
                data.service_time[from_node];
       });
-  // [END transit_callback]
+  
 
-  // Define cost of each arc.
-  // [START arc_cost]
+
+  
+
+  
+
   routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index);
-  // [END arc_cost]
+  
 
-  // Add Time constraint.
-  // [START time_constraint]
+
+  
+
+  
+
   routing.AddDimension(transit_callback_index,
-                       10,    // needed optional waiting time to place break
-                       180,   // maximum time per vehicle
-                       true,  // Force start cumul to zero.
+                       10,    
+
+                       180,   
+
+                       true,  
+
                        "Time");
   RoutingDimension* time_dimension = routing.GetMutableDimension("Time");
   time_dimension->SetGlobalSpanCostCoefficient(10);
-  // [END time_constraint]
+  
 
-  // Add Breaks
+
+  
+
   std::vector<int64_t> service_times(routing.Size());
   for (int index = 0; index < routing.Size(); index++) {
     const RoutingIndexManager::NodeIndex node = manager.IndexToNode(index);
@@ -165,10 +218,14 @@ void VrpBreaks() {
   for (int vehicle = 0; vehicle < manager.num_vehicles(); ++vehicle) {
     std::vector<IntervalVar*> break_intervals;
     IntervalVar* const break_interval = solver->MakeFixedDurationIntervalVar(
-        50,     // start min
-        60,     // start max
-        10,     // duration: 10min
-        false,  // optional: no
+        50,     
+
+        60,     
+
+        10,     
+
+        false,  
+
         absl::StrCat("Break for vehicle ", vehicle));
     break_intervals.push_back(break_interval);
 
@@ -176,31 +233,44 @@ void VrpBreaks() {
                                                service_times);
   }
 
-  // Setting first solution heuristic.
-  // [START parameters]
+  
+
+  
+
   RoutingSearchParameters searchParameters = DefaultRoutingSearchParameters();
   searchParameters.set_first_solution_strategy(
       FirstSolutionStrategy::PATH_CHEAPEST_ARC);
-  // [END parameters]
+  
 
-  // Solve the problem.
-  // [START solve]
+
+  
+
+  
+
   const Assignment* solution = routing.SolveWithParameters(searchParameters);
-  // [END solve]
+  
 
-  // Print solution on console.
-  // [START print_solution]
+
+  
+
+  
+
   if (solution != nullptr) {
     PrintSolution(manager, routing, *solution);
   } else {
     LOG(INFO) << "No solution found.";
   }
-  // [END print_solution]
-}
-}  // namespace operations_research
+  
 
-int main(int /*argc*/, char* /*argv*/[]) {
+}
+}  
+
+
+int main(int 
+, char* 
+[]) {
   operations_research::VrpBreaks();
   return EXIT_SUCCESS;
 }
-// [END program]
+
+

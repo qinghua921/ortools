@@ -1,18 +1,32 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// Solve the Slitherlink problem:
-//    see https://en.wikipedia.org/wiki/Slitherlink
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <iostream>
 #include <string>
@@ -104,7 +118,8 @@ void SlitherLink(absl::Span<const std::vector<int>> data) {
   }
 
   CircuitConstraint circuit = builder.AddCircuitConstraint();
-  // Horizontal arcs.
+  
+
   for (int x = 0; x < num_columns; ++x) {
     for (int y = 0; y < num_rows + 1; ++y) {
       const int arc = undirected_horizontal_arc(x, y);
@@ -114,7 +129,8 @@ void SlitherLink(absl::Span<const std::vector<int>> data) {
                      horizontal_arcs[2 * arc + 1]);
     }
   }
-  // Vertical arcs.
+  
+
   for (int x = 0; x < num_columns + 1; ++x) {
     for (int y = 0; y < num_rows; ++y) {
       const int arc = undirected_vertical_arc(x, y);
@@ -124,7 +140,8 @@ void SlitherLink(absl::Span<const std::vector<int>> data) {
                      vertical_arcs[2 * arc + 1]);
     }
   }
-  // Self loops.
+  
+
   std::vector<BoolVar> self_nodes(num_nodes);
   for (int x = 0; x < num_columns + 1; ++x) {
     for (int y = 0; y < num_rows + 1; ++y) {
@@ -155,7 +172,8 @@ void SlitherLink(absl::Span<const std::vector<int>> data) {
     }
   }
 
-  // Special rule on corners: value == 3 implies 2 corner arcs used.
+  
+
   if (data[0][0] == 3) {
     const int h_arc = undirected_horizontal_arc(0, 0);
     builder.AddBoolOr(
@@ -185,7 +203,8 @@ void SlitherLink(absl::Span<const std::vector<int>> data) {
     builder.AddBoolOr({vertical_arcs[2 * v_arc], vertical_arcs[2 * v_arc + 1]});
   }
 
-  // Topology rule: Border arcs are oriented in one direction.
+  
+
   for (int x = 0; x < num_columns; ++x) {
     const int top_arc = undirected_horizontal_arc(x, 0);
     builder.AddEquality(horizontal_arcs[2 * top_arc + 1], 0);
@@ -226,8 +245,10 @@ void SlitherLink(absl::Span<const std::vector<int>> data) {
   LOG(INFO) << CpSolverResponseStats(response);
 }
 
-}  // namespace sat
-}  // namespace operations_research
+}  
+
+}  
+
 
 int main(int argc, char** argv) {
   absl::ParseCommandLine(argc, argv);

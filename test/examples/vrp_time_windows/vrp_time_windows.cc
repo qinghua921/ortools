@@ -1,18 +1,32 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// [START program]
-// [START import]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <cstdint>
 #include <sstream>
 #include <string>
@@ -23,11 +37,14 @@
 #include "ortools/constraint_solver/routing_enums.pb.h"
 #include "ortools/constraint_solver/routing_index_manager.h"
 #include "ortools/constraint_solver/routing_parameters.h"
-// [END import]
 
-// [START program_part1]
+
+
+
+
 namespace operations_research {
-// [START data_model]
+
+
 struct DataModel {
   const std::vector<std::vector<int64_t>> time_matrix{
       {0, 6, 9, 8, 7, 3, 6, 2, 3, 2, 6, 6, 4, 4, 5, 9, 7},
@@ -49,35 +66,59 @@ struct DataModel {
       {7, 14, 9, 16, 14, 8, 5, 10, 6, 5, 4, 10, 8, 6, 2, 9, 0},
   };
   const std::vector<std::pair<int64_t, int64_t>> time_windows{
-      {0, 5},    // depot
-      {7, 12},   // 1
-      {10, 15},  // 2
-      {16, 18},  // 3
-      {10, 13},  // 4
-      {0, 5},    // 5
-      {5, 10},   // 6
-      {0, 4},    // 7
-      {5, 10},   // 8
-      {0, 3},    // 9
-      {10, 16},  // 10
-      {10, 15},  // 11
-      {0, 5},    // 12
-      {5, 10},   // 13
-      {7, 8},    // 14
-      {10, 15},  // 15
-      {11, 15},  // 16
+      {0, 5},    
+
+      {7, 12},   
+
+      {10, 15},  
+
+      {16, 18},  
+
+      {10, 13},  
+
+      {0, 5},    
+
+      {5, 10},   
+
+      {0, 4},    
+
+      {5, 10},   
+
+      {0, 3},    
+
+      {10, 16},  
+
+      {10, 15},  
+
+      {0, 5},    
+
+      {5, 10},   
+
+      {7, 8},    
+
+      {10, 15},  
+
+      {11, 15},  
+
   };
   const int num_vehicles = 4;
   const RoutingIndexManager::NodeIndex depot{0};
 };
-// [END data_model]
 
-// [START solution_printer]
-//! @brief Print the solution.
-//! @param[in] data Data of the problem.
-//! @param[in] manager Index manager used.
-//! @param[in] routing Routing solver used.
-//! @param[in] solution Solution found by the solver.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void PrintSolution(const DataModel& data, const RoutingIndexManager& manager,
                    const RoutingModel& routing, const Assignment& solution) {
   const RoutingDimension& time_dimension = routing.GetDimensionOrDie("Time");
@@ -105,98 +146,141 @@ void PrintSolution(const DataModel& data, const RoutingIndexManager& manager,
   LOG(INFO) << "Advanced usage:";
   LOG(INFO) << "Problem solved in " << routing.solver()->wall_time() << "ms";
 }
-// [END solution_printer]
+
+
 
 void VrpTimeWindows() {
-  // Instantiate the data problem.
-  // [START data]
-  DataModel data;
-  // [END data]
+  
 
-  // Create Routing Index Manager
-  // [START index_manager]
+  
+
+  DataModel data;
+  
+
+
+  
+
+  
+
   RoutingIndexManager manager(data.time_matrix.size(), data.num_vehicles,
                               data.depot);
-  // [END index_manager]
+  
 
-  // Create Routing Model.
-  // [START routing_model]
+
+  
+
+  
+
   RoutingModel routing(manager);
-  // [END routing_model]
+  
 
-  // Create and register a transit callback.
-  // [START transit_callback]
+
+  
+
+  
+
   const int transit_callback_index = routing.RegisterTransitCallback(
       [&data, &manager](const int64_t from_index,
                         const int64_t to_index) -> int64_t {
-        // Convert from routing variable Index to time matrix NodeIndex.
+        
+
         const int from_node = manager.IndexToNode(from_index).value();
         const int to_node = manager.IndexToNode(to_index).value();
         return data.time_matrix[from_node][to_node];
       });
-  // [END transit_callback]
+  
 
-  // Define cost of each arc.
-  // [START arc_cost]
+
+  
+
+  
+
   routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index);
-  // [END arc_cost]
+  
 
-  // Add Time constraint.
-  // [START time_constraint]
+
+  
+
+  
+
   const std::string time = "Time";
-  routing.AddDimension(transit_callback_index,  // transit callback index
-                       int64_t{30},             // allow waiting time
-                       int64_t{30},             // maximum time per vehicle
-                       false,  // Don't force start cumul to zero
+  routing.AddDimension(transit_callback_index,  
+
+                       int64_t{30},             
+
+                       int64_t{30},             
+
+                       false,  
+
                        time);
   const RoutingDimension& time_dimension = routing.GetDimensionOrDie(time);
-  // Add time window constraints for each location except depot.
+  
+
   for (int i = 1; i < data.time_windows.size(); ++i) {
     const int64_t index =
         manager.NodeToIndex(RoutingIndexManager::NodeIndex(i));
     time_dimension.CumulVar(index)->SetRange(data.time_windows[i].first,
                                              data.time_windows[i].second);
   }
-  // Add time window constraints for each vehicle start node.
+  
+
   for (int i = 0; i < data.num_vehicles; ++i) {
     const int64_t index = routing.Start(i);
     time_dimension.CumulVar(index)->SetRange(data.time_windows[0].first,
                                              data.time_windows[0].second);
   }
-  // [END time_constraint]
+  
 
-  // Instantiate route start and end times to produce feasible times.
-  // [START depot_start_end_times]
+
+  
+
+  
+
   for (int i = 0; i < data.num_vehicles; ++i) {
     routing.AddVariableMinimizedByFinalizer(
         time_dimension.CumulVar(routing.Start(i)));
     routing.AddVariableMinimizedByFinalizer(
         time_dimension.CumulVar(routing.End(i)));
   }
-  // [END depot_start_end_times]
+  
 
-  // Setting first solution heuristic.
-  // [START parameters]
+
+  
+
+  
+
   RoutingSearchParameters searchParameters = DefaultRoutingSearchParameters();
   searchParameters.set_first_solution_strategy(
       FirstSolutionStrategy::PATH_CHEAPEST_ARC);
-  // [END parameters]
+  
 
-  // Solve the problem.
-  // [START solve]
+
+  
+
+  
+
   const Assignment* solution = routing.SolveWithParameters(searchParameters);
-  // [END solve]
+  
 
-  // Print solution on console.
-  // [START print_solution]
+
+  
+
+  
+
   PrintSolution(data, manager, routing, *solution);
-  // [END print_solution]
-}
-}  // namespace operations_research
+  
 
-int main(int /*argc*/, char* /*argv*/[]) {
+}
+}  
+
+
+int main(int 
+, char* 
+[]) {
   operations_research::VrpTimeWindows();
   return EXIT_SUCCESS;
 }
-// [END program_part1]
-// [END program]
+
+
+
+

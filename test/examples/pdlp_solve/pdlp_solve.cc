@@ -1,19 +1,34 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// Command-line interface to PDLP. The functionality is similar to solve.cc,
-// but using PDLP's API directly. All integrality constraints are dropped from
-// the input problem.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <atomic>
 #include <cstdint>
@@ -42,7 +57,8 @@
 #include "ortools/util/fp_roundtrip_conv.h"
 #include "ortools/util/sigint.h"
 
-// TODO: .mps.gz files aren't working. As a workaround, use .mps.
+
+
 
 ABSL_FLAG(
     std::string, input, "",
@@ -73,25 +89,32 @@ void WriteSolveLog(const std::string& solve_log_file, const SolveLog& log) {
                << solve_log_file << ". Expected .textproto, .pb, or .json";
   }
   QCHECK_OK(WriteProtoToFile(solve_log_file, log, write_format,
-                             /*gzipped=*/false,
-                             /*append_extension_to_file_name=*/false));
+                             
+false,
+                             
+false));
 }
 
 void Solve(const std::string& input, absl::string_view params_str,
            const std::string& solve_log_file, const std::string& sol_file) {
   QCHECK(!input.empty()) << "--input is required";
   PrimalDualHybridGradientParams params;
-  // Print iteration statistics by default. This can be overridden by
-  // specifying verbosity_level in --params.
+  
+
+  
+
   params.set_verbosity_level(2);
   QCHECK(ProtobufTextFormatMergeFromString(params_str, &params))
       << "Error parsing --params";
 
-  // Note: ReadQuadraticProgramOrDie drops integrality constraints.
-  QuadraticProgram qp =
-      ReadQuadraticProgramOrDie(input, /*include_names=*/true);
+  
 
-  // Register a signal handler to interrupt the solve when the user presses ^C.
+  QuadraticProgram qp =
+      ReadQuadraticProgramOrDie(input, 
+true);
+
+  
+
   SigintHandler handler;
   std::atomic<bool> interrupted(false);
   handler.Register([&interrupted] { interrupted.store(true); });
@@ -106,7 +129,8 @@ void Solve(const std::string& input, absl::string_view params_str,
   const std::optional<ConvergenceInformation> convergence_information =
       pdlp::GetConvergenceInformation(result.solve_log.solution_stats(),
                                       result.solve_log.solution_type());
-  // TODO: In what format should we write the dual solution?
+  
+
   if (!sol_file.empty() && convergence_information.has_value()) {
     std::string sol_string;
     absl::StrAppend(
@@ -128,11 +152,13 @@ void Solve(const std::string& input, absl::string_view params_str,
   }
 }
 
-}  // namespace operations_research::pdlp
+}  
+
 
 int main(int argc, char** argv) {
   absl::SetFlag(&FLAGS_stderrthreshold, 0);
-  InitGoogle(argv[0], &argc, &argv, /*remove_flags=*/true);
+  InitGoogle(argv[0], &argc, &argv, 
+true);
 
   operations_research::pdlp::Solve(
       absl::GetFlag(FLAGS_input), absl::GetFlag(FLAGS_params),

@@ -1,18 +1,32 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// Driver for reading and solving files in the MPS format and in
-// the linear_solver.proto format.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <stdio.h>
 
@@ -66,7 +80,8 @@ using operations_research::glop::MPSReader;
 using operations_research::glop::ProblemStatus;
 using operations_research::glop::ToDouble;
 
-// Parse glop parameters from the flags --params_file and --params.
+
+
 void ReadGlopParameters(GlopParameters* parameters) {
   if (!absl::GetFlag(FLAGS_params_file).empty()) {
     std::string params;
@@ -97,7 +112,8 @@ int main(int argc, char* argv[]) {
 
   LinearProgram linear_program;
   std::vector<std::string> file_list;
-  // Replace this with your favorite match function.
+  
+
   file_list.push_back(absl::GetFlag(FLAGS_input));
   for (int i = 0; i < file_list.size(); ++i) {
     const std::string& file_name = file_list[i];
@@ -119,7 +135,8 @@ int main(int argc, char* argv[]) {
       absl::PrintF("%s", linear_program.Dump());
     }
 
-    // Create the solver with the correct parameters.
+    
+
     LPSolver solver;
     solver.SetParameters(parameters);
     ProblemStatus solve_status = ProblemStatus::INIT;

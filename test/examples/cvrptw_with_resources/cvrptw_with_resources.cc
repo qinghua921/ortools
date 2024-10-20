@@ -1,25 +1,46 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// Capacitated Vehicle Routing Problem with Time Windows and capacitated
-// resources.
-// This is an extension to the model in cvrptw.cc so refer to that file for
-// more information on the common part of the model. The model implemented here
-// limits the number of vehicles which can simultaneously leave or enter the
-// depot due to limited resources (or capacity) available.
-// TODO(user): The current model consumes resources even for vehicles with
-// empty routes; fix this when we have an API on the cumulative constraints
-// with variable demands.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <cstdint>
 #include <random>
@@ -70,15 +91,19 @@ int main(int argc, char** argv) {
       << "Specify an instance size greater than 0.";
   CHECK_LT(0, absl::GetFlag(FLAGS_vrp_vehicles))
       << "Specify a non-null vehicle fleet size.";
-  // VRP of size absl::GetFlag(FLAGS_vrp_size).
-  // Nodes are indexed from 0 to absl::GetFlag(FLAGS_vrp_orders), the starts and
-  // ends of the routes are at node 0.
+  
+
+  
+
+  
+
   const RoutingIndexManager::NodeIndex kDepot(0);
   RoutingIndexManager manager(absl::GetFlag(FLAGS_vrp_orders) + 1,
                               absl::GetFlag(FLAGS_vrp_vehicles), kDepot);
   RoutingModel routing(manager);
 
-  // Setting up locations.
+  
+
   const int64_t kXMax = 100000;
   const int64_t kYMax = 100000;
   const int64_t kSpeed = 10;
@@ -89,7 +114,8 @@ int main(int argc, char** argv) {
     locations.AddRandomLocation(kXMax, kYMax);
   }
 
-  // Setting the cost function.
+  
+
   const int vehicle_cost = routing.RegisterTransitCallback(
       [&locations, &manager](int64_t i, int64_t j) {
         return locations.ManhattanDistance(manager.IndexToNode(i),
@@ -97,7 +123,8 @@ int main(int argc, char** argv) {
       });
   routing.SetArcCostEvaluatorOfAllVehicles(vehicle_cost);
 
-  // Adding capacity dimension constraints.
+  
+
   const int64_t kVehicleCapacity = 40;
   const int64_t kNullCapacitySlack = 0;
   RandomDemand demand(manager.num_nodes(), kDepot,
@@ -109,9 +136,11 @@ int main(int argc, char** argv) {
                                                   manager.IndexToNode(j));
                            }),
                        kNullCapacitySlack, kVehicleCapacity,
-                       /*fix_start_cumul_to_zero=*/true, kCapacity);
+                       
+true, kCapacity);
 
-  // Adding time dimension constraints.
+  
+
   const int64_t kTimePerDemandUnit = 300;
   const int64_t kHorizon = 24 * 3600;
   ServiceTimePlusTransition time(
@@ -126,10 +155,12 @@ int main(int argc, char** argv) {
       routing.RegisterTransitCallback([&time, &manager](int64_t i, int64_t j) {
         return time.Compute(manager.IndexToNode(i), manager.IndexToNode(j));
       }),
-      kHorizon, kHorizon, /*fix_start_cumul_to_zero=*/false, kTime);
+      kHorizon, kHorizon, 
+false, kTime);
   const RoutingDimension& time_dimension = routing.GetDimensionOrDie(kTime);
 
-  // Adding time windows.
+  
+
   std::mt19937 randomizer(
       GetSeed(absl::GetFlag(FLAGS_vrp_use_deterministic_random_seed)));
   const int64_t kTWDuration = 5 * 3600;
@@ -139,30 +170,36 @@ int main(int argc, char** argv) {
     time_dimension.CumulVar(order)->SetRange(start, start + kTWDuration);
   }
 
-  // Adding resource constraints at the depot (start and end location of
-  // routes).
+  
+
+  
+
   std::vector<IntVar*> start_end_times;
   for (int i = 0; i < absl::GetFlag(FLAGS_vrp_vehicles); ++i) {
     start_end_times.push_back(time_dimension.CumulVar(routing.End(i)));
     start_end_times.push_back(time_dimension.CumulVar(routing.Start(i)));
   }
-  // Build corresponding time intervals.
+  
+
   const int64_t kVehicleSetup = 180;
   Solver* const solver = routing.solver();
   std::vector<IntervalVar*> intervals;
   solver->MakeFixedDurationIntervalVarArray(start_end_times, kVehicleSetup,
                                             "depot_interval", &intervals);
-  // Constrain the number of maximum simultaneous intervals at depot.
+  
+
   const int64_t kDepotCapacity = 5;
   std::vector<int64_t> depot_usage(start_end_times.size(), 1);
   solver->AddConstraint(
       solver->MakeCumulative(intervals, depot_usage, kDepotCapacity, "depot"));
-  // Instantiate route start and end times to produce feasible times.
+  
+
   for (int i = 0; i < start_end_times.size(); ++i) {
     routing.AddVariableMinimizedByFinalizer(start_end_times[i]);
   }
 
-  // Adding penalty costs to allow skipping orders.
+  
+
   const int64_t kPenalty = 100000;
   const RoutingIndexManager::NodeIndex kFirstNodeAfterDepot(1);
   for (RoutingIndexManager::NodeIndex order = kFirstNodeAfterDepot;
@@ -171,14 +208,18 @@ int main(int argc, char** argv) {
     routing.AddDisjunction(orders, kPenalty);
   }
 
-  // Solve, returns a solution if any (owned by RoutingModel).
+  
+
   RoutingSearchParameters parameters = DefaultRoutingSearchParameters();
   CHECK(google::protobuf::TextFormat::MergeFromString(
       absl::GetFlag(FLAGS_routing_search_parameters), &parameters));
   const Assignment* solution = routing.SolveWithParameters(parameters);
   if (solution != nullptr) {
-    DisplayPlan(manager, routing, *solution, /*use_same_vehicle_costs=*/false,
-                /*max_nodes_per_group=*/0, /*same_vehicle_cost=*/0,
+    DisplayPlan(manager, routing, *solution, 
+false,
+                
+0, 
+0,
                 routing.GetDimensionOrDie(kCapacity),
                 routing.GetDimensionOrDie(kTime));
   } else {

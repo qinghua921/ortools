@@ -1,20 +1,36 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// This file illustrate the API for Large Neighborhood Search and
-// Local Search. It solves the same trivial problem with a Large
-// Neighborhood Search approach, a Local Search approach, and a Local
-// Search with Filter approach.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <vector>
 
 #include "absl/log/flags.h"
@@ -57,7 +73,8 @@ class MoveOneVar : public IntVarLocalSearchOperator {
   ~MoveOneVar() override {}
 
  protected:
-  // Make a neighbor assigning one variable to its target value.
+  
+
   bool MakeOneNeighbor() override {
     const int64_t current_value = OldValue(variable_index_);
     if (move_up_) {
@@ -76,9 +93,11 @@ class MoveOneVar : public IntVarLocalSearchOperator {
     CHECK_LT(variable_index_, Size());
   }
 
-  // Index of the next variable to try to restore
+  
+
   int64_t variable_index_;
-  // Direction of the modification.
+  
+
   bool move_up_;
 };
 
@@ -101,23 +120,40 @@ class SumFilter : public IntVarLocalSearchFilter {
     const Assignment::IntContainer& solution_delta = delta->IntVarContainer();
     const int solution_delta_size = solution_delta.Size();
 
-    // The input const Assignment* delta given to Accept() may
-    // actually contain "Deactivated" elements, which represent
-    // variables that have been freed -- they are not bound to a
-    // single value anymore. This happens with LNS-type (Large
-    // Neighborhood Search) LocalSearchOperator, which are not used in
-    // this example as of 2012-01; and we refer the reader to
-    // ./routing.cc for an example of such LNS-type operators.
-    //
-    // For didactical purposes, we will assume for a moment that a
-    // LNS-type operator might be applied. The Filter will still be
-    // called, but our filter here won't be able to work, since
-    // it needs every variable to be bound (i.e. have a fixed value),
-    // in the assignment that it considers. Therefore, we include here
-    // a snippet of code that will detect if the input assignment is
-    // not fully bound. For further details, read ./routing.cc -- but
-    // we strongly advise the reader to first try and understand all
-    // of this file.
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
     for (int i = 0; i < solution_delta_size; ++i) {
       if (!solution_delta.Element(i).Activated()) {
         VLOG(1) << "Element #" << i << " of the delta assignment given to"
@@ -195,7 +231,8 @@ void SolveProblem(SolveType solve_type) {
   s.Solve(ls, collector, obj, log);
   LOG(INFO) << "Objective value = " << collector->objective_value(0);
 }
-}  // namespace operations_research
+}  
+
 
 int main(int argc, char** argv) {
   InitGoogle(argv[0], &argc, &argv, true);

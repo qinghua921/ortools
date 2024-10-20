@@ -1,30 +1,56 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// Reader and solver for the shift minimization personnel task
-// scheduling problem (see
-// https://publications.csiro.au/rpr/download?pid=csiro:EP104071&dsid=DS2)/
-//
-// Data files are in
-//    /cns/li-d/home/operations-research/shift_minization_scheduling
-//
-// The problem is the following:
-//   - There is a list of jobs. Each job has a start date and an end date. They
-//     must all be performed.
-//   - There is a set of workers. Each worker can perform one or more jobs among
-//     a subset of job. One worker cannot perform two jobs that overlaps.
-//   - The objective it to minimize the number of active workers, while
-//     performing all the jobs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <algorithm>
 #include <map>
@@ -76,13 +102,20 @@ class ShiftMinimizationParser {
     return possible_assignments_per_job_;
   }
 
-  // The file format is the following
-  // # comments...
-  // Type = 1
-  // Jobs = <n>
-  // <start> <end>  // Repeated n times
-  // Qualifications = <k>
-  // c: job_1 .. job_c  // repeated k times (a counter and job ids after).
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
   bool LoadFile(const std::string& file_name) {
     if (load_status_ != NOT_STARTED) {
       return false;
@@ -175,8 +208,10 @@ class ShiftMinimizationParser {
 
 bool Overlaps(const ShiftMinimizationParser::Job& j1,
               const ShiftMinimizationParser::Job& j2) {
-  // TODO(user): Are end date inclusive or exclusive? To check.
-  // For now, we assume that they are exclusive.
+  
+
+  
+
   return !(j1.start > j2.end || j2.start > j1.end);
 }
 
@@ -195,11 +230,14 @@ void LoadAndSolve(const std::string& file_name) {
   std::vector<std::vector<BoolVar>> possible_workers_per_job(num_jobs);
 
   for (int w = 0; w < num_workers; ++w) {
-    // Status variables for workers, are they active or not?
+    
+
     active_workers[w] = cp_model.NewBoolVar();
 
-    // Job-Worker variable. worker_job_vars[w][i] is true iff worker w
-    // performs it's ith possible job.
+    
+
+    
+
     const std::vector<int>& possible = parser.possible_jobs_per_worker()[w];
     for (int p : possible) {
       const BoolVar var = cp_model.NewBoolVar();
@@ -207,7 +245,8 @@ void LoadAndSolve(const std::string& file_name) {
       possible_workers_per_job[p].push_back(var);
     }
 
-    // Add conflicts on overlapping jobs for the same worker.
+    
+
     for (int i = 0; i < possible.size() - 1; ++i) {
       for (int j = i + 1; j < possible.size(); ++j) {
         const int job1 = possible[i];
@@ -220,25 +259,34 @@ void LoadAndSolve(const std::string& file_name) {
       }
     }
 
-    // Maintain active_workers variable.
+    
+
     cp_model.AddBoolOr(worker_job_vars[w]).OnlyEnforceIf(active_workers[w]);
     for (const BoolVar& var : worker_job_vars[w]) {
       cp_model.AddImplication(var, active_workers[w]);
     }
   }
 
-  // All jobs must be performed.
+  
+
   for (int j = 0; j < num_jobs; ++j) {
-    // this does not enforce that at most one worker performs one job.
-    // It should not change the solution cost.
-    // TODO(user): Checks if sum() == 1 improves the solving speed.
+    
+
+    
+
+    
+
     cp_model.AddBoolOr(possible_workers_per_job[j]);
   }
 
-  // Redundant constraint:
-  //   For each time point, count the number of active jobs at that time,
-  //   then the number of active workers on these jobs is equal to the number of
-  //   active jobs.
+  
+
+  
+
+  
+
+  
+
   absl::btree_set<int> time_points;
   absl::btree_set<std::vector<int>> visited_job_lists;
 
@@ -250,23 +298,28 @@ void LoadAndSolve(const std::string& file_name) {
   int num_count_constraints = 0;
   int max_intersection_size = 0;
 
-  // Add one counting constraint per time point.
+  
+
   for (int t : time_points) {
-    // Collect all jobs that intersects with this time point.
+    
+
     std::vector<int> intersecting_jobs;
     for (int j = 0; j < num_jobs; ++j) {
       const ShiftMinimizationParser::Job& job = parser.jobs()[j];
-      // Assumption: End date are inclusive.
+      
+
       if (t >= job.start && t <= job.end) {
         intersecting_jobs.push_back(j);
       }
     }
 
-    // Check that we have not already visited this exact set of candidate jobs.
+    
+
     if (visited_job_lists.contains(intersecting_jobs)) continue;
     visited_job_lists.insert(intersecting_jobs);
 
-    // Collect the relevant worker job vars.
+    
+
     std::vector<BoolVar> overlapping_worker_jobs;
     for (int j : intersecting_jobs) {
       for (const auto& p : parser.possible_assignments_per_job()[j]) {
@@ -275,10 +328,12 @@ void LoadAndSolve(const std::string& file_name) {
       }
     }
 
-    // Add the count constraints: We have as many active workers as jobs.
+    
+
     const int num_jobs = intersecting_jobs.size();
     cp_model.AddEquality(LinearExpr::Sum(overlapping_worker_jobs), num_jobs);
-    // Book keeping.
+    
+
     max_intersection_size = std::max(max_intersection_size, num_jobs);
     num_count_constraints++;
   }
@@ -288,21 +343,25 @@ void LoadAndSolve(const std::string& file_name) {
             << " time points.";
   LOG(INFO) << "Lower bound = " << max_intersection_size;
 
-  // Objective.
+  
+
   const IntVar objective_var =
       cp_model.NewIntVar(Domain(max_intersection_size, num_workers));
   cp_model.AddEquality(LinearExpr::Sum(active_workers), objective_var);
   cp_model.Minimize(objective_var);
 
-  // Solve.
+  
+
   Model model;
   model.Add(NewSatParameters(absl::GetFlag(FLAGS_params)));
 
   const CpSolverResponse response = SolveCpModel(cp_model.Build(), &model);
   LOG(INFO) << CpSolverResponseStats(response);
 }
-}  // namespace sat
-}  // namespace operations_research
+}  
+
+}  
+
 
 int main(int argc, char** argv) {
   absl::SetFlag(&FLAGS_stderrthreshold, 0);

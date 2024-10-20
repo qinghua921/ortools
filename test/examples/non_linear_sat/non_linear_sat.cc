@@ -1,20 +1,35 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// Finds a rectangle with maximum available area for given perimeter
-// using AddMultiplicationEquality
 
-// [START program]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <stdlib.h>
 
 #include "ortools/base/logging.h"
@@ -46,7 +61,8 @@ void NonLinearSatProgram() {
 
   if (response.status() == CpSolverStatus::OPTIMAL ||
       response.status() == CpSolverStatus::FEASIBLE) {
-    // Get the value of x in the solution.
+    
+
     LOG(INFO) << "x = " << SolutionIntegerValue(response, x);
     LOG(INFO) << "y = " << SolutionIntegerValue(response, y);
     LOG(INFO) << "s = " << SolutionIntegerValue(response, area);
@@ -55,11 +71,14 @@ void NonLinearSatProgram() {
   }
 }
 
-}  // namespace sat
-}  // namespace operations_research
+}  
+
+}  
+
 
 int main() {
   operations_research::sat::NonLinearSatProgram();
   return EXIT_SUCCESS;
 }
-// [END program]
+
+

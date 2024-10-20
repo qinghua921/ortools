@@ -1,19 +1,34 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// [START program]
-// Solve assignment problem.
-// [START import]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <stdlib.h>
 
 #include <cstdint>
@@ -26,13 +41,16 @@
 #include "ortools/sat/cp_model.pb.h"
 #include "ortools/sat/cp_model_solver.h"
 
-// [END import]
+
+
 namespace operations_research {
 namespace sat {
 
 void AssignmentTaskSizes() {
-  // Data
-  // [START data]
+  
+
+  
+
   const std::vector<std::vector<int>> costs = {{
       {{90, 76, 75, 70, 50, 74, 12, 68}},
       {{35, 85, 55, 65, 48, 101, 70, 83}},
@@ -54,19 +72,28 @@ void AssignmentTaskSizes() {
   std::iota(all_tasks.begin(), all_tasks.end(), 0);
 
   const std::vector<int64_t> task_sizes = {{10, 7, 3, 12, 15, 4, 11, 5}};
-  // Maximum total of task sizes for any worker
+  
+
   const int total_size_max = 15;
-  // [END data]
+  
 
-  // Model
-  // [START model]
+
+  
+
+  
+
   CpModelBuilder cp_model;
-  // [END model]
+  
 
-  // Variables
-  // [START variables]
-  // x[i][j] is an array of Boolean variables. x[i][j] is true
-  // if worker i is assigned to task j.
+
+  
+
+  
+
+  
+
+  
+
   std::vector<std::vector<BoolVar>> x(num_workers,
                                       std::vector<BoolVar>(num_tasks));
   for (int worker : all_workers) {
@@ -75,11 +102,15 @@ void AssignmentTaskSizes() {
           absl::StrFormat("x[%d,%d]", worker, task));
     }
   }
-  // [END variables]
+  
 
-  // Constraints
-  // [START constraints]
-  // Each worker is assigned to at most one task.
+
+  
+
+  
+
+  
+
   for (int worker : all_workers) {
     LinearExpr task_sum;
     for (int task : all_tasks) {
@@ -87,7 +118,8 @@ void AssignmentTaskSizes() {
     }
     cp_model.AddLessOrEqual(task_sum, total_size_max);
   }
-  // Each task is assigned to exactly one worker.
+  
+
   for (int task : all_tasks) {
     std::vector<BoolVar> tasks;
     for (int worker : all_workers) {
@@ -95,10 +127,13 @@ void AssignmentTaskSizes() {
     }
     cp_model.AddExactlyOne(tasks);
   }
-  // [END constraints]
+  
 
-  // Objective
-  // [START objective]
+
+  
+
+  
+
   LinearExpr total_cost;
   for (int worker : all_workers) {
     for (int task : all_tasks) {
@@ -106,15 +141,21 @@ void AssignmentTaskSizes() {
     }
   }
   cp_model.Minimize(total_cost);
-  // [END objective]
+  
 
-  // Solve
-  // [START solve]
+
+  
+
+  
+
   const CpSolverResponse response = Solve(cp_model.Build());
-  // [END solve]
+  
 
-  // Print solution.
-  // [START print_solution]
+
+  
+
+  
+
   if (response.status() == CpSolverStatus::INFEASIBLE) {
     LOG(FATAL) << "No solution found.";
   }
@@ -128,13 +169,17 @@ void AssignmentTaskSizes() {
       }
     }
   }
-  // [END print_solution]
+  
+
 }
-}  // namespace sat
-}  // namespace operations_research
+}  
+
+}  
+
 
 int main(int argc, char** argv) {
   operations_research::sat::AssignmentTaskSizes();
   return EXIT_SUCCESS;
 }
-// [END program]
+
+

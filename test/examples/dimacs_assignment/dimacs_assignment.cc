@@ -1,15 +1,27 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <algorithm>
 #include <cmath>
@@ -54,8 +66,10 @@ CostValue BuildAndSolveHungarianInstance(
   typedef std::vector<HungarianRow> HungarianProblem;
   HungarianProblem hungarian_cost;
   hungarian_cost.resize(assignment.NumLeftNodes());
-  // First we have to find the biggest cost magnitude so we can
-  // initialize the arc costs that aren't really there.
+  
+
+  
+
   CostValue largest_cost_magnitude = 0;
   for (typename GraphType::ArcIterator arc_it(graph); arc_it.Ok();
        arc_it.Next()) {
@@ -70,13 +84,20 @@ CostValue BuildAndSolveHungarianInstance(
     row->resize(assignment.NumNodes() - assignment.NumLeftNodes(),
                 missing_arc_cost);
   }
-  // We're using a graph representation without forward arcs, so in
-  // order to use the generic GraphType::ArcIterator we would
-  // need to increase our memory footprint by building the array of
-  // arc tails (since we need tails to build the input to the
-  // hungarian algorithm). We opt for the alternative of iterating
-  // over hte arcs via adjacency lists, which gives us the arc tails
-  // implicitly.
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
   for (typename GraphType::NodeIterator node_it(graph); node_it.Ok();
        node_it.Next()) {
     NodeIndex node = node_it.Index();
@@ -122,8 +143,10 @@ void DisplayAssignment(const LinearSumAssignment<GraphType>& assignment) {
 template <typename GraphType>
 int SolveDimacsAssignment(int argc, char* argv[]) {
   std::string error_message;
-  // Handle on the graph we will need to delete because the
-  // LinearSumAssignment object does not take ownership of it.
+  
+
+  
+
   GraphType* graph = nullptr;
   DimacsAssignmentParser<GraphType> parser(argv[1]);
   LinearSumAssignment<GraphType>* assignment =
@@ -132,12 +155,18 @@ int SolveDimacsAssignment(int argc, char* argv[]) {
     LOG(FATAL) << error_message;
   }
   if (!absl::GetFlag(FLAGS_assignment_problem_output_file).empty()) {
-    // The following tail array management stuff is done in a generic
-    // way so we can plug in different types of graphs for which the
-    // TailArrayManager template can be instantiated, even though we
-    // know the type of the graph explicitly. In this way, the type of
-    // the graph can be switched just by changing the graph type in
-    // this file and making no other changes to the code.
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
     TailArrayManager<GraphType> tail_array_manager(graph);
     PrintDimacsAssignmentProblem<GraphType>(
         *assignment, tail_array_manager,
@@ -171,7 +200,8 @@ int SolveDimacsAssignment(int argc, char* argv[]) {
   delete graph;
   return EXIT_SUCCESS;
 }
-}  // namespace operations_research
+}  
+
 
 static const char* const kUsageTemplate = "usage: %s <filename>";
 

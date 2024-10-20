@@ -1,15 +1,27 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include "ortools/linear_solver/samples/network_design_ilph.h"
 
@@ -84,7 +96,8 @@ void CapacityPlanningMipModel::Build(const CapacityPlanningProblem& problem,
                                      bool relax_integrality) {
   solver_ = std::make_unique<MPSolver>(
       "Capacity planning solver", MPSolver::SCIP_MIXED_INTEGER_PROGRAMMING);
-  // flow_[arc][commodity] represents the flow of `commodity` on `arc`.
+  
+
   num_arcs_ = problem.graph.num_arcs();
   num_nodes_ = problem.graph.num_nodes();
   num_commodities_ = problem.num_commodities;
@@ -97,8 +110,10 @@ void CapacityPlanningMipModel::Build(const CapacityPlanningProblem& problem,
     }
   }
 
-  // open_[arc] represents the decision to open `arc` or not. It is a
-  // Boolean variable.
+  
+
+  
+
   open_.resize(num_arcs_);
   for (int arc = 0; arc < num_arcs_; ++arc) {
     if (relax_integrality) {
@@ -108,8 +123,10 @@ void CapacityPlanningMipModel::Build(const CapacityPlanningProblem& problem,
     }
   }
 
-  // flow_[arc][commodity] <= min(demand[commodity], capacities[arc]) *
-  // open_[arc]
+  
+
+  
+
   for (int arc = 0; arc < num_arcs_; ++arc) {
     for (int commodity = 0; commodity < num_commodities_; ++commodity) {
       MPConstraint* const bounding_constraint_on_arc =
@@ -123,10 +140,14 @@ void CapacityPlanningMipModel::Build(const CapacityPlanningProblem& problem,
     }
   }
 
-  // Flow conservation constraints:
-  // For each commodity, the sum of the flows over outgoing arcs, minus the
-  // sum of the flows over incoming arcs is equal to
-  // demands_at_node_per_commodity[node][commodity].
+  
+
+  
+
+  
+
+  
+
   for (int commodity = 0; commodity < num_commodities_; ++commodity) {
     for (int node = 0; node < problem.graph.num_nodes(); ++node) {
       const int64_t in_flow =
@@ -147,8 +168,10 @@ void CapacityPlanningMipModel::Build(const CapacityPlanningProblem& problem,
       }
     }
   }
-  // For all arcs: sum(flow_[arc][commodity]) <=
-  //                   problem.capacities[arc] * open_[arc].
+  
+
+  
+
   for (int arc = 0; arc < num_arcs_; ++arc) {
     MPConstraint* const capacity_constraint = solver_->MakeRowConstraint(
         -MPSolver::infinity(), 0.0, absl::StrCat("capacity_", arc));
@@ -174,19 +197,24 @@ void CapacityPlanningMipModel::ExportModelToFile(
   solver_->ExportModelToProto(&exported_model);
   const absl::Status status =
       WriteProtoToFile(filename, exported_model, ProtoWriteFormat::kProtoText,
-                       /*gzipped=*/false);
+                       
+false);
   LOG_IF(ERROR, !status.ok()) << status;
 }
 
 void CapacityPlanningILPH::Build(const CapacityPlanningProblem& problem) {
-  lp_relaxation_model_.Build(problem, /*relax_integrality=*/true);
-  mip_restricted_model_.Build(problem, /*relax_integrality=*/false);
+  lp_relaxation_model_.Build(problem, 
+true);
+  mip_restricted_model_.Build(problem, 
+false);
 }
 
 MPSolver::ResultStatus CapacityPlanningILPH::CapacityPlanningILPH::Solve() {
   best_cost_ = MPSolver::infinity();
-  // TODO(user): manage time more finely, by giving a total time to run, and do
-  // not fix a number of iterations.
+  
+
+  
+
   mip_restricted_params_.time_limit = absl::Minutes(5);
   lp_relaxation_params_.time_limit = absl::Minutes(5);
   lp_relaxation_model_.solver()->SetTimeLimit(lp_relaxation_params_.time_limit);
@@ -201,17 +229,24 @@ MPSolver::ResultStatus CapacityPlanningILPH::CapacityPlanningILPH::Solve() {
     std::vector<double> open_values(lp_relaxation_model_.num_arcs(), 0.0);
     const double linear_relaxation_cost =
         lp_relaxation_model_.solver()->Objective().Value();
-    // Get the values for the opening variables before we modify the LP
-    // relaxation.
+    
+
+    
+
     for (int arc = 0; arc < lp_relaxation_model_.num_arcs(); ++arc) {
       open_values[arc] =
           lp_relaxation_model_.GetOpeningVariables()[arc]->solution_value();
     }
-    // Create the pseudo-cut for the LP-relaxation model. First define J
-    // as the set where the opening variables have value y* = 0 or 1 in
-    // the linear relaxation. We then want a solution that is different
-    // from the current solution: Sum over J |y - y*| >= 1, where y
-    // denotes the opening variables.
+    
+
+    
+
+    
+
+    
+
+    
+
     MPConstraint* pseudo_cut = lp_relaxation_model_.solver()->MakeRowConstraint(
         -MPSolver::infinity(), MPSolver::infinity(), "pseudo_cut");
     double pseudo_cut_lb = 1.0;
@@ -219,17 +254,24 @@ MPSolver::ResultStatus CapacityPlanningILPH::CapacityPlanningILPH::Solve() {
     for (int arc = 0; arc < lp_relaxation_model_.num_arcs(); ++arc) {
       const double y = open_values[arc];
       const double rounded_y = std::round(y);
-      // Is arc a member of J? If so, round it and fix it in the MIP relaxation
-      // model.
+      
+
+      
+
       if (std::abs(y - rounded_y) < 1e-5) {
         ++num_fixed_vars;
         mip_restricted_model_.GetOpeningVariables()[arc]->SetBounds(rounded_y,
                                                                     rounded_y);
-        // Compute the coefficient of the pseudo-cut.
-        // Add |y - y*| to the pseudo cut.
-        // When y* == 0, |y - y*| == y, so just add y with coefficient 1.0.
-        // When y* == 1, |y - y*| == 1 - y, so add y with coefficient -1.0,
-        // and decrease the lower bound by 1.
+        
+
+        
+
+        
+
+        
+
+        
+
         const double coefficient = rounded_y == 0.0 ? 1.0 : -1.0;
         pseudo_cut_lb -= rounded_y == 0.0 ? 0.0 : 1.0;
         pseudo_cut->SetCoefficient(
@@ -241,7 +283,8 @@ MPSolver::ResultStatus CapacityPlanningILPH::CapacityPlanningILPH::Solve() {
     LOG(INFO) << "Pseudo cut added. " << num_fixed_vars << " out of "
               << lp_relaxation_model_.num_arcs() << " variables fixed.";
     LOG(INFO) << "Solving MIP.";
-    // Solve the reduced problem P(y, J)
+    
+
     if (mip_restricted_model_.solver()->Solve() == MPSolver::INFEASIBLE) break;
 
     for (int arc = 0; arc < mip_restricted_model_.num_arcs(); ++arc) {
@@ -254,7 +297,8 @@ MPSolver::ResultStatus CapacityPlanningILPH::CapacityPlanningILPH::Solve() {
     best_cost_ = std::min(best_cost_, mip_relaxation_cost);
     LOG(INFO) << "MIP relaxation objective = " << mip_relaxation_cost
               << ", best cost = " << best_cost_;
-    // Relax the bounds on the MIP relaxation P.
+    
+
     for (int arc = 0; arc < mip_restricted_model_.num_arcs(); ++arc) {
       mip_restricted_model_.GetOpeningVariables()[arc]->SetBounds(0, 1);
     }
@@ -263,4 +307,5 @@ MPSolver::ResultStatus CapacityPlanningILPH::CapacityPlanningILPH::Solve() {
   return MPSolver::FEASIBLE;
 }
 
-}  // namespace operations_research
+}  
+

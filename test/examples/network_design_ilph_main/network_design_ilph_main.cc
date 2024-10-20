@@ -1,15 +1,27 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include "absl/flags/flag.h"
 #include "absl/log/check.h"
@@ -63,8 +75,11 @@ int main(int argc, char* argv[]) {
     case MPSolver::NOT_SOLVED:
       absl::PrintF("Not solved.");
       return 1;
-      // No default case as we want the compiler to check for the complete
-      // treatment of all the cases.
+      
+
+      
+
   }
-  return 0;  // Never reached.
+  return 0;  
+
 }

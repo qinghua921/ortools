@@ -1,20 +1,36 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// Magic sequence problem
-//
-// Compute a sequence of numbers such that the number of occurrences of i
-// in the sequence is equal to the value of the ith number.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <cstdint>
 #include <cstdlib>
@@ -47,14 +63,17 @@ void MagicSequence(int size) {
     }
   }
 
-  // Domain constraint on each position.
+  
+
   for (int i = 0; i < size; ++i) {
     cp_model.AddEquality(LinearExpr::Sum(var_domains[i]), 1);
   }
 
-  // The number of variables equal to j shall be the value of vars[j].
+  
+
   std::vector<int64_t> values(size);
-  std::iota(values.begin(), values.end(), 0);  // [0, 1, 2, .., size - 1]
+  std::iota(values.begin(), values.end(), 0);  
+
   std::vector<BoolVar> vars_equal_to_j;
 
   for (int j = 0; j < size; ++j) {
@@ -88,8 +107,10 @@ void MagicSequence(int size) {
   }
 }
 
-}  // namespace sat
-}  // namespace operations_research
+}  
+
+}  
+
 
 int main(int argc, char** argv) {
   absl::SetFlag(&FLAGS_stderrthreshold, 0);

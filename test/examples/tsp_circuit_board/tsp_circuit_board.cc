@@ -1,18 +1,32 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// [START program]
-// [START import]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <cmath>
 #include <cstdint>
 #include <sstream>
@@ -22,10 +36,12 @@
 #include "ortools/constraint_solver/routing_enums.pb.h"
 #include "ortools/constraint_solver/routing_index_manager.h"
 #include "ortools/constraint_solver/routing_parameters.h"
-// [END import]
+
+
 
 namespace operations_research {
-// [START data_model]
+
+
 struct DataModel {
   const std::vector<std::vector<int>> locations{
       {288, 149}, {288, 129}, {270, 133}, {256, 141}, {256, 157}, {246, 157},
@@ -79,10 +95,13 @@ struct DataModel {
   const int num_vehicles = 1;
   const RoutingIndexManager::NodeIndex depot{0};
 };
-// [END data_model]
 
-// [START distance_matrix]
-// @brief Generate distance matrix.
+
+
+
+
+
+
 std::vector<std::vector<int64_t>> ComputeEuclideanDistanceMatrix(
     const std::vector<std::vector<int>>& locations) {
   std::vector<std::vector<int64_t>> distances =
@@ -98,17 +117,24 @@ std::vector<std::vector<int64_t>> ComputeEuclideanDistanceMatrix(
   }
   return distances;
 }
-// [END distance_matrix]
 
-// [START solution_printer]
-//! @brief Print the solution
-//! @param[in] manager Index manager used.
-//! @param[in] routing Routing solver used.
-//! @param[in] solution Solution found by the solver.
+
+
+
+
+
+
+
+
+
+
+
+
 void PrintSolution(const RoutingIndexManager& manager,
                    const RoutingModel& routing, const Assignment& solution) {
   LOG(INFO) << "Objective: " << solution.ObjectiveValue();
-  // Inspect solution.
+  
+
   int64_t index = routing.Start(0);
   LOG(INFO) << "Route:";
   int64_t distance{0};
@@ -125,63 +151,92 @@ void PrintSolution(const RoutingIndexManager& manager,
   LOG(INFO) << "Advanced usage:";
   LOG(INFO) << "Problem solved in " << routing.solver()->wall_time() << "ms";
 }
-// [END solution_printer]
+
+
 
 void Tsp() {
-  // Instantiate the data problem.
-  // [START data]
-  DataModel data;
-  // [END data]
+  
 
-  // Create Routing Index Manager
-  // [START index_manager]
+  
+
+  DataModel data;
+  
+
+
+  
+
+  
+
   RoutingIndexManager manager(data.locations.size(), data.num_vehicles,
                               data.depot);
-  // [END index_manager]
+  
 
-  // Create Routing Model.
-  // [START routing_model]
+
+  
+
+  
+
   RoutingModel routing(manager);
-  // [END routing_model]
+  
 
-  // [START transit_callback]
+
+  
+
   const auto distance_matrix = ComputeEuclideanDistanceMatrix(data.locations);
   const int transit_callback_index = routing.RegisterTransitCallback(
       [&distance_matrix, &manager](const int64_t from_index,
                                    const int64_t to_index) -> int64_t {
-        // Convert from routing variable Index to distance matrix NodeIndex.
+        
+
         const int from_node = manager.IndexToNode(from_index).value();
         const int to_node = manager.IndexToNode(to_index).value();
         return distance_matrix[from_node][to_node];
       });
-  // [END transit_callback]
+  
 
-  // Define cost of each arc.
-  // [START arc_cost]
+
+  
+
+  
+
   routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index);
-  // [END arc_cost]
+  
 
-  // Setting first solution heuristic.
-  // [START parameters]
+
+  
+
+  
+
   RoutingSearchParameters searchParameters = DefaultRoutingSearchParameters();
   searchParameters.set_first_solution_strategy(
       FirstSolutionStrategy::PATH_CHEAPEST_ARC);
-  // [END parameters]
+  
 
-  // Solve the problem.
-  // [START solve]
+
+  
+
+  
+
   const Assignment* solution = routing.SolveWithParameters(searchParameters);
-  // [END solve]
+  
 
-  // Print solution on console.
-  // [START print_solution]
+
+  
+
+  
+
   PrintSolution(manager, routing, *solution);
-  // [END print_solution]
-}
-}  // namespace operations_research
+  
 
-int main(int /*argc*/, char* /*argv*/[]) {
+}
+}  
+
+
+int main(int 
+, char* 
+[]) {
   operations_research::Tsp();
   return EXIT_SUCCESS;
 }
-// [END program]
+
+

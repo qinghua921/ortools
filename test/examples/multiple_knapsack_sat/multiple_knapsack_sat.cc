@@ -1,19 +1,34 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// [START program]
-// Solves a multiple knapsack problem using the CP-SAT solver.
-// [START import]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <stdlib.h>
 
 #include <map>
@@ -26,13 +41,15 @@
 #include "ortools/sat/cp_model.h"
 #include "ortools/sat/cp_model.pb.h"
 #include "ortools/sat/cp_model_solver.h"
-// [END import]
+
+
 
 namespace operations_research {
 namespace sat {
 
 void MultipleKnapsackSat() {
-  // [START data]
+  
+
   const std::vector<int> weights = {
       {48, 30, 42, 36, 36, 48, 42, 42, 36, 24, 30, 30, 42, 36, 36}};
   const std::vector<int> values = {
@@ -45,15 +62,21 @@ void MultipleKnapsackSat() {
   const int num_bins = static_cast<int>(bin_capacities.size());
   std::vector<int> all_bins(num_bins);
   std::iota(all_bins.begin(), all_bins.end(), 0);
-  // [END data]
+  
 
-  // [START model]
+
+  
+
   CpModelBuilder cp_model;
-  // [END model]
+  
 
-  // Variables.
-  // [START variables]
-  // x[i, b] = 1 if item i is packed in bin b.
+
+  
+
+  
+
+  
+
   std::map<std::tuple<int, int>, BoolVar> x;
   for (int i : all_items) {
     for (int b : all_bins) {
@@ -61,11 +84,15 @@ void MultipleKnapsackSat() {
       x[key] = cp_model.NewBoolVar().WithName(absl::StrFormat("x_%d_%d", i, b));
     }
   }
-  // [END variables]
+  
 
-  // Constraints.
-  // [START constraints]
-  // Each item is assigned to at most one bin.
+
+  
+
+  
+
+  
+
   for (int i : all_items) {
     std::vector<BoolVar> copies;
     for (int b : all_bins) {
@@ -74,7 +101,8 @@ void MultipleKnapsackSat() {
     cp_model.AddAtMostOne(copies);
   }
 
-  // The amount packed in each bin cannot exceed its capacity.
+  
+
   for (int b : all_bins) {
     LinearExpr bin_weight;
     for (int i : all_items) {
@@ -82,11 +110,15 @@ void MultipleKnapsackSat() {
     }
     cp_model.AddLessOrEqual(bin_weight, bin_capacities[b]);
   }
-  // [END constraints]
+  
 
-  // Objective.
-  // [START objective]
-  // Maximize total value of packed items.
+
+  
+
+  
+
+  
+
   LinearExpr objective;
   for (int i : all_items) {
     for (int b : all_bins) {
@@ -94,13 +126,17 @@ void MultipleKnapsackSat() {
     }
   }
   cp_model.Maximize(objective);
-  // [END objective]
+  
 
-  // [START solve]
+
+  
+
   const CpSolverResponse response = Solve(cp_model.Build());
-  // [END solve]
+  
 
-  // [START print_solution]
+
+  
+
   if (response.status() == CpSolverStatus::OPTIMAL ||
       response.status() == CpSolverStatus::FEASIBLE) {
     LOG(INFO) << "Total packed value: " << response.objective_value();
@@ -126,19 +162,26 @@ void MultipleKnapsackSat() {
   } else {
     LOG(INFO) << "The problem does not have an optimal solution.";
   }
-  // [END print_solution]
+  
 
-  // Statistics.
-  // [START statistics]
+
+  
+
+  
+
   LOG(INFO) << "Statistics";
   LOG(INFO) << CpSolverResponseStats(response);
-  // [END statistics]
+  
+
 }
-}  // namespace sat
-}  // namespace operations_research
+}  
+
+}  
+
 
 int main() {
   operations_research::sat::MultipleKnapsackSat();
   return EXIT_SUCCESS;
 }
-// [END program]
+
+

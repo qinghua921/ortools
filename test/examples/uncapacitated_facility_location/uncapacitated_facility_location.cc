@@ -1,24 +1,44 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// Uncapacitated Facility Location Problem.
-// A description of the problem can be found here:
-// https://en.wikipedia.org/wiki/Facility_location_problem.
-// The variant which is tackled by this model does not consider capacities
-// for facilities. Moreover, all cost are based on euclidean distance factors,
-// i.e. the problem we really solve is a Metric Facility Location. For the
-// sake of simplicity, facilities and demands are randomly located. Distances
-// are assumed to be in meters and times in seconds.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <cstdio>
 #include <iostream>
@@ -61,18 +81,22 @@ static void UncapacitatedFacilityLocation(
     int32_t facilities, int32_t clients, double fix_cost,
     MPSolver::OptimizationProblemType optimization_problem_type) {
   LOG(INFO) << "Starting " << __func__;
-  // Local Constants
+  
+
   const int32_t kXMax = 1000;
   const int32_t kYMax = 1000;
   const double kMaxDistance = 6 * sqrt((kXMax * kYMax)) / facilities;
   const int kStrLen = 1024;
-  // char buffer for names
+  
+
   char name_buffer[kStrLen + 1];
   name_buffer[kStrLen] = '\0';
   LOG(INFO) << "Facilities/Clients/Fix cost/MaxDist: " << facilities << "/"
             << clients << "/" << fix_cost << "/" << kMaxDistance;
-  // Setting up facilities and demand points
-  random_engine_t randomizer;  // Deterministic random generator.
+  
+
+  random_engine_t randomizer;  
+
   std::vector<Location> facility(facilities);
   std::vector<Location> client(clients);
   for (int i = 0; i < facilities; ++i) {
@@ -84,20 +108,29 @@ static void UncapacitatedFacilityLocation(
     client[i].y = absl::Uniform(randomizer, 0, kYMax + 1);
   }
 
-  // Setup uncapacitated facility location model:
-  // Min sum( c_f * x_f : f in Facilities) + sum(x_{f,c} * x_{f,c} : {f,c} in E)
-  // s.t. (1)  sum(x_{f,c} : f in Facilities) >= 1 forall c in Clients
-  //      (2)  x_f - x_{f,c} >= 0                  forall {f,c} in E
-  //      (3)  x_f in {0,1}                        forall f in Facilities
-  //
-  // We consider E as the pairs {f,c} in Facilities x Clients such that
-  // Distance(f,c) <= kMaxDistance
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
   MPSolver solver("UncapacitatedFacilityLocation", optimization_problem_type);
   const double infinity = solver.infinity();
   MPObjective* objective = solver.MutableObjective();
   objective->SetMinimization();
 
-  // Add binary facilities variables
+  
+
   std::vector<MPVariable*> xf{};
   for (int f = 0; f < facilities; ++f) {
     snprintf(name_buffer, kStrLen, "x[%d](%g,%g)", f, facility[f].x,
@@ -107,43 +140,55 @@ static void UncapacitatedFacilityLocation(
     objective->SetCoefficient(x, fix_cost);
   }
 
-  // Build edge variables
+  
+
   std::vector<Edge> edges;
   for (int c = 0; c < clients; ++c) {
     snprintf(name_buffer, kStrLen, "R-Client[%d](%g,%g)", c, client[c].x,
              client[c].y);
     MPConstraint* client_constraint =
-        solver.MakeRowConstraint(/* lb */ 1, /* ub */ infinity, name_buffer);
+        solver.MakeRowConstraint(
+ 1, 
+ infinity, name_buffer);
     for (int f = 0; f < facilities; ++f) {
       double distance = Distance(facility[f], client[c]);
       if (distance > kMaxDistance) continue;
       Edge edge{};
       snprintf(name_buffer, kStrLen, "x[%d,%d]", f, c);
-      edge.x = solver.MakeNumVar(/* lb */ 0, /*ub */ 1, name_buffer);
+      edge.x = solver.MakeNumVar(
+ 0, 
+ 1, name_buffer);
       edge.f = f;
       edge.c = c;
       edges.push_back(edge);
       objective->SetCoefficient(edge.x, distance);
-      // coefficient for constraint (1)
+      
+
       client_constraint->SetCoefficient(edge.x, 1);
-      // add constraint (2)
+      
+
       snprintf(name_buffer, kStrLen, "R-Edge[%d,%d]", f, c);
       MPConstraint* edge_constraint =
-          solver.MakeRowConstraint(/* lb */ 0, /* ub */ infinity, name_buffer);
+          solver.MakeRowConstraint(
+ 0, 
+ infinity, name_buffer);
       edge_constraint->SetCoefficient(edge.x, -1);
       edge_constraint->SetCoefficient(xf[f], 1);
     }
-  }  // End adding all edge variables
+  }  
+
   LOG(INFO) << "Number of variables = " << solver.NumVariables();
   LOG(INFO) << "Number of constraints = " << solver.NumConstraints();
-  // display on screen LP if small enough
+  
+
   if (clients <= 10 && facilities <= 10) {
     std::string lp_string{};
     const bool obfuscate = false;
     solver.ExportModelAsLpFormat(obfuscate, &lp_string);
     std::cout << "LP-Model:\n" << lp_string << std::endl;
   }
-  // Set options and solve
+  
+
   if (optimization_problem_type != MPSolver::SCIP_MIXED_INTEGER_PROGRAMMING) {
     if (!solver.SetNumThreads(8).ok()) {
       LOG(INFO) << "Could not set parallelism for "
@@ -152,7 +197,8 @@ static void UncapacitatedFacilityLocation(
   }
   solver.EnableOutput();
   const MPSolver::ResultStatus result_status = solver.Solve();
-  // Check that the problem has an optimal solution.
+  
+
   if (result_status != MPSolver::OPTIMAL) {
     LOG(FATAL) << "The problem does not have an optimal solution!";
   } else {
@@ -214,18 +260,21 @@ void RunAllExamples(int32_t facilities, int32_t clients, double fix_cost) {
   LOG(INFO) << "---- Integer programming example with Gurobi ----";
   UncapacitatedFacilityLocation(facilities, clients, fix_cost,
                                 MPSolver::GUROBI_MIXED_INTEGER_PROGRAMMING);
-#endif  // USE_GUROBI
+#endif  
+
 #if defined(USE_CPLEX)
   LOG(INFO) << "---- Integer programming example with CPLEX ----";
   UncapacitatedFacilityLocation(facilities, clients, fix_cost,
                                 MPSolver::CPLEX_MIXED_INTEGER_PROGRAMMING);
-#endif  // USE_CPLEX
+#endif  
+
   LOG(INFO) << "---- Integer programming example with CP-SAT ----";
   UncapacitatedFacilityLocation(facilities, clients, fix_cost,
                                 MPSolver::SAT_INTEGER_PROGRAMMING);
 }
 
-}  // namespace operations_research
+}  
+
 
 int main(int argc, char** argv) {
   absl::InitializeLog();

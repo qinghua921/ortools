@@ -1,18 +1,32 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// [START program]
-// [START import]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <cstdint>
 #include <functional>
 #include <sstream>
@@ -24,10 +38,12 @@
 #include "ortools/constraint_solver/routing_enums.pb.h"
 #include "ortools/constraint_solver/routing_index_manager.h"
 #include "ortools/constraint_solver/routing_parameters.h"
-// [END import]
+
+
 
 namespace operations_research {
-// [START data_model]
+
+
 struct DataModel {
   const std::vector<std::vector<int64_t>> distance_matrix{
       {0, 548, 776, 696, 582, 274, 502, 194, 308, 194, 536, 502, 388, 354, 468,
@@ -68,12 +84,17 @@ struct DataModel {
   const int num_vehicles = 4;
   const RoutingIndexManager::NodeIndex depot{0};
 };
-// [END data_model]
 
-//! @brief Print the solution.
-//! @param[in] routing_manager Index manager used.
-//! @param[in] routing_model Routing solver used.
-// [START solution_callback_printer]
+
+
+
+
+
+
+
+
+
+
 void print_solution(const RoutingIndexManager& routing_manager,
                     const RoutingModel& routing_model) {
   LOG(INFO) << "################";
@@ -98,9 +119,11 @@ void print_solution(const RoutingIndexManager& routing_manager,
   }
   LOG(INFO) << "Total distance of all routes: " << total_distance << "m";
 }
-// [END solution_callback_printer]
 
-// [START solution_callback]
+
+
+
+
 struct SolutionCallback {
   const RoutingIndexManager& routing_manager;
   const RoutingModel& routing_model;
@@ -132,91 +155,131 @@ struct SolutionCallback {
  private:
   int64_t counter = 0;
 };
-// [END solution_callback]
+
+
 
 void VrpSolutionCallback() {
-  // Instantiate the data problem.
-  // [START data]
-  DataModel data;
-  // [END data]
+  
 
-  // Create Routing Index Manager.
-  // [START index_manager]
+  
+
+  DataModel data;
+  
+
+
+  
+
+  
+
   RoutingIndexManager routing_manager(data.distance_matrix.size(),
                                       data.num_vehicles, data.depot);
-  // [END index_manager]
+  
 
-  // Create Routing Model.
-  // [START routing_model]
+
+  
+
+  
+
   RoutingModel routing_model(routing_manager);
-  // [END routing_model]
+  
 
-  // Create and register a transit callback.
-  // [START transit_callback]
+
+  
+
+  
+
   const int transit_callback_index = routing_model.RegisterTransitCallback(
       [&data, &routing_manager](const int64_t from_index,
                                 const int64_t to_index) -> int64_t {
-        // Convert from routing variable Index to distance matrix NodeIndex.
+        
+
         const int from_node = routing_manager.IndexToNode(from_index).value();
         const int to_node = routing_manager.IndexToNode(to_index).value();
         return data.distance_matrix[from_node][to_node];
       });
-  // [END transit_callback]
+  
 
-  // Define cost of each arc.
-  // [START arc_cost]
+
+  
+
+  
+
   routing_model.SetArcCostEvaluatorOfAllVehicles(transit_callback_index);
-  // [END arc_cost]
+  
 
-  // Add Distance constraint.
-  // [START distance_constraint]
+
+  
+
+  
+
   routing_model.AddDimension(transit_callback_index,
-                             0,     // no slack
-                             3000,  // vehicle maximum travel distance
-                             true,  // start cumul to zero
+                             0,     
+
+                             3000,  
+
+                             true,  
+
                              "Distance");
   routing_model.GetMutableDimension("Distance")
       ->SetGlobalSpanCostCoefficient(100);
-  // [END distance_constraint]
+  
 
-  // Attach a solution callback.
-  // [START attach_callback]
+
+  
+
+  
+
   SolutionCallback solution_callback{routing_manager, routing_model,
-                                     /*max_solution=*/15};
+                                     
+15};
   routing_model.AddAtSolutionCallback(
       std::bind(&SolutionCallback::Run, &solution_callback));
-  // [END attach_callback]
+  
 
-  // Setting first solution heuristic.
-  // [START parameters]
+
+  
+
+  
+
   RoutingSearchParameters search_parameters = DefaultRoutingSearchParameters();
   search_parameters.set_first_solution_strategy(
       FirstSolutionStrategy::PATH_CHEAPEST_ARC);
   search_parameters.set_local_search_metaheuristic(
       LocalSearchMetaheuristic::GUIDED_LOCAL_SEARCH);
   search_parameters.mutable_time_limit()->set_seconds(5);
-  // [END parameters]
+  
 
-  // Solve the problem.
-  // [START solve]
+
+  
+
+  
+
   const Assignment* solution =
       routing_model.SolveWithParameters(search_parameters);
-  // [END solve]
+  
 
-  // Print solution on console.
-  // [START print_solution]
+
+  
+
+  
+
   if (solution != nullptr) {
     LOG(INFO) << "Best objectives: "
               << std::to_string(solution_callback.objectives.back());
   } else {
     LOG(INFO) << "No solution found.";
   }
-  // [END print_solution]
-}
-}  // namespace operations_research
+  
 
-int main(int /*argc*/, char* /*argv*/[]) {
+}
+}  
+
+
+int main(int 
+, char* 
+[]) {
   operations_research::VrpSolutionCallback();
   return EXIT_SUCCESS;
 }
-// [END program]
+
+

@@ -1,18 +1,32 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// [START program]
-// [START import]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <cmath>
 #include <cstdint>
 #include <sstream>
@@ -22,10 +36,12 @@
 #include "ortools/constraint_solver/routing_enums.pb.h"
 #include "ortools/constraint_solver/routing_index_manager.h"
 #include "ortools/constraint_solver/routing_parameters.h"
-// [END import]
+
+
 
 namespace operations_research {
-// [START data_model]
+
+
 struct DataModel {
   const std::vector<std::vector<int64_t>> distance_matrix{
       {0, 2451, 713, 1018, 1631, 1374, 2408, 213, 2571, 875, 1420, 2145, 1972},
@@ -45,12 +61,15 @@ struct DataModel {
   const int num_vehicles = 1;
   const RoutingIndexManager::NodeIndex depot{0};
 };
-// [END data_model]
 
-// [START solution_printer]
+
+
+
+
 void PrintSolution(
     const std::vector<std::vector<RoutingIndexManager::NodeIndex>>& routes) {
-  // Print routes.
+  
+
   DataModel data;
   int64_t total_distance = 0;
   for (int i = 0; i < routes.size(); ++i) {
@@ -70,68 +89,97 @@ void PrintSolution(
   }
   LOG(INFO) << "Total distance of all routes: " << total_distance << "m";
 }
-// [END solution_printer]
+
+
 
 void Tsp() {
-  // Instantiate the data problem.
-  // [START data]
-  DataModel data;
-  // [END data]
+  
 
-  // Create Routing Index Manager
-  // [START index_manager]
+  
+
+  DataModel data;
+  
+
+
+  
+
+  
+
   RoutingIndexManager manager(data.distance_matrix.size(), data.num_vehicles,
                               data.depot);
-  // [END index_manager]
+  
 
-  // Create Routing Model.
-  // [START routing_model]
+
+  
+
+  
+
   RoutingModel routing(manager);
-  // [END routing_model]
+  
 
-  // Define cost of each arc.
-  // [START arc_cost]
+
+  
+
+  
+
   const int transit_callback_index = routing.RegisterTransitCallback(
       [&data, &manager](const int64_t from_index,
                         const int64_t to_index) -> int64_t {
-        // Convert from routing variable Index to distance matrix NodeIndex.
+        
+
         const int from_node = manager.IndexToNode(from_index).value();
         const int to_node = manager.IndexToNode(to_index).value();
         return data.distance_matrix[from_node][to_node];
       });
   routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index);
-  // [END arc_cost]
+  
 
-  // Setting first solution heuristic.
-  // [START parameters]
+
+  
+
+  
+
   RoutingSearchParameters searchParameters = DefaultRoutingSearchParameters();
   searchParameters.set_first_solution_strategy(
       FirstSolutionStrategy::PATH_CHEAPEST_ARC);
-  // [END parameters]
+  
 
-  // Solve the problem.
-  // [START solve]
+
+  
+
+  
+
   const Assignment* solution = routing.SolveWithParameters(searchParameters);
-  // [END solve]
+  
 
-  // [START get_routes]
-  // Get the routes and convert indices to nodes.
+
+  
+
+  
+
   std::vector<std::vector<RoutingIndexManager::NodeIndex>> routes;
   for (const std::vector<int64_t>& route_indices :
        routing.GetRoutesFromAssignment(*solution)) {
     routes.push_back(manager.IndicesToNodes(route_indices));
   }
-  // [END get_routes]
+  
 
-  // Print solution on console.
+
+  
+
   PrintSolution(routes);
-  // [END print_solution]
+  
+
 }
 
-}  // namespace operations_research
+}  
 
-int main(int /*argc*/, char* /*argv*/[]) {
+
+int main(int 
+, char* 
+[]) {
   operations_research::Tsp();
   return EXIT_SUCCESS;
 }
-// [END program]
+
+

@@ -1,20 +1,33 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <array>
 #include <iomanip>
 #include <iterator>
-#include <numeric>  // std::iota
+#include <numeric>  
+
 #include <ostream>
 #include <sstream>
 #include <string>
@@ -27,11 +40,13 @@
 #include "ortools/base/logging.h"
 #include "ortools/constraint_solver/constraint_solver.h"
 
-// Solve a job shop problem:
+
+
 
 namespace operations_research {
 void SolveJobShopExample() {
-  // Instantiate the solver.
+  
+
   Solver solver("JobShopExample");
   std::array<int, 3> machines;
   std::iota(std::begin(machines), std::end(machines), 0);
@@ -41,7 +56,8 @@ void SolveJobShopExample() {
     LOG(INFO) << "Machines: " << oss.str();
   }
 
-  // Jobs definition
+  
+
   using MachineIndex = int;
   using ProcessingTime = int;
   using Task = std::pair<MachineIndex, ProcessingTime>;
@@ -59,7 +75,8 @@ void SolveJobShopExample() {
     LOG(INFO) << problem.str();
   }
 
-  // Computes horizon.
+  
+
   ProcessingTime horizon = 0;
   for (const Job& job : jobs) {
     for (const Task& task : job) {
@@ -68,7 +85,8 @@ void SolveJobShopExample() {
   }
   LOG(INFO) << "Horizon: " << horizon;
 
-  // Creates tasks.
+  
+
   std::vector<std::vector<IntervalVar*>> tasks_matrix(jobs.size());
   for (int i = 0; i < jobs.size(); ++i) {
     for (int j = 0; j < jobs[i].size(); ++j) {
@@ -79,7 +97,8 @@ void SolveJobShopExample() {
     }
   }
 
-  // Add conjunctive constraints.
+  
+
   for (int i = 0; i < jobs.size(); ++i) {
     for (int j = 0; j < jobs[i].size() - 1; ++j) {
       solver.AddConstraint(solver.MakeIntervalVarRelation(
@@ -88,7 +107,8 @@ void SolveJobShopExample() {
     }
   }
 
-  // Creates sequence variables and add disjunctive constraints.
+  
+
   std::vector<SequenceVar*> all_sequences;
   std::vector<IntVar*> all_machines_jobs;
   for (const auto machine : machines) {
@@ -105,7 +125,8 @@ void SolveJobShopExample() {
     all_sequences.push_back(disj->MakeSequenceVar());
   }
 
-  // Set the objective.
+  
+
   std::vector<IntVar*> all_ends;
   for (const auto& job : tasks_matrix) {
     IntervalVar* const task = job.back();
@@ -114,33 +135,45 @@ void SolveJobShopExample() {
   IntVar* const obj_var = solver.MakeMax(all_ends)->Var();
   OptimizeVar* const objective_monitor = solver.MakeMinimize(obj_var, 1);
 
-  // ----- Search monitors and decision builder -----
+  
 
-  // This decision builder will rank all tasks on all machines.
+
+  
+
   DecisionBuilder* const sequence_phase =
       solver.MakePhase(all_sequences, Solver::SEQUENCE_DEFAULT);
 
-  // After the ranking of tasks, the schedule is still loose and any
-  // task can be postponed at will. But, because the problem is now a PERT
-  // (http://en.wikipedia.org/wiki/Program_Evaluation_and_Review_Technique),
-  // we can schedule each task at its earliest start time. This is
-  // conveniently done by fixing the objective variable to its
-  // minimum value.
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
   DecisionBuilder* const obj_phase = solver.MakePhase(
       obj_var, Solver::CHOOSE_FIRST_UNBOUND, Solver::ASSIGN_MIN_VALUE);
 
-  // The main decision builder (ranks all tasks, then fixes the
-  // objective_variable).
+  
+
+  
+
   DecisionBuilder* const main_phase = solver.Compose(sequence_phase, obj_phase);
 
-  // Search log.
+  
+
   const int kLogFrequency = 1000000;
   SearchMonitor* const search_log =
       solver.MakeSearchLog(kLogFrequency, objective_monitor);
 
   SearchLimit* limit = nullptr;
 
-  // Create the solution collector.
+  
+
   SolutionCollector* const collector = solver.MakeLastSolutionCollector();
   collector->Add(all_sequences);
   collector->AddObjective(obj_var);
@@ -153,7 +186,8 @@ void SolveJobShopExample() {
     }
   }
 
-  // Solve the problem.
+  
+
   if (solver.Solve(main_phase, search_log, objective_monitor, limit,
                    collector)) {
     LOG(INFO) << "Optimal Schedule Length: " << collector->objective_value(0);
@@ -194,7 +228,8 @@ void SolveJobShopExample() {
     LOG(INFO) << "Time: " << solver.wall_time() << "ms";
   }
 }
-}  // namespace operations_research
+}  
+
 
 int main(int argc, char** argv) {
   InitGoogle(argv[0], &argc, &argv, true);

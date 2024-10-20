@@ -1,15 +1,27 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <string>
 #include <tuple>
@@ -39,9 +51,12 @@ void SolveQap() {
 
   CpModelBuilder cp_model;
 
-  // Create placement variables.
-  // place_vars[f][l] contains the binary variable that decides whether to put
-  // factory f in location l.
+  
+
+  
+
+  
+
   std::vector<std::vector<BoolVar>> place_vars;
   place_vars.resize(n);
   for (int f = 0; f < n; ++f) {
@@ -52,12 +67,14 @@ void SolveQap() {
     }
   }
 
-  // Place each factory exactly once.
+  
+
   for (int f = 0; f < n; ++f) {
     cp_model.AddExactlyOne(place_vars[f]);
   }
 
-  // Occupy each location exactly once.
+  
+
   for (int l = 0; l < n; ++l) {
     std::vector<BoolVar> tmp;
     for (int f = 0; f < n; ++f) {
@@ -66,7 +83,8 @@ void SolveQap() {
     cp_model.AddExactlyOne(tmp);
   }
 
-  // Create objective.
+  
+
   absl::flat_hash_map<std::tuple<int, int, int, int>, BoolVar> cache;
   LinearExpr objective;
   for (int f1 = 0; f1 < n; ++f1) {
@@ -106,31 +124,38 @@ void SolveQap() {
 
   cp_model.Minimize(objective);
 
-  // Setup parameters.
+  
+
   SatParameters parameters;
   parameters.set_log_search_progress(true);
-  // Parse the --params flag.
+  
+
   if (!absl::GetFlag(FLAGS_params).empty()) {
     CHECK(google::protobuf::TextFormat::MergeFromString(
         absl::GetFlag(FLAGS_params), &parameters))
         << absl::GetFlag(FLAGS_params);
   }
 
-  // Solve.
+  
+
   const CpSolverResponse response =
       SolveWithParameters(cp_model.Build(), parameters);
 }
 
-}  // namespace sat
-}  // namespace operations_research
+}  
+
+}  
+
 
 static const char kUsageStr[] =
     "Solves quadratic assignment problems with CP-SAT. "
     "The input file should have the format described in the QAPLIB (see "
-    "http://anjos.mgi.polymtl.ca/qaplib/).";
+    "http:
+
 
 int main(int argc, char** argv) {
-  InitGoogle(kUsageStr, &argc, &argv, /*remove_flags=*/true);
+  InitGoogle(kUsageStr, &argc, &argv, 
+true);
   if (absl::GetFlag(FLAGS_input).empty()) {
     LOG(INFO) << "--input is required";
     return EXIT_SUCCESS;

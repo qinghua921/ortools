@@ -1,6 +1,0 @@
-files:
-  - .\temp\A.hpp
-namespaces:
-  - operations_research:
-      classs:
-        - MPVariable

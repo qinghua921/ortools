@@ -1,19 +1,32 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <array>
 #include <iterator>
-#include <numeric>  // std::iota
+#include <numeric>  
+
 #include <sstream>
 #include <vector>
 
@@ -25,7 +38,8 @@
 
 namespace operations_research {
 void SolveNursesExample() {
-  // Instantiate the solver.
+  
+
   Solver solver("NursesExample");
   std::array<int, 4> nurses;
   std::iota(std::begin(nurses), std::end(nurses), 0);
@@ -35,7 +49,8 @@ void SolveNursesExample() {
     LOG(INFO) << "Nurses:" << oss.str();
   }
 
-  // Nurse assigned to shift 0 means not working that day.
+  
+
   std::array<int, 4> shifts;
   std::iota(std::begin(shifts), std::end(shifts), 0);
   {
@@ -52,7 +67,8 @@ void SolveNursesExample() {
     LOG(INFO) << "Days:" << oss.str();
   }
 
-  // Create shift variables.
+  
+
   std::vector<std::vector<IntVar*>> shifts_matrix(nurses.size());
   std::vector<IntVar*> shifts_flat;
   for (const auto nurse : nurses) {
@@ -65,7 +81,8 @@ void SolveNursesExample() {
     }
   }
 
-  // Create nurse variables.
+  
+
   std::vector<std::vector<IntVar*>> nurses_matrix(shifts.size());
   for (const auto shift : shifts) {
     for (const auto day : days) {
@@ -76,7 +93,8 @@ void SolveNursesExample() {
     }
   }
 
-  // Set relationships between shifts and nurses.
+  
+
   for (const auto day : days) {
     std::vector<IntVar*> nurses_for_day(shifts.size());
     for (const auto shift : shifts) {
@@ -89,16 +107,19 @@ void SolveNursesExample() {
     }
   }
 
-  // Make assignments different on each day i.e.
+  
+
   for (const auto day : days) {
-    // no shift can have two nurses
+    
+
     std::vector<IntVar*> shifts_for_day(nurses.size());
     for (const auto nurse : nurses) {
       shifts_for_day[nurse] = shifts_matrix[nurse][day];
     }
     solver.AddConstraint(solver.MakeAllDifferent(shifts_for_day));
 
-    // no nurses can have more than one shifts a day
+    
+
     std::vector<IntVar*> nurses_for_day(shifts.size());
     for (const auto shift : shifts) {
       nurses_for_day[shift] = nurses_matrix[shift][day];
@@ -106,7 +127,8 @@ void SolveNursesExample() {
     solver.AddConstraint(solver.MakeAllDifferent(nurses_for_day));
   }
 
-  // Each nurse works 5 or 6 days in a week.
+  
+
   for (const auto nurse : nurses) {
     std::vector<IntVar*> nurse_is_working;
     for (const auto day : days) {
@@ -117,9 +139,12 @@ void SolveNursesExample() {
     solver.AddConstraint(solver.MakeSumLessOrEqual(nurse_is_working, 6));
   }
 
-  // Create works_shift variables.
-  // works_shift_matrix[n][s] is True if
-  // nurse n works shift s at least once during the week.
+  
+
+  
+
+  
+
   std::vector<std::vector<IntVar*>> works_shift_matrix(nurses.size());
   for (const auto nurse : nurses) {
     for (const auto shift : shifts) {
@@ -142,8 +167,10 @@ void SolveNursesExample() {
     }
   }
 
-  // For each shift(other than 0), at most 2 nurses are assigned to that shift
-  // during the week.
+  
+
+  
+
   for (std::size_t shift = 1; shift < shifts.size(); ++shift) {
     std::vector<IntVar*> nurses_for_shift;
     for (const auto nurse : nurses) {
@@ -152,8 +179,10 @@ void SolveNursesExample() {
     solver.AddConstraint(solver.MakeSumLessOrEqual(nurses_for_shift, 2));
   }
 
-  // If a nurse works shifts 2 or 3 on,
-  // he must also work that shift the previous day or the following day.
+  
+
+  
+
   for (const auto shift : {2, 3}) {
     for (const auto day : days) {
       IntVar* v0 = solver.MakeIsEqualVar(nurses_matrix[shift][day],
@@ -164,27 +193,33 @@ void SolveNursesExample() {
     }
   }
 
-  // ----- Search monitors and decision builder -----
+  
 
-  // Create the decision builder.
+
+  
+
   DecisionBuilder* const main_phase = solver.MakePhase(
       shifts_flat, Solver::CHOOSE_FIRST_UNBOUND, Solver::ASSIGN_MIN_VALUE);
 
-  // Search log.
+  
+
   SearchMonitor* const search_log = nullptr;
 
   SearchLimit* limit = nullptr;
 
-  // Create the solution collector.
+  
+
   SolutionCollector* const collector = solver.MakeAllSolutionCollector();
   collector->Add(shifts_flat);
 
-  // Solve
+  
+
   solver.Solve(main_phase, search_log, nullptr, limit, collector);
   LOG(INFO) << "Number of solutions: " << collector->solution_count();
   LOG(INFO) << "";
 
-  // Display a few solutions picked at random.
+  
+
   std::array<int, 4> a_few_solutions = {859, 2034, 5091, 7003};
   for (const auto solution : a_few_solutions) {
     LOG(INFO) << "Solution " << solution << ":";
@@ -200,7 +235,8 @@ void SolveNursesExample() {
   LOG(INFO) << "Advanced usage:";
   LOG(INFO) << "Time: " << solver.wall_time() << "ms";
 }
-}  // namespace operations_research
+}  
+
 
 int main(int argc, char** argv) {
   InitGoogle(argv[0], &argc, &argv, true);

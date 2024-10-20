@@ -1,15 +1,27 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <iostream>
 #include <vector>
@@ -22,7 +34,8 @@
 int main(int argc, char** argv) {
   InitGoogle(argv[0], &argc, &argv, true);
 
-  // The input graph, encoded as a list of arcs with distances.
+  
+
   std::vector<operations_research::ArcWithLengthAndResources> arcs = {
       {.from = 0, .to = 1, .length = 5, .resources = {1, 2}},
       {.from = 0, .to = 2, .length = 4, .resources = {3, 2}},
@@ -38,7 +51,8 @@ int main(int argc, char** argv) {
       operations_research::ConstrainedShortestPathsOnDag(
           num_nodes, arcs, source, destination, max_resources);
 
-  // Print to length of the path and then the nodes in the path.
+  
+
   std::cout << "Constrained shortest path length: " << path_with_length.length
             << std::endl;
   std::cout << "Constrained shortest path nodes: "

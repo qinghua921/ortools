@@ -1,23 +1,42 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// Solve a scaled constrained two dimensional knapsack problem.
-// Each bin must be filled with items with min and max weights, and min and max
-// volumes. As is a knapsack, the objective is to maximize total value. It turns
-// out that the objective is to maximize weights.
-//
-// Data is for 1 bin and 10 items. Scaling is done my having m bins and m copies
-// of each items.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <cstdint>
 #include <string>
@@ -42,7 +61,8 @@ static const int kWeightMax = 22000;
 static const int kVolumeMin = 1156;
 static const int kVolumeMax = 1600;
 
-// Data for a single bin problem
+
+
 static const int kItemsWeights[] = {1008, 2087, 5522, 5250,  5720,
                                     4998, 275,  3145, 12580, 382};
 static const int kItemsVolumes[] = {281, 307, 206, 111, 275,
@@ -67,7 +87,8 @@ void MultiKnapsackSat(int scaling, const std::string& params) {
     selected_items[i] = builder.NewBoolVar();
   }
 
-  // Fill up scaled values, weights, volumes;
+  
+
   std::vector<int64_t> values(num_items);
   std::vector<int64_t> weights(num_items);
   std::vector<int64_t> volumes(num_items);
@@ -77,7 +98,8 @@ void MultiKnapsackSat(int scaling, const std::string& params) {
     volumes[i] = kItemsVolumes[index];
   }
 
-  // Constraints per bins.
+  
+
   std::vector<IntVar> bin_weights;
   for (int b = 0; b < num_bins; ++b) {
     IntVar bin_weight = builder.NewIntVar({kWeightMin, kWeightMax});
@@ -89,7 +111,8 @@ void MultiKnapsackSat(int scaling, const std::string& params) {
         {kVolumeMin, kVolumeMax});
   }
 
-  // Each item is selected at most one time.
+  
+
   for (int i = 0; i < num_items; ++i) {
     std::vector<BoolVar> bin_contain_item(num_bins);
     for (int b = 0; b < num_bins; ++b) {
@@ -98,17 +121,21 @@ void MultiKnapsackSat(int scaling, const std::string& params) {
     builder.AddEquality(LinearExpr::Sum(bin_contain_item), selected_items[i]);
   }
 
-  // Maximize the sums of weights.
+  
+
   builder.Maximize(LinearExpr::Sum(bin_weights));
 
-  // And solve.
+  
+
   const CpSolverResponse response =
       SolveWithParameters(builder.Build(), params);
   LOG(INFO) << CpSolverResponseStats(response);
 }
 
-}  // namespace sat
-}  // namespace operations_research
+}  
+
+}  
+
 
 int main(int argc, char** argv) {
   absl::SetFlag(&FLAGS_stderrthreshold, 0);

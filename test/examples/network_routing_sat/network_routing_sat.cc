@@ -1,29 +1,53 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// This model solves a multicommodity mono-routing problem with
-// capacity constraints and a max usage cost structure.  This means
-// that given a graph with capacity on edges, and a set of demands
-// (source, destination, traffic), the goal is to assign one unique
-// path for each demand such that the cost is minimized.  The cost is
-// defined by the maximum ratio utilization (traffic/capacity) for all
-// arcs.  There is also a penalty associated with a traffic of an arc
-// being above the comfort zone, 85% of the capacity by default.
-// Please note that constraint programming is well suited here because
-// we cannot have multiple active paths for a single demand.
-// Otherwise, a approach based on a linear solver is a better match.
 
-// A random problem generator is also included.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <algorithm>
 #include <atomic>
@@ -47,7 +71,8 @@
 #include "ortools/sat/model.h"
 #include "ortools/util/time_limit.h"
 
-// ----- Data Generator -----
+
+
 ABSL_FLAG(int, clients, 0,
           "Number of network clients nodes. If equal to zero, "
           "then all backbones nodes are also client nodes.");
@@ -69,7 +94,8 @@ ABSL_FLAG(int, max_capacity, 0, "Max traffic on any arc.");
 ABSL_FLAG(int, fixed_charge_cost, 0, "Fixed charged cost when using an arc.");
 ABSL_FLAG(int, seed, 0, "Random seed");
 
-// ----- CP Model -----
+
+
 ABSL_FLAG(double, comfort_zone, 0.85,
           "Above this limit in 1/1000th, the link is said to be "
           "congestioned.");
@@ -78,47 +104,60 @@ ABSL_FLAG(int, extra_hops, 6,
           "maximum length 'shortest path + extra_hops'");
 ABSL_FLAG(int, max_paths, 1200, "Max number of possible paths for a demand.");
 
-// ----- Reporting -----
+
+
 ABSL_FLAG(bool, print_model, false, "Print details of the model.");
 
-// ----- Sat parameters -----
+
+
 ABSL_FLAG(std::string, params, "", "Sat parameters.");
 
 namespace operations_research {
 namespace sat {
-// ---------- Data and Data Generation ----------
 
-// ----- Data -----
-// Contains problem data. It assumes capacities are symmetrical:
-//   (capacity(i->j) == capacity(j->i)).
-// Demands are not symmetrical.
+
+
+
+
+
+
+
+
+
+
 class NetworkRoutingData {
  public:
   NetworkRoutingData() : name_(""), max_capacity_(-1), fixed_charge_cost_(-1) {}
 
-  // Name of the problem.
+  
+
   const std::string& name() const { return name_; }
 
-  // Properties of the model.
+  
+
   int num_nodes() const { return graph_.num_nodes(); }
   int num_arcs() const { return all_arcs_.size(); }
   int num_demands() const { return all_demands_.size(); }
 
-  // Returns the capacity of an arc, and 0 if the arc is not defined.
+  
+
   int Capacity(int node1, int node2) const {
     const auto& iter = all_arcs_.find(
         std::make_pair(std::min(node1, node2), std::max(node1, node2)));
     return iter != all_arcs_.end() ? iter->second : 0;
   }
 
-  // Returns the demand between the source and the destination, and 0 if
-  // there are no demands between the source and the destination.
+  
+
+  
+
   int Demand(int source, int destination) const {
     const auto& iter = all_demands_.find(std::make_pair(source, destination));
     return iter != all_demands_.end() ? iter->second : 0;
   }
 
-  // External building API.
+  
+
   void set_num_nodes(int num_nodes) { graph_.ReserveNodes(num_nodes); }
   void AddArc(int node1, int node2, int capacity) {
     const int tail = std::min(node1, node2);
@@ -144,19 +183,31 @@ class NetworkRoutingData {
   util::ListGraph<int, int> graph_;
 };
 
-// ----- Data Generation -----
 
-// Random generator of problem. This generator creates a random
-// problem. This problem uses a special topology. There are
-// 'num_backbones' nodes and 'num_clients' nodes. if 'num_clients' is
-// null, then all backbones nodes are also client nodes. All traffic
-// originates and terminates in client nodes. Each client node is
-// connected to 'min_client_degree' - 'max_client_degree' backbone
-// nodes. Each backbone node is connected to 'min_backbone_degree' -
-// 'max_backbone_degree' other backbone nodes. There are 'num_demands'
-// demands, with a traffic between 'traffic_min' and 'traffic_max'.
-// Each arc has a capacity of 'max_capacity'. Using an arc incurs a
-// fixed cost of 'fixed_charge_cost'.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 class NetworkRoutingDataBuilder {
  public:
   NetworkRoutingDataBuilder(int num_clients, int num_backbones, int num_demands,
@@ -225,7 +276,8 @@ class NetworkRoutingDataBuilder {
   void BuildGraph() {
     const int size = num_backbones_ + num_clients_;
 
-    // First we create the backbone nodes.
+    
+
     for (int i = 1; i < num_backbones_; ++i) {
       absl::uniform_int_distribution<int> source(0, i - 1);
       const int j = source(rand_gen_);
@@ -264,8 +316,10 @@ class NetworkRoutingDataBuilder {
       }
     }
 
-    // Then create the client nodes connected to the backbone nodes.
-    // If num_client is 0, then backbone nodes are also client nodes.
+    
+
+    
+
     for (int i = num_backbones_; i < size; ++i) {
       const int degree = uniform_client_degree_(rand_gen_);
       while (degrees_[i] < degree) {
@@ -344,9 +398,11 @@ class NetworkRoutingDataBuilder {
   absl::uniform_int_distribution<int> uniform_source_;
 };
 
-// ---------- Solving the Problem ----------
 
-// Useful data struct to hold demands.
+
+
+
+
 struct Demand {
  public:
   Demand(int the_source, int the_destination, int the_traffic)
@@ -367,7 +423,8 @@ class NetworkRoutingSolver {
   void ComputeAllPathsForOneDemandAndOnePathLength(int demand_index,
                                                    int max_length,
                                                    int max_paths) {
-    // We search for paths of length exactly 'max_length'.
+    
+
     CpModelBuilder cp_model;
     std::vector<IntVar> arc_vars;
     std::vector<IntVar> node_vars;
@@ -397,7 +454,8 @@ class NetworkRoutingSolver {
     cp_model.AddAllDifferent(node_vars);
 
     Model model;
-    // Create an atomic Boolean that will be periodically checked by the limit.
+    
+
     std::atomic<bool> stopped(false);
     model.GetOrCreate<TimeLimit>()->RegisterExternalBooleanAsLimit(&stopped);
 
@@ -420,9 +478,12 @@ class NetworkRoutingSolver {
     SolveCpModel(cp_model.Build(), &model);
   }
 
-  // This method will fill the all_paths_ data structure. all_paths_
-  // contains, for each demand, a vector of possible paths, stored as
-  // a hash_set of arc indices.
+  
+
+  
+
+  
+
   int ComputeAllPaths(int extra_hops, int max_paths) {
     int num_paths = 0;
     for (int demand_index = 0; demand_index < demands_array_.size();
@@ -495,7 +556,8 @@ class NetworkRoutingSolver {
     int64_t total_cumulated_traffic = 0;
     all_min_path_lengths_.clear();
 
-    // Dummy vector for edge costs: always 1.
+    
+
     const std::vector<PathDistance> distances(2 * count_arcs(), 1);
 
     for (const Demand& demand : demands_array_) {
@@ -546,7 +608,8 @@ class NetworkRoutingSolver {
     const int64_t total_cumulated_traffic = InitShortestPaths(data);
     const int num_paths = InitPaths(data, extra_hops, max_paths);
 
-    // ----- Report Problem Sizes -----
+    
+
 
     LOG(INFO) << "Model created:";
     LOG(INFO) << "  - " << data.num_nodes() << " nodes";
@@ -558,23 +621,27 @@ class NetworkRoutingSolver {
     LOG(INFO) << "  - " << num_paths << " possible paths for all demands";
   }
 
-  // ----- Main Solve routine -----
+  
+
 
   int64_t Solve() {
     LOG(INFO) << "Solving model";
     const int num_demands = demands_array_.size();
     const int num_arcs = count_arcs();
 
-    // ----- Build Model -----
+    
+
     CpModelBuilder cp_model;
     std::vector<std::vector<IntVar>> path_vars(num_demands);
 
-    // Node - Graph Constraint.
+    
+
     for (int demand_index = 0; demand_index < num_demands; ++demand_index) {
       for (int arc = 0; arc < num_arcs; ++arc) {
         path_vars[demand_index].push_back(IntVar(cp_model.NewBoolVar()));
       }
-      // Fill Tuple Set for AllowedAssignment constraint.
+      
+
       TableConstraint path_ct =
           cp_model.AddAllowedAssignments(path_vars[demand_index]);
       for (const auto& one_path : all_paths_[demand_index]) {
@@ -585,7 +652,8 @@ class NetworkRoutingSolver {
         path_ct.AddTuple(tuple);
       }
     }
-    // Traffic variables and objective definition.
+    
+
     std::vector<IntVar> traffic_vars(num_arcs);
     std::vector<IntVar> normalized_traffic_vars(num_arcs);
     std::vector<BoolVar> comfortable_traffic_vars(num_arcs);
@@ -668,8 +736,10 @@ class NetworkRoutingSolver {
   std::vector<std::vector<OnePath>> all_paths_;
 };
 
-}  // namespace sat
-}  // namespace operations_research
+}  
+
+}  
+
 
 int main(int argc, char** argv) {
   absl::SetFlag(&FLAGS_stderrthreshold, 0);

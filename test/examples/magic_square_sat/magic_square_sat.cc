@@ -1,15 +1,27 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <string>
 #include <vector>
@@ -43,13 +55,16 @@ void MagicSquare(int size) {
     }
   }
 
-  // All cells take different values.
+  
+
   builder.AddAllDifferent(all_variables);
 
-  // The sum on each row, columns and two main diagonals.
+  
+
   const int magic_value = size * (size * size + 1) / 2;
 
-  // Sum on rows.
+  
+
   for (int i = 0; i < size; ++i) {
     LinearExpr sum;
     for (int j = 0; j < size; ++j) {
@@ -58,7 +73,8 @@ void MagicSquare(int size) {
     builder.AddEquality(sum, magic_value);
   }
 
-  // Sum on columns.
+  
+
   for (int j = 0; j < size; ++j) {
     LinearExpr sum;
     for (int i = 0; i < size; ++i) {
@@ -67,7 +83,8 @@ void MagicSquare(int size) {
     builder.AddEquality(sum, magic_value);
   }
 
-  // Sum on diagonals.
+  
+
   LinearExpr diag1_sum;
   LinearExpr diag2_sum;
   for (int i = 0; i < size; ++i) {
@@ -97,8 +114,10 @@ void MagicSquare(int size) {
   LOG(INFO) << CpSolverResponseStats(response);
 }
 
-}  // namespace sat
-}  // namespace operations_research
+}  
+
+}  
+
 
 int main(int argc, char** argv) {
   absl::SetFlag(&FLAGS_stderrthreshold, 0);

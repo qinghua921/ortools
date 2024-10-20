@@ -1,22 +1,40 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// Solves a simple LP using PDLP's direct C++ API.
-//
-// Note: The direct API is generally for advanced use cases. It is matrix-based,
-// that is, you specify the LP using matrices and vectors instead of algebraic
-// expressions. You can also use PDLP via the algebraic MPSolver API (see
-// linear_solver/samples/simple_lp_program.cc).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <cstdint>
 #include <iostream>
 #include <limits>
@@ -36,19 +54,30 @@ namespace pdlp = ::operations_research::pdlp;
 
 constexpr double kInfinity = std::numeric_limits<double>::infinity();
 
-// Returns a small LP:
-// min 5.5 x_0 - 2 x_1 - x_2 +   x_3 - 14 s.t.
-//     2 x_0 +     x_1 +   x_2 + 2 x_3  = 12
-//       x_0 +             x_2          <=  7
-//     4 x_0                            >=  -4
-//    -1 <=            1.5 x_2 -   x_3  <= 1
-//   -infinity <= x_0 <= infinity
-//          -2 <= x_1 <= infinity
-//   -infinity <= x_2 <= 6
-//         2.5 <= x_3 <= 3.5
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 pdlp::QuadraticProgram SimpleLp() {
   pdlp::QuadraticProgram lp(4, 4);
-  // "<<" is Eigen's syntax for initialization.
+  
+
   lp.constraint_lower_bounds << 12, -kInfinity, -4, -1;
   lp.constraint_upper_bounds << 12, 7, kInfinity, 1;
   lp.variable_lower_bounds << -kInfinity, -2, -kInfinity, 2.5;
@@ -65,11 +94,14 @@ pdlp::QuadraticProgram SimpleLp() {
 }
 
 int main(int argc, char* argv[]) {
-  InitGoogle(argv[0], &argc, &argv, /*remove_flags=*/true);
+  InitGoogle(argv[0], &argc, &argv, 
+true);
 
   pdlp::PrimalDualHybridGradientParams params;
-  // Below are some common parameters to modify. Here, we just re-assign the
-  // defaults.
+  
+
+  
+
   params.mutable_termination_criteria()
       ->mutable_simple_optimality_criteria()
       ->set_eps_optimal_relative(1.0e-6);
@@ -93,10 +125,14 @@ int main(int argc, char* argv[]) {
               << '\n';
   }
 
-  // Solutions vectors are always returned. *However*, their interpretation
-  // depends on termination_reason! See primal_dual_hybrid_gradient.h for more
-  // details on what the vectors mean if termination_reason is not
-  // TERMINATION_REASON_OPTIMAL.
+  
+
+  
+
+  
+
+  
+
   std::cout << "Primal solution:\n" << result.primal_solution << '\n';
   std::cout << "Dual solution:\n" << result.dual_solution << '\n';
   std::cout << "Reduced costs:\n" << result.reduced_costs << '\n';

@@ -1,19 +1,34 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// [START program]
-// Nurse scheduling problem with shift requests.
-// [START import]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <stdlib.h>
 
 #include <cstdint>
@@ -28,13 +43,15 @@
 #include "ortools/sat/cp_model.h"
 #include "ortools/sat/cp_model.pb.h"
 #include "ortools/sat/cp_model_solver.h"
-// [END import]
+
+
 
 namespace operations_research {
 namespace sat {
 
 void ScheduleRequestsSat() {
-  // [START data]
+  
+
   const int num_nurses = 5;
   const int num_days = 7;
   const int num_shifts = 3;
@@ -95,16 +112,23 @@ void ScheduleRequestsSat() {
           {0, 0, 0},
       },
   };
-  // [END data]
+  
 
-  // Creates the model.
-  // [START model]
+
+  
+
+  
+
   CpModelBuilder cp_model;
-  // [END model]
+  
 
-  // Creates shift variables.
-  // shifts[(n, d, s)]: nurse 'n' works shift 's' on day 'd'.
-  // [START variables]
+
+  
+
+  
+
+  
+
   std::map<std::tuple<int, int, int>, BoolVar> shifts;
   for (int n : all_nurses) {
     for (int d : all_days) {
@@ -115,10 +139,13 @@ void ScheduleRequestsSat() {
       }
     }
   }
-  // [END variables]
+  
 
-  // Each shift is assigned to exactly one nurse in the schedule period.
-  // [START exactly_one_nurse]
+
+  
+
+  
+
   for (int d : all_days) {
     for (int s : all_shifts) {
       std::vector<BoolVar> nurses;
@@ -129,10 +156,13 @@ void ScheduleRequestsSat() {
       cp_model.AddExactlyOne(nurses);
     }
   }
-  // [END exactly_one_nurse]
+  
 
-  // Each nurse works at most one shift per day.
-  // [START at_most_one_shift]
+
+  
+
+  
+
   for (int n : all_nurses) {
     for (int d : all_days) {
       std::vector<BoolVar> work;
@@ -143,13 +173,19 @@ void ScheduleRequestsSat() {
       cp_model.AddAtMostOne(work);
     }
   }
-  // [END at_most_one_shift]
+  
 
-  // [START assign_nurses_evenly]
-  // Try to distribute the shifts evenly, so that each nurse works
-  // min_shifts_per_nurse shifts. If this is not possible, because the total
-  // number of shifts is not divisible by the number of nurses, some nurses will
-  // be assigned one more shift.
+
+  
+
+  
+
+  
+
+  
+
+  
+
   int min_shifts_per_nurse = (num_shifts * num_days) / num_nurses;
   int max_shifts_per_nurse;
   if ((num_shifts * num_days) % num_nurses == 0) {
@@ -168,9 +204,11 @@ void ScheduleRequestsSat() {
     cp_model.AddLessOrEqual(min_shifts_per_nurse, num_worked_shifts);
     cp_model.AddLessOrEqual(num_worked_shifts, max_shifts_per_nurse);
   }
-  // [END assign_nurses_evenly]
+  
 
-  // [START objective]
+
+  
+
   LinearExpr objective_expr;
   for (int n : all_nurses) {
     for (int d : all_days) {
@@ -183,13 +221,17 @@ void ScheduleRequestsSat() {
     }
   }
   cp_model.Maximize(objective_expr);
-  // [END objective]
+  
 
-  // [START solve]
+
+  
+
   const CpSolverResponse response = Solve(cp_model.Build());
-  // [END solve]
+  
 
-  // [START print_solution]
+
+  
+
   if (response.status() == CpSolverStatus::OPTIMAL) {
     LOG(INFO) << "Solution:";
     for (int d : all_days) {
@@ -215,20 +257,27 @@ void ScheduleRequestsSat() {
   } else {
     LOG(INFO) << "No optimal solution found !";
   }
-  // [END print_solution]
+  
 
-  // Statistics.
-  // [START statistics]
+
+  
+
+  
+
   LOG(INFO) << "Statistics";
   LOG(INFO) << CpSolverResponseStats(response);
-  // [END statistics]
+  
+
 }
 
-}  // namespace sat
-}  // namespace operations_research
+}  
+
+}  
+
 
 int main() {
   operations_research::sat::ScheduleRequestsSat();
   return EXIT_SUCCESS;
 }
-// [END program]
+
+

@@ -1,23 +1,39 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// [START program]
-// The Stigler diet problem.
-// [START import]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <array>
 #include <memory>
 #include <string>
-#include <utility>  // std::pair
+#include <utility>  
+
 #include <vector>
 
 #include "absl/flags/flag.h"
@@ -25,12 +41,15 @@
 #include "ortools/base/init_google.h"
 #include "ortools/base/logging.h"
 #include "ortools/linear_solver/linear_solver.h"
-// [END import]
+
+
 
 namespace operations_research {
 void StiglerDiet() {
-  // [START data_model]
-  // Nutrient minimums.
+  
+
+  
+
   const std::vector<std::pair<std::string, double>> nutrients = {
       {"Calories (kcal)", 3.0}, {"Protein (g)", 70.0},
       {"Calcium (g)", 0.8},     {"Iron (mg)", 12.0},
@@ -39,18 +58,30 @@ void StiglerDiet() {
       {"Vitamin C (mg)", 75.0}};
 
   struct Commodity {
-    std::string name;  //!< Commodity name
-    std::string unit;  //!< Unit
-    double price;      //!< 1939 price per unit (cents)
-    //! Calories (kcal),
-    //! Protein (g),
-    //! Calcium (g),
-    //! Iron (mg),
-    //! Vitamin A (kIU),
-    //! Vitamin B1 (mg),
-    //! Vitamin B2 (mg),
-    //! Niacin (mg),
-    //! Vitamin C (mg)
+    std::string name;  
+
+    std::string unit;  
+
+    double price;      
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
+    
+
     std::array<double, 9> nutrients;
   };
 
@@ -231,24 +262,32 @@ void StiglerDiet() {
        "1 lb.",
        20.5,
        {6.4, 11, 0.4, 7, 0.2, 0.2, 0.4, 3, 0}}};
-  // [END data_model]
+  
 
-  // [START solver]
-  // Create the linear solver with the GLOP backend.
+
+  
+
+  
+
   std::unique_ptr<MPSolver> solver(MPSolver::CreateSolver("GLOP"));
-  // [END solver]
+  
 
-  // [START variables]
+
+  
+
   std::vector<MPVariable*> foods;
   const double infinity = solver->infinity();
   for (const Commodity& commodity : data) {
     foods.push_back(solver->MakeNumVar(0.0, infinity, commodity.name));
   }
   LOG(INFO) << "Number of variables = " << solver->NumVariables();
-  // [END variables]
+  
 
-  // [START constraints]
-  // Create the constraints, one per nutrient.
+
+  
+
+  
+
   std::vector<MPConstraint*> constraints;
   for (std::size_t i = 0; i < nutrients.size(); ++i) {
     constraints.push_back(
@@ -258,22 +297,29 @@ void StiglerDiet() {
     }
   }
   LOG(INFO) << "Number of constraints = " << solver->NumConstraints();
-  // [END constraints]
+  
 
-  // [START objective]
+
+  
+
   MPObjective* const objective = solver->MutableObjective();
   for (size_t i = 0; i < data.size(); ++i) {
     objective->SetCoefficient(foods[i], 1);
   }
   objective->SetMinimization();
-  // [END objective]
+  
 
-  // [START solve]
+
+  
+
   const MPSolver::ResultStatus result_status = solver->Solve();
-  // [END solve]
+  
 
-  // [START print_solution]
-  // Check that the problem has an optimal solution.
+
+  
+
+  
+
   if (result_status != MPSolver::OPTIMAL) {
     LOG(INFO) << "The problem does not have an optimal solution!";
     if (result_status == MPSolver::FEASIBLE) {
@@ -307,16 +353,20 @@ void StiglerDiet() {
               << std::to_string(nutrients_result[i]) << " (min "
               << std::to_string(nutrients[i].second) << ")";
   }
-  // [END print_solution]
+  
 
-  // [START advanced]
+
+  
+
   LOG(INFO) << "";
   LOG(INFO) << "Advanced usage:";
   LOG(INFO) << "Problem solved in " << solver->wall_time() << " milliseconds";
   LOG(INFO) << "Problem solved in " << solver->iterations() << " iterations";
-  // [END advanced]
+  
+
 }
-}  // namespace operations_research
+}  
+
 
 int main(int argc, char** argv) {
   InitGoogle(argv[0], &argc, &argv, true);
@@ -324,4 +374,5 @@ int main(int argc, char** argv) {
   operations_research::StiglerDiet();
   return EXIT_SUCCESS;
 }
-// [END program]
+
+

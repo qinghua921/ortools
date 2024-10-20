@@ -1,24 +1,44 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// Soft-Capacitated Vehicle Routing Problem.
-// A description of the problem can be found here:
-// http://en.wikipedia.org/wiki/Vehicle_routing_problem.
-// The variant which is tackled by this model includes a capacity dimension,
-// implemented as a soft constraint: using more than the available capacity is
-// penalized (i.e. "costs" more) but not forbidden. For the sake of simplicity,
-// orders are randomly located and distances are computed using the Manhattan
-// distance. Distances are assumed to be in meters and times in seconds.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <cstdint>
 #include <random>
@@ -85,15 +105,19 @@ int main(int argc, char** argv) {
         << "The hard capacity must be higher than the soft capacity.";
   }
 
-  // VRP of size absl::GetFlag(FLAGS_vrp_size).
-  // Nodes are indexed from 0 to absl::GetFlag(FLAGS_vrp_orders), the starts and
-  // ends of the routes are at node 0.
+  
+
+  
+
+  
+
   const RoutingIndexManager::NodeIndex kDepot(0);
   RoutingIndexManager manager(absl::GetFlag(FLAGS_vrp_orders) + 1,
                               absl::GetFlag(FLAGS_vrp_vehicles), kDepot);
   RoutingModel routing(manager);
 
-  // Setting up locations.
+  
+
   const int64_t kXMax = 100'000;
   const int64_t kYMax = 100'000;
   const int64_t kSpeed = 10;
@@ -104,7 +128,8 @@ int main(int argc, char** argv) {
     locations.AddRandomLocation(kXMax, kYMax);
   }
 
-  // Setting the cost function.
+  
+
   const int vehicle_cost = routing.RegisterTransitCallback(
       [&locations, &manager](int64_t i, int64_t j) {
         return locations.ManhattanDistance(manager.IndexToNode(i),
@@ -112,7 +137,8 @@ int main(int argc, char** argv) {
       });
   routing.SetArcCostEvaluatorOfAllVehicles(vehicle_cost);
 
-  // Adding capacity dimension constraints with slacks.
+  
+
   const int64_t kNullCapacitySlack = 0;
   RandomDemand demand(manager.num_nodes(), kDepot,
                       absl::GetFlag(FLAGS_vrp_use_deterministic_random_seed));
@@ -123,11 +149,14 @@ int main(int argc, char** argv) {
         return demand.Demand(manager.IndexToNode(i), manager.IndexToNode(j));
       }),
       kNullCapacitySlack, absl::GetFlag(FLAGS_vrp_vehicle_hard_capacity),
-      /*fix_start_cumul_to_zero=*/true, kCapacity);
+      
+true, kCapacity);
   RoutingDimension* capacity_dimension = routing.GetMutableDimension(kCapacity);
 
-  // Penalise the capacity slacks to implement the soft constraint (a hard
-  // constraint has a zero slack).
+  
+
+  
+
   const int num_vehicles = absl::GetFlag(FLAGS_vrp_vehicles);
   for (int vehicle = 0; vehicle < num_vehicles; ++vehicle) {
     capacity_dimension->SetCumulVarSoftUpperBound(
@@ -135,7 +164,8 @@ int main(int argc, char** argv) {
         absl::GetFlag(FLAGS_vrp_vehicle_soft_capacity_cost));
   }
 
-  // Adding time dimension constraints.
+  
+
   const int64_t kTimePerDemandUnit = 300;
   const int64_t kHorizon = 24 * 3600;
   ServiceTimePlusTransition time(
@@ -150,10 +180,12 @@ int main(int argc, char** argv) {
       routing.RegisterTransitCallback([&time, &manager](int64_t i, int64_t j) {
         return time.Compute(manager.IndexToNode(i), manager.IndexToNode(j));
       }),
-      kHorizon, kHorizon, /*fix_start_cumul_to_zero=*/true, kTime);
+      kHorizon, kHorizon, 
+true, kTime);
   const RoutingDimension& time_dimension = routing.GetDimensionOrDie(kTime);
 
-  // Adding time windows.
+  
+
   std::mt19937 randomizer(
       GetSeed(absl::GetFlag(FLAGS_vrp_use_deterministic_random_seed)));
   const int64_t kTWDuration = 5 * 3600;
@@ -163,7 +195,8 @@ int main(int argc, char** argv) {
     time_dimension.CumulVar(order)->SetRange(start, start + kTWDuration);
   }
 
-  // Adding penalty costs to allow skipping orders.
+  
+
   const int64_t kPenalty = 10'000'000;
   const RoutingIndexManager::NodeIndex kFirstNodeAfterDepot(1);
   for (RoutingIndexManager::NodeIndex order = kFirstNodeAfterDepot;
@@ -172,7 +205,8 @@ int main(int argc, char** argv) {
     routing.AddDisjunction(orders, kPenalty);
   }
 
-  // Adding same vehicle constraint costs for consecutive nodes.
+  
+
   if (absl::GetFlag(FLAGS_vrp_use_same_vehicle_costs)) {
     std::vector<int64_t> group;
     for (RoutingIndexManager::NodeIndex order = kFirstNodeAfterDepot;
@@ -188,7 +222,8 @@ int main(int argc, char** argv) {
     }
   }
 
-  // Solve, returns a solution if any (owned by RoutingModel).
+  
+
   RoutingSearchParameters parameters = DefaultRoutingSearchParameters();
   CHECK(google::protobuf::TextFormat::MergeFromString(
       absl::GetFlag(FLAGS_routing_search_parameters), &parameters));

@@ -1,18 +1,32 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// This example is very similar to cvrptw.cc, but distances are time dependent.
-// The function RandomStepFunction is used to add random noise to each transit.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <cmath>
 #include <cstdint>
@@ -63,12 +77,18 @@ static const char kTime[] = "Time";
 static const char kCapacity[] = "Capacity";
 static const char kTimeDependentCost[] = "TimeDependentCost";
 
-// This class implements the Pólya urn stochastic process, for more information:
-// https://en.wikipedia.org/wiki/P%C3%B3lya_urn_model
-// Basically, the polya urn is a martingale that converges almost surely to a
-// uniform random variable over [0, 1]. It is questionable if it's realistic to
-// model traffic deviations with this process, but traffic is hard to model in
-// general.
+
+
+
+
+
+
+
+
+
+
+
+
 class PolyaUrn {
  public:
   PolyaUrn(int red_balls, int blue_balls, int seed)
@@ -78,8 +98,10 @@ class PolyaUrn {
     CHECK_LT(0, red_balls_);
     CHECK_LT(red_balls_, all_balls_);
   }
-  // Every call to Next moves the process one step forward and returns the
-  // current value.
+  
+
+  
+
   double Next() {
     CHECK_LT(0, red_balls_);
     CHECK_LT(red_balls_, all_balls_);
@@ -99,7 +121,8 @@ class PolyaUrn {
   std::mt19937 generator_;
 };
 
-// Creates a random histogram over the interval [0, interval_end) using the urn.
+
+
 StepFunction RandomStepFunction(int64_t mean, int64_t step_size,
                                 int64_t interval_end, int seed) {
   PolyaUrn random_generator(1, 1, seed);
@@ -134,9 +157,12 @@ class TrafficTransitionEvaluator {
       return distance + deviation.GetValue(time);
     };
     return RoutingModel::MakeStateDependentTransit(travel_time, 0, max_time_);
-    // Now the local variables deviation and travel_time are going to be
-    // destroyed, but MakeStateDependentTransit does not store either and it
-    // uses its own caches.
+    
+
+    
+
+    
+
   }
 
  private:
@@ -150,16 +176,20 @@ int main(int argc, char** argv) {
       << "Specify an instance size greater than 0.";
   CHECK_LT(0, absl::GetFlag(FLAGS_vrp_vehicles))
       << "Specify a non-null vehicle fleet size.";
-  // VRP of size absl::GetFlag(FLAGS_vrp_size).
-  // Nodes are indexed from 0 to absl::GetFlag(FLAGS_vrp_orders), the starts and
-  // ends of the routes are at node 0.
+  
+
+  
+
+  
+
   static const RoutingIndexManager::NodeIndex kDepot(0);
   static const RoutingIndexManager::NodeIndex kFirstNodeAfterDepot(1);
   RoutingIndexManager manager(absl::GetFlag(FLAGS_vrp_orders) + 1,
                               absl::GetFlag(FLAGS_vrp_vehicles), kDepot);
   RoutingModel routing(manager);
 
-  // Setting up locations.
+  
+
   const int64_t kXMax = 1000;
   const int64_t kYMax = 1000;
   const int64_t kSpeed = 10;
@@ -170,7 +200,8 @@ int main(int argc, char** argv) {
     locations.AddRandomLocation(kXMax, kYMax);
   }
 
-  // Adding capacity dimension constraints.
+  
+
   const int64_t kVehicleCapacity = 40;
   const int64_t kNullCapacitySlack = 0;
   RandomDemand demand(manager.num_nodes(), kDepot,
@@ -182,9 +213,11 @@ int main(int argc, char** argv) {
                                                   manager.IndexToNode(j));
                            }),
                        kNullCapacitySlack, kVehicleCapacity,
-                       /*fix_start_cumul_to_zero=*/true, kCapacity);
+                       
+true, kCapacity);
 
-  // Adding time dimension constraints.
+  
+
   const int64_t kTimePerDemandUnit = 3;
   const int64_t kHorizon = 24 * 36;
   ServiceTimePlusTransition time(
@@ -199,20 +232,24 @@ int main(int argc, char** argv) {
       routing.RegisterTransitCallback([&time, &manager](int64_t i, int64_t j) {
         return time.Compute(manager.IndexToNode(i), manager.IndexToNode(j));
       }),
-      kHorizon, kHorizon, /*fix_start_cumul_to_zero=*/true, kTime);
+      kHorizon, kHorizon, 
+true, kTime);
 
-  // Setting the cost function. In fact, we create a time dependent dimension.
+  
+
   const int64_t max_time = manager.num_nodes() * (kXMax + kYMax) / kSpeed;
   TrafficTransitionEvaluator traffic_evaluator(locations, max_time);
   routing.AddDimensionDependentDimensionWithVehicleCapacity(
       routing.RegisterStateDependentTransitCallback(::absl::bind_front(
           &TrafficTransitionEvaluator::Run, &traffic_evaluator, manager)),
       &routing.GetDimensionOrDie(kTime), kHorizon, kHorizon,
-      /*fix_start_cumul_to_zero=*/true, kTimeDependentCost);
+      
+true, kTimeDependentCost);
   routing.GetMutableDimension(kTimeDependentCost)
       ->SetSpanCostCoefficientForAllVehicles(1);
 
-  // Adding time windows.
+  
+
   std::mt19937 randomizer(
       GetSeed(absl::GetFlag(FLAGS_vrp_use_deterministic_random_seed)));
   const RoutingDimension& time_dimension = routing.GetDimensionOrDie(kTime);
@@ -223,7 +260,8 @@ int main(int argc, char** argv) {
     time_dimension.CumulVar(order)->SetRange(start, start + kTWDuration);
   }
 
-  // Adding penalty costs to allow skipping orders.
+  
+
   const int64_t kPenalty = 10000000;
   for (RoutingIndexManager::NodeIndex order = kFirstNodeAfterDepot;
        order < routing.nodes(); ++order) {
@@ -231,14 +269,18 @@ int main(int argc, char** argv) {
     routing.AddDisjunction(orders, kPenalty);
   }
 
-  // Solve, returns a solution if any (owned by RoutingModel).
+  
+
   RoutingSearchParameters parameters = DefaultRoutingSearchParameters();
   CHECK(google::protobuf::TextFormat::MergeFromString(
       absl::GetFlag(FLAGS_routing_search_parameters), &parameters));
   const Assignment* solution = routing.SolveWithParameters(parameters);
   if (solution != nullptr) {
-    DisplayPlan(manager, routing, *solution, /*use_same_vehicle_costs=*/false,
-                /*max_nodes_per_group=*/0, /*same_vehicle_cost=*/0,
+    DisplayPlan(manager, routing, *solution, 
+false,
+                
+0, 
+0,
                 routing.GetDimensionOrDie(kCapacity),
                 routing.GetDimensionOrDie(kTime));
   } else {

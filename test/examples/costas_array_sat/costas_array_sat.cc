@@ -1,25 +1,46 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// Costas Array Problem
-//
-// Finds an NxN matrix of 0s and 1s, with only one 1 per row,
-// and one 1 per column, such that all displacement vectors
-// between each pair of 1s are distinct.
-//
-// This example contains two separate implementations. CostasHard()
-// uses hard constraints, whereas CostasSoft() uses a minimizer to
-// minimize the number of duplicates.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <cstdint>
 #include <ctime>
@@ -48,12 +69,14 @@ ABSL_FLAG(std::string, params, "", "Sat parameters.");
 namespace operations_research {
 namespace sat {
 
-// Checks that all pairwise distances are unique and returns all violators
+
+
 void CheckConstraintViolators(absl::Span<const int64_t> vars,
                               std::vector<int>* const violators) {
   int dim = vars.size();
 
-  // Check that all indices are unique
+  
+
   for (int i = 0; i < dim; ++i) {
     for (int k = i + 1; k < dim; ++k) {
       if (vars[i] == vars[k]) {
@@ -63,7 +86,8 @@ void CheckConstraintViolators(absl::Span<const int64_t> vars,
     }
   }
 
-  // Check that all differences are unique for each level
+  
+
   for (int level = 1; level < dim; ++level) {
     for (int i = 0; i < dim - level; ++i) {
       const int difference = vars[i + level] - vars[i];
@@ -80,7 +104,8 @@ void CheckConstraintViolators(absl::Span<const int64_t> vars,
   }
 }
 
-// Check that all pairwise differences are unique
+
+
 bool CheckCostas(absl::Span<const int64_t> vars) {
   std::vector<int> violators;
 
@@ -89,11 +114,13 @@ bool CheckCostas(absl::Span<const int64_t> vars) {
   return violators.empty();
 }
 
-// Computes a Costas Array.
+
+
 void CostasHard(const int dim) {
   CpModelBuilder cp_model;
 
-  // create the variables
+  
+
   std::vector<IntVar> vars;
   Domain domain(1, dim);
   for (int i = 0; i < dim; ++i) {
@@ -103,7 +130,8 @@ void CostasHard(const int dim) {
 
   cp_model.AddAllDifferent(vars);
 
-  // Check that the pairwise difference is unique
+  
+
   for (int i = 1; i < dim; ++i) {
     std::vector<IntVar> subset;
     Domain difference_domain(-dim, dim);
@@ -142,11 +170,13 @@ void CostasHard(const int dim) {
   }
 }
 
-// Computes a Costas Array.
+
+
 void CostasBool(const int dim) {
   CpModelBuilder cp_model;
 
-  // create the variables
+  
+
   std::vector<std::vector<BoolVar>> vars(dim);
   std::vector<std::vector<BoolVar>> transposed_vars(dim);
   for (int i = 0; i < dim; ++i) {
@@ -162,7 +192,8 @@ void CostasBool(const int dim) {
     cp_model.AddEquality(LinearExpr::Sum(transposed_vars[i]), 1);
   }
 
-  // Check that the pairwise difference is unique
+  
+
   for (int step = 1; step < dim; ++step) {
     for (int diff = 1; diff < dim - 1; ++diff) {
       std::vector<BoolVar> positive_diffs;
@@ -213,11 +244,13 @@ void CostasBool(const int dim) {
   }
 }
 
-// Computes a Costas Array with a minimization objective.
+
+
 void CostasBoolSoft(const int dim) {
   CpModelBuilder cp_model;
 
-  // create the variables
+  
+
   std::vector<std::vector<BoolVar>> vars(dim);
   std::vector<std::vector<BoolVar>> transposed_vars(dim);
   for (int i = 0; i < dim; ++i) {
@@ -234,7 +267,8 @@ void CostasBoolSoft(const int dim) {
   }
 
   std::vector<IntVar> all_violations;
-  // Check that the pairwise difference is unique
+  
+
   for (int step = 1; step < dim; ++step) {
     for (int diff = 1; diff < dim - 1; ++diff) {
       std::vector<BoolVar> positive_diffs;
@@ -293,8 +327,10 @@ void CostasBoolSoft(const int dim) {
   }
 }
 
-}  // namespace sat
-}  // namespace operations_research
+}  
+
+}  
+
 
 int main(int argc, char** argv) {
   absl::SetFlag(&FLAGS_stderrthreshold, 0);

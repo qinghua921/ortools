@@ -1,50 +1,96 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-//
-// Frequency Assignment Problem
-// The Radio Link Frequency Assignment Problem consists in assigning frequencies
-// to a set of radio links defined between pairs of sites in order to avoid
-// interferences. Each radio link is represented by a variable whose domain is
-// the set of all frequencies that are available for this link.
-// The essential constraint involving two variables of the problem F1 and F2,
-// which represent two frequencies in the spectrum, is
-// |F1 - F2| > k12, where k12 is a predefined constant value.
-// The Frequency Assignment Problem is an NP-complete problem as proved by means
-// of reduction from k-Colorability problem for undirected graphs.
-// The solution of the problem can be based on various criteria:
-// - Simple satisfaction
-// - Minimizing the number of distinct frequencies used
-// - Minimizing the maximum frequency used, i.e. minimizing the total width of
-// the spectrum
-// - Minimizing a weighted sum of violated constraints if the problem is
-//   inconsistent
-// More on the Frequency Assignment Problem and the data format of its instances
-// can be found at: http://www.inra.fr/mia/T/schiex/Doc/CELAR.shtml#synt
-//
-// Implementation
-// Two solvers are implemented: The HardFapSolver finds the solution to
-// feasible instances of the problem with objective either the minimization of
-// the largest frequency assigned or the minimization of the number of
-// frequencies used to the solution.
-// The SoftFapSolver is optimizes the unfeasible instances. Some of the
-// constraints of these instances may actually be soft constraints which may be
-// violated at some predefined constant cost. The SoftFapSolver aims to minimize
-// the total cost of violated constraints, i.e. to minimize the sum of all the
-// violation costs.
-// If the latter solver is forced to solve a feasible instance, the main
-// function redirects to the former, afterwards.
-//
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <algorithm>
 #include <cstdint>
@@ -91,8 +137,10 @@ ABSL_FLAG(bool, display_results, true,
 
 namespace operations_research {
 
-// Decision on the relative order that the two variables of a constraint
-// will have. It takes as parameters the components of the constraint.
+
+
+
+
 class OrderingDecision : public Decision {
  public:
   OrderingDecision(IntVar* const variable1, IntVar* const variable2, int value,
@@ -102,20 +150,25 @@ class OrderingDecision : public Decision {
         value_(value),
         operator_(std::move(operation)) {}
 
-  // This type is neither copyable nor movable.
+  
+
   OrderingDecision(const OrderingDecision&) = delete;
   OrderingDecision& operator=(const OrderingDecision&) = delete;
   ~OrderingDecision() override = default;
 
-  // Apply will be called first when the decision is executed.
+  
+
   void Apply(Solver* const s) override {
-    // variable1 < variable2
+    
+
     MakeDecision(s, variable1_, variable2_);
   }
 
-  // Refute will be called after a backtrack.
+  
+
   void Refute(Solver* const s) override {
-    // variable1 > variable2
+    
+
     MakeDecision(s, variable2_, variable1_);
   }
 
@@ -138,28 +191,35 @@ class OrderingDecision : public Decision {
   const std::string operator_;
 };
 
-// Decision on whether a soft constraint will be added to a model
-// or if it will be violated.
+
+
+
+
 class ConstraintDecision : public Decision {
  public:
   explicit ConstraintDecision(IntVar* const constraint_violation)
       : constraint_violation_(constraint_violation) {}
 
-  // This type is neither copyable nor movable.
+  
+
   ConstraintDecision(const ConstraintDecision&) = delete;
   ConstraintDecision& operator=(const ConstraintDecision&) = delete;
 
   ~ConstraintDecision() override = default;
 
-  // Apply will be called first when the decision is executed.
+  
+
   void Apply(Solver* const) override {
-    // The constraint with which the builder is dealing, will be satisfied.
+    
+
     constraint_violation_->SetValue(0);
   }
 
-  // Refute will be called after a backtrack.
+  
+
   void Refute(Solver* const) override {
-    // The constraint with which the builder is dealing, will not be satisfied.
+    
+
     constraint_violation_->SetValue(1);
   }
 
@@ -167,10 +227,14 @@ class ConstraintDecision : public Decision {
   IntVar* const constraint_violation_;
 };
 
-// The ordering builder resolves the relative order of the two variables
-// included in each of the constraints of the problem. In that way the
-// solving becomes much more efficient since we are branching on the
-// disjunction implied by the absolute value expression.
+
+
+
+
+
+
+
+
 class OrderingBuilder : public DecisionBuilder {
  public:
   enum Order { LESS = -1, EQUAL = 0, GREATER = 1 };
@@ -197,7 +261,8 @@ class OrderingBuilder : public DecisionBuilder {
     CHECK_EQ(variable_state_.size(), variables_.size());
   }
 
-  // This type is neither copyable nor movable.
+  
+
   OrderingBuilder(const OrderingBuilder&) = delete;
   OrderingBuilder& operator=(const OrderingBuilder&) = delete;
 
@@ -211,12 +276,17 @@ class OrderingBuilder : public DecisionBuilder {
       IntVar* variable1 = variables_[index1];
       IntVar* variable2 = variables_[index2];
 
-      // checked_iter is equal to 0 means that whether the constraint is to be
-      // added or dropped hasn't been checked.
-      // If it is equal to 1, this has already been checked and the ordering
-      // of the constraint is to be done.
+      
+
+      
+
+      
+
+      
+
       if (!checked_iter_ && !constraint.hard) {
-        // New Soft Constraint: Check if it will be added or dropped.
+        
+
         ConstraintDecision* constraint_decision =
             new ConstraintDecision(violated_constraints_[iter_]);
 
@@ -224,10 +294,12 @@ class OrderingBuilder : public DecisionBuilder {
         return s->RevAlloc(constraint_decision);
       }
 
-      // The constraint is either hard or soft and checked already.
+      
+
       if (violated_constraints_[iter_]->Bound() &&
           violated_constraints_[iter_]->Value() == 0) {
-        // If the constraint is added, do the ordering of its variables.
+        
+
         OrderingDecision* ordering_decision;
         Order hint = Hint(constraint);
         if (hint == LESS || hint == EQUAL) {
@@ -237,17 +309,21 @@ class OrderingBuilder : public DecisionBuilder {
           ordering_decision = new OrderingDecision(
               variable2, variable1, constraint.value, constraint.operation);
         }
-        // Proceed to the next constraint.
+        
+
         s->SaveAndAdd(&iter_, 1);
-        // Assign checked_iter_ back to 0 to flag a new unchecked constraint.
+        
+
         s->SaveAndSetValue(&checked_iter_, 0);
         return s->RevAlloc(ordering_decision);
       } else {
-        // The constraint was dropped.
+        
+
         return nullptr;
       }
     } else {
-      // All the constraints were processed. No decision to take.
+      
+
       return nullptr;
     }
   }
@@ -268,19 +344,32 @@ class OrderingBuilder : public DecisionBuilder {
                  minimum_value_available_[variable2] + value);
     return GREATER;
   }
-  // The Hint() function takes as parameter a constraint of the model and
-  // returns the most probable relative order that the two variables
-  // involved in the constraint should have.
-  // The function reaches such a decision, by taking into consideration if
-  // variable1 or variable2 or both have been denoted as less (state = -1)
-  // or greater (state = 1) than another variable in a previous constraint
-  // and tries to maintain the same state in the current constraint too.
-  // If both variables have the same state, the variable whose minimum value is
-  // the smallest is set to be lower than the other one.
-  // If none of the above are applicable variable1 is set to be lower than
-  // variable2. This ordering is more efficient if used with the
-  // Solver::ASSIGN_MIN_VALUE value selection strategy.
-  // It returns 1 if variable1 > variable2 or -1 if variable1 < variable2.
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
   Order Hint(const FapConstraint& constraint) {
     const int id1 = constraint.variable1;
     const int id2 = constraint.variable2;
@@ -316,22 +405,26 @@ class OrderingBuilder : public DecisionBuilder {
     }
   }
 
-  // Passed as arguments from the function that creates the Decision Builder.
+  
+
   const absl::btree_map<int, FapVariable> data_variables_;
   const std::vector<FapConstraint> data_constraints_;
   const std::vector<IntVar*> variables_;
   const std::vector<IntVar*> violated_constraints_;
   const absl::btree_map<int, int> index_from_key_;
-  // Used by Next() for monitoring decisions.
+  
+
   const int size_;
   int iter_;
   int checked_iter_;
-  // Used by Hint() for indicating the most probable ordering.
+  
+
   std::vector<Order> variable_state_;
   std::vector<int> minimum_value_available_;
 };
 
-// A comparator for sorting the constraints depending on their impact.
+
+
 bool ConstraintImpactComparator(FapConstraint constraint1,
                                 FapConstraint constraint2) {
   if (constraint1.impact == constraint2.impact) {
@@ -345,7 +438,8 @@ int64_t ValueEvaluator(
         value_evaluator_map,
     int64_t variable_index, int64_t value) {
   CHECK(value_evaluator_map != nullptr);
-  // Evaluate the choice. Smaller ranking denotes a better choice.
+  
+
   int64_t ranking = -1;
   for (const auto& it : *value_evaluator_map) {
     if ((it.first != variable_index) && (it.second.first == value)) {
@@ -354,15 +448,18 @@ int64_t ValueEvaluator(
     }
   }
 
-  // Update the history of assigned values and their rankings of each variable.
+  
+
   absl::flat_hash_map<int64_t, std::pair<int64_t, int64_t>>::iterator it;
   int64_t new_value = value;
   int64_t new_ranking = ranking;
   if ((it = value_evaluator_map->find(variable_index)) !=
       value_evaluator_map->end()) {
     std::pair<int64_t, int64_t> existing_value_ranking = it->second;
-    // Replace only if the current choice for this variable has smaller
-    // ranking or same ranking but smaller value of the existing choice.
+    
+
+    
+
     if (!(existing_value_ranking.second > ranking ||
           (existing_value_ranking.second == ranking &&
            existing_value_ranking.first > value))) {
@@ -377,8 +474,10 @@ int64_t ValueEvaluator(
   return new_ranking;
 }
 
-// The variables which participate in more constraints and have the
-// smaller domain should be in higher priority for assignment.
+
+
+
+
 int64_t VariableEvaluator(
     absl::Span<const int> key_from_index,
     const absl::btree_map<int, FapVariable>& data_variables,
@@ -389,7 +488,8 @@ int64_t VariableEvaluator(
   return result;
 }
 
-// Creates the variables of the solver from the parsed data.
+
+
 void CreateModelVariables(
     const absl::btree_map<int, FapVariable>& data_variables, Solver* solver,
     std::vector<IntVar*>* model_variables,
@@ -420,7 +520,8 @@ void CreateModelVariables(
   }
 }
 
-// Creates the constraints of the instance from the parsed data.
+
+
 void CreateModelConstraints(absl::Span<const FapConstraint> data_constraints,
                             const std::vector<IntVar*>& variables,
                             const absl::btree_map<int, int>& index_from_key,
@@ -448,8 +549,10 @@ void CreateModelConstraints(absl::Span<const FapConstraint> data_constraints,
   }
 }
 
-// According to the value of a command line flag, chooses the strategy which
-// determines the selection of the variable to be assigned next.
+
+
+
+
 void ChooseVariableStrategy(Solver::IntVarStrategy* variable_strategy) {
   CHECK(variable_strategy != nullptr);
 
@@ -485,20 +588,24 @@ void ChooseVariableStrategy(Solver::IntVarStrategy* variable_strategy) {
   }
 }
 
-// According to the values of some command line flags, adds some monitors
-// for the search of the Solver.
+
+
+
+
 void CreateAdditionalMonitors(OptimizeVar* const objective, Solver* solver,
                               std::vector<SearchMonitor*>* monitors) {
   CHECK(solver != nullptr);
   CHECK(monitors != nullptr);
 
-  // Search Log
+  
+
   if (absl::GetFlag(FLAGS_log_search)) {
     SearchMonitor* const log = solver->MakeSearchLog(100000, objective);
     monitors->push_back(log);
   }
 
-  // Time Limit
+  
+
   if (absl::GetFlag(FLAGS_time_limit_in_ms) != 0) {
     LOG(INFO) << "Adding time limit of "
               << absl::GetFlag(FLAGS_time_limit_in_ms) << " ms.";
@@ -507,7 +614,8 @@ void CreateAdditionalMonitors(OptimizeVar* const objective, Solver* solver,
     monitors->push_back(limit);
   }
 
-  // Search Restart
+  
+
   SearchMonitor* const restart =
       absl::GetFlag(FLAGS_restart) != -1
           ? (absl::GetFlag(FLAGS_luby)
@@ -519,10 +627,14 @@ void CreateAdditionalMonitors(OptimizeVar* const objective, Solver* solver,
   }
 }
 
-// The Hard Solver is dealing with finding the solution to feasible
-// instances of the problem with objective either the minimization of
-// the largest frequency assigned or the minimization of the number
-// of frequencies used to the solution.
+
+
+
+
+
+
+
+
 void HardFapSolver(const absl::btree_map<int, FapVariable>& data_variables,
                    const std::vector<FapConstraint>& data_constraints,
                    absl::string_view data_objective,
@@ -530,17 +642,20 @@ void HardFapSolver(const absl::btree_map<int, FapVariable>& data_variables,
   Solver solver("HardFapSolver");
   std::vector<SearchMonitor*> monitors;
 
-  // Create Model Variables.
+  
+
   std::vector<IntVar*> variables;
   absl::btree_map<int, int> index_from_key;
   std::vector<int> key_from_index;
   CreateModelVariables(data_variables, &solver, &variables, &index_from_key,
                        &key_from_index);
 
-  // Create Model Constraints.
+  
+
   CreateModelConstraints(data_constraints, variables, index_from_key, &solver);
 
-  // Order the constraints according to their impact in the instance.
+  
+
   std::vector<FapConstraint> ordered_constraints(data_constraints);
   std::sort(ordered_constraints.begin(), ordered_constraints.end(),
             ConstraintImpactComparator);
@@ -549,15 +664,20 @@ void HardFapSolver(const absl::btree_map<int, FapVariable>& data_variables,
   solver.MakeIntVarArray(ordered_constraints.size(), 0, 0,
                          &violated_constraints);
 
-  // Objective:
-  // Either minimize the largest assigned frequency or
-  // minimize the number of different frequencies assigned.
+  
+
+  
+
+  
+
   IntVar* objective_var;
   OptimizeVar* objective;
   if (data_objective == "Minimize the largest assigned value.") {
     LOG(INFO) << "Minimize the largest assigned value.";
-    // The objective_var is set to hold the maximum value assigned
-    // in the variables vector.
+    
+
+    
+
     objective_var = solver.MakeMax(variables)->Var();
     objective = solver.MakeMinimize(objective_var, 1);
   } else if (data_objective == "Minimize the number of assigned values.") {
@@ -573,8 +693,10 @@ void HardFapSolver(const absl::btree_map<int, FapVariable>& data_variables,
           solver.MakeIsEqualCstVar(cardinality[val], 0));
     }
     CHECK(!value_not_assigned.empty());
-    // The objective_var is set to maximize the number of values
-    // that have not been assigned to a variable.
+    
+
+    
+
     objective_var = solver.MakeSum(value_not_assigned)->Var();
     objective = solver.MakeMaximize(objective_var, 1);
   } else {
@@ -583,16 +705,20 @@ void HardFapSolver(const absl::btree_map<int, FapVariable>& data_variables,
   }
   monitors.push_back(objective);
 
-  // Ordering Builder
+  
+
   OrderingBuilder* ob = solver.RevAlloc(
       new OrderingBuilder(data_variables, ordered_constraints, variables,
                           violated_constraints, index_from_key));
 
-  // Decision Builder Configuration
-  // Choose the next variable selection strategy.
+  
+
+  
+
   Solver::IntVarStrategy variable_strategy;
   ChooseVariableStrategy(&variable_strategy);
-  // Choose the value selection strategy.
+  
+
   DecisionBuilder* db;
   absl::flat_hash_map<int64_t, std::pair<int64_t, int64_t>> history;
   if (absl::GetFlag(FLAGS_value_evaluator) == "value_evaluator") {
@@ -611,33 +737,39 @@ void HardFapSolver(const absl::btree_map<int, FapVariable>& data_variables,
 
   DecisionBuilder* final_db = solver.Compose(ob, db);
 
-  // Create Additional Monitors.
+  
+
   CreateAdditionalMonitors(objective, &solver, &monitors);
 
-  // Collector
+  
+
   SolutionCollector* const collector = solver.MakeLastSolutionCollector();
   collector->Add(variables);
   collector->Add(objective_var);
   monitors.push_back(collector);
 
-  // Solve.
+  
+
   LOG(INFO) << "Solving...";
   const int64_t time1 = solver.wall_time();
   solver.Solve(final_db, monitors);
   const int64_t time2 = solver.wall_time();
 
-  // Display Time.
+  
+
   if (absl::GetFlag(FLAGS_display_time)) {
     PrintElapsedTime(time1, time2);
   }
-  // Display Results.
+  
+
   if (absl::GetFlag(FLAGS_display_results)) {
     PrintResultsHard(collector, variables, objective_var, data_variables,
                      data_constraints, index_from_key, key_from_index);
   }
 }
 
-// Splits variables of the instance to hard and soft.
+
+
 void SplitVariablesHardSoft(
     const absl::btree_map<int, FapVariable>& data_variables,
     absl::btree_map<int, FapVariable>* hard_variables,
@@ -655,7 +787,8 @@ void SplitVariablesHardSoft(
   }
 }
 
-// Splits constraints of the instance to hard and soft.
+
+
 void SplitConstraintHardSoft(absl::Span<const FapConstraint> data_constraints,
                              std::vector<FapConstraint>* hard_constraints,
                              std::vector<FapConstraint>* soft_constraints) {
@@ -670,8 +803,10 @@ void SplitConstraintHardSoft(absl::Span<const FapConstraint> data_constraints,
   }
 }
 
-// Penalize the modification of the initial position of soft variable of
-// the instance.
+
+
+
+
 void PenalizeVariablesViolation(
     const absl::btree_map<int, FapVariable>& soft_variables,
     const absl::btree_map<int, int>& index_from_key,
@@ -688,7 +823,8 @@ void PenalizeVariablesViolation(
   }
 }
 
-// Penalize the violation of soft constraints of the instance.
+
+
 void PenalizeConstraintsViolation(
     absl::Span<const FapConstraint> constraints,
     absl::Span<const FapConstraint> soft_constraints,
@@ -699,7 +835,8 @@ void PenalizeConstraintsViolation(
   for (const FapConstraint& ct : constraints) {
     CHECK_LT(violated_constraints_index, violated_constraints->size());
     if (!ct.hard) {
-      // The violated_constraints_index will stop at the first soft constraint.
+      
+
       break;
     }
     IntVar* const hard_violation = solver->MakeIntVar(0, 0);
@@ -734,23 +871,31 @@ void PenalizeConstraintsViolation(
   CHECK_EQ(violated_constraints->size(), constraints.size());
 }
 
-// The Soft Solver is dealing with the optimization of unfeasible instances
-// and aims to minimize the total cost of violated constraints. Returning value
-// equal to 0 denotes that the instance is feasible.
+
+
+
+
+
+
 int SoftFapSolver(const absl::btree_map<int, FapVariable>& data_variables,
                   const std::vector<FapConstraint>& data_constraints,
-                  absl::string_view /*data_objective*/,
-                  absl::Span<const int> /*values*/) {
+                  absl::string_view 
+,
+                  absl::Span<const int> 
+) {
   Solver solver("SoftFapSolver");
   std::vector<SearchMonitor*> monitors;
 
-  // Split variables to hard and soft.
+  
+
   absl::btree_map<int, FapVariable> hard_variables;
   absl::btree_map<int, FapVariable> soft_variables;
   SplitVariablesHardSoft(data_variables, &hard_variables, &soft_variables);
 
-  // Order instance's constraints by their impact and then split them to
-  // hard and soft.
+  
+
+  
+
   std::vector<FapConstraint> ordered_constraints(data_constraints);
   std::sort(ordered_constraints.begin(), ordered_constraints.end(),
             ConstraintImpactComparator);
@@ -759,17 +904,20 @@ int SoftFapSolver(const absl::btree_map<int, FapVariable>& data_variables,
   SplitConstraintHardSoft(ordered_constraints, &hard_constraints,
                           &soft_constraints);
 
-  // Create Model Variables.
+  
+
   std::vector<IntVar*> variables;
   absl::btree_map<int, int> index_from_key;
   std::vector<int> key_from_index;
   CreateModelVariables(data_variables, &solver, &variables, &index_from_key,
                        &key_from_index);
 
-  // Create Model Constraints.
+  
+
   CreateModelConstraints(hard_constraints, variables, index_from_key, &solver);
 
-  // Penalize variable and constraint violations.
+  
+
   std::vector<IntVar*> cost;
   std::vector<IntVar*> violated_constraints(ordered_constraints.size(),
                                             nullptr);
@@ -779,19 +927,24 @@ int SoftFapSolver(const absl::btree_map<int, FapVariable>& data_variables,
                                index_from_key, variables, &cost,
                                &violated_constraints, &solver);
 
-  // Objective
-  // Minimize the sum of violation penalties.
+  
+
+  
+
   IntVar* objective_var = solver.MakeSum(cost)->Var();
   OptimizeVar* objective = solver.MakeMinimize(objective_var, 1);
   monitors.push_back(objective);
 
-  // Ordering Builder
+  
+
   OrderingBuilder* ob = solver.RevAlloc(
       new OrderingBuilder(data_variables, ordered_constraints, variables,
                           violated_constraints, index_from_key));
 
-  // Decision Builder Configuration
-  // Choose the next variable selection strategy.
+  
+
+  
+
   DecisionBuilder* db;
   if (absl::GetFlag(FLAGS_variable_evaluator) == "variable_evaluator") {
     LOG(INFO) << "Using VariableEvaluator for variable selection strategy and "
@@ -810,16 +963,19 @@ int SoftFapSolver(const absl::btree_map<int, FapVariable>& data_variables,
   }
   DecisionBuilder* final_db = solver.Compose(ob, db);
 
-  // Create Additional Monitors.
+  
+
   CreateAdditionalMonitors(objective, &solver, &monitors);
 
-  // Collector
+  
+
   SolutionCollector* const collector = solver.MakeLastSolutionCollector();
   collector->Add(variables);
   collector->Add(objective_var);
   monitors.push_back(collector);
 
-  // Solve.
+  
+
   LOG(INFO) << "Solving...";
   const int64_t time1 = solver.wall_time();
   solver.Solve(final_db, monitors);
@@ -827,11 +983,13 @@ int SoftFapSolver(const absl::btree_map<int, FapVariable>& data_variables,
 
   int violation_sum =
       collector->Value(collector->solution_count() - 1, objective_var);
-  // Display Time.
+  
+
   if (absl::GetFlag(FLAGS_display_time)) {
     PrintElapsedTime(time1, time2);
   }
-  // Display Results.
+  
+
   if (absl::GetFlag(FLAGS_display_results)) {
     PrintResultsSoft(collector, variables, objective_var, hard_variables,
                      hard_constraints, soft_variables, soft_constraints,
@@ -845,13 +1003,15 @@ void SolveProblem(const absl::btree_map<int, FapVariable>& variables,
                   const std::vector<FapConstraint>& constraints,
                   absl::string_view objective, const std::vector<int>& values,
                   bool soft) {
-  // Print Instance!
+  
+
   FapModelPrinter model_printer(variables, constraints, objective, values);
   model_printer.PrintFapObjective();
   model_printer.PrintFapVariables();
   model_printer.PrintFapConstraints();
   model_printer.PrintFapValues();
-  // Create Model & Solve!
+  
+
   if (!soft) {
     LOG(INFO) << "Running HardFapSolver";
     HardFapSolver(variables, constraints, objective, values);
@@ -867,7 +1027,8 @@ void SolveProblem(const absl::btree_map<int, FapVariable>& variables,
   }
 }
 
-}  // namespace operations_research
+}  
+
 
 int main(int argc, char** argv) {
   InitGoogle(argv[0], &argc, &argv, true);
@@ -877,7 +1038,8 @@ int main(int argc, char** argv) {
 
   LOG(INFO) << "Solving instance in directory  "
             << absl::GetFlag(FLAGS_directory);
-  // Parse!
+  
+
   absl::btree_map<int, operations_research::FapVariable> variables;
   std::vector<operations_research::FapConstraint> constraints;
   std::string objective;

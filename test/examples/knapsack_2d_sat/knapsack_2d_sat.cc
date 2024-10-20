@@ -1,19 +1,34 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// This file solves a 2D Bin Packing problem as a 2D Knapsack problem.
-// It loads the size of the mainrectangle, all available items (rectangles too),
-// and tries to fit as many rectangles as possible in the main rectangle.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <algorithm>
 #include <cstdint>
@@ -39,8 +54,10 @@ ABSL_FLAG(std::string, params, "", "Sat parameters in text proto format.");
 namespace operations_research {
 namespace sat {
 
-// Logs the current cost and fills solution_in_ascii_form with a nice ascii
-// drawing of the current solution.
+
+
+
+
 void CheckAndPrint2DSolution(
     const CpSolverResponse& response,
     const packing::MultipleDimensionsBinPackingProblem& problem,
@@ -106,8 +123,10 @@ void CheckAndPrint2DSolution(
   }
 }
 
-// Load a 2d binpacking problem and solve it as a 2d knapsack problem.
-// That is fit the max number of object in one box.
+
+
+
+
 void LoadAndSolve(const std::string& file_name, int instance) {
   packing::BinPacking2dParser parser;
   if (!parser.Load2BPFile(file_name, instance)) {
@@ -125,8 +144,10 @@ void LoadAndSolve(const std::string& file_name, int instance) {
 
   CpModelBuilder cp_model;
 
-  // Selects the right shape for each item (plus nil shape if not selected).
-  // The nil shape is the first choice.
+  
+
+  
+
   std::vector<std::vector<BoolVar>> selected(num_items);
   for (int item = 0; item < num_items; ++item) {
     const int num_shapes = problem.items(item).shapes_size();
@@ -137,12 +158,14 @@ void LoadAndSolve(const std::string& file_name, int instance) {
     }
   }
 
-  // Exactly one shape is selected for each item.
+  
+
   for (int item = 0; item < num_items; ++item) {
     cp_model.AddEquality(LinearExpr::Sum(selected[item]), 1);
   }
 
-  // Manages positions and sizes for each item.
+  
+
   std::vector<std::vector<IntervalVar>> interval_by_item_dimension(num_items);
   for (int item = 0; item < num_items; ++item) {
     interval_by_item_dimension[item].resize(num_dimensions);
@@ -175,7 +198,8 @@ void LoadAndSolve(const std::string& file_name, int instance) {
     }
   }
 
-  // Non overlapping.
+  
+
   if (num_dimensions == 1) {
     LOG(FATAL) << "One dimension is not supported.";
   } else if (num_dimensions == 2) {
@@ -189,7 +213,8 @@ void LoadAndSolve(const std::string& file_name, int instance) {
     LOG(FATAL) << num_dimensions << " dimensions not supported.";
   }
 
-  // Objective.
+  
+
   LinearExpr objective;
   for (int item_id = 0; item_id < num_items; ++item_id) {
     objective += selected[item_id][0] * problem.items(item_id).value();
@@ -197,10 +222,12 @@ void LoadAndSolve(const std::string& file_name, int instance) {
   cp_model.Minimize(objective);
 
   Model model;
-  // Setup parameters.
+  
+
   SatParameters parameters;
   parameters.set_log_search_progress(true);
-  // Parse the --params flag.
+  
+
   if (!absl::GetFlag(FLAGS_params).empty()) {
     CHECK(google::protobuf::TextFormat::MergeFromString(
         absl::GetFlag(FLAGS_params), &parameters))
@@ -222,8 +249,10 @@ void LoadAndSolve(const std::string& file_name, int instance) {
   }
 }
 
-}  // namespace sat
-}  // namespace operations_research
+}  
+
+}  
+
 
 int main(int argc, char** argv) {
   absl::SetFlag(&FLAGS_stderrthreshold, 0);

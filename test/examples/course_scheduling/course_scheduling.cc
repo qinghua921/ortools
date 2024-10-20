@@ -1,15 +1,27 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include "examples/cpp/course_scheduling.h"
 
@@ -40,13 +52,16 @@ absl::Status CourseSchedulingSolver::ValidateModelAndLoadClasses(
   time_slot_count_ = model.days_count() * model.daily_time_slot_count();
   room_count_ = model.rooms_size();
   solve_for_rooms_ = room_count_ > 0;
-  // If there are no rooms given, we have to give room_count at least one in
-  // order for the loops creating the solver variables and constraints to work.
+  
+
+  
+
   if (!solve_for_rooms_) {
     room_count_ = 1;
   }
 
-  // Validate the information given for each course.
+  
+
   for (const Course& course : model.courses()) {
     if (course.consecutive_slots_count() != 1 &&
         course.consecutive_slots_count() != 2) {
@@ -82,8 +97,10 @@ absl::Status CourseSchedulingSolver::ValidateModelAndLoadClasses(
     }
   }
 
-  // Validate the information given for each teacher and create hash sets of the
-  // restricted indices for each teacher.
+  
+
+  
+
   teacher_to_restricted_slots_ =
       std::vector<absl::flat_hash_set<int>>(model.teachers_size());
   for (int teacher_index = 0; teacher_index < model.teachers_size();
@@ -101,16 +118,23 @@ absl::Status CourseSchedulingSolver::ValidateModelAndLoadClasses(
     }
   }
 
-  // Since each course can have multiple sections (classes), we need to
-  // "flatten" out each course so that each of its sections gets a unique index.
-  // This vector stores the information for calculating each unique index. The
-  // first value is the unique index the course's sections begin at. The second
-  // value is the total number of sections of that course.
+  
+
+  
+
+  
+
+  
+
+  
+
   course_to_classes_ = std::vector<std::vector<int>>(model.courses_size());
-  // For each teacher, store the class unique indices that they teach.
+  
+
   teacher_to_classes_ =
       std::vector<absl::flat_hash_set<int>>(model.teachers_size());
-  // Store course indices of courses that have a single section.
+  
+
   absl::flat_hash_set<int> singleton_courses;
   int flattened_course_index = 0;
   for (int course_index = 0; course_index < model.courses_size();
@@ -133,8 +157,10 @@ absl::Status CourseSchedulingSolver::ValidateModelAndLoadClasses(
   }
   class_count_ = flattened_course_index;
 
-  // Validate the information given for each student. Store each student's
-  // course pairs.
+  
+
+  
+
   for (const Student& student : model.students()) {
     for (const int course_index : student.course_indices()) {
       if (course_index >= model.courses_size()) {
@@ -290,10 +316,14 @@ CourseSchedulingResult CourseSchedulingSolver::ScheduleCourses(
                       MPSolver::SCIP_MIXED_INTEGER_PROGRAMMING);
   const double kInfinity = std::numeric_limits<double>::infinity();
 
-  // Create binary variables x(n,t,r) where x(n,t,r) = 1 indicates that course n
-  // is scheduled for time slot t in course r. Variables are only created if
-  // attendees of class n are available for time slot t and if the course can be
-  // placed into room r.
+  
+
+  
+
+  
+
+  
+
   std::vector<std::vector<std::vector<MPVariable*>>> variables(
       class_count_,
       std::vector<std::vector<MPVariable*>>(
@@ -341,8 +371,10 @@ CourseSchedulingResult CourseSchedulingSolver::ScheduleCourses(
     }
   }
 
-  // 1. Each course meets no more than its number of consecutive time slots a
-  // day.
+  
+
+  
+
   for (int day = 0; day < model.days_count(); ++day) {
     for (int course = 0; course < model.courses_size(); ++course) {
       const int consecutive_slot_count =
@@ -364,8 +396,10 @@ CourseSchedulingResult CourseSchedulingSolver::ScheduleCourses(
     }
   }
 
-  // 2. Each course must meet the given number of times * its number of
-  // consecutive time slots.
+  
+
+  
+
   for (int course = 0; course < model.courses_size(); ++course) {
     const int meeting_count = model.courses(course).meetings_count();
     const int consecutive_slot_count =
@@ -380,7 +414,8 @@ CourseSchedulingResult CourseSchedulingSolver::ScheduleCourses(
     }
   }
 
-  // 3. Teachers are scheduled for no more than one course per time slot.
+  
+
   for (int time_slot = 0; time_slot < time_slot_count_; ++time_slot) {
     for (int teacher = 0; teacher < model.teachers_size(); ++teacher) {
       MPConstraint* const ct = mip_solver.MakeRowConstraint(0, 1);
@@ -390,7 +425,8 @@ CourseSchedulingResult CourseSchedulingSolver::ScheduleCourses(
     }
   }
 
-  // 4. Each room can only be occupied by one course for each time slot.
+  
+
   if (solve_for_rooms_) {
     for (int time_slot = 0; time_slot < time_slot_count_; ++time_slot) {
       for (int room = 0; room < room_count_; ++room) {
@@ -402,8 +438,10 @@ CourseSchedulingResult CourseSchedulingSolver::ScheduleCourses(
     }
   }
 
-  // 5. Ensure each class is scheduled for the correct number of consecutive
-  // time slots.
+  
+
+  
+
   for (int course = 0; course < model.courses_size(); ++course) {
     const int consecutive_slot_count =
         model.courses(course).consecutive_slots_count();
@@ -411,8 +449,10 @@ CourseSchedulingResult CourseSchedulingSolver::ScheduleCourses(
     for (const int class_index : course_to_classes_[course]) {
       for (int day = 0; day < model.days_count(); ++day) {
         for (int room = 0; room < room_count_; ++room) {
-          // If only the previous time slot is chosen, force the current time
-          // slot to be chosen.
+          
+
+          
+
           for (int daily_time_slot = 0;
                daily_time_slot < model.daily_time_slot_count();
                ++daily_time_slot) {
@@ -436,8 +476,10 @@ CourseSchedulingResult CourseSchedulingSolver::ScheduleCourses(
     }
   }
 
-  // 6. Ensure that there are at least two sections of each course_conflicts_
-  // pair that are scheduled for different time slots.
+  
+
+  
+
   for (const auto& conflict_pair : course_conflicts_) {
     const int course_1 = conflict_pair.first;
     const int course_2 = conflict_pair.second;
@@ -454,8 +496,10 @@ CourseSchedulingResult CourseSchedulingSolver::ScheduleCourses(
     }
   }
 
-  // 7. Ensure that conflicting class pairs are not scheduled for the same time
-  // slot.
+  
+
+  
+
   for (const auto& conflict_pair : class_conflicts) {
     for (int time_slot = 0; time_slot < time_slot_count_; ++time_slot) {
       MPConstraint* const ct = mip_solver.MakeRowConstraint(0, 1);
@@ -513,9 +557,12 @@ CourseSchedulingSolver::ConflictPairs CourseSchedulingSolver::AssignStudents(
   MPSolver mip_solver("AssignStudentsMIP",
                       MPSolver::SCIP_MIXED_INTEGER_PROGRAMMING);
 
-  // Create binary variables y(s,n) where y(s,n) = 1 indicates that student s is
-  // enrolled in class n. Variables are created for a student and each section
-  // of a course that they are signed up to take.
+  
+
+  
+
+  
+
   std::vector<std::vector<MPVariable*>> variables(
       model.students_size(), std::vector<MPVariable*>(class_count_, nullptr));
   for (int student_index = 0; student_index < model.students_size();
@@ -529,8 +576,10 @@ CourseSchedulingSolver::ConflictPairs CourseSchedulingSolver::AssignStudents(
     }
   }
 
-  // 1. Each student must be assigned to exactly one section for each course
-  // they are signed up to take.
+  
+
+  
+
   for (int student_index = 0; student_index < model.students_size();
        ++student_index) {
     const Student& student = model.students(student_index);
@@ -542,7 +591,8 @@ CourseSchedulingSolver::ConflictPairs CourseSchedulingSolver::AssignStudents(
     }
   }
 
-  // 2. Ensure that the minimum and maximum capacities for each class are met.
+  
+
   for (int course_index = 0; course_index < model.courses_size();
        ++course_index) {
     const Course& course = model.courses(course_index);
@@ -556,9 +606,12 @@ CourseSchedulingSolver::ConflictPairs CourseSchedulingSolver::AssignStudents(
     }
   }
 
-  // 3. Each student should be assigned to one class per time slot. This is a
-  // soft constraint -- if violated, then the variable infeasibility_var(s,t)
-  // will be greater than 0 for that student s and time slot t.
+  
+
+  
+
+  
+
   std::vector<std::vector<MPVariable*>> infeasibility_vars(
       model.students_size(),
       std::vector<MPVariable*>(time_slot_count_, nullptr));
@@ -584,10 +637,14 @@ CourseSchedulingSolver::ConflictPairs CourseSchedulingSolver::AssignStudents(
     }
   }
 
-  // Minimize the infeasibility vars. If the objective is 0, then we have found
-  // a feasible solution for the course schedule. If the objective is greater
-  // than 0, then some students were assigned to multiple courses for the same
-  // time slot and we need to find a new schedule for the courses.
+  
+
+  
+
+  
+
+  
+
   MPObjective* const objective = mip_solver.MutableObjective();
   for (int student_index = 0; student_index < model.students_size();
        ++student_index) {
@@ -601,8 +658,10 @@ CourseSchedulingSolver::ConflictPairs CourseSchedulingSolver::AssignStudents(
   MPSolver::ResultStatus status = mip_solver.Solve();
   ConflictPairs class_conflict_pairs;
 
-  // This model will only be infeasible if the minimum or maximum capacities
-  // are violated.
+  
+
+  
+
   if (status != MPSolver::OPTIMAL && status != MPSolver::FEASIBLE) {
     result->set_solver_status(MipStatusToCourseSchedulingResultStatus(status));
     result->clear_class_assignments();
@@ -694,7 +753,8 @@ absl::Status CourseSchedulingSolver::VerifyCourseSchedulingResult(
     const int consecutive_time_slots =
         model.courses(course_index).consecutive_slots_count();
 
-    // Verify that each class meets the correct number of times.
+    
+
     if (class_assignment.time_slots_size() !=
         meetings_count * consecutive_time_slots) {
       return absl::InvalidArgumentError(absl::StrFormat(
@@ -714,9 +774,12 @@ absl::Status CourseSchedulingSolver::VerifyCourseSchedulingResult(
           .push_back(time_slot);
     }
 
-    // Verify that a class meets no more than its consecutive time slot count
-    // per day. If a class needs 2 consecutive time slots, verify that it is
-    // scheduled accordingly.
+    
+
+    
+
+    
+
     for (int day = 0; day < model.days_count(); ++day) {
       const int day_count = day_to_time_slots[day].size();
       if (day_count != 0 && day_count != consecutive_time_slots) {
@@ -739,7 +802,8 @@ absl::Status CourseSchedulingSolver::VerifyCourseSchedulingResult(
       }
     }
 
-    // Verify that their is no more than 1 class per room for each time slot.
+    
+
     if (solve_for_rooms_) {
       for (int i = 0; i < class_assignment.room_indices_size(); ++i) {
         const int room = class_assignment.room_indices(i);
@@ -755,8 +819,10 @@ absl::Status CourseSchedulingSolver::VerifyCourseSchedulingResult(
     }
   }
 
-  // Verify that each teacher is assigned to no more than one class per time
-  // slot and that each teacher is not assigned to their restricted time slots.
+  
+
+  
+
   for (int teacher = 0; teacher < model.teachers_size(); ++teacher) {
     const auto& class_list = teacher_to_classes_[teacher];
     absl::flat_hash_set<int> teacher_time_slots;
@@ -784,7 +850,8 @@ absl::Status CourseSchedulingSolver::VerifyCourseSchedulingResult(
        result.student_assignments()) {
     const int student_index = student_assignment.student_index();
 
-    // Verify that each student is assigned to the correct courses.
+    
+
     std::vector<int> enrolled_courses =
         std::vector<int>(model.students(student_index).course_indices().begin(),
                          model.students(student_index).course_indices().end());
@@ -800,8 +867,10 @@ absl::Status CourseSchedulingSolver::VerifyCourseSchedulingResult(
                           model.students(student_index).display_name()));
     }
 
-    // Verify that each student is assigned to no more than one class per time
-    // slot.
+    
+
+    
+
     absl::flat_hash_set<int> student_time_slots;
     for (int i = 0; i < student_assignment.course_indices_size(); ++i) {
       const int course_index = student_assignment.course_indices(i);
@@ -821,7 +890,8 @@ absl::Status CourseSchedulingSolver::VerifyCourseSchedulingResult(
     }
   }
 
-  // Verify size of each class is within the minimum and maximum capacities.
+  
+
   for (int course = 0; course < model.courses_size(); ++course) {
     const int min_cap = model.courses(course).min_capacity();
     const int max_cap = model.courses(course).max_capacity();
@@ -845,4 +915,5 @@ absl::Status CourseSchedulingSolver::VerifyCourseSchedulingResult(
   return absl::OkStatus();
 }
 
-}  // namespace operations_research
+}  
+

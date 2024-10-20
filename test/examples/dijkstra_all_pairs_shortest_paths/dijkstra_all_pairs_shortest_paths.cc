@@ -1,31 +1,57 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// Solves all pairs shortest paths (APSP) by repeatedly using Dijkstra's
-// algorithm.
-//
-// This example runs on a randomly generated graph. The nodes are each points
-// in Euclidean 2D space, placed uniformly at random on [0, 1] * [0, 1]. Two
-// nodes are connected by an edge if they are within distance L, and the edge
-// length is the Euclidean distance. We find and return all pairs of points that
-// connected by a path with distance at most 3*L. As input flags, we take the
-// number of nodes, and the desired number of neighbors per node. We compute L
-// from these quantities.
-//
-// The problem is naturally modeled on an undirected graph, but our APSP is
-// implemented for directed graphs, so we include each edge as two arcs.
 
-#define _USE_MATH_DEFINES  // Needed for visual studio for M_PI.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#define _USE_MATH_DEFINES  
+
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
@@ -53,7 +79,8 @@ ABSL_FLAG(double, expected_neighbors, 5,
 
 namespace {
 
-constexpr double kPi = M_PI;  // Post C++ 20, prefer std::numbers::pi
+constexpr double kPi = M_PI;  
+
 
 std::vector<std::pair<double, double>> GenerateRandomPoints(int32_t n) {
   absl::BitGen bit_gen;
@@ -86,10 +113,14 @@ std::pair<util::StaticGraph<int32_t, int32_t>, std::vector<double>> MakeGraph(
   std::vector<double> arcs;
   for (int32_t i = 0; i < num_nodes; ++i) {
     for (int32_t j = i + 1; j < num_nodes; ++j) {
-      // We want to add an arc for all pairs of points within max_edge_distance,
-      // but checking all O(n^2) pairs is too slow. The points are sorted by x,
-      // so we can easily exclude points if there x distance exceeds
-      // max_edge_distance.
+      
+
+      
+
+      
+
+      
+
       if (points[j].first - points[i].first > max_edge_distance) {
         break;
       }
@@ -125,20 +156,25 @@ std::vector<std::pair<int32_t, int32_t>> AllPairsWithinDistance(
   return result;
 }
 
-}  // namespace
+}  
+
 
 int main(int argc, char** argv) {
   InitGoogle(argv[0], &argc, &argv, true);
   const int32_t n = absl::GetFlag(FLAGS_num_nodes);
-  CHECK_GE(n, 2);  // Don't divide by zero below.
+  CHECK_GE(n, 2);  
+
   const double expected_neighbors = absl::GetFlag(FLAGS_expected_neighbors);
   CHECK_GE(expected_neighbors, 0);
   const std::vector<std::pair<double, double>> node_locations =
       GenerateRandomPoints(n);
   const double expected_edges = n * expected_neighbors / 2.0;
-  // The expected number of neighbors is (n-1)*pi*(max_edge_distance)**2. So
-  //    (n-1)*pi*(max_edge_distance)**2 = expected_neighbors
-  //    sqrt(expected_neighbors/((n-1) * pi)) = max_edge_distance
+  
+
+  
+
+  
+
   const double max_edge_distance =
       std::sqrt(expected_neighbors / ((n - 1) * kPi));
   std::cout << "Building graph..." << std::endl;
@@ -146,10 +182,14 @@ int main(int argc, char** argv) {
       MakeGraph(node_locations, max_edge_distance);
   std::cout << "Done building graph" << std::endl;
   const double limit = 3 * max_edge_distance;
-  // This is an upper bound on the expected number of connected pairs. You can
-  // only reach points within euclidean distance of limit, but not all these
-  // points will actually be reachable, you need a path of points separated by
-  // at most max_edge_distance.
+  
+
+  
+
+  
+
+  
+
   const double estimated_connected_pairs = (kPi * limit * limit * n) * n / 2;
   std::cout << "Nodes: " << n << std::endl;
   std::cout << "Estimated neighbors per node: " << expected_neighbors
@@ -165,7 +205,8 @@ int main(int argc, char** argv) {
   const std::vector<std::pair<int, int>> all_pairs_within_distance =
       AllPairsWithinDistance(graph, arc_lengths, limit);
   const absl::Duration shortest_path_time = absl::Now() - start;
-  // Our problem is undirected, so everything appears twice.
+  
+
   std::cout << "Actual pairs of points within distance limit: "
             << all_pairs_within_distance.size() / 2 << std::endl;
   std::cout << "Shortest path time: " << shortest_path_time << std::endl;

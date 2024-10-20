@@ -1,18 +1,32 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// [START program]
-// [START import]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #include <algorithm>
 #include <cstdint>
 #include <cstdlib>
@@ -26,10 +40,12 @@
 #include "ortools/constraint_solver/routing_enums.pb.h"
 #include "ortools/constraint_solver/routing_index_manager.h"
 #include "ortools/constraint_solver/routing_parameters.h"
-// [END import]
+
+
 
 namespace operations_research {
-// [START data_model]
+
+
 struct DataModel {
   const std::vector<std::vector<int64_t>> distance_matrix{
       {0, 548, 776, 696, 582, 274, 502, 194, 308, 194, 536, 502, 388, 354, 468,
@@ -67,25 +83,34 @@ struct DataModel {
       {662, 1210, 754, 1358, 1244, 708, 480, 856, 514, 468, 354, 844, 730, 536,
        194, 798, 0},
   };
-  // [START initial_routes]
+  
+
   const std::vector<std::vector<int64_t>> initial_routes{
       {8, 16, 14, 13, 12, 11},
       {3, 4, 9, 10},
       {15, 1},
       {7, 5, 2, 6},
   };
-  // [END initial_routes]
+  
+
   const int num_vehicles = 4;
   const RoutingIndexManager::NodeIndex depot{0};
 };
-// [END data_model]
 
-//! @brief Print the solution.
-//! @param[in] data Data of the problem.
-//! @param[in] manager Index manager used.
-//! @param[in] routing Routing solver used.
-//! @param[in] solution Solution found by the solver.
-// [START solution_printer]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 void PrintSolution(const DataModel& data, const RoutingIndexManager& manager,
                    const RoutingModel& routing, const Assignment& solution) {
   LOG(INFO) << "Objective: " << solution.ObjectiveValue();
@@ -110,89 +135,129 @@ void PrintSolution(const DataModel& data, const RoutingIndexManager& manager,
   LOG(INFO) << "";
   LOG(INFO) << "Problem solved in " << routing.solver()->wall_time() << "ms";
 }
-// [END solution_printer]
+
+
 
 void VrpInitialRoutes() {
-  // Instantiate the data problem.
-  // [START data]
-  DataModel data;
-  // [END data]
+  
 
-  // Create Routing Index Manager
-  // [START index_manager]
+  
+
+  DataModel data;
+  
+
+
+  
+
+  
+
   RoutingIndexManager manager(data.distance_matrix.size(), data.num_vehicles,
                               data.depot);
-  // [END index_manager]
+  
 
-  // Create Routing Model.
-  // [START routing_model]
+
+  
+
+  
+
   RoutingModel routing(manager);
-  // [END routing_model]
+  
 
-  // Create and register a transit callback.
-  // [START transit_callback]
+
+  
+
+  
+
   const int transit_callback_index = routing.RegisterTransitCallback(
       [&data, &manager](const int64_t from_index,
                         const int64_t to_index) -> int64_t {
-        // Convert from routing variable Index to distance matrix NodeIndex.
+        
+
         const int from_node = manager.IndexToNode(from_index).value();
         const int to_node = manager.IndexToNode(to_index).value();
         return data.distance_matrix[from_node][to_node];
       });
-  // [END transit_callback]
+  
 
-  // Define cost of each arc.
-  // [START arc_cost]
+
+  
+
+  
+
   routing.SetArcCostEvaluatorOfAllVehicles(transit_callback_index);
-  // [END arc_cost]
+  
 
-  // Add Distance constraint.
-  // [START distance_constraint]
+
+  
+
+  
+
   routing.AddDimension(transit_callback_index, 0, 3000,
-                       true,  // start cumul to zero
+                       true,  
+
                        "Distance");
   routing.GetMutableDimension("Distance")->SetGlobalSpanCostCoefficient(100);
-  // [END distance_constraint]
+  
 
-  // Close model with the custom search parameters
-  // [START parameters]
+
+  
+
+  
+
   RoutingSearchParameters searchParameters = DefaultRoutingSearchParameters();
   searchParameters.set_first_solution_strategy(
       FirstSolutionStrategy::PATH_CHEAPEST_ARC);
   searchParameters.set_local_search_metaheuristic(
       LocalSearchMetaheuristic::GUIDED_LOCAL_SEARCH);
   searchParameters.mutable_time_limit()->set_seconds(5);
-  // When an initial solution is given for search, the model will be closed with
-  // the default search parameters unless it is explicitly closed with the
-  // custom search parameters.
-  routing.CloseModelWithParameters(searchParameters);
-  // [END parameters]
+  
 
-  // Get initial solution from routes after closing the model.
-  // [START print_initial_solution]
+  
+
+  
+
+  routing.CloseModelWithParameters(searchParameters);
+  
+
+
+  
+
+  
+
   const Assignment* initial_solution =
       routing.ReadAssignmentFromRoutes(data.initial_routes, true);
-  // Print initial solution on console.
+  
+
   LOG(INFO) << "Initial solution: ";
   PrintSolution(data, manager, routing, *initial_solution);
-  // [END print_initial_solution]
+  
 
-  // Solve from initial solution.
-  // [START solve]
+
+  
+
+  
+
   const Assignment* solution = routing.SolveFromAssignmentWithParameters(
       initial_solution, searchParameters);
-  // [END solve]
+  
 
-  // Print solution on console.
-  // [START print_solution]
+
+  
+
+  
+
   LOG(INFO) << "";
   LOG(INFO) << "Solution from search: ";
   PrintSolution(data, manager, routing, *solution);
-  // [START print_solution]
-}
-}  // namespace operations_research
+  
 
-int main(int /*argc*/, char* /*argv*/[]) {
+}
+}  
+
+
+int main(int 
+, char* 
+[]) {
   operations_research::VrpInitialRoutes();
   return EXIT_SUCCESS;
 }

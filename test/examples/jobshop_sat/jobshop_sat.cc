@@ -1,15 +1,27 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <algorithm>
 #include <cstdint>
@@ -63,7 +75,8 @@ using operations_research::scheduling::jssp::TransitionTimeMatrix;
 namespace operations_research {
 namespace sat {
 
-// Compute a valid horizon from a problem.
+
+
 int64_t ComputeHorizon(const JsspInputProblem& problem) {
   int64_t sum_of_durations = 0;
   int64_t max_latest_end = 0;
@@ -105,8 +118,10 @@ int64_t ComputeHorizon(const JsspInputProblem& problem) {
                   sum_of_durations + sum_of_transitions + max_earliest_start);
 }
 
-// A job is a sequence of tasks. For each task, we store the main interval, as
-// well as its start, size, and end expressions.
+
+
+
+
 struct JobTaskData {
   IntervalVar interval;
   LinearExpr start;
@@ -114,8 +129,10 @@ struct JobTaskData {
   LinearExpr end;
 };
 
-// Create the job structure as a chain of tasks. Fills in the job_to_tasks
-// vector.
+
+
+
+
 void CreateJobs(const JsspInputProblem& problem, int64_t horizon,
                 std::vector<std::vector<JobTaskData>>& job_to_tasks,
                 CpModelBuilder& cp_model) {
@@ -136,7 +153,8 @@ void CreateJobs(const JsspInputProblem& problem, int64_t horizon,
       const int num_alternatives = task.machine_size();
       CHECK_EQ(num_alternatives, task.duration_size());
 
-      // Add the "main" task interval.
+      
+
       std::vector<int64_t> durations;
       int64_t min_duration = task.duration(0);
       int64_t max_duration = task.duration(0);
@@ -147,17 +165,28 @@ void CreateJobs(const JsspInputProblem& problem, int64_t horizon,
         durations.push_back(task.duration(a));
       }
 
-      // Hack: we force the end to be below the horizon if the job has no hard
-      // limit defined.
-      //
-      // The correct formula should use min_duration, but this will break the
-      // makespan detection inside the solver. Luckily, the horizon computation
-      // is very loose and has a lot of slack, so we should not loose the
-      // optimal solution.
-      //
-      // TODO(user): remove the makespan interval when makespan detection is
-      // based on the dependency graph and not on the creation of the makespan
-      // interval.
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
+      
+
       const IntVar start = cp_model.NewIntVar(Domain(
           hard_start,
           job.has_latest_end() || problem.makespan_cost_per_time_unit() == 0
@@ -177,7 +206,8 @@ void CreateJobs(const JsspInputProblem& problem, int64_t horizon,
         task_data.push_back({interval, start, duration, end});
       }
 
-      // Chain the task belonging to the same job.
+      
+
       if (t > 0) {
         cp_model.AddLessOrEqual(task_data[t - 1].end, task_data[t].start);
       }
@@ -185,17 +215,22 @@ void CreateJobs(const JsspInputProblem& problem, int64_t horizon,
   }
 }
 
-// Each task in a job can have multiple alternative ways of being performed.
-// This structure stores the start, end, and presence variables attached to one
-// alternative for a given task.
+
+
+
+
+
+
 struct AlternativeTaskData {
   int machine;
   IntervalVar interval;
   BoolVar presence;
 };
 
-// For each task of each jobs, create the alternative tasks and link them to the
-// main task of the job.
+
+
+
+
 void CreateAlternativeTasks(
     const JsspInputProblem& problem,
     absl::Span<const std::vector<JobTaskData>> job_to_tasks, int64_t horizon,
@@ -266,7 +301,8 @@ void CreateAlternativeTasks(
             }
           }
 
-          // Link local and global variables.
+          
+
           if (absl::GetFlag(FLAGS_use_optional_variables)) {
             cp_model.AddEquality(tasks[t].start, alt_start)
                 .OnlyEnforceIf(alt_presence);
@@ -275,7 +311,8 @@ void CreateAlternativeTasks(
           alternatives.push_back({alt_machine, alt_interval, alt_presence});
         }
 
-        // Exactly one alternative interval is present.
+        
+
         std::vector<BoolVar> interval_presences;
         for (const AlternativeTaskData& alternative : alternatives) {
           interval_presences.push_back(alternative.presence);
@@ -286,9 +323,12 @@ void CreateAlternativeTasks(
   }
 }
 
-// Tasks or alternative tasks are added to machines one by one.
-// This structure records the characteristics of each task added on a machine.
-// This information is indexed on each vector by the order of addition.
+
+
+
+
+
+
 struct MachineTaskData {
   int job;
   IntervalVar interval;
@@ -330,7 +370,8 @@ void CreateMachines(
   const std::vector<std::vector<MachineTaskData>> machine_to_tasks =
       GetDataPerMachine(problem, job_task_to_alternatives);
 
-  // Add one no_overlap constraint per machine.
+  
+
   for (int m = 0; m < num_machines; ++m) {
     std::vector<IntervalVar> intervals;
     for (const MachineTaskData& task : machine_to_tasks[m]) {
@@ -343,11 +384,16 @@ void CreateMachines(
     cp_model.AddNoOverlap(intervals);
   }
 
-  // Add transition times if needed.
-  //
-  // TODO(user): If there is just a few non-zero transition, there is probably
-  // a better way than this quadratic blowup.
-  // TODO(user): Check for triangular inequalities.
+  
+
+  
+
+  
+
+  
+
+  
+
   for (int m = 0; m < num_machines; ++m) {
     if (!problem.machines(m).has_transition_time_matrix()) continue;
 
@@ -356,12 +402,16 @@ void CreateMachines(
     const TransitionTimeMatrix& machine_transitions =
         problem.machines(m).transition_time_matrix();
 
-    // Create circuit constraint on a machine. Node 0 is both the source and
-    // sink, i.e. the first and last job.
+    
+
+    
+
     CircuitConstraint circuit = cp_model.AddCircuitConstraint();
 
-    // If all intervals are optional, a solution without any performed
-    // interval in this resource requires an empty circuit.
+    
+
+    
+
     BoolVar empty_circuit = cp_model.NewBoolVar();
     circuit.AddArc(0, 0, empty_circuit);
 
@@ -369,22 +419,28 @@ void CreateMachines(
       const int job_i = machine_to_tasks[m][i].job;
       const MachineTaskData& tail = machine_to_tasks[m][i];
 
-      // TODO(user): simplify the code!
+      
+
       CHECK_EQ(i, job_i);
 
-      // Source to nodes.
+      
+
       circuit.AddArc(0, i + 1, cp_model.NewBoolVar());
-      // Node to sink.
+      
+
       circuit.AddArc(i + 1, 0, cp_model.NewBoolVar());
 
-      // If the circuit is empty, the interval cannot be performed.
+      
+
       cp_model.AddImplication(empty_circuit, ~tail.interval.PresenceBoolVar());
 
-      // Used to constrain the size of the tail interval.
+      
+
       std::vector<BoolVar> literals;
       std::vector<int64_t> transitions;
 
-      // Node to node.
+      
+
       for (int j = 0; j < num_intervals; ++j) {
         if (i == j) {
           circuit.AddArc(i + 1, i + 1, ~tail.interval.PresenceBoolVar());
@@ -392,7 +448,8 @@ void CreateMachines(
           const MachineTaskData& head = machine_to_tasks[m][j];
           const int job_j = head.job;
 
-          // TODO(user): simplify the code!
+          
+
           CHECK_EQ(j, job_j);
           const int64_t transition =
               machine_transitions.transition_time(job_i * num_jobs + job_j);
@@ -402,21 +459,28 @@ void CreateMachines(
           circuit.AddArc(i + 1, j + 1, lit);
 
           if (absl::GetFlag(FLAGS_use_variable_duration_to_encode_transition)) {
-            // Store the delays and the literals for the linear expression of
-            // the size of the tail interval.
+            
+
+            
+
             literals.push_back(lit);
             transitions.push_back(transition);
-            // This is redundant with the linear expression below, but makes
-            // much shorter explanations.
+            
+
+            
+
             cp_model
                 .AddEquality(tail.interval.SizeExpr(),
                              tail.fixed_duration + transition)
                 .OnlyEnforceIf(lit);
           }
 
-          // Make sure the interval follow the circuit in time.
-          // Note that we use the start + duration + transition  as this is more
-          // precise than the non-propagated end.
+          
+
+          
+
+          
+
           cp_model
               .AddLessOrEqual(
                   tail.interval.StartExpr() + tail.fixed_duration + transition,
@@ -425,7 +489,8 @@ void CreateMachines(
         }
       }
 
-      // Add a linear equation to define the size of the tail interval.
+      
+
       if (absl::GetFlag(FLAGS_use_variable_duration_to_encode_transition)) {
         cp_model.AddEquality(tail.interval.SizeExpr(),
                              LinearExpr::WeightedSum(literals, transitions) +
@@ -439,7 +504,8 @@ void CreateMachines(
   }
 }
 
-// Collect all objective terms and add them to the model.
+
+
 void CreateObjective(
     const JsspInputProblem& problem,
     absl::Span<const std::vector<JobTaskData>> job_to_tasks,
@@ -452,13 +518,15 @@ void CreateObjective(
     const Job& job = problem.jobs(j);
     const int num_tasks_in_job = job.tasks_size();
 
-    // Add the cost associated to each task.
+    
+
     for (int t = 0; t < num_tasks_in_job; ++t) {
       const Task& task = job.tasks(t);
       const int num_alternatives = task.machine_size();
 
       for (int a = 0; a < num_alternatives; ++a) {
-        // Add cost if present.
+        
+
         if (task.cost_size() > 0) {
           objective +=
               job_task_to_alternatives[j][t][a].presence * task.cost(a);
@@ -466,7 +534,8 @@ void CreateObjective(
       }
     }
 
-    // Job lateness cost.
+    
+
     const int64_t lateness_penalty = job.lateness_cost_per_time_unit();
     if (lateness_penalty != 0L) {
       const int64_t due_date = job.late_due_date();
@@ -480,7 +549,8 @@ void CreateObjective(
       }
     }
 
-    // Job earliness cost.
+    
+
     const int64_t earliness_penalty = job.earliness_cost_per_time_unit();
     if (earliness_penalty != 0L) {
       const int64_t due_date = job.early_due_date();
@@ -494,22 +564,27 @@ void CreateObjective(
     }
   }
 
-  // Makespan objective.
+  
+
   if (problem.makespan_cost_per_time_unit() != 0L) {
     objective += makespan * problem.makespan_cost_per_time_unit();
   }
 
-  // Add the objective to the model.
+  
+
   cp_model.Minimize(objective);
   if (problem.has_scaling_factor()) {
-    // We use the protobuf API to set the scaling factor.
+    
+
     cp_model.MutableProto()->mutable_objective()->set_scaling_factor(
         1.0 / problem.scaling_factor().value());
   }
 }
 
-// This is a relaxation of the problem where we only consider the main tasks,
-// and not the alternate copies.
+
+
+
+
 void AddCumulativeRelaxation(
     const JsspInputProblem& problem,
     absl::Span<const std::vector<JobTaskData>> job_to_tasks,
@@ -517,8 +592,10 @@ void AddCumulativeRelaxation(
   const int num_jobs = problem.jobs_size();
   const int num_machines = problem.machines_size();
 
-  // Build a graph where two machines are connected if they appear in the same
-  // set of alternate machines for a given task.
+  
+
+  
+
   int num_tasks = 0;
   std::vector<absl::flat_hash_set<int>> neighbors(num_machines);
   for (int j = 0; j < num_jobs; ++j) {
@@ -533,7 +610,8 @@ void AddCumulativeRelaxation(
     }
   }
 
-  // Search for connected components in the above graph.
+  
+
   std::vector<int> components =
       util::GetConnectedComponents(num_machines, neighbors);
   absl::flat_hash_map<int, std::vector<int>> machines_per_component;
@@ -560,8 +638,10 @@ void AddCumulativeRelaxation(
       }
     }
 
-    // Ignore trivial cases with at most one interval, or all intervals, or only
-    // one machine.
+    
+
+    
+
     if (connected_intervals.size() <= 1 || component.size() <= 1 ||
         component.size() == num_tasks) {
       continue;
@@ -581,15 +661,18 @@ void AddCumulativeRelaxation(
   }
 }
 
-// This redundant linear constraints states that the sum of durations of all
-// tasks is a lower bound of the makespan * number of machines.
+
+
+
+
 void AddMakespanRedundantConstraints(
     const JsspInputProblem& problem,
     absl::Span<const std::vector<JobTaskData>> job_to_tasks, IntVar makespan,
     CpModelBuilder& cp_model) {
   const int num_machines = problem.machines_size();
 
-  // Global energetic reasoning.
+  
+
   LinearExpr sum_of_duration;
   for (const std::vector<JobTaskData>& tasks : job_to_tasks) {
     for (const JobTaskData& task : tasks) {
@@ -633,7 +716,8 @@ void DisplayJobStatistics(
             << num_tasks_with_variable_duration;
 }
 
-// Solve a JobShop scheduling problem using CP-SAT.
+
+
 void Solve(const JsspInputProblem& problem) {
   if (absl::GetFlag(FLAGS_display_model)) {
     LOG(INFO) << problem;
@@ -644,73 +728,101 @@ void Solve(const JsspInputProblem& problem) {
     cp_model.SetName(problem.name());
   }
 
-  // Compute an over estimate of the horizon.
+  
+
   const int64_t horizon = absl::GetFlag(FLAGS_horizon) != -1
                               ? absl::GetFlag(FLAGS_horizon)
                               : ComputeHorizon(problem);
 
-  // Create the main job structure.
+  
+
   const int num_jobs = problem.jobs_size();
   std::vector<std::vector<JobTaskData>> job_to_tasks(num_jobs);
   CreateJobs(problem, horizon, job_to_tasks, cp_model);
 
-  // For each task of each jobs, create the alternative copies if needed and
-  // fill in the AlternativeTaskData vector.
+  
+
+  
+
   std::vector<std::vector<std::vector<AlternativeTaskData>>>
       job_task_to_alternatives(num_jobs);
   CreateAlternativeTasks(problem, job_to_tasks, horizon,
                          job_task_to_alternatives, cp_model);
 
-  // Create the makespan variable and interval.
-  // If this flag is true, we will add to each no overlap constraint a special
-  // "makespan interval" that must necessarily be last by construction. This
-  // gives us a better lower bound on the makespan because this way we known
-  // that it must be after all other intervals in each no-overlap constraint.
-  //
-  // Otherwise, we will just add precedence constraints between the last task of
-  // each job and the makespan variable. Alternatively, we could have added a
-  // precedence relation between all tasks and the makespan for a similar
-  // propagation thanks to our "precedence" propagator in the disjunctive but
-  // that was slower than the interval trick when I tried.
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
   const IntVar makespan = cp_model.NewIntVar(Domain(0, horizon));
   IntervalVar makespan_interval;
   if (problem.makespan_cost_per_time_unit() != 0L) {
     if (absl::GetFlag(FLAGS_use_interval_makespan)) {
       makespan_interval = cp_model.NewIntervalVar(
-          /*start=*/makespan,
-          /*size=*/cp_model.NewIntVar(Domain(1, horizon)),
-          /*end=*/cp_model.NewIntVar(Domain(horizon + 1)));
+          
+makespan,
+          
+cp_model.NewIntVar(Domain(1, horizon)),
+          
+cp_model.NewIntVar(Domain(horizon + 1)));
     }
     for (int j = 0; j < num_jobs; ++j) {
-      // The makespan will be greater than the end of each job.
+      
+
       cp_model.AddLessOrEqual(job_to_tasks[j].back().end, makespan);
     }
   }
 
-  // Display model statistics before creating the machine as they may display
-  // additional statistics.
+  
+
+  
+
   DisplayJobStatistics(problem, horizon, job_to_tasks,
                        job_task_to_alternatives);
 
-  // Machine constraints.
+  
+
   CreateMachines(problem, job_task_to_alternatives, makespan_interval,
                  cp_model);
 
-  // Try to detect connected components of alternative machines.
-  // If this is happens, we can add a cumulative constraint as a relaxation of
-  // all no_ovelap constraints on the set of alternative machines.
+  
+
+  
+
+  
+
   if (absl::GetFlag(FLAGS_use_cumulative_relaxation) &&
       problem.makespan_cost_per_time_unit() != 0) {
     AddCumulativeRelaxation(problem, job_to_tasks, makespan_interval, cp_model);
   }
 
-  // This redundant makespan constraint is here mostly to improve the LP
-  // relaxation.
+  
+
+  
+
   if (problem.makespan_cost_per_time_unit() != 0L) {
     AddMakespanRedundantConstraints(problem, job_to_tasks, makespan, cp_model);
   }
 
-  // Add job precedences.
+  
+
   for (const JobPrecedence& precedence : problem.precedences()) {
     const LinearExpr start =
         job_to_tasks[precedence.second_job_index()].front().start;
@@ -719,33 +831,41 @@ void Solve(const JsspInputProblem& problem) {
     cp_model.AddLessOrEqual(end + precedence.min_delay(), start);
   }
 
-  // Objective.
+  
+
   CreateObjective(problem, job_to_tasks, job_task_to_alternatives, horizon,
                   makespan, cp_model);
 
-  // Decision strategy.
-  // CP-SAT now has a default strategy for scheduling problem that works best.
+  
+
+  
+
 
   if (absl::GetFlag(FLAGS_display_sat_model)) {
     LOG(INFO) << cp_model.Proto();
   }
 
-  // Setup parameters.
+  
+
   SatParameters parameters;
   parameters.set_log_search_progress(true);
 
-  // Prefer objective_shaving_search over objective_lb_search.
+  
+
   if (parameters.num_workers() >= 16 && parameters.num_workers() < 24) {
     parameters.add_ignore_subsolvers("objective_lb_search");
     parameters.add_extra_subsolvers("objective_shaving_search");
   }
 
-  // Tells the solver we have a makespan objective.
-  // Also take decision based on precedence, this usually work better.
+  
+
+  
+
   parameters.set_push_all_tasks_toward_start(true);
   parameters.set_use_dynamic_precedence_in_disjunctive(true);
 
-  // Parse the --params flag.
+  
+
   if (!absl::GetFlag(FLAGS_params).empty()) {
     CHECK(google::protobuf::TextFormat::MergeFromString(
         absl::GetFlag(FLAGS_params), &parameters))
@@ -755,12 +875,14 @@ void Solve(const JsspInputProblem& problem) {
   const CpSolverResponse response =
       SolveWithParameters(cp_model.Build(), parameters);
 
-  // Abort if we don't have any solution.
+  
+
   if (response.status() != CpSolverStatus::OPTIMAL &&
       response.status() != CpSolverStatus::FEASIBLE)
     return;
 
-  // Check transitions.
+  
+
   {
     const int num_machines = problem.machines_size();
     const std::vector<std::vector<MachineTaskData>> machine_to_tasks =
@@ -806,7 +928,8 @@ void Solve(const JsspInputProblem& problem) {
     }
   }
 
-  // Check cost, recompute it from scratch.
+  
+
   int64_t final_cost = 0;
   if (problem.makespan_cost_per_time_unit() != 0) {
     int64_t makespan = 0;
@@ -833,19 +956,27 @@ void Solve(const JsspInputProblem& problem) {
     }
   }
 
-  // Note that this the objective is a variable of the model, there is actually
-  // no strong guarantee that in an intermediate solution, it is packed to its
-  // minimum possible value. We do observe this from time to time. The DCHECK is
-  // mainly to warn when this happen.
-  //
-  // TODO(user): Support alternative cost in check.
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
   const double tolerance = 1e-6;
   DCHECK_GE(response.objective_value(), final_cost - tolerance);
   DCHECK_LE(response.objective_value(), final_cost + tolerance);
 }
 
-}  // namespace sat
-}  // namespace operations_research
+}  
+
+}  
+
 
 int main(int argc, char** argv) {
   absl::SetFlag(&FLAGS_stderrthreshold, 0);

@@ -1,20 +1,36 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-// This file solves a 2D Bin Packing problem.
-// It loads the size of the main rectangle, all available items (rectangles
-// too), and tries to fit all rectangles in the minimum numbers of bins (they
-// have the size of the main rectangle.)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <algorithm>
 #include <cstdint>
@@ -89,26 +105,36 @@ absl::btree_set<int> FindFixedItems(
     const packing::MultipleDimensionsBinPackingProblem& problem) {
   absl::btree_set<int> fixed_items;
 
-  // We start by fixing big pairwise incompatible items. Each to its own bin.
-  // See Côté; Haouari; Iori. (2019). A Primal Decomposition Algorithm for the
-  // Two-dimensional Bin Packing Problem (https://arxiv.org/pdf/1909.06835.pdf).
+  
+
+  
+
+  
+
   const int num_items = problem.items_size();
   const auto bin_sizes = problem.box_shape().dimensions();
 
   for (int i = 0; i < num_items; ++i) {
     if (2 * problem.items(i).shapes(0).dimensions(0) > bin_sizes[0] &&
         2 * problem.items(i).shapes(0).dimensions(1) > bin_sizes[1]) {
-      // Big items are pairwise incompatible. Just fix them in different bins.
+      
+
       fixed_items.insert(i);
     }
   }
 
-  // Now we fixed all items that are too big to fit any two of them in a bin.
-  // There could still be two items that are incompatible with all the big ones
-  // and one with one another: a very wide one and a very tall one. Let's fix
-  // those two too if they exist. Note that if there are no big items
-  // incompatible_pair_candidates contains all items and we will fix the first
-  // pairwise incompatible pair.
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
   absl::btree_set<int> incompatible_pair_candidates;
   for (int i = 0; i < num_items; ++i) {
     if (fixed_items.contains(i)) {
@@ -133,8 +159,10 @@ absl::btree_set<int> FindFixedItems(
         continue;
       }
       if (ItemsAreIncompatible(problem, i1, i2)) {
-        // We found a pair that is incompatible with all the big items and
-        // between one another.
+        
+
+        
+
         fixed_items.insert(i1);
         fixed_items.insert(i2);
         found_incompatible_pair = true;
@@ -147,11 +175,16 @@ absl::btree_set<int> FindFixedItems(
   }
 
   if (!found_incompatible_pair && !incompatible_pair_candidates.empty()) {
-    // We could not add a pair of mutually incompatible items to our list. But
-    // we know a set of elements that are incompatible with all the big ones.
-    // Let's add the one with the largest area. Note that if there are no big
-    // items, incompatible_pair_candidates contains all items and we will just
-    // fix the largest element.
+    
+
+    
+
+    
+
+    
+
+    
+
     fixed_items.insert(*std::min_element(incompatible_pair_candidates.begin(),
                                          incompatible_pair_candidates.end(),
                                          GreaterByArea(problem)));
@@ -174,7 +207,8 @@ absl::btree_set<int> FindFixedItems(
   return fixed_items;
 }
 
-// Solves a subset sum problem to find the maximum reachable max size.
+
+
 int64_t MaxSubsetSumSize(absl::Span<const int64_t> sizes, int64_t max_size) {
   CpModelBuilder builder;
   LinearExpr weighed_sum;
@@ -190,9 +224,11 @@ int64_t MaxSubsetSumSize(absl::Span<const int64_t> sizes, int64_t max_size) {
   return static_cast<int64_t>(response.objective_value());
 }
 
-}  // namespace
+}  
 
-// Load a 2D bin packing problem and solve it.
+
+
+
 void LoadAndSolve(const std::string& file_name, int instance) {
   packing::BinPacking2dParser parser;
   if (!parser.Load2BPFile(file_name, instance)) {
@@ -208,22 +244,32 @@ void LoadAndSolve(const std::string& file_name, int instance) {
   const int num_dimensions = original_bin_sizes.size();
   const int num_items = problem.items_size();
 
-  // Non overlapping.
+  
+
   if (num_dimensions == 1) {
     LOG(FATAL) << "One dimension is not supported.";
   } else if (num_dimensions != 2) {
     LOG(FATAL) << num_dimensions << " dimensions not supported.";
   }
 
-  // Reduce the size of the bin with subset-sum.
-  //
-  // Short correctness proof: For any solution, we can transform it so that each
-  // item is packed to the bottom and left. That is, touch an item or the bin
-  // border on these sides. In that case, we can see that there is a "path" from
-  // the top item, only moving down via touching items, to the bottom edge. And
-  // similarly from the right most item, moving left, to the left edge. So on
-  // each coordinate, the maximum size must be expressible as an exact sum of
-  // the item sizes.
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
   std::vector<int64_t> x_sizes;
   std::vector<int64_t> y_sizes;
   int64_t sum_of_items_area = 0;
@@ -261,13 +307,15 @@ void LoadAndSolve(const std::string& file_name, int instance) {
   cp_model.SetName(absl::StrCat(
       "binpacking_2d_", file::Stem(absl::GetFlag(FLAGS_input)), "_", instance));
 
-  // We do not support multiple shapes per item.
+  
+
   for (int item = 0; item < num_items; ++item) {
     const int num_shapes = problem.items(item).shapes_size();
     CHECK_EQ(1, num_shapes);
   }
 
-  // Create one Boolean variable per item and per bin.
+  
+
   std::vector<std::vector<BoolVar>> item_to_bin(num_items);
   for (int item = 0; item < num_items; ++item) {
     item_to_bin[item].resize(max_bins);
@@ -276,14 +324,16 @@ void LoadAndSolve(const std::string& file_name, int instance) {
     }
   }
 
-  // Exactly one bin is selected for each item.
+  
+
   for (int item = 0; item < num_items; ++item) {
     cp_model.AddExactlyOne(item_to_bin[item]);
   }
 
   const absl::btree_set<int> fixed_items = FindFixedItems(problem);
 
-  // Fix the fixed_items to the first fixed_items.size() bins.
+  
+
   CHECK_LE(fixed_items.size(), max_bins)
       << "Infeasible problem, increase max_bins";
   int count = 0;
@@ -292,12 +342,14 @@ void LoadAndSolve(const std::string& file_name, int instance) {
     ++count;
   }
 
-  // Detect incompatible pairs of items and add conflict at the bin level.
+  
+
   int num_incompatible_pairs = 0;
   for (int i1 = 0; i1 + 1 < num_items; ++i1) {
     for (int i2 = i1 + 1; i2 < num_items; ++i2) {
       if (fixed_items.contains(i1) && fixed_items.contains(i2)) {
-        // Both are already fixed to different bins.
+        
+
         continue;
       }
       if (!ItemsAreIncompatible(problem, i1, i2)) {
@@ -313,7 +365,8 @@ void LoadAndSolve(const std::string& file_name, int instance) {
     LOG(INFO) << num_incompatible_pairs << " incompatible pairs of items";
   }
 
-  // Compute the min size of all items in each dimension.
+  
+
   std::vector<int64_t> min_sizes_per_dimension = bin_sizes;
   for (int item = 0; item < num_items; ++item) {
     for (int dim = 0; dim < num_dimensions; ++dim) {
@@ -323,9 +376,12 @@ void LoadAndSolve(const std::string& file_name, int instance) {
     }
   }
 
-  // Manages positions and sizes for each item.
-  //
-  // Creates the starts variables.
+  
+
+  
+
+  
+
   std::vector<std::vector<IntVar>> starts_by_dimension(num_items);
   absl::btree_set<int> items_exclusive_in_at_least_one_dimension;
   for (int item = 0; item < num_items; ++item) {
@@ -333,8 +389,10 @@ void LoadAndSolve(const std::string& file_name, int instance) {
     for (int dim = 0; dim < num_dimensions; ++dim) {
       const int64_t bin_size = bin_sizes[dim];
       const int64_t item_size = problem.items(item).shapes(0).dimensions(dim);
-      // For item fixed to a given bin, by symmetry, we can also assume it
-      // is in the lower left corner.
+      
+
+      
+
       const int64_t start_max = fixed_items.contains(item)
                                     ? (bin_size - item_size + 1) / 2
                                     : bin_size - item_size;
@@ -347,7 +405,8 @@ void LoadAndSolve(const std::string& file_name, int instance) {
     }
   }
 
-  // Creates the optional interval variables, sharing the same IntVar.
+  
+
   std::vector<std::vector<std::vector<IntervalVar>>>
       interval_by_item_bin_dimension(num_items);
   for (int item = 0; item < num_items; ++item) {
@@ -370,18 +429,27 @@ void LoadAndSolve(const std::string& file_name, int instance) {
     for (const int item : items_exclusive_in_at_least_one_dimension) {
       for (int dim = 0; dim < num_dimensions; ++dim) {
         if (fixed_items.contains(item)) {
-          // Since this item is alone on its line (respectively column) and
-          // effectively divides the bin in two we can put it in one corner. For
-          // example, for a horizontal long item, solutions where the long item
-          // sits in the middle would mean that there is also a solution where
-          // the long item is moved all the way to the bottom.
+          
+
+          
+
+          
+
+          
+
+          
+
           cp_model.FixVariable(starts_by_dimension[item][dim], 0);
           if (dim == 0) ++num_items_fixed_in_corner;
         } else {
-          // Since this item is alone on its line (respectively column), we can
-          // fix it at the beginning of the line (respectively column). Because
-          // this item can be in the same bin as a fixed item or another
-          // exclusive item, we cannot fix it to the bottom left corner.
+          
+
+          
+
+          
+
+          
+
           const int64_t bin_size = bin_sizes[dim];
           const int64_t item_size =
               problem.items(item).shapes(0).dimensions(dim);
@@ -397,7 +465,8 @@ void LoadAndSolve(const std::string& file_name, int instance) {
   }
 
   if (absl::GetFlag(FLAGS_symmetry_breaking_level) >= 2) {
-    // Break symmetry of a permutation of identical items
+    
+
     absl::btree_map<std::pair<int64_t, int64_t>, std::vector<int>>
         item_indexes_for_dimensions;
     for (int item = 0; item < num_items; ++item) {
@@ -426,7 +495,8 @@ void LoadAndSolve(const std::string& file_name, int instance) {
     }
   }
 
-  // Add non overlapping constraint.
+  
+
   for (int b = 0; b < max_bins; ++b) {
     NoOverlap2DConstraint no_overlap_2d = cp_model.AddNoOverlap2D();
     for (int item = 0; item < num_items; ++item) {
@@ -435,10 +505,12 @@ void LoadAndSolve(const std::string& file_name, int instance) {
     }
   }
 
-  // Objective variable.
+  
+
   const IntVar obj = cp_model.NewIntVar({trivial_lb, max_bins});
 
-  // Global cumulative.
+  
+
   if (absl::GetFlag(FLAGS_use_global_cumulative)) {
     DCHECK_EQ(num_dimensions, 2);
     for (int dim = 0; dim < num_dimensions; ++dim) {
@@ -454,13 +526,16 @@ void LoadAndSolve(const std::string& file_name, int instance) {
     }
   }
 
-  // Maintain one Boolean variable per bin that indicates if the bin is used
-  // or not.
+  
+
+  
+
   std::vector<BoolVar> bin_is_used(max_bins);
   for (int b = 0; b < max_bins; ++b) {
     bin_is_used[b] = cp_model.NewBoolVar();
 
-    // Link bin_is_used[i] with the items in bin i.
+    
+
     std::vector<BoolVar> all_items_in_bin;
     for (int item = 0; item < num_items; ++item) {
       cp_model.AddImplication(item_to_bin[item][b], bin_is_used[b]);
@@ -469,7 +544,8 @@ void LoadAndSolve(const std::string& file_name, int instance) {
     cp_model.AddBoolOr(all_items_in_bin).OnlyEnforceIf(bin_is_used[b]);
   }
 
-  // Objective definition.
+  
+
   cp_model.Minimize(obj);
   CHECK_GT(trivial_lb, 0);
   for (int b = trivial_lb; b < max_bins; ++b) {
@@ -478,7 +554,8 @@ void LoadAndSolve(const std::string& file_name, int instance) {
   }
 
   if (absl::GetFlag(FLAGS_symmetry_breaking_level) >= 1) {
-    // First sort the items not yet fixed by area.
+    
+
     std::vector<int> not_placed_items;
     for (int item = 0; item < num_items; ++item) {
       if (!fixed_items.contains(item)) {
@@ -488,8 +565,10 @@ void LoadAndSolve(const std::string& file_name, int instance) {
     std::sort(not_placed_items.begin(), not_placed_items.end(),
               GreaterByArea(problem));
 
-    // Symmetry breaking: i-th biggest item is in bin <= i for the first
-    // max_bins items.
+    
+
+    
+
     int first_empty_bin = fixed_items.size();
     for (const int item : not_placed_items) {
       if (first_empty_bin + 1 >= max_bins) break;
@@ -500,31 +579,38 @@ void LoadAndSolve(const std::string& file_name, int instance) {
     }
   }
 
-  // Setup parameters.
+  
+
   SatParameters parameters;
   parameters.set_log_search_progress(true);
 
-  // Parse the --params flag.
+  
+
   if (!absl::GetFlag(FLAGS_params).empty()) {
     CHECK(google::protobuf::TextFormat::MergeFromString(
         absl::GetFlag(FLAGS_params), &parameters))
         << absl::GetFlag(FLAGS_params);
   }
 
-  // If number of workers is >= 16 and < 24, we prefer replacing
-  // objective_lb_search by objective_shaving_search.
+  
+
+  
+
   if (parameters.num_workers() >= 16 && parameters.num_workers() < 24) {
     parameters.add_ignore_subsolvers("objective_lb_search");
     parameters.add_extra_subsolvers("objective_shaving_search");
   }
 
-  // We rely on the solver default logging to log the number of bins.
+  
+
   const CpSolverResponse response =
       SolveWithParameters(cp_model.Build(), parameters);
 }
 
-}  // namespace sat
-}  // namespace operations_research
+}  
+
+}  
+
 
 int main(int argc, char** argv) {
   absl::SetFlag(&FLAGS_stderrthreshold, 0);

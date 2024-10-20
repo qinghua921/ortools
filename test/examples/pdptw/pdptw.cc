@@ -1,40 +1,76 @@
-// Copyright 2010-2024 Google LLC
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
 
-//
-// Pickup and Delivery Problem with Time Windows.
-// The overall objective is to minimize the length of the routes delivering
-// quantities of goods between pickup and delivery locations, taking into
-// account vehicle capacities and node time windows.
-// Given a set of pairs of pickup and delivery nodes, find the set of routes
-// visiting all the nodes, such that
-// - corresponding pickup and delivery nodes are visited on the same route,
-// - the pickup node is visited before the corresponding delivery node,
-// - the quantity picked up at the pickup node is the same as the quantity
-//   delivered at the delivery node,
-// - the total quantity carried by a vehicle at any time is less than its
-//   capacity,
-// - each node must be visited within its time window (time range during which
-//   the node is accessible).
-// The maximum number of vehicles used (i.e. the number of routes used) is
-// specified in the data but can be overridden using the --pdp_force_vehicles
-// flag.
-//
-// A further description of the problem can be found here:
-// http://en.wikipedia.org/wiki/Vehicle_routing_problem
-// http://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.123.9965&rep=rep1&type=pdf.
-// Reads data in the format defined by Li & Lim
-// (https://www.sintef.no/projectweb/top/pdptw/li-lim-benchmark/documentation/).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #include <algorithm>
 #include <cmath>
@@ -76,16 +112,22 @@ ABSL_FLAG(std::string, routing_search_parameters,
 
 namespace operations_research {
 
-// Scaling factor used to scale up distances, allowing a bit more precision
-// from Euclidean distances.
+
+
+
+
 const int64_t kScalingFactor = 1000;
 
-// Vector of (x,y) node coordinates, *unscaled*, in some imaginary planar,
-// metric grid.
+
+
+
+
 typedef std::vector<std::pair<int, int> > Coordinates;
 
-// Returns the scaled Euclidean distance between two nodes, coords holding the
-// coordinates of the nodes.
+
+
+
+
 int64_t Travel(const Coordinates* const coords,
                RoutingIndexManager::NodeIndex from,
                RoutingIndexManager::NodeIndex to) {
@@ -97,17 +139,23 @@ int64_t Travel(const Coordinates* const coords,
                               std::sqrt(1.0L * xd * xd + yd * yd));
 }
 
-// Returns the scaled service time at a given node, service_times holding the
-// service times.
+
+
+
+
 int64_t ServiceTime(const std::vector<int64_t>* const service_times,
                     RoutingIndexManager::NodeIndex node) {
   return kScalingFactor * service_times->at(node.value());
 }
 
-// Returns the scaled (distance plus service time) between two indices, coords
-// holding the coordinates of the nodes and service_times holding the service
-// times.
-// The service time is the time spent to execute a delivery or a pickup.
+
+
+
+
+
+
+
+
 int64_t TravelPlusServiceTime(const RoutingIndexManager& manager,
                               const Coordinates* const coords,
                               const std::vector<int64_t>* const service_times,
@@ -117,12 +165,18 @@ int64_t TravelPlusServiceTime(const RoutingIndexManager& manager,
   return ServiceTime(service_times, from) + Travel(coords, from, to);
 }
 
-// Returns the list of variables to use for the Tabu metaheuristic.
-// The current list is:
-// - Total cost of the solution,
-// - Number of used vehicles,
-// - Total schedule duration.
-// TODO(user): add total waiting time.
+
+
+
+
+
+
+
+
+
+
+
+
 std::vector<IntVar*> GetTabuVars(std::vector<IntVar*> existing_vars,
                                  operations_research::RoutingModel* routing) {
   Solver* const solver = routing->solver();
@@ -131,7 +185,8 @@ std::vector<IntVar*> GetTabuVars(std::vector<IntVar*> existing_vars,
 
   IntVar* used_vehicles = solver->MakeIntVar(0, routing->vehicles());
   std::vector<IntVar*> is_used_vars;
-  // Number of vehicle used
+  
+
   is_used_vars.reserve(routing->vehicles());
   for (int v = 0; v < routing->vehicles(); v++) {
     is_used_vars.push_back(solver->MakeIsDifferentCstVar(
@@ -144,7 +199,8 @@ std::vector<IntVar*> GetTabuVars(std::vector<IntVar*> existing_vars,
   return vars;
 }
 
-// Outputs a solution to the current model in a string.
+
+
 std::string VerboseOutput(const RoutingModel& routing,
                           const RoutingIndexManager& manager,
                           const Assignment& assignment,
@@ -194,8 +250,10 @@ std::string VerboseOutput(const RoutingModel& routing,
 }
 
 namespace {
-// An inefficient but convenient method to parse a whitespace-separated list
-// of integers. Returns true iff the input string was entirely valid and parsed.
+
+
+
+
 bool SafeParseInt64Array(const std::string& str,
                          std::vector<int64_t>* parsed_int) {
   std::istringstream input(str);
@@ -204,19 +262,24 @@ bool SafeParseInt64Array(const std::string& str,
   while (input >> x) parsed_int->push_back(x);
   return input.eof();
 }
-}  // namespace
+}  
 
-// Builds and solves a model from a file in the format defined by Li & Lim
-// (https://www.sintef.no/projectweb/top/pdptw/li-lim-benchmark/documentation/).
+
+
+
+
+
 bool LoadAndSolve(const std::string& pdp_file,
                   const RoutingModelParameters& model_parameters,
                   const RoutingSearchParameters& search_parameters) {
-  // Load all the lines of the file in RAM (it shouldn't be too large anyway).
+  
+
   std::vector<std::string> lines;
   {
     std::string contents;
     CHECK_OK(file::GetContents(pdp_file, &contents, file::Defaults()));
-    const int64_t kMaxInputFileSize = 1 << 30;  // 1GB
+    const int64_t kMaxInputFileSize = 1 << 30;  
+
     if (contents.size() >= kMaxInputFileSize) {
       LOG(WARNING) << "Input file '" << pdp_file << "' is too large (>"
                    << kMaxInputFileSize << " bytes).";
@@ -224,12 +287,14 @@ bool LoadAndSolve(const std::string& pdp_file,
     }
     lines = absl::StrSplit(contents, '\n', absl::SkipEmpty());
   }
-  // Reading header.
+  
+
   if (lines.empty()) {
     LOG(WARNING) << "Empty file: " << pdp_file;
     return false;
   }
-  // Parse file header.
+  
+
   std::vector<int64_t> parsed_int;
   if (!SafeParseInt64Array(lines[0], &parsed_int) || parsed_int.size() != 3 ||
       parsed_int[0] < 0 || parsed_int[1] < 0 || parsed_int[2] < 0) {
@@ -240,9 +305,11 @@ bool LoadAndSolve(const std::string& pdp_file,
                                ? absl::GetFlag(FLAGS_pdp_force_vehicles)
                                : parsed_int[0];
   const int64_t capacity = parsed_int[1];
-  // We do not care about the 'speed' field, in third position.
+  
 
-  // Parse order data.
+
+  
+
   std::vector<int> customer_ids;
   std::vector<std::pair<int, int> > coords;
   std::vector<int64_t> demands;
@@ -285,7 +352,8 @@ bool LoadAndSolve(const std::string& pdp_file,
     horizon = std::max(horizon, close_time);
   }
 
-  // Build pickup and delivery model.
+  
+
   const int num_nodes = customer_ids.size();
   RoutingIndexManager manager(num_nodes, num_vehicles, depot);
   RoutingModel routing(manager, model_parameters);
@@ -300,7 +368,8 @@ bool LoadAndSolve(const std::string& pdp_file,
     return demands[manager.IndexToNode(from_index).value()];
   };
   routing.AddDimension(routing.RegisterTransitCallback(demand_evaluator), 0,
-                       capacity, /*fix_start_cumul_to_zero=*/true, "demand");
+                       capacity, 
+true, "demand");
   RoutingTransitCallback2 time_evaluator = [&](int64_t from_index,
                                                int64_t to_index) {
     return TravelPlusServiceTime(manager, &coords, &service_times, from_index,
@@ -308,7 +377,8 @@ bool LoadAndSolve(const std::string& pdp_file,
   };
   routing.AddDimension(routing.RegisterTransitCallback(time_evaluator),
                        kScalingFactor * horizon, kScalingFactor * horizon,
-                       /*fix_start_cumul_to_zero=*/true, "time");
+                       
+true, "time");
   const RoutingDimension& time_dimension = routing.GetDimensionOrDie("time");
   Solver* const solver = routing.solver();
   for (int node = 0; node < num_nodes; ++node) {
@@ -331,10 +401,14 @@ bool LoadAndSolve(const std::string& pdp_file,
 
   if (search_parameters.local_search_metaheuristic() ==
       LocalSearchMetaheuristic::GENERIC_TABU_SEARCH) {
-    // Create variable for the total schedule time of the solution.
-    // This will be used as one of the Tabu criteria.
-    // This is done here and not in GetTabuVarsCallback as it requires calling
-    // AddVariableMinimizedByFinalizer and this method must be called early.
+    
+
+    
+
+    
+
+    
+
     std::vector<IntVar*> end_cumuls;
     std::vector<IntVar*> start_cumuls;
     for (int i = 0; i < routing.vehicles(); ++i) {
@@ -356,7 +430,8 @@ bool LoadAndSolve(const std::string& pdp_file,
     routing.SetTabuVarsCallback(tabu_var_callback);
   }
 
-  // Adding penalty costs to allow skipping orders.
+  
+
   const int64_t kPenalty = 10000000;
   for (RoutingIndexManager::NodeIndex order(1); order < routing.nodes();
        ++order) {
@@ -364,7 +439,8 @@ bool LoadAndSolve(const std::string& pdp_file,
     routing.AddDisjunction(orders, kPenalty);
   }
 
-  // Solve pickup and delivery problem.
+  
+
   SimpleCycleTimer timer;
   timer.Start();
   const Assignment* assignment = routing.SolveWithParameters(search_parameters);
@@ -395,7 +471,8 @@ bool LoadAndSolve(const std::string& pdp_file,
   return false;
 }
 
-}  // namespace operations_research
+}  
+
 
 int main(int argc, char** argv) {
   absl::SetFlag(&FLAGS_stderrthreshold, 0);
