@@ -18,12 +18,10 @@
     "gen": "ts-node gen/gen.ts"
   },
   "devDependencies": {
-    "antlr4ng": "^3.0.5",
     "cmake-js": "7.3.0",
     "node-addon-api": "8.1.0",
     "ts-node": "^10.9.2",
-    "typescript": "^5.6.2",
-    "yaml": "^2.5.1"
+    "typescript": "^5.6.2"
   },
   "keywords": [
     "ortools",
