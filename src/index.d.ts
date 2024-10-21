@@ -1,6 +1,4 @@
-﻿import { MPVariable } from "./operations_research/MPVariable";
-
-export namespace operations_research
+﻿export namespace operations_research
 {
     export namespace MPSolver
     {
