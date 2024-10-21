@@ -173,6 +173,7 @@ export namespace operations_research
 
     export class MPConstraint
     {
+        // TODO continue here
         //const std::string &name() const;
         //void Clear();
         //void SetCoefficient(const MPVariable *var, double coeff);

@@ -89,7 +89,6 @@ class GMPVariable : public Napi::ObjectWrap<GMPVariable>
     static inline Napi::FunctionReference constructor;
     MPVariable *pMPVariable = nullptr;
     GMPVariable(const Napi::CallbackInfo &info);
-    ~GMPVariable();
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
 
     Napi::Value name(const Napi::CallbackInfo &info);
@@ -163,8 +162,25 @@ class GMPConstraint : public Napi::ObjectWrap<GMPConstraint>
     static inline Napi::FunctionReference constructor;
     MPConstraint *pMPConstraint = nullptr;
     GMPConstraint(const Napi::CallbackInfo &info);
-    ~GMPConstraint();
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
+
+    // const std::string &name() const;
+    // void Clear();
+    // void SetCoefficient(const MPVariable *var, double coeff);
+    // double GetCoefficient(const MPVariable *var) const;
+    // const absl::flat_hash_map<const MPVariable *, double> &terms() const;
+    // double lb() const;
+    // double ub() const;
+    // void SetLB(double lb);
+    // void SetUB(double ub);
+    // void SetBounds(double lb, double ub);
+    // bool is_lazy() const;
+    // void set_is_lazy(bool laziness);
+    // const MPVariable *indicator_variable() const;
+    // bool indicator_value() const;
+    // int index() const£»
+    // double dual_value() const;
+    // MPSolver::BasisStatus basis_status() const;
 };
 
 class GMPObjective : public Napi::ObjectWrap<GMPObjective>

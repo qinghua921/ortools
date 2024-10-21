@@ -365,6 +365,7 @@ Napi::Value operations_research::GMPSolver::LookupVariableOrNull(const Napi::Cal
     Napi::TypeError::New(env, "operations_research::GMPSolver::LookupVariableOrNull : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
+
 // MPVariable *MakeVar(double lb, double ub, bool integer, const std::string &name);
 Napi::Value operations_research::GMPSolver::MakeVar(const Napi::CallbackInfo &info)
 {
@@ -623,7 +624,7 @@ Napi::Value operations_research::GMPSolver::MakeRowConstraint(const Napi::Callba
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-// MPConstraint *MakeRowConstraint(double lb, double ub);
+    // MPConstraint *MakeRowConstraint(double lb, double ub);
     if (info.Length() == 2 && info[0].IsNumber() && info[1].IsNumber())
     {
         double lb                = info[0].As<Napi::Number>().DoubleValue();
@@ -633,7 +634,7 @@ Napi::Value operations_research::GMPSolver::MakeRowConstraint(const Napi::Callba
         return GMPConstraint::constructor.New({external});
     }
 
-// MPConstraint *MakeRowConstraint();
+    // MPConstraint *MakeRowConstraint();
     if (info.Length() == 0)
     {
         MPConstraint *constraint = this->pMPSolver->MakeRowConstraint();
@@ -641,7 +642,7 @@ Napi::Value operations_research::GMPSolver::MakeRowConstraint(const Napi::Callba
         return GMPConstraint::constructor.New({external});
     }
 
-// MPConstraint *MakeRowConstraint(double lb, double ub, const std::string &name);
+    // MPConstraint *MakeRowConstraint(double lb, double ub, const std::string &name);
     if (info.Length() == 3 && info[0].IsNumber() && info[1].IsNumber() && info[2].IsString())
     {
         double lb                = info[0].As<Napi::Number>().DoubleValue();
@@ -652,7 +653,7 @@ Napi::Value operations_research::GMPSolver::MakeRowConstraint(const Napi::Callba
         return GMPConstraint::constructor.New({external});
     }
 
-// MPConstraint *MakeRowConstraint(const std::string &name);
+    // MPConstraint *MakeRowConstraint(const std::string &name);
     if (info.Length() == 1 && info[0].IsString())
     {
         std::string name         = info[0].As<Napi::String>().Utf8Value();
@@ -661,7 +662,7 @@ Napi::Value operations_research::GMPSolver::MakeRowConstraint(const Napi::Callba
         return GMPConstraint::constructor.New({external});
     }
 
-// MPConstraint *MakeRowConstraint(const LinearRange &range);
+    // MPConstraint *MakeRowConstraint(const LinearRange &range);
     if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GLinearRange::constructor.Value()))
     {
         GLinearRange *range      = Napi::ObjectWrap<GLinearRange>::Unwrap(info[0].As<Napi::Object>());
@@ -670,7 +671,7 @@ Napi::Value operations_research::GMPSolver::MakeRowConstraint(const Napi::Callba
         return GMPConstraint::constructor.New({external});
     }
 
-// MPConstraint *MakeRowConstraint(const LinearRange &range, const std::string &name);
+    // MPConstraint *MakeRowConstraint(const LinearRange &range, const std::string &name);
     if (info.Length() == 2 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GLinearRange::constructor.Value()) && info[1].IsString())
     {
         GLinearRange *range      = Napi::ObjectWrap<GLinearRange>::Unwrap(info[0].As<Napi::Object>());
@@ -706,14 +707,14 @@ Napi::Value operations_research::GMPSolver::Solve(const Napi::CallbackInfo &info
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-// ResultStatus Solve();
+    // ResultStatus Solve();
     if (info.Length() == 0)
     {
         MPSolver::ResultStatus status = this->pMPSolver->Solve();
         return Napi::Number::New(env, static_cast<int>(status));
     }
 
-// ResultStatus Solve(const MPSolverParameters &param);
+    // ResultStatus Solve(const MPSolverParameters &param);
     if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GMPSolverParameters::constructor.Value()))
     {
         GMPSolverParameters *param    = Napi::ObjectWrap<GMPSolverParameters>::Unwrap(info[0].As<Napi::Object>());
@@ -1925,6 +1926,7 @@ Napi::Object operations_research::GLinearRange::Init(Napi::Env env, Napi::Object
     exports.Set(Napi::String::New(env, "LinearRange"), func);
     return exports;
 }
+
 // double lower_bound() const;
 Napi::Value operations_research::GLinearRange::lower_bound(const Napi::CallbackInfo &info)
 {
@@ -1940,6 +1942,7 @@ Napi::Value operations_research::GLinearRange::lower_bound(const Napi::CallbackI
     Napi::TypeError::New(env, "operations_research::GLinearRange::lower_bound : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
+
 // const LinearExpr &linear_expr() const;
 Napi::Value operations_research::GLinearRange::linear_expr(const Napi::CallbackInfo &info)
 {
@@ -1956,6 +1959,7 @@ Napi::Value operations_research::GLinearRange::linear_expr(const Napi::CallbackI
     Napi::TypeError::New(env, "operations_research::GLinearRange::linear_expr : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
+
 // double upper_bound() const;
 Napi::Value operations_research::GLinearRange::upper_bound(const Napi::CallbackInfo &info)
 {
@@ -1971,3 +1975,68 @@ Napi::Value operations_research::GLinearRange::upper_bound(const Napi::CallbackI
     Napi::TypeError::New(env, "operations_research::GLinearRange::upper_bound : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
+
+operations_research::GMPConstraint::GMPConstraint(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GMPConstraint>(info)
+{
+    Napi::Env env = info.Env();
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external = info[0].As<Napi::External<MPConstraint>>();
+        pMPConstraint = dynamic_cast<MPConstraint *>(external.Data());
+        if (pMPConstraint) return;
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::GMPConstraint : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+Napi::Object operations_research::GMPConstraint::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "MPConstraint",
+        {
+            // const std::string &name() const;
+            // void Clear();
+            // void SetCoefficient(const MPVariable *var, double coeff);
+            // double GetCoefficient(const MPVariable *var) const;
+            // const absl::flat_hash_map<const MPVariable *, double> &terms() const;
+            // double lb() const;
+            // double ub() const;
+            // void SetLB(double lb);
+            // void SetUB(double ub);
+            // void SetBounds(double lb, double ub);
+            // bool is_lazy() const;
+            // void set_is_lazy(bool laziness);
+            // const MPVariable *indicator_variable() const;
+            // bool indicator_value() const;
+            // int index() const£»
+            // double dual_value() const;
+            // MPSolver::BasisStatus basis_status() const;
+        }
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set(Napi::String::New(env, "MPConstraint"), func);
+    return exports;
+}
+
+// const std::string &name() const;
+// void Clear();
+// void SetCoefficient(const MPVariable *var, double coeff);
+// double GetCoefficient(const MPVariable *var) const;
+// const absl::flat_hash_map<const MPVariable *, double> &terms() const;
+// double lb() const;
+// double ub() const;
+// void SetLB(double lb);
+// void SetUB(double ub);
+// void SetBounds(double lb, double ub);
+// bool is_lazy() const;
+// void set_is_lazy(bool laziness);
+// const MPVariable *indicator_variable() const;
+// bool indicator_value() const;
+// int index() const£»
+// double dual_value() const;
+// MPSolver::BasisStatus basis_status() const;
