@@ -1,5 +1,11 @@
 ﻿export namespace operations_research
 {
+    export function operator_le(lhs: CanAsLinearExpr, rhs: CanAsLinearExpr): LinearRange;
+    export function operator_eq(lhs: CanAsLinearExpr, rhs: CanAsLinearExpr): LinearRange;
+    export function operator_ge(lhs: CanAsLinearExpr, rhs: CanAsLinearExpr): LinearRange;
+    export function operator_times(lhs: CanAsLinearExpr, rhs: number): LinearExpr;
+    export function operator_times(lhs: number, rhs: CanAsLinearExpr): LinearExpr;
+
     export namespace MPSolver
     {
         export enum OptimizationProblemType
@@ -157,6 +163,7 @@
     };
 
     export class MPModelRequest { }
+
     export class MPSolutionResponse { }
 
     export class LinearRange
@@ -248,7 +255,6 @@
             SCALING_ON = 1
         };
     }
-
     export class MPSolverParameters
     {
         static readonly kDefaultDoubleParamValue: number;
@@ -270,11 +276,13 @@
         GetIntegerParam(param: MPSolverParameters.IntegerParam): number;
     };
 
+    export type CanAsLinearExpr = LinearExpr | number | MPVariable;
+
     export class LinearExpr
     {
         static NotVar(var_: LinearExpr): LinearExpr;
-        operator_plus_equals(rhs: LinearExpr): LinearExpr;
-        operator_minus_equals(rhs: LinearExpr): LinearExpr;
+        operator_plus_equals(rhs: CanAsLinearExpr): LinearExpr;
+        operator_minus_equals(rhs: CanAsLinearExpr): LinearExpr;
         operator_times_equals(rhs: number): LinearExpr;
         operator_divide_equals(rhs: number): LinearExpr;
         operator_negate(): LinearExpr;
@@ -283,4 +291,90 @@
         SolutionValue(): number;
         ToString(): string;
     };
+
+    export namespace sat
+    {
+        export class CpModelBuilder
+        {
+            //void SetName(absl::string_view name);
+            //IntVar NewIntVar(const Domain &domain);
+            //BoolVar NewBoolVar();
+            //IntVar NewConstant(int64_t value);
+            //BoolVar TrueVar();
+            //BoolVar FalseVar();
+            //IntervalVar NewIntervalVar(const LinearExpr &start, const LinearExpr &size, const LinearExpr &end);
+            //IntervalVar NewFixedSizeIntervalVar(const LinearExpr &start, int64_t size);
+            //IntervalVar NewOptionalIntervalVar(const LinearExpr &start, const LinearExpr &size, const LinearExpr &end, BoolVar presence);
+            //IntervalVar NewOptionalFixedSizeIntervalVar(const LinearExpr &start, int64_t size, BoolVar presence);
+            //void FixVariable(IntVar var, int64_t value);
+            //void FixVariable(BoolVar var, bool value);
+            //Constraint AddBoolOr(absl::Span<const BoolVar> literals);
+            //Constraint AddAtLeastOne(absl::Span<const BoolVar> literals);
+            //Constraint AddAtMostOne(absl::Span<const BoolVar> literals);
+            //Constraint AddExactlyOne(absl::Span<const BoolVar> literals);
+            //Constraint AddBoolAnd(absl::Span<const BoolVar> literals);
+            //Constraint AddBoolXor(absl::Span<const BoolVar> literals);
+            //Constraint AddImplication(BoolVar a, BoolVar b);
+            //Constraint AddImplication(absl::Span<const BoolVar> lhs, absl::Span<const BoolVar> rhs);
+            //Constraint AddEquality(const LinearExpr &left, const LinearExpr &right);
+            //Constraint AddGreaterOrEqual(const LinearExpr &left, const LinearExpr &right);
+            //Constraint AddGreaterThan(const LinearExpr &left, const LinearExpr &right);
+            //Constraint AddLessOrEqual(const LinearExpr &left, const LinearExpr &right);
+            //Constraint AddLessThan(const LinearExpr &left, const LinearExpr &right);
+            //Constraint AddLinearConstraint(const LinearExpr &expr, const Domain &domain);
+            //Constraint AddNotEqual(const LinearExpr &left, const LinearExpr &right);
+            //Constraint AddAllDifferent(absl::Span<const IntVar> vars);
+            //Constraint AddAllDifferent(absl::Span<const LinearExpr> exprs);
+            //Constraint AddAllDifferent(std::initializer_list<LinearExpr> exprs);
+            //Constraint AddVariableElement(IntVar index, absl::Span<const IntVar> variables, IntVar target);
+            //Constraint AddElement(IntVar index, absl::Span<const int64_t> values, IntVar target);
+            //CircuitConstraint AddCircuitConstraint();
+            //MultipleCircuitConstraint AddMultipleCircuitConstraint();
+            //TableConstraint AddAllowedAssignments(absl::Span<const IntVar> vars);
+            //TableConstraint AddForbiddenAssignments(absl::Span<const IntVar> vars);
+            //Constraint AddInverseConstraint(absl::Span<const IntVar> variables, absl::Span<const IntVar> inverse_variables);
+            //ReservoirConstraint AddReservoirConstraint(int64_t min_level, int64_t max_level);
+            //AutomatonConstraint AddAutomaton(absl::Span<const IntVar> transition_variables, int starting_state, absl::Span<const int> final_states);
+            //Constraint AddMinEquality(const LinearExpr &target, absl::Span<const IntVar> vars);
+            //Constraint AddMinEquality(const LinearExpr &target, absl::Span<const LinearExpr> exprs);
+            //Constraint AddMinEquality(const LinearExpr &target, std::initializer_list<LinearExpr> exprs);
+            //Constraint AddMaxEquality(const LinearExpr &target, absl::Span<const IntVar> vars);
+            //Constraint AddMaxEquality(const LinearExpr &target, absl::Span<const LinearExpr> exprs);
+            //Constraint AddMaxEquality(const LinearExpr &target, std::initializer_list<LinearExpr> exprs);
+            //Constraint AddDivisionEquality(const LinearExpr &target, const LinearExpr &numerator, const LinearExpr &denominator);
+            //Constraint AddAbsEquality(const LinearExpr &target, const LinearExpr &expr);
+            //Constraint AddModuloEquality(const LinearExpr &target, const LinearExpr &var, const LinearExpr &mod);
+            //Constraint AddMultiplicationEquality(const LinearExpr &target, absl::Span<const LinearExpr> exprs);
+            //Constraint AddMultiplicationEquality(const LinearExpr &target, absl::Span<const IntVar> vars);
+            //Constraint AddMultiplicationEquality(const LinearExpr &target, std::initializer_list<LinearExpr> exprs);
+            //Constraint AddMultiplicationEquality(const LinearExpr &target, const LinearExpr &left, const LinearExpr &right);
+            //Constraint AddNoOverlap(absl::Span<const IntervalVar> vars);
+            //NoOverlap2DConstraint AddNoOverlap2D();
+            //CumulativeConstraint AddCumulative(LinearExpr capacity);
+            //void Minimize(const LinearExpr &expr);
+            //void Minimize(const DoubleLinearExpr &expr);
+            //void Maximize(const LinearExpr &expr);
+            //void Maximize(const DoubleLinearExpr &expr);
+            //void ClearObjective();
+            //bool HasObjective() const;
+            //void AddDecisionStrategy(absl::Span<const IntVar> variables, DecisionStrategyProto::VariableSelectionStrategy var_strategy, DecisionStrategyProto::DomainReductionStrategy domain_strategy);
+            //void AddDecisionStrategy(absl::Span<const BoolVar> variables, DecisionStrategyProto::VariableSelectionStrategy var_strategy, DecisionStrategyProto::DomainReductionStrategy domain_strategy);
+            //void AddDecisionStrategy(absl::Span<const LinearExpr> expressions, DecisionStrategyProto::VariableSelectionStrategy var_strategy, DecisionStrategyProto::DomainReductionStrategy domain_strategy);
+            //void AddDecisionStrategy(std::initializer_list<LinearExpr> expressions, DecisionStrategyProto::VariableSelectionStrategy var_strategy, DecisionStrategyProto::DomainReductionStrategy domain_strategy);
+            //void AddHint(IntVar var, int64_t value);
+            //void AddHint(BoolVar var, bool value);
+            //void ClearHints();
+            //void AddAssumption(BoolVar lit);
+            //void AddAssumptions(absl::Span<const BoolVar> literals);
+            //void ClearAssumptions();
+            //const CpModelProto &Build() const;
+            //const CpModelProto &Proto() const;
+            //CpModelProto *MutableProto();
+            //bool ExportToFile(absl::string_view filename) const;
+            //CpModelBuilder Clone() const;
+            //BoolVar GetBoolVarFromProtoIndex(int index);
+            //IntVar GetIntVarFromProtoIndex(int index);
+            //IntervalVar GetIntervalVarFromProtoIndex(int index);
+        };
+    }
 };

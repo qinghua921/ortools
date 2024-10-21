@@ -15,7 +15,7 @@
   "types": "src/index.d.ts",
   "scripts": {
     "cppbuild": "cmake-js compile",
-    "gen": "ts-node gen/gen.ts"
+    "test": "ts-node test/test.ts"
   },
   "devDependencies": {
     "cmake-js": "7.3.0",

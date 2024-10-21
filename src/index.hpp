@@ -2,9 +2,17 @@
 
 #include <napi.h>
 #include <ortools/linear_solver/linear_solver.h>
+#include <ortools/sat/cp_model.h>
 
 namespace operations_research
 {
+
+Napi::Value Goperator_ge(const Napi::CallbackInfo &info);
+Napi::Value Goperator_eq(const Napi::CallbackInfo &info);
+Napi::Value Goperator_le(const Napi::CallbackInfo &info);
+Napi::Value Goperator_times(const Napi::CallbackInfo &info);
+static Napi::Object FuncInit(Napi::Env env, Napi::Object exports);
+
 class GMPSolver : public Napi::ObjectWrap<GMPSolver>
 {
   public:
@@ -260,4 +268,15 @@ class GLinearExpr : public Napi::ObjectWrap<GLinearExpr>
     Napi::Value ToString(const Napi::CallbackInfo &info);
 };
 
+namespace sat
+{
+class GCpModelBuilder : public Napi::ObjectWrap<GCpModelBuilder>
+{
+  public:
+    static inline Napi::FunctionReference constructor;
+    CpModelBuilder *pCpModelBuilder = nullptr;
+    GCpModelBuilder(const Napi::CallbackInfo &info);
+    ~GCpModelBuilder();
+    static Napi::Object Init(Napi::Env env, Napi::Object exports);
+};
 } // namespace operations_research
