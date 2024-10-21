@@ -2169,6 +2169,7 @@ Napi::Value operations_research::GMPConstraint::SetUB(const Napi::CallbackInfo &
     Napi::TypeError::New(env, "operations_research::GMPConstraint::SetUB : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
+
 // void SetBounds(double lb, double ub);
 Napi::Value operations_research::GMPConstraint::SetBounds(const Napi::CallbackInfo &info)
 {
@@ -2186,6 +2187,7 @@ Napi::Value operations_research::GMPConstraint::SetBounds(const Napi::CallbackIn
     Napi::TypeError::New(env, "operations_research::GMPConstraint::SetBounds : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
+
 // bool is_lazy() const;
 Napi::Value operations_research::GMPConstraint::is_lazy(const Napi::CallbackInfo &info)
 {
@@ -2201,6 +2203,7 @@ Napi::Value operations_research::GMPConstraint::is_lazy(const Napi::CallbackInfo
     Napi::TypeError::New(env, "operations_research::GMPConstraint::is_lazy : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
+
 // void set_is_lazy(bool laziness);
 Napi::Value operations_research::GMPConstraint::set_is_lazy(const Napi::CallbackInfo &info)
 {
@@ -2217,6 +2220,7 @@ Napi::Value operations_research::GMPConstraint::set_is_lazy(const Napi::Callback
     Napi::TypeError::New(env, "operations_research::GMPConstraint::set_is_lazy : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
+
 // const MPVariable *indicator_variable() const;
 Napi::Value operations_research::GMPConstraint::indicator_variable(const Napi::CallbackInfo &info)
 {
@@ -2237,6 +2241,7 @@ Napi::Value operations_research::GMPConstraint::indicator_variable(const Napi::C
     Napi::TypeError::New(env, "operations_research::GMPConstraint::indicator_variable : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
+
 // bool indicator_value() const;
 Napi::Value operations_research::GMPConstraint::indicator_value(const Napi::CallbackInfo &info)
 {
@@ -2268,6 +2273,7 @@ Napi::Value operations_research::GMPConstraint::index(const Napi::CallbackInfo &
     Napi::TypeError::New(env, "operations_research::GMPConstraint::index : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
+
 // double dual_value() const;
 Napi::Value operations_research::GMPConstraint::dual_value(const Napi::CallbackInfo &info)
 {
@@ -2283,6 +2289,7 @@ Napi::Value operations_research::GMPConstraint::dual_value(const Napi::CallbackI
     Napi::TypeError::New(env, "operations_research::GMPConstraint::dual_value : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
+
 // MPSolver::BasisStatus basis_status() const;
 Napi::Value operations_research::GMPConstraint::basis_status(const Napi::CallbackInfo &info)
 {

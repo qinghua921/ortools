@@ -171,7 +171,7 @@
 
     export class MPConstraint
     {
-        name(): string; 
+        name(): string;
         Clear(): void;
         SetCoefficient(var_: MPVariable, coeff: number): void;
         GetCoefficient(var_: MPVariable): number;
@@ -188,5 +188,28 @@
         index(): number;
         dual_value(): number;
         basis_status(): MPSolver.BasisStatus;
+    };
+
+    export class MPObjective
+    {
+        // TODO continue here
+
+        //void Clear();
+        //void SetCoefficient(const MPVariable *var, double coeff);
+        //double GetCoefficient(const MPVariable *var) const;
+        //const absl::flat_hash_map<const MPVariable *, double> &terms() const;
+        //void SetOffset(double value);
+        //double offset() const;
+        //void OptimizeLinearExpr(const LinearExpr &linear_expr, bool is_maximization);
+        //void MaximizeLinearExpr(const LinearExpr &linear_expr);
+        //void MinimizeLinearExpr(const LinearExpr &linear_expr);
+        //void AddLinearExpr(const LinearExpr &linear_expr);
+        //void SetOptimizationDirection(bool maximize);
+        //void SetMinimization();
+        //void SetMaximization();
+        //bool maximization() const;
+        //bool minimization() const;
+        //double Value() const;
+        //double BestBound() const;
     };
 };

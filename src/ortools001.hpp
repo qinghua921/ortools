@@ -189,7 +189,6 @@ class GMPObjective : public Napi::ObjectWrap<GMPObjective>
     static inline Napi::FunctionReference constructor;
     MPObjective *pMPObjective = nullptr;
     GMPObjective(const Napi::CallbackInfo &info);
-    ~GMPObjective();
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
 };
 
