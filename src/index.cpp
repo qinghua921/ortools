@@ -41,6 +41,16 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     //     operations_research.Set( "sat", sat );
     // }
     operations_research::GMPSolver::Init(env, operations_research);
+    operations_research::GMPVariable::Init(env, operations_research);
+    operations_research::GMPCallback::Init(env, operations_research);
+    operations_research::GMPModelRequest::Init(env, operations_research);
+    operations_research::GMPSolutionResponse::Init(env, operations_research);
+    operations_research::GLinearRange::Init(env, operations_research);
+    operations_research::GMPConstraint::Init(env, operations_research);
+    operations_research::GMPObjective::Init(env, operations_research);
+    operations_research::GMPSolverParameters::Init(env, operations_research);
+    operations_research::GMPCallbackContext::Init(env, operations_research);
+    operations_research::GLinearExpr::Init(env, operations_research);
     exports.Set("operations_research", operations_research);
 
     return exports;

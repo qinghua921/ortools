@@ -2305,3 +2305,803 @@ Napi::Value operations_research::GMPConstraint::basis_status(const Napi::Callbac
     Napi::TypeError::New(env, "operations_research::GMPConstraint::basis_status : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
+
+operations_research::GMPObjective::GMPObjective(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GMPObjective>(info)
+{
+    Napi::Env env = info.Env();
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external = info[0].As<Napi::External<MPObjective>>();
+        pMPObjective  = dynamic_cast<MPObjective *>(external.Data());
+        if (pMPObjective) return;
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::GMPObjective : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+Napi::Object operations_research::GMPObjective::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "MPObjective",
+        {
+            InstanceMethod("Clear", &GMPObjective::Clear),
+            InstanceMethod("SetCoefficient", &GMPObjective::SetCoefficient),
+            InstanceMethod("GetCoefficient", &GMPObjective::GetCoefficient),
+            InstanceMethod("terms", &GMPObjective::terms),
+            InstanceMethod("SetOffset", &GMPObjective::SetOffset),
+            InstanceMethod("offset", &GMPObjective::offset),
+            InstanceMethod("OptimizeLinearExpr", &GMPObjective::OptimizeLinearExpr),
+            InstanceMethod("MaximizeLinearExpr", &GMPObjective::MaximizeLinearExpr),
+            InstanceMethod("MinimizeLinearExpr", &GMPObjective::MinimizeLinearExpr),
+            InstanceMethod("AddLinearExpr", &GMPObjective::AddLinearExpr),
+            InstanceMethod("SetOptimizationDirection", &GMPObjective::SetOptimizationDirection),
+            InstanceMethod("SetMinimization", &GMPObjective::SetMinimization),
+            InstanceMethod("SetMaximization", &GMPObjective::SetMaximization),
+            InstanceMethod("maximization", &GMPObjective::maximization),
+            InstanceMethod("minimization", &GMPObjective::minimization),
+            InstanceMethod("Value", &GMPObjective::Value),
+            InstanceMethod("BestBound", &GMPObjective::BestBound),
+        }
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set(Napi::String::New(env, "MPObjective"), func);
+    return exports;
+}
+
+// void Clear();
+Napi::Value operations_research::GMPObjective::Clear(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        this->pMPObjective->Clear();
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::Clear : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// void SetCoefficient(const MPVariable *var, double coeff);
+Napi::Value operations_research::GMPObjective::SetCoefficient(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 2 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GMPVariable::constructor.Value()) && info[1].IsNumber())
+    {
+        GMPVariable *var = Napi::ObjectWrap<GMPVariable>::Unwrap(info[0].As<Napi::Object>());
+        double coeff     = info[1].As<Napi::Number>().DoubleValue();
+        this->pMPObjective->SetCoefficient(var->pMPVariable, coeff);
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::SetCoefficient : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// double GetCoefficient(const MPVariable *var) const;
+Napi::Value operations_research::GMPObjective::GetCoefficient(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GMPVariable::constructor.Value()))
+    {
+        GMPVariable *var = Napi::ObjectWrap<GMPVariable>::Unwrap(info[0].As<Napi::Object>());
+        double coeff     = this->pMPObjective->GetCoefficient(var->pMPVariable);
+        return Napi::Number::New(env, coeff);
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::GetCoefficient : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// const absl::flat_hash_map<const MPVariable *, double> &terms() const;
+Napi::Value operations_research::GMPObjective::terms(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        auto &terms = this->pMPObjective->terms();
+        auto ret    = Napi::Object::New(env);
+        for (const auto &term : terms)
+        {
+            ret.Set(Napi::String::New(env, term.first->name()), Napi::Number::New(env, term.second));
+        }
+        return ret;
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::terms : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// void SetOffset(double value);
+Napi::Value operations_research::GMPObjective::SetOffset(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsNumber())
+    {
+        double value = info[0].As<Napi::Number>().DoubleValue();
+        this->pMPObjective->SetOffset(value);
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::SetOffset : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// double offset() const;
+Napi::Value operations_research::GMPObjective::offset(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        double offset = this->pMPObjective->offset();
+        return Napi::Number::New(env, offset);
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::offset : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// void OptimizeLinearExpr(const LinearExpr &linear_expr, bool is_maximization);
+Napi::Value operations_research::GMPObjective::OptimizeLinearExpr(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 2 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GLinearExpr::constructor.Value()) && info[1].IsBoolean())
+    {
+        GLinearExpr *linear_expr = Napi::ObjectWrap<GLinearExpr>::Unwrap(info[0].As<Napi::Object>());
+        bool is_maximization     = info[1].As<Napi::Boolean>().Value();
+        this->pMPObjective->OptimizeLinearExpr(*linear_expr->pLinearExpr, is_maximization);
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::OptimizeLinearExpr : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// void MaximizeLinearExpr(const LinearExpr &linear_expr);
+Napi::Value operations_research::GMPObjective::MaximizeLinearExpr(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GLinearExpr::constructor.Value()))
+    {
+        GLinearExpr *linear_expr = Napi::ObjectWrap<GLinearExpr>::Unwrap(info[0].As<Napi::Object>());
+        this->pMPObjective->MaximizeLinearExpr(*linear_expr->pLinearExpr);
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::MaximizeLinearExpr : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// void MinimizeLinearExpr(const LinearExpr &linear_expr);
+Napi::Value operations_research::GMPObjective::MinimizeLinearExpr(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GLinearExpr::constructor.Value()))
+    {
+        GLinearExpr *linear_expr = Napi::ObjectWrap<GLinearExpr>::Unwrap(info[0].As<Napi::Object>());
+        this->pMPObjective->MinimizeLinearExpr(*linear_expr->pLinearExpr);
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::MinimizeLinearExpr : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// void AddLinearExpr(const LinearExpr &linear_expr);
+Napi::Value operations_research::GMPObjective::AddLinearExpr(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GLinearExpr::constructor.Value()))
+    {
+        GLinearExpr *linear_expr = Napi::ObjectWrap<GLinearExpr>::Unwrap(info[0].As<Napi::Object>());
+        this->pMPObjective->AddLinearExpr(*linear_expr->pLinearExpr);
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::AddLinearExpr : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// void SetOptimizationDirection(bool maximize);
+Napi::Value operations_research::GMPObjective::SetOptimizationDirection(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsBoolean())
+    {
+        bool maximize = info[0].As<Napi::Boolean>().Value();
+        this->pMPObjective->SetOptimizationDirection(maximize);
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::SetOptimizationDirection : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// void SetMinimization();
+Napi::Value operations_research::GMPObjective::SetMinimization(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        this->pMPObjective->SetMinimization();
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::SetMinimization : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// void SetMaximization();
+Napi::Value operations_research::GMPObjective::SetMaximization(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        this->pMPObjective->SetMaximization();
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::SetMaximization : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// bool maximization() const;
+Napi::Value operations_research::GMPObjective::maximization(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        bool maximization = this->pMPObjective->maximization();
+        return Napi::Boolean::New(env, maximization);
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::maximization : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// bool minimization() const;
+Napi::Value operations_research::GMPObjective::minimization(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        bool minimization = this->pMPObjective->minimization();
+        return Napi::Boolean::New(env, minimization);
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::minimization : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// double Value() const;
+Napi::Value operations_research::GMPObjective::Value(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        double value = this->pMPObjective->Value();
+        return Napi::Number::New(env, value);
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::Value : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// double BestBound() const;
+Napi::Value operations_research::GMPObjective::BestBound(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        double best_bound = this->pMPObjective->BestBound();
+        return Napi::Number::New(env, best_bound);
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPObjective::BestBound : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
+operations_research::GMPSolverParameters::GMPSolverParameters(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GMPSolverParameters>(info)
+{
+    Napi::Env env = info.Env();
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external       = info[0].As<Napi::External<MPSolverParameters>>();
+        pMPSolverParameters = dynamic_cast<MPSolverParameters *>(external.Data());
+        if (pMPSolverParameters) return;
+    }
+
+    // MPSolverParameters();
+    if (info.Length() == 0)
+    {
+        pMPSolverParameters = new MPSolverParameters();
+        return;
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPSolverParameters::GMPSolverParameters : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+operations_research::GMPSolverParameters::~GMPSolverParameters()
+{
+    if (pMPSolverParameters) delete pMPSolverParameters;
+}
+
+Napi::Object operations_research::GMPSolverParameters::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+
+    auto enumDoubleParam = Napi::Object::New(env);
+    enumDoubleParam.Set(Napi::String::New(env, "RELATIVE_MIP_GAP"), Napi::Number::New(env, MPSolverParameters::DoubleParam::RELATIVE_MIP_GAP));
+    enumDoubleParam.Set(Napi::String::New(env, "PRIMAL_TOLERANCE"), Napi::Number::New(env, MPSolverParameters::DoubleParam::PRIMAL_TOLERANCE));
+    enumDoubleParam.Set(Napi::String::New(env, "DUAL_TOLERANCE"), Napi::Number::New(env, MPSolverParameters::DoubleParam::DUAL_TOLERANCE));
+
+    auto enumIntegerParam = Napi::Object::New(env);
+    enumIntegerParam.Set(Napi::String::New(env, "PRESOLVE"), Napi::Number::New(env, MPSolverParameters::IntegerParam::PRESOLVE));
+    enumIntegerParam.Set(Napi::String::New(env, "LP_ALGORITHM"), Napi::Number::New(env, MPSolverParameters::IntegerParam::LP_ALGORITHM));
+    enumIntegerParam.Set(Napi::String::New(env, "INCREMENTALITY"), Napi::Number::New(env, MPSolverParameters::IntegerParam::INCREMENTALITY));
+    enumIntegerParam.Set(Napi::String::New(env, "SCALING"), Napi::Number::New(env, MPSolverParameters::IntegerParam::SCALING));
+
+    auto enumPresolveValues = Napi::Object::New(env);
+    enumPresolveValues.Set(Napi::String::New(env, "PRESOLVE_OFF"), Napi::Number::New(env, MPSolverParameters::PresolveValues::PRESOLVE_OFF));
+    enumPresolveValues.Set(Napi::String::New(env, "PRESOLVE_ON"), Napi::Number::New(env, MPSolverParameters::PresolveValues::PRESOLVE_ON));
+
+    auto enumLpAlgorithmValues = Napi::Object::New(env);
+    enumLpAlgorithmValues.Set(Napi::String::New(env, "DUAL"), Napi::Number::New(env, MPSolverParameters::LpAlgorithmValues::DUAL));
+    enumLpAlgorithmValues.Set(Napi::String::New(env, "PRIMAL"), Napi::Number::New(env, MPSolverParameters::LpAlgorithmValues::PRIMAL));
+    enumLpAlgorithmValues.Set(Napi::String::New(env, "BARRIER"), Napi::Number::New(env, MPSolverParameters::LpAlgorithmValues::BARRIER));
+
+    auto enumIncrementalityValues = Napi::Object::New(env);
+    enumIncrementalityValues.Set(Napi::String::New(env, "INCREMENTALITY_OFF"), Napi::Number::New(env, MPSolverParameters::IncrementalityValues::INCREMENTALITY_OFF));
+    enumIncrementalityValues.Set(Napi::String::New(env, "INCREMENTALITY_ON"), Napi::Number::New(env, MPSolverParameters::IncrementalityValues::INCREMENTALITY_ON));
+
+    auto enumScalingValues = Napi::Object::New(env);
+    enumScalingValues.Set(Napi::String::New(env, "SCALING_OFF"), Napi::Number::New(env, MPSolverParameters::ScalingValues::SCALING_OFF));
+    enumScalingValues.Set(Napi::String::New(env, "SCALING_ON"), Napi::Number::New(env, MPSolverParameters::ScalingValues::SCALING_ON));
+
+    Napi::Function func = DefineClass(
+        env,
+        "MPSolverParameters",
+        {
+            StaticValue("enumDoubleParam", enumDoubleParam),
+            StaticValue("enumIntegerParam", enumIntegerParam),
+            StaticValue("enumPresolveValues", enumPresolveValues),
+            StaticValue("enumLpAlgorithmValues", enumLpAlgorithmValues),
+            StaticValue("enumIncrementalityValues", enumIncrementalityValues),
+            StaticValue("enumScalingValues", enumScalingValues),
+
+            StaticValue("kDefaultDoubleParamValue", Napi::Number::New(env, MPSolverParameters::kDefaultDoubleParamValue)),
+            StaticValue("kDefaultIntegerParamValue", Napi::Number::New(env, MPSolverParameters::kDefaultIntegerParamValue)),
+            StaticValue("kUnknownDoubleParamValue", Napi::Number::New(env, MPSolverParameters::kUnknownDoubleParamValue)),
+            StaticValue("kUnknownIntegerParamValue", Napi::Number::New(env, MPSolverParameters::kUnknownIntegerParamValue)),
+            StaticValue("kDefaultRelativeMipGap", Napi::Number::New(env, MPSolverParameters::kDefaultRelativeMipGap)),
+            StaticValue("kDefaultPrimalTolerance", Napi::Number::New(env, MPSolverParameters::kDefaultPrimalTolerance)),
+            StaticValue("kDefaultDualTolerance", Napi::Number::New(env, MPSolverParameters::kDefaultDualTolerance)),
+            StaticValue("kDefaultPresolve", Napi::Number::New(env, MPSolverParameters::kDefaultPresolve)),
+            StaticValue("kDefaultIncrementality", Napi::Number::New(env, MPSolverParameters::kDefaultIncrementality)),
+
+            InstanceMethod("SetDoubleParam", &GMPSolverParameters::SetDoubleParam),
+            InstanceMethod("SetIntegerParam", &GMPSolverParameters::SetIntegerParam),
+            InstanceMethod("ResetDoubleParam", &GMPSolverParameters::ResetDoubleParam),
+            InstanceMethod("ResetIntegerParam", &GMPSolverParameters::ResetIntegerParam),
+            InstanceMethod("Reset", &GMPSolverParameters::Reset),
+            InstanceMethod("GetDoubleParam", &GMPSolverParameters::GetDoubleParam),
+            InstanceMethod("GetIntegerParam", &GMPSolverParameters::GetIntegerParam),
+        }
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set(Napi::String::New(env, "MPSolverParameters"), func);
+    return exports;
+}
+
+// void SetDoubleParam(MPSolverParameters::DoubleParam param, double value);
+Napi::Value operations_research::GMPSolverParameters::SetDoubleParam(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 2 && info[0].IsNumber() && info[1].IsNumber())
+    {
+        MPSolverParameters::DoubleParam param = static_cast<MPSolverParameters::DoubleParam>(info[0].As<Napi::Number>().Int32Value());
+        double value                          = info[1].As<Napi::Number>().DoubleValue();
+        this->pMPSolverParameters->SetDoubleParam(param, value);
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPSolverParameters::SetDoubleParam : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// void SetIntegerParam(MPSolverParameters::IntegerParam param, int value);
+Napi::Value operations_research::GMPSolverParameters::SetIntegerParam(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 2 && info[0].IsNumber() && info[1].IsNumber())
+    {
+        MPSolverParameters::IntegerParam param = static_cast<MPSolverParameters::IntegerParam>(info[0].As<Napi::Number>().Int32Value());
+        int value                              = info[1].As<Napi::Number>().Int32Value();
+        this->pMPSolverParameters->SetIntegerParam(param, value);
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPSolverParameters::SetIntegerParam : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// void ResetDoubleParam(MPSolverParameters::DoubleParam param);
+Napi::Value operations_research::GMPSolverParameters::ResetDoubleParam(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsNumber())
+    {
+        MPSolverParameters::DoubleParam param = static_cast<MPSolverParameters::DoubleParam>(info[0].As<Napi::Number>().Int32Value());
+        this->pMPSolverParameters->ResetDoubleParam(param);
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPSolverParameters::ResetDoubleParam : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// void ResetIntegerParam(MPSolverParameters::IntegerParam param);
+Napi::Value operations_research::GMPSolverParameters::ResetIntegerParam(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsNumber())
+    {
+        MPSolverParameters::IntegerParam param = static_cast<MPSolverParameters::IntegerParam>(info[0].As<Napi::Number>().Int32Value());
+        this->pMPSolverParameters->ResetIntegerParam(param);
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPSolverParameters::ResetIntegerParam : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// void Reset();
+Napi::Value operations_research::GMPSolverParameters::Reset(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        this->pMPSolverParameters->Reset();
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPSolverParameters::Reset : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// double GetDoubleParam(MPSolverParameters::DoubleParam param) const;
+Napi::Value operations_research::GMPSolverParameters::GetDoubleParam(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsNumber())
+    {
+        MPSolverParameters::DoubleParam param = static_cast<MPSolverParameters::DoubleParam>(info[0].As<Napi::Number>().Int32Value());
+        double value                          = this->pMPSolverParameters->GetDoubleParam(param);
+        return Napi::Number::New(env, value);
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPSolverParameters::GetDoubleParam : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// int GetIntegerParam(MPSolverParameters::IntegerParam param) const;
+Napi::Value operations_research::GMPSolverParameters::GetIntegerParam(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsNumber())
+    {
+        MPSolverParameters::IntegerParam param = static_cast<MPSolverParameters::IntegerParam>(info[0].As<Napi::Number>().Int32Value());
+        int value                              = this->pMPSolverParameters->GetIntegerParam(param);
+        return Napi::Number::New(env, value);
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPSolverParameters::GetIntegerParam : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
+operations_research::GMPCallbackContext::GMPCallbackContext(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GMPCallbackContext>(info)
+{
+    Napi::Env env = info.Env();
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external      = info[0].As<Napi::External<MPCallbackContext>>();
+        pMPCallbackContext = dynamic_cast<MPCallbackContext *>(external.Data());
+        if (pMPCallbackContext) return;
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPCallbackContext::GMPCallbackContext : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+operations_research::GMPCallbackContext::~GMPCallbackContext()
+{
+    if (pMPCallbackContext) delete pMPCallbackContext;
+}
+
+Napi::Object operations_research::GMPCallbackContext::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "MPCallbackContext",
+        {}
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set(Napi::String::New(env, "MPCallbackContext"), func);
+    return exports;
+}
+
+operations_research::GLinearExpr::GLinearExpr(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GLinearExpr>(info)
+{
+    Napi::Env env = info.Env();
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external = info[0].As<Napi::External<LinearExpr>>();
+        pLinearExpr   = dynamic_cast<LinearExpr *>(external.Data());
+        if (pLinearExpr) return;
+    }
+
+    // LinearExpr();
+    if (info.Length() == 0)
+    {
+        pLinearExpr = new LinearExpr();
+        return;
+    }
+
+    // LinearExpr(double constant);
+    if (info.Length() == 1 && info[0].IsNumber())
+    {
+        double constant = info[0].As<Napi::Number>().DoubleValue();
+        pLinearExpr     = new LinearExpr(constant);
+        return;
+    }
+
+    // LinearExpr(const MPVariable *var);
+    if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GMPVariable::constructor.Value()))
+    {
+        auto var    = GMPVariable::Unwrap(info[0].As<Napi::Object>());
+        pLinearExpr = new LinearExpr(var->pMPVariable);
+        return;
+    }
+
+    Napi::TypeError::New(env, "operations_research::GLinearExpr::GLinearExpr : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+operations_research::GLinearExpr::~GLinearExpr()
+{
+    if (pLinearExpr) delete pLinearExpr;
+}
+
+Napi::Object operations_research::GLinearExpr::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "LinearExpr",
+        {
+            StaticMethod("NotVar", &GLinearExpr::NotVar),
+            InstanceMethod("operator_plus_equals", &GLinearExpr::operator_plus_equals),
+            InstanceMethod("operator_minus_equals", &GLinearExpr::operator_minus_equals),
+            InstanceMethod("operator_times_equals", &GLinearExpr::operator_times_equals),
+            InstanceMethod("operator_divide_equals", &GLinearExpr::operator_divide_equals),
+            InstanceMethod("operator_negate", &GLinearExpr::operator_negate),
+            InstanceMethod("offset", &GLinearExpr::offset),
+            InstanceMethod("terms", &GLinearExpr::terms),
+            InstanceMethod("SolutionValue", &GLinearExpr::SolutionValue),
+            InstanceMethod("ToString", &GLinearExpr::ToString),
+        }
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set(Napi::String::New(env, "LinearExpr"), func);
+    return exports;
+}
+
+bool operations_research::GLinearExpr::ToLinearExpr(const Napi::Value &value, LinearExpr &expr)
+{
+    if (value.IsObject() && value.As<Napi::Object>().InstanceOf(GLinearExpr::constructor.Value()))
+        expr = *GLinearExpr::Unwrap(value.As<Napi::Object>())->pLinearExpr;
+    else if (value.IsNumber())
+        expr = value.As<Napi::Number>().DoubleValue();
+    else if (value.IsObject() && value.As<Napi::Object>().InstanceOf(GMPVariable::constructor.Value()))
+        expr = GMPVariable::Unwrap(value.As<Napi::Object>())->pMPVariable;
+    else
+        return false;
+
+    return true;
+}
+
+// static LinearExpr NotVar(LinearExpr var);
+Napi::Value operations_research::GLinearExpr::NotVar(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GLinearExpr::constructor.Value()))
+    {
+        LinearExpr *pLinearExpr = GLinearExpr::Unwrap(info[0].As<Napi::Object>())->pLinearExpr;
+        LinearExpr result       = LinearExpr::NotVar(*pLinearExpr);
+        return GLinearExpr::constructor.New({Napi::External<LinearExpr>::New(env, new LinearExpr(result))});
+    }
+
+    Napi::TypeError::New(env, "operations_research::GLinearExpr::NotVar : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// LinearExpr &operator+=(const LinearExpr &rhs);
+Napi::Value operations_research::GLinearExpr::operator_plus_equals(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    LinearExpr rhs;
+    if (info.Length() == 1 && ToLinearExpr(info[0], rhs))
+    {
+        *pLinearExpr += rhs;
+        return this->Value();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GLinearExpr::operator+= : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// LinearExpr &operator-=(const LinearExpr &rhs);
+Napi::Value operations_research::GLinearExpr::operator_minus_equals(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    LinearExpr rhs;
+    if (info.Length() == 1 && ToLinearExpr(info[0], rhs))
+    {
+        *pLinearExpr -= rhs;
+        return this->Value();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GLinearExpr::operator-= : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// LinearExpr &operator*=(double rhs);
+Napi::Value operations_research::GLinearExpr::operator_times_equals(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsNumber())
+    {
+        double rhs = info[0].As<Napi::Number>().DoubleValue();
+        *pLinearExpr *= rhs;
+        return this->Value();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GLinearExpr::operator*= : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// LinearExpr &operator/=(double rhs);
+Napi::Value operations_research::GLinearExpr::operator_divide_equals(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsNumber())
+    {
+        double rhs = info[0].As<Napi::Number>().DoubleValue();
+        *pLinearExpr /= rhs;
+        return this->Value();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GLinearExpr::operator/= : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// LinearExpr operator-() const;
+Napi::Value operations_research::GLinearExpr::operator_negate(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        LinearExpr result = -(*pLinearExpr);
+        return GLinearExpr::constructor.New({Napi::External<LinearExpr>::New(env, new LinearExpr(result))});
+    }
+
+    Napi::TypeError::New(env, "operations_research::GLinearExpr::operator- : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// double offset() const;
+Napi::Value operations_research::GLinearExpr::offset(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        return Napi::Number::New(env, pLinearExpr->offset());
+    }
+
+    Napi::TypeError::New(env, "operations_research::GLinearExpr::offset : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// const absl::flat_hash_map<const MPVariable *, double> &terms() const;
+Napi::Value operations_research::GLinearExpr::terms(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        Napi::Object result = Napi::Object::New(env);
+        for (const auto &term : pLinearExpr->terms())
+        {
+            result.Set(Napi::String::New(env, term.first->name()), Napi::Number::New(env, term.second));
+        }
+        return result;
+    }
+
+    Napi::TypeError::New(env, "operations_research::GLinearExpr::terms : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// double SolutionValue() const;
+Napi::Value operations_research::GLinearExpr::SolutionValue(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        return Napi::Number::New(env, pLinearExpr->SolutionValue());
+    }
+
+    Napi::TypeError::New(env, "operations_research::GLinearExpr::SolutionValue : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// std::string ToString() const;
+Napi::Value operations_research::GLinearExpr::ToString(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        return Napi::String::New(env, pLinearExpr->ToString());
+    }
+
+    Napi::TypeError::New(env, "operations_research::GLinearExpr::ToString : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}

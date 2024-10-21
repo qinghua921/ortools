@@ -192,24 +192,95 @@
 
     export class MPObjective
     {
-        // TODO continue here
+        Clear(): void;
+        SetCoefficient(var_: MPVariable, coeff: number): void;
+        GetCoefficient(var_: MPVariable): number;
+        terms(): { [key: string]: number };
+        SetOffset(value: number): void;
+        offset(): number;
+        OptimizeLinearExpr(linear_expr: LinearExpr, is_maximization: boolean): void;
+        MaximizeLinearExpr(linear_expr: LinearExpr): void;
+        MinimizeLinearExpr(linear_expr: LinearExpr): void;
+        AddLinearExpr(linear_expr: LinearExpr): void;
+        SetOptimizationDirection(maximize: boolean): void;
+        SetMinimization(): void;
+        SetMaximization(): void;
+        maximization(): boolean;
+        minimization(): boolean;
+        Value(): number;
+        BestBound(): number;
+    };
 
-        //void Clear();
-        //void SetCoefficient(const MPVariable *var, double coeff);
-        //double GetCoefficient(const MPVariable *var) const;
-        //const absl::flat_hash_map<const MPVariable *, double> &terms() const;
-        //void SetOffset(double value);
-        //double offset() const;
-        //void OptimizeLinearExpr(const LinearExpr &linear_expr, bool is_maximization);
-        //void MaximizeLinearExpr(const LinearExpr &linear_expr);
-        //void MinimizeLinearExpr(const LinearExpr &linear_expr);
-        //void AddLinearExpr(const LinearExpr &linear_expr);
-        //void SetOptimizationDirection(bool maximize);
-        //void SetMinimization();
-        //void SetMaximization();
-        //bool maximization() const;
-        //bool minimization() const;
-        //double Value() const;
-        //double BestBound() const;
+    export namespace MPSolverParameters
+    {
+        export enum DoubleParam
+        {
+            RELATIVE_MIP_GAP = 0,
+            PRIMAL_TOLERANCE = 1,
+            DUAL_TOLERANCE = 2
+        };
+        export enum IntegerParam
+        {
+            PRESOLVE = 1000,
+            LP_ALGORITHM = 1001,
+            INCREMENTALITY = 1002,
+            SCALING = 1003
+        };
+        export enum PresolveValues
+        {
+            PRESOLVE_OFF = 0,
+            PRESOLVE_ON = 1
+        };
+        export enum LpAlgorithmValues
+        {
+            DUAL = 10,
+            PRIMAL = 11,
+            BARRIER = 12
+        };
+        export enum IncrementalityValues
+        {
+            INCREMENTALITY_OFF = 0,
+            INCREMENTALITY_ON = 1
+        };
+        export enum ScalingValues
+        {
+            SCALING_OFF = 0,
+            SCALING_ON = 1
+        };
+    }
+
+    export class MPSolverParameters
+    {
+        static readonly kDefaultDoubleParamValue: number;
+        static readonly kDefaultIntegerParamValue: number;
+        static readonly kUnknownDoubleParamValue: number;
+        static readonly kUnknownIntegerParamValue: number;
+        static readonly kDefaultRelativeMipGap: number;
+        static readonly kDefaultPrimalTolerance: number;
+        static readonly kDefaultDualTolerance: number;
+        static readonly kDefaultPresolve: MPSolverParameters.PresolveValues;
+        static readonly kDefaultIncrementality: MPSolverParameters.IncrementalityValues;
+
+        SetDoubleParam(param: MPSolverParameters.DoubleParam, value: number): void;
+        SetIntegerParam(param: MPSolverParameters.IntegerParam, value: number): void;
+        ResetDoubleParam(param: MPSolverParameters.DoubleParam): void;
+        ResetIntegerParam(param: MPSolverParameters.IntegerParam): void;
+        Reset(): void;
+        GetDoubleParam(param: MPSolverParameters.DoubleParam): number;
+        GetIntegerParam(param: MPSolverParameters.IntegerParam): number;
+    };
+
+    export class LinearExpr
+    {
+        static NotVar(var_: LinearExpr): LinearExpr;
+        operator_plus_equals(rhs: LinearExpr): LinearExpr;
+        operator_minus_equals(rhs: LinearExpr): LinearExpr;
+        operator_times_equals(rhs: number): LinearExpr;
+        operator_divide_equals(rhs: number): LinearExpr;
+        operator_negate(): LinearExpr;
+        offset(): number;
+        terms(): { [key: string]: number };
+        SolutionValue(): number;
+        ToString(): string;
     };
 };

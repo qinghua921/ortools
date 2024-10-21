@@ -190,6 +190,24 @@ class GMPObjective : public Napi::ObjectWrap<GMPObjective>
     MPObjective *pMPObjective = nullptr;
     GMPObjective(const Napi::CallbackInfo &info);
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
+
+    Napi::Value Clear(const Napi::CallbackInfo &info);
+    Napi::Value SetCoefficient(const Napi::CallbackInfo &info);
+    Napi::Value GetCoefficient(const Napi::CallbackInfo &info);
+    Napi::Value terms(const Napi::CallbackInfo &info);
+    Napi::Value SetOffset(const Napi::CallbackInfo &info);
+    Napi::Value offset(const Napi::CallbackInfo &info);
+    Napi::Value OptimizeLinearExpr(const Napi::CallbackInfo &info);
+    Napi::Value MaximizeLinearExpr(const Napi::CallbackInfo &info);
+    Napi::Value MinimizeLinearExpr(const Napi::CallbackInfo &info);
+    Napi::Value AddLinearExpr(const Napi::CallbackInfo &info);
+    Napi::Value SetOptimizationDirection(const Napi::CallbackInfo &info);
+    Napi::Value SetMinimization(const Napi::CallbackInfo &info);
+    Napi::Value SetMaximization(const Napi::CallbackInfo &info);
+    Napi::Value maximization(const Napi::CallbackInfo &info);
+    Napi::Value minimization(const Napi::CallbackInfo &info);
+    Napi::Value Value(const Napi::CallbackInfo &info);
+    Napi::Value BestBound(const Napi::CallbackInfo &info);
 };
 
 class GMPSolverParameters : public Napi::ObjectWrap<GMPSolverParameters>
@@ -200,6 +218,14 @@ class GMPSolverParameters : public Napi::ObjectWrap<GMPSolverParameters>
     GMPSolverParameters(const Napi::CallbackInfo &info);
     ~GMPSolverParameters();
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
+
+    Napi::Value SetDoubleParam(const Napi::CallbackInfo &info);
+    Napi::Value SetIntegerParam(const Napi::CallbackInfo &info);
+    Napi::Value ResetDoubleParam(const Napi::CallbackInfo &info);
+    Napi::Value ResetIntegerParam(const Napi::CallbackInfo &info);
+    Napi::Value Reset(const Napi::CallbackInfo &info);
+    Napi::Value GetDoubleParam(const Napi::CallbackInfo &info);
+    Napi::Value GetIntegerParam(const Napi::CallbackInfo &info);
 };
 
 class GMPCallbackContext : public Napi::ObjectWrap<GMPCallbackContext>
@@ -220,6 +246,18 @@ class GLinearExpr : public Napi::ObjectWrap<GLinearExpr>
     GLinearExpr(const Napi::CallbackInfo &info);
     ~GLinearExpr();
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
+    static bool ToLinearExpr(const Napi::Value &value, LinearExpr &expr);
+
+    static Napi::Value NotVar(const Napi::CallbackInfo &info);
+    Napi::Value operator_plus_equals(const Napi::CallbackInfo &info);
+    Napi::Value operator_minus_equals(const Napi::CallbackInfo &info);
+    Napi::Value operator_times_equals(const Napi::CallbackInfo &info);
+    Napi::Value operator_divide_equals(const Napi::CallbackInfo &info);
+    Napi::Value operator_negate(const Napi::CallbackInfo &info);
+    Napi::Value offset(const Napi::CallbackInfo &info);
+    Napi::Value terms(const Napi::CallbackInfo &info);
+    Napi::Value SolutionValue(const Napi::CallbackInfo &info);
+    Napi::Value ToString(const Napi::CallbackInfo &info);
 };
 
 } // namespace operations_research
