@@ -623,7 +623,7 @@ Napi::Value operations_research::GMPSolver::MakeRowConstraint(const Napi::Callba
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-    // MPConstraint *MakeRowConstraint(double lb, double ub);
+// MPConstraint *MakeRowConstraint(double lb, double ub);
     if (info.Length() == 2 && info[0].IsNumber() && info[1].IsNumber())
     {
         double lb                = info[0].As<Napi::Number>().DoubleValue();
@@ -633,7 +633,7 @@ Napi::Value operations_research::GMPSolver::MakeRowConstraint(const Napi::Callba
         return GMPConstraint::constructor.New({external});
     }
 
-    // MPConstraint *MakeRowConstraint();
+// MPConstraint *MakeRowConstraint();
     if (info.Length() == 0)
     {
         MPConstraint *constraint = this->pMPSolver->MakeRowConstraint();
@@ -641,7 +641,7 @@ Napi::Value operations_research::GMPSolver::MakeRowConstraint(const Napi::Callba
         return GMPConstraint::constructor.New({external});
     }
 
-    // MPConstraint *MakeRowConstraint(double lb, double ub, const std::string &name);
+// MPConstraint *MakeRowConstraint(double lb, double ub, const std::string &name);
     if (info.Length() == 3 && info[0].IsNumber() && info[1].IsNumber() && info[2].IsString())
     {
         double lb                = info[0].As<Napi::Number>().DoubleValue();
@@ -652,7 +652,7 @@ Napi::Value operations_research::GMPSolver::MakeRowConstraint(const Napi::Callba
         return GMPConstraint::constructor.New({external});
     }
 
-    // MPConstraint *MakeRowConstraint(const std::string &name);
+// MPConstraint *MakeRowConstraint(const std::string &name);
     if (info.Length() == 1 && info[0].IsString())
     {
         std::string name         = info[0].As<Napi::String>().Utf8Value();
@@ -661,7 +661,7 @@ Napi::Value operations_research::GMPSolver::MakeRowConstraint(const Napi::Callba
         return GMPConstraint::constructor.New({external});
     }
 
-    // MPConstraint *MakeRowConstraint(const LinearRange &range);
+// MPConstraint *MakeRowConstraint(const LinearRange &range);
     if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GLinearRange::constructor.Value()))
     {
         GLinearRange *range      = Napi::ObjectWrap<GLinearRange>::Unwrap(info[0].As<Napi::Object>());
@@ -670,7 +670,7 @@ Napi::Value operations_research::GMPSolver::MakeRowConstraint(const Napi::Callba
         return GMPConstraint::constructor.New({external});
     }
 
-    // MPConstraint *MakeRowConstraint(const LinearRange &range, const std::string &name);
+// MPConstraint *MakeRowConstraint(const LinearRange &range, const std::string &name);
     if (info.Length() == 2 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GLinearRange::constructor.Value()) && info[1].IsString())
     {
         GLinearRange *range      = Napi::ObjectWrap<GLinearRange>::Unwrap(info[0].As<Napi::Object>());
@@ -706,14 +706,14 @@ Napi::Value operations_research::GMPSolver::Solve(const Napi::CallbackInfo &info
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-    // ResultStatus Solve();
+// ResultStatus Solve();
     if (info.Length() == 0)
     {
         MPSolver::ResultStatus status = this->pMPSolver->Solve();
         return Napi::Number::New(env, static_cast<int>(status));
     }
 
-    // ResultStatus Solve(const MPSolverParameters &param);
+// ResultStatus Solve(const MPSolverParameters &param);
     if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GMPSolverParameters::constructor.Value()))
     {
         GMPSolverParameters *param    = Napi::ObjectWrap<GMPSolverParameters>::Unwrap(info[0].As<Napi::Object>());

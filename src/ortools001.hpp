@@ -89,6 +89,7 @@ class GMPVariable : public Napi::ObjectWrap<GMPVariable>
     static inline Napi::FunctionReference constructor;
     MPVariable *pMPVariable = nullptr;
     GMPVariable(const Napi::CallbackInfo &info);
+    ~GMPVariable();
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
 
     Napi::Value name(const Napi::CallbackInfo &info);
