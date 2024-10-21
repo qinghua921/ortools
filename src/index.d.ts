@@ -171,23 +171,22 @@
 
     export class MPConstraint
     {
-        // TODO continue here
-        //const std::string &name() const;
-        //void Clear();
-        //void SetCoefficient(const MPVariable *var, double coeff);
-        //double GetCoefficient(const MPVariable *var) const;
-        //const absl::flat_hash_map<const MPVariable *, double> &terms() const;
-        //double lb() const;
-        //double ub() const;
-        //void SetLB(double lb);
-        //void SetUB(double ub);
-        //void SetBounds(double lb, double ub);
-        //bool is_lazy() const;
-        //void set_is_lazy(bool laziness);
-        //const MPVariable *indicator_variable() const;
-        //bool indicator_value() const;
-        //int index() const；
-        //double dual_value() const;
-        //MPSolver::BasisStatus basis_status() const;
+        name(): string; 
+        Clear(): void;
+        SetCoefficient(var_: MPVariable, coeff: number): void;
+        GetCoefficient(var_: MPVariable): number;
+        terms(): { [key: string]: number };
+        lb(): number;
+        ub(): number;
+        SetLB(lb: number): void;
+        SetUB(ub: number): void;
+        SetBounds(lb: number, ub: number): void;
+        is_lazy(): boolean;
+        set_is_lazy(laziness: boolean): void;
+        indicator_variable(): MPVariable;
+        indicator_value(): boolean;
+        index(): number;
+        dual_value(): number;
+        basis_status(): MPSolver.BasisStatus;
     };
 };

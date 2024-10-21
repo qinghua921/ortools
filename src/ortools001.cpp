@@ -1897,7 +1897,7 @@ operations_research::GLinearRange::GLinearRange(const Napi::CallbackInfo &info)
         double lower_bound       = info[0].As<Napi::Number>().DoubleValue();
         GLinearExpr *linear_expr = Napi::ObjectWrap<GLinearExpr>::Unwrap(info[1].As<Napi::Object>());
         double upper_bound       = info[2].As<Napi::Number>().DoubleValue();
-        pLinearRange             = new LinearRange(lower_bound, linear_expr->pLinearExpr, upper_bound);
+        pLinearRange             = new LinearRange(lower_bound, *linear_expr->pLinearExpr, upper_bound);
         return;
     }
 
@@ -1998,23 +1998,23 @@ Napi::Object operations_research::GMPConstraint::Init(Napi::Env env, Napi::Objec
         env,
         "MPConstraint",
         {
-            // const std::string &name() const;
-            // void Clear();
-            // void SetCoefficient(const MPVariable *var, double coeff);
-            // double GetCoefficient(const MPVariable *var) const;
-            // const absl::flat_hash_map<const MPVariable *, double> &terms() const;
-            // double lb() const;
-            // double ub() const;
-            // void SetLB(double lb);
-            // void SetUB(double ub);
-            // void SetBounds(double lb, double ub);
-            // bool is_lazy() const;
-            // void set_is_lazy(bool laziness);
-            // const MPVariable *indicator_variable() const;
-            // bool indicator_value() const;
-            // int index() const£»
-            // double dual_value() const;
-            // MPSolver::BasisStatus basis_status() const;
+            InstanceMethod("name", &GMPConstraint::name),
+            InstanceMethod("Clear", &GMPConstraint::Clear),
+            InstanceMethod("SetCoefficient", &GMPConstraint::SetCoefficient),
+            InstanceMethod("GetCoefficient", &GMPConstraint::GetCoefficient),
+            InstanceMethod("terms", &GMPConstraint::terms),
+            InstanceMethod("lb", &GMPConstraint::lb),
+            InstanceMethod("ub", &GMPConstraint::ub),
+            InstanceMethod("SetLB", &GMPConstraint::SetLB),
+            InstanceMethod("SetUB", &GMPConstraint::SetUB),
+            InstanceMethod("SetBounds", &GMPConstraint::SetBounds),
+            InstanceMethod("is_lazy", &GMPConstraint::is_lazy),
+            InstanceMethod("set_is_lazy", &GMPConstraint::set_is_lazy),
+            InstanceMethod("indicator_variable", &GMPConstraint::indicator_variable),
+            InstanceMethod("indicator_value", &GMPConstraint::indicator_value),
+            InstanceMethod("index", &GMPConstraint::index),
+            InstanceMethod("dual_value", &GMPConstraint::dual_value),
+            InstanceMethod("basis_status", &GMPConstraint::basis_status),
         }
     );
     constructor = Napi::Persistent(func);
@@ -2024,19 +2024,277 @@ Napi::Object operations_research::GMPConstraint::Init(Napi::Env env, Napi::Objec
 }
 
 // const std::string &name() const;
+Napi::Value operations_research::GMPConstraint::name(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        const std::string &name = this->pMPConstraint->name();
+        return Napi::String::New(env, name);
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::name : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
 // void Clear();
+Napi::Value operations_research::GMPConstraint::Clear(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        this->pMPConstraint->Clear();
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::Clear : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
 // void SetCoefficient(const MPVariable *var, double coeff);
+Napi::Value operations_research::GMPConstraint::SetCoefficient(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 2 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GMPVariable::constructor.Value()) && info[1].IsNumber())
+    {
+        GMPVariable *var = Napi::ObjectWrap<GMPVariable>::Unwrap(info[0].As<Napi::Object>());
+        double coeff     = info[1].As<Napi::Number>().DoubleValue();
+        this->pMPConstraint->SetCoefficient(var->pMPVariable, coeff);
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::SetCoefficient : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
 // double GetCoefficient(const MPVariable *var) const;
+Napi::Value operations_research::GMPConstraint::GetCoefficient(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GMPVariable::constructor.Value()))
+    {
+        GMPVariable *var = Napi::ObjectWrap<GMPVariable>::Unwrap(info[0].As<Napi::Object>());
+        double coeff     = this->pMPConstraint->GetCoefficient(var->pMPVariable);
+        return Napi::Number::New(env, coeff);
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::GetCoefficient : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
 // const absl::flat_hash_map<const MPVariable *, double> &terms() const;
+Napi::Value operations_research::GMPConstraint::terms(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        const auto &terms = this->pMPConstraint->terms();
+        Napi::Object obj  = Napi::Object::New(env);
+        for (const auto &term : terms)
+        {
+            obj.Set(Napi::String::New(env, term.first->name()), Napi::Number::New(env, term.second));
+        }
+        return obj;
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::terms : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
 // double lb() const;
+Napi::Value operations_research::GMPConstraint::lb(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        double lb = this->pMPConstraint->lb();
+        return Napi::Number::New(env, lb);
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::lb : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
 // double ub() const;
+Napi::Value operations_research::GMPConstraint::ub(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        double ub = this->pMPConstraint->ub();
+        return Napi::Number::New(env, ub);
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::ub : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
 // void SetLB(double lb);
+Napi::Value operations_research::GMPConstraint::SetLB(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsNumber())
+    {
+        double lb = info[0].As<Napi::Number>().DoubleValue();
+        this->pMPConstraint->SetLB(lb);
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::SetLB : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
 // void SetUB(double ub);
+Napi::Value operations_research::GMPConstraint::SetUB(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsNumber())
+    {
+        double ub = info[0].As<Napi::Number>().DoubleValue();
+        this->pMPConstraint->SetUB(ub);
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::SetUB : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
 // void SetBounds(double lb, double ub);
+Napi::Value operations_research::GMPConstraint::SetBounds(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 2 && info[0].IsNumber() && info[1].IsNumber())
+    {
+        double lb = info[0].As<Napi::Number>().DoubleValue();
+        double ub = info[1].As<Napi::Number>().DoubleValue();
+        this->pMPConstraint->SetBounds(lb, ub);
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::SetBounds : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
 // bool is_lazy() const;
+Napi::Value operations_research::GMPConstraint::is_lazy(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        bool is_lazy = this->pMPConstraint->is_lazy();
+        return Napi::Boolean::New(env, is_lazy);
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::is_lazy : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
 // void set_is_lazy(bool laziness);
+Napi::Value operations_research::GMPConstraint::set_is_lazy(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsBoolean())
+    {
+        bool laziness = info[0].As<Napi::Boolean>().Value();
+        this->pMPConstraint->set_is_lazy(laziness);
+        return env.Undefined();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::set_is_lazy : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
 // const MPVariable *indicator_variable() const;
+Napi::Value operations_research::GMPConstraint::indicator_variable(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        const MPVariable *indicator_variable = this->pMPConstraint->indicator_variable();
+        if (indicator_variable)
+        {
+            auto external = Napi::External<MPVariable>::New(env, const_cast<MPVariable *>(indicator_variable));
+            return GMPVariable::constructor.New({external});
+        }
+        return env.Null();
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::indicator_variable : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
 // bool indicator_value() const;
+Napi::Value operations_research::GMPConstraint::indicator_value(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        bool indicator_value = this->pMPConstraint->indicator_value();
+        return Napi::Boolean::New(env, indicator_value);
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::indicator_value : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
 // int index() const£»
+Napi::Value operations_research::GMPConstraint::index(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        int index = this->pMPConstraint->index();
+        return Napi::Number::New(env, index);
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::index : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
 // double dual_value() const;
+Napi::Value operations_research::GMPConstraint::dual_value(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        double dual_value = this->pMPConstraint->dual_value();
+        return Napi::Number::New(env, dual_value);
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::dual_value : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
 // MPSolver::BasisStatus basis_status() const;
+Napi::Value operations_research::GMPConstraint::basis_status(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        MPSolver::BasisStatus basis_status = this->pMPConstraint->basis_status();
+        return Napi::Number::New(env, basis_status);
+    }
+
+    Napi::TypeError::New(env, "operations_research::GMPConstraint::basis_status : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}

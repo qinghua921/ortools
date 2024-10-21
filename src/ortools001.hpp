@@ -164,23 +164,23 @@ class GMPConstraint : public Napi::ObjectWrap<GMPConstraint>
     GMPConstraint(const Napi::CallbackInfo &info);
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
 
-    // const std::string &name() const;
-    // void Clear();
-    // void SetCoefficient(const MPVariable *var, double coeff);
-    // double GetCoefficient(const MPVariable *var) const;
-    // const absl::flat_hash_map<const MPVariable *, double> &terms() const;
-    // double lb() const;
-    // double ub() const;
-    // void SetLB(double lb);
-    // void SetUB(double ub);
-    // void SetBounds(double lb, double ub);
-    // bool is_lazy() const;
-    // void set_is_lazy(bool laziness);
-    // const MPVariable *indicator_variable() const;
-    // bool indicator_value() const;
-    // int index() const£»
-    // double dual_value() const;
-    // MPSolver::BasisStatus basis_status() const;
+    Napi::Value name(const Napi::CallbackInfo &info);
+    Napi::Value Clear(const Napi::CallbackInfo &info);
+    Napi::Value SetCoefficient(const Napi::CallbackInfo &info);
+    Napi::Value GetCoefficient(const Napi::CallbackInfo &info);
+    Napi::Value terms(const Napi::CallbackInfo &info);
+    Napi::Value lb(const Napi::CallbackInfo &info);
+    Napi::Value ub(const Napi::CallbackInfo &info);
+    Napi::Value SetLB(const Napi::CallbackInfo &info);
+    Napi::Value SetUB(const Napi::CallbackInfo &info);
+    Napi::Value SetBounds(const Napi::CallbackInfo &info);
+    Napi::Value is_lazy(const Napi::CallbackInfo &info);
+    Napi::Value set_is_lazy(const Napi::CallbackInfo &info);
+    Napi::Value indicator_variable(const Napi::CallbackInfo &info);
+    Napi::Value indicator_value(const Napi::CallbackInfo &info);
+    Napi::Value index(const Napi::CallbackInfo &info);
+    Napi::Value dual_value(const Napi::CallbackInfo &info);
+    Napi::Value basis_status(const Napi::CallbackInfo &info);
 };
 
 class GMPObjective : public Napi::ObjectWrap<GMPObjective>
