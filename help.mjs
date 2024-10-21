@@ -23,7 +23,7 @@ function remove_comments(folder)
 
 function main()
 {
-    let folder = './cmake/or-tools_x64_VisualStudio2022_cpp_v9.11.4210/include';
+    let folder = './cmake/include';
     remove_comments(folder);
 }
 
