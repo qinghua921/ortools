@@ -2,41 +2,6 @@ import { operations_research } from '../src'
 
 function CpSatExample()
 {
-
-    //CpModelBuilder cp_model;
-
-    //int64_t var_upper_bound = std::max({50, 45, 37});
-    //const Domain domain(0, var_upper_bound);
-    //const IntVar x = cp_model.NewIntVar(domain).WithName("x");
-    //const IntVar y = cp_model.NewIntVar(domain).WithName("y");
-    //const IntVar z = cp_model.NewIntVar(domain).WithName("z");
-
-    //cp_model.AddLessOrEqual(2 * x + 7 * y + 3 * z, 50);
-    //cp_model.AddLessOrEqual(3 * x - 5 * y + 7 * z, 45);
-    //cp_model.AddLessOrEqual(5 * x + 2 * y - 6 * z, 37);
-
-    //cp_model.Maximize(2 * x + 2 * y + 3 * z);
-
-    //const CpSolverResponse response = Solve(cp_model.Build());
-
-    //if (response.status() == CpSolverStatus::OPTIMAL ||
-    //    response.status() == CpSolverStatus::FEASIBLE)
-    //{
-
-    //    LOG(INFO) << "Maximum of objective function: "
-    //              << response.objective_value();
-    //    LOG(INFO) << "x = " << SolutionIntegerValue(response, x);
-    //    LOG(INFO) << "y = " << SolutionIntegerValue(response, y);
-    //    LOG(INFO) << "z = " << SolutionIntegerValue(response, z);
-    //}
-    //else
-    //{
-    //    LOG(INFO) << "No solution found.";
-    //}
-
-    //LOG(INFO) << "Statistics";
-    //LOG(INFO) << CpSolverResponseStats(response);
-
     const cp_model = new operations_research.sat.CpModelBuilder();
     const var_upper_bound = Math.max(50, 45, 37);
     const domain = new operations_research.Domain(0, var_upper_bound);
@@ -44,13 +9,49 @@ function CpSatExample()
     const y = cp_model.NewIntVar(domain).WithName("y");
     const z = cp_model.NewIntVar(domain).WithName("z");
 
-    cp_model.AddLessOrEqual(2 * x + 7 * y + 3 * z, 50);
-    cp_model.AddLessOrEqual(3 * x - 5 * y + 7 * z, 45);
-    cp_model.AddLessOrEqual(5 * x + 2 * y - 6 * z, 37);
-
-    cp_model.Maximize(2 * x + 2 * y + 3 * z);
+    cp_model.AddLessOrEqual(
+        operations_research.sat.operator_plus(
+            [operations_research.sat.operator_times(2, x),
+            operations_research.sat.operator_times(7, y),
+            operations_research.sat.operator_times(3, z)]
+        ),
+        50);
+    cp_model.AddLessOrEqual(
+        operations_research.sat.operator_plus(
+            [operations_research.sat.operator_times(3, x),
+            operations_research.sat.operator_times(-5, y),
+            operations_research.sat.operator_times(7, z)])
+        , 45);
+    cp_model.AddLessOrEqual(
+        operations_research.sat.operator_plus(
+            [operations_research.sat.operator_times(5, x),
+            operations_research.sat.operator_times(2, y),
+            operations_research.sat.operator_times(-6, z)])
+        , 37);
+    cp_model.Maximize(
+        operations_research.sat.operator_plus(
+            [operations_research.sat.operator_times(2, x),
+            operations_research.sat.operator_times(2, y),
+            operations_research.sat.operator_times(3, z)])
+    );
 
     const response = operations_research.sat.Solve(cp_model.Build());
+
+    if (response.status === operations_research.sat.CpSolverStatus.OPTIMAL ||
+        response.status === operations_research.sat.CpSolverStatus.FEASIBLE)
+    {
+
+        console.log("Maximum of objective function: " + response.objective_value());
+        console.log("x = " + operations_research.sat.SolutionIntegerValue(response, x));
+        console.log("y = " + operations_research.sat.SolutionIntegerValue(response, y));
+        console.log("z = " + operations_research.sat.SolutionIntegerValue(response, z));
+    } else
+    {
+        console.log("No solution found.");
+    }
+
+    console.log("Statistics");
+    console.log(operations_research.sat.CpSolverResponseStats(response));
 }
 
 CpSatExample();

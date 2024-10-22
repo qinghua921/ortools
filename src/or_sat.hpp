@@ -8,6 +8,16 @@ namespace operations_research
 {
 namespace sat
 {
+
+Napi::Value Goperator_nagate(const Napi::CallbackInfo &info);
+Napi::Value Goperator_plus(const Napi::CallbackInfo &info);
+Napi::Value Goperator_minus(const Napi::CallbackInfo &info);
+Napi::Value Goperator_times(const Napi::CallbackInfo &info);
+Napi::Value GSolve(const Napi::CallbackInfo &info);
+Napi::Value GSolutionIntegerValue(const Napi::CallbackInfo &info);
+Napi::Value GCpSolverResponseStats(const Napi::CallbackInfo &info);
+Napi::Object SatInit(Napi::Env env, Napi::Object exports);
+
 class GCpModelBuilder : public Napi::ObjectWrap<GCpModelBuilder>
 {
   public:
@@ -68,7 +78,6 @@ class GCpModelBuilder : public Napi::ObjectWrap<GCpModelBuilder>
     Napi::Value AddDecisionStrategy(const Napi::CallbackInfo &info);
     Napi::Value AddHint(const Napi::CallbackInfo &info);
     Napi::Value ClearHints(const Napi::CallbackInfo &info);
-
     Napi::Value AddAssumption(const Napi::CallbackInfo &info);
     Napi::Value AddAssumptions(const Napi::CallbackInfo &info);
     Napi::Value ClearAssumptions(const Napi::CallbackInfo &info);
@@ -82,6 +91,26 @@ class GCpModelBuilder : public Napi::ObjectWrap<GCpModelBuilder>
     Napi::Value GetIntervalVarFromProtoIndex(const Napi::CallbackInfo &info);
 };
 
+class GCpModelProto : public Napi::ObjectWrap<GCpModelProto>
+{
+  public:
+    static inline Napi::FunctionReference constructor;
+    CpModelProto *pCpModelProto = nullptr;
+    GCpModelProto(const Napi::CallbackInfo &info);
+    ~GCpModelProto();
+    static Napi::Object Init(Napi::Env env, Napi::Object exports);
+};
+
+class GCpSolverResponse : public Napi::ObjectWrap<GCpSolverResponse>
+{
+  public:
+    static inline Napi::FunctionReference constructor;
+    CpSolverResponse *pCpSolverResponse = nullptr;
+    GCpSolverResponse(const Napi::CallbackInfo &info);
+    ~GCpSolverResponse();
+    static Napi::Object Init(Napi::Env env, Napi::Object exports);
+};
+
 class GIntVar : public Napi::ObjectWrap<GIntVar>
 {
   public:
@@ -90,6 +119,15 @@ class GIntVar : public Napi::ObjectWrap<GIntVar>
     GIntVar(const Napi::CallbackInfo &info);
     ~GIntVar();
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
+
+    Napi::Value ToBoolVar(const Napi::CallbackInfo &info);
+    Napi::Value WithName(const Napi::CallbackInfo &info);
+    Napi::Value Name(const Napi::CallbackInfo &info);
+    Napi::Value operator_eq(const Napi::CallbackInfo &info);
+    Napi::Value operator_nq(const Napi::CallbackInfo &info);
+    Napi::Value Domain(const Napi::CallbackInfo &info);
+    Napi::Value DebugString(const Napi::CallbackInfo &info);
+    Napi::Value index(const Napi::CallbackInfo &info);
 };
 
 class GBoolVar : public Napi::ObjectWrap<GBoolVar>
@@ -130,16 +168,6 @@ class GConstraint : public Napi::ObjectWrap<GConstraint>
     Constraint *pConstraint = nullptr;
     GConstraint(const Napi::CallbackInfo &info);
     ~GConstraint();
-    static Napi::Object Init(Napi::Env env, Napi::Object exports);
-};
-
-class GCpModelProto : public Napi::ObjectWrap<GCpModelProto>
-{
-  public:
-    static inline Napi::FunctionReference constructor;
-    CpModelProto *pCpModelProto = nullptr;
-    GCpModelProto(const Napi::CallbackInfo &info);
-    ~GCpModelProto();
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
 };
 

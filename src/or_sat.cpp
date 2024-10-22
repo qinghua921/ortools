@@ -4,6 +4,186 @@ namespace operations_research
 namespace sat
 {
 
+#pragma region Functions
+
+// inline LinearExpr operator-(LinearExpr expr)
+Napi::Value Goperator_nagate(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    LinearExpr expr;
+    if (info.Length() == 1 && GLinearExpr::ToLinearExpr(info[0], expr))
+    {
+        auto result   = -expr;
+        auto external = Napi::External<LinearExpr>::New(env, new LinearExpr(result));
+        return GLinearExpr::constructor.New({external});
+    }
+
+    Napi::TypeError::New(env, "Goperator_nagate : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
+// inline LinearExpr operator+(const LinearExpr[] exprs)
+Napi::Value Goperator_plus(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    std::vector<LinearExpr> exprs;
+    if (info.Length() == 1 && info[0].IsArray())
+    {
+        Napi::Array arr = info[0].As<Napi::Array>();
+        for (uint32_t i = 0; i < arr.Length(); i++)
+        {
+            LinearExpr expr;
+            if (GLinearExpr::ToLinearExpr(arr[i], expr))
+            {
+                exprs.push_back(expr);
+                continue;
+            }
+            Napi::TypeError::New(env, "Goperator_plus : Invalid arguments").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        LinearExpr result = 0;
+        for (const auto &expr : exprs) result += expr;
+        auto external = Napi::External<LinearExpr>::New(env, new LinearExpr(result));
+        return GLinearExpr::constructor.New({external});
+    }
+
+    Napi::TypeError::New(env, "Goperator_plus : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
+// inline LinearExpr operator-(const LinearExpr &lhs, const LinearExpr &rhs)
+Napi::Value Goperator_minus(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    LinearExpr lhs, rhs;
+    if (info.Length() == 2 && GLinearExpr::ToLinearExpr(info[0], lhs) && GLinearExpr::ToLinearExpr(info[1], rhs))
+    {
+        auto result   = lhs - rhs;
+        auto external = Napi::External<LinearExpr>::New(env, new LinearExpr(result));
+        return GLinearExpr::constructor.New({external});
+    }
+
+    Napi::TypeError::New(env, "Goperator_minus : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
+Napi::Value Goperator_times(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    LinearExpr expr;
+
+    // inline LinearExpr operator*(LinearExpr expr, int64_t factor)
+    if (info.Length() == 2 && GLinearExpr::ToLinearExpr(info[0], expr) && info[1].IsNumber())
+    {
+        int64_t factor = info[1].As<Napi::Number>().Int64Value();
+        auto result    = factor * expr;
+        auto external  = Napi::External<LinearExpr>::New(env, new LinearExpr(result));
+        return GLinearExpr::constructor.New({external});
+    }
+
+    // inline LinearExpr operator*(int64_t factor, LinearExpr expr)
+    if (info.Length() == 2 && info[0].IsNumber() && GLinearExpr::ToLinearExpr(info[1], expr))
+    {
+        int64_t factor = info[0].As<Napi::Number>().Int64Value();
+        auto result    = factor * expr;
+        auto external  = Napi::External<LinearExpr>::New(env, new LinearExpr(result));
+        return GLinearExpr::constructor.New({external});
+    }
+
+    Napi::TypeError::New(env, "Goperator_times : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
+// CpSolverResponse Solve(const CpModelProto &model_proto);
+Napi::Value GSolve(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GCpModelProto::constructor.Value()))
+    {
+        auto model_proto = GCpModelProto::Unwrap(info[0].As<Napi::Object>());
+        auto response    = Solve(*model_proto->pCpModelProto);
+        auto external    = Napi::External<CpSolverResponse>::New(env, new CpSolverResponse(response));
+        return GCpSolverResponse::constructor.New({external});
+    }
+
+    Napi::TypeError::New(env, "GSolve : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
+// int64_t SolutionIntegerValue(const CpSolverResponse &r, const LinearExpr &expr);
+Napi::Value GSolutionIntegerValue(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    LinearExpr expr;
+    if (info.Length() == 2 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GCpSolverResponse::constructor.Value()) && GLinearExpr::ToLinearExpr(info[1], expr))
+    {
+        auto response = GCpSolverResponse::Unwrap(info[0].As<Napi::Object>());
+        return Napi::Number::New(env, SolutionIntegerValue(*response->pCpSolverResponse, expr));
+    }
+
+    Napi::TypeError::New(env, "GSolutionIntegerValue : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// std::string CpSolverResponseStats(const CpSolverResponse &response, bool has_objective = true);
+Napi::Value GCpSolverResponseStats(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GCpSolverResponse::constructor.Value()))
+    {
+        auto response = GCpSolverResponse::Unwrap(info[0].As<Napi::Object>());
+        return Napi::String::New(env, CpSolverResponseStats(*response->pCpSolverResponse));
+    }
+
+    if (info.Length() == 2 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GCpSolverResponse::constructor.Value()) && info[1].IsBoolean())
+    {
+        auto response      = GCpSolverResponse::Unwrap(info[0].As<Napi::Object>());
+        bool has_objective = info[1].As<Napi::Boolean>().Value();
+        return Napi::String::New(env, CpSolverResponseStats(*response->pCpSolverResponse, has_objective));
+    }
+
+    Napi::TypeError::New(env, "GCpSolverResponseStats : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
+Napi::Object SatInit(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+
+    exports.Set("operator_nagate", Napi::Function::New(env, Goperator_nagate));
+    exports.Set("operator_plus", Napi::Function::New(env, Goperator_plus));
+    exports.Set("operator_minus", Napi::Function::New(env, Goperator_minus));
+    exports.Set("operator_times", Napi::Function::New(env, Goperator_times));
+    exports.Set("Solve", Napi::Function::New(env, GSolve));
+    exports.Set("SolutionIntegerValue", Napi::Function::New(env, GSolutionIntegerValue));
+    exports.Set("CpSolverResponseStats", Napi::Function::New(env, GCpSolverResponseStats));
+
+    auto enumCpSolverStatus = Napi::Object::New(env);
+    enumCpSolverStatus.Set("UNKNOWN", static_cast<int>(CpSolverStatus::UNKNOWN));
+    enumCpSolverStatus.Set("MODEL_INVALID", static_cast<int>(CpSolverStatus::MODEL_INVALID));
+    enumCpSolverStatus.Set("FEASIBLE", static_cast<int>(CpSolverStatus::FEASIBLE));
+    enumCpSolverStatus.Set("INFEASIBLE", static_cast<int>(CpSolverStatus::INFEASIBLE));
+    enumCpSolverStatus.Set("OPTIMAL", static_cast<int>(CpSolverStatus::OPTIMAL));
+    exports.Set("CpSolverStatus", enumCpSolverStatus);
+    return exports;
+}
+
+#pragma endregion
+
 GCpModelBuilder::GCpModelBuilder(const Napi::CallbackInfo &info)
     : Napi::ObjectWrap<GCpModelBuilder>(info)
 {
@@ -14,6 +194,12 @@ GCpModelBuilder::GCpModelBuilder(const Napi::CallbackInfo &info)
         auto external   = info[0].As<Napi::External<CpModelBuilder>>();
         pCpModelBuilder = dynamic_cast<CpModelBuilder *>(external.Data());
         if (pCpModelBuilder) return;
+    }
+
+    if (info.Length() == 0)
+    {
+        pCpModelBuilder = new CpModelBuilder();
+        return;
     }
 
     Napi::TypeError::New(env, "GCpModelBuilder::GCpModelBuilder : Invalid arguments").ThrowAsJavaScriptException();
@@ -1585,6 +1771,640 @@ bool GLinearExpr::ToLinearExpr(const Napi::Value &value, LinearExpr &expr)
         return false;
 
     return true;
+}
+
+GIntVar::GIntVar(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GIntVar>(info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external = info[0].As<Napi::External<IntVar>>();
+        pIntVar       = dynamic_cast<IntVar *>(external.Data());
+        if (pIntVar) return;
+    }
+
+    // IntVar() = default;
+    if (info.Length() == 0)
+    {
+        pIntVar = new IntVar();
+        return;
+    }
+
+    // explicit IntVar(const BoolVar &var);
+    if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GBoolVar::constructor.Value()))
+    {
+        auto var = GBoolVar::Unwrap(info[0].As<Napi::Object>())->pBoolVar;
+        pIntVar  = new IntVar(*var);
+        return;
+    }
+
+    Napi::TypeError::New(env, "GIntVar::GIntVar : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+GIntVar::~GIntVar()
+{
+    if (pIntVar) delete pIntVar;
+}
+
+Napi::Object GIntVar::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "IntVar",
+        {
+            InstanceMethod("ToBoolVar", &GIntVar::ToBoolVar),
+            InstanceMethod("WithName", &GIntVar::WithName),
+            InstanceMethod("Name", &GIntVar::Name),
+            InstanceMethod("Domain", &GIntVar::Domain),
+            InstanceMethod("DebugString", &GIntVar::DebugString),
+            InstanceMethod("index", &GIntVar::index),
+            InstanceMethod("operator_eq", &GIntVar::operator_eq),
+            InstanceMethod("operator_nq", &GIntVar::operator_nq),
+        }
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set("IntVar", func);
+    return exports;
+}
+
+// BoolVar ToBoolVar() const;
+Napi::Value GIntVar::ToBoolVar(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        auto var      = pIntVar->ToBoolVar();
+        auto external = Napi::External<BoolVar>::New(env, new BoolVar(var));
+        return GBoolVar::constructor.New({external});
+    }
+
+    Napi::TypeError::New(env, "GIntVar::ToBoolVar : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// IntVar WithName(absl::string_view name);
+Napi::Value GIntVar::WithName(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsString())
+    {
+        std::string name = info[0].As<Napi::String>().Utf8Value();
+        auto var         = pIntVar->WithName(name);
+        auto external    = Napi::External<IntVar>::New(env, new IntVar(var));
+        return GIntVar::constructor.New({external});
+    }
+
+    Napi::TypeError::New(env, "GIntVar::WithName : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// std::string Name() const;
+Napi::Value GIntVar::Name(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        std::string name = pIntVar->Name();
+        return Napi::String::New(env, name);
+    }
+
+    Napi::TypeError::New(env, "GIntVar::Name : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// bool operator==(const IntVar &other) const;
+Napi::Value GIntVar::operator_eq(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GIntVar::constructor.Value()))
+    {
+        auto other = GIntVar::Unwrap(info[0].As<Napi::Object>())->pIntVar;
+        return Napi::Boolean::New(env, *pIntVar == *other);
+    }
+
+    Napi::TypeError::New(env, "GIntVar::operator_eq : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// bool operator!=(const IntVar &other) const;
+Napi::Value GIntVar::operator_nq(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GIntVar::constructor.Value()))
+    {
+        auto other = GIntVar::Unwrap(info[0].As<Napi::Object>())->pIntVar;
+        return Napi::Boolean::New(env, *pIntVar != *other);
+    }
+
+    Napi::TypeError::New(env, "GIntVar::operator_nq : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+//::operations_research::Domain Domain() const;
+Napi::Value GIntVar::Domain(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        auto domain   = pIntVar->Domain();
+        auto external = Napi::External<operations_research::Domain>::New(env, new operations_research::Domain(domain));
+        return GDomain::constructor.New({external});
+    }
+
+    Napi::TypeError::New(env, "GIntVar::Domain : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// std::string DebugString() const;
+Napi::Value GIntVar::DebugString(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        std::string debugString = pIntVar->DebugString();
+        return Napi::String::New(env, debugString);
+    }
+
+    Napi::TypeError::New(env, "GIntVar::DebugString : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// int index() const;
+Napi::Value GIntVar::index(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        int index = pIntVar->index();
+        return Napi::Number::New(env, index);
+    }
+
+    Napi::TypeError::New(env, "GIntVar::index : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
+GIntervalVar::GIntervalVar(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GIntervalVar>(info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external = info[0].As<Napi::External<IntervalVar>>();
+        pIntervalVar  = dynamic_cast<IntervalVar *>(external.Data());
+        if (pIntervalVar) return;
+    }
+
+    Napi::TypeError::New(env, "GIntervalVar::GIntervalVar : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+GIntervalVar::~GIntervalVar()
+{
+    if (pIntervalVar) delete pIntervalVar;
+}
+
+Napi::Object GIntervalVar::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "IntervalVar",
+        {}
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set("IntervalVar", func);
+    return exports;
+}
+
+GCpModelProto::GCpModelProto(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GCpModelProto>(info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external = info[0].As<Napi::External<CpModelProto>>();
+        pCpModelProto = dynamic_cast<CpModelProto *>(external.Data());
+        if (pCpModelProto) return;
+    }
+
+    Napi::TypeError::New(env, "GCpModelProto::GCpModelProto : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+GCpModelProto::~GCpModelProto()
+{
+    if (pCpModelProto) delete pCpModelProto;
+}
+Napi::Object GCpModelProto::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "CpModelProto",
+        {}
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set("CpModelProto", func);
+    return exports;
+}
+
+GBoolVar::GBoolVar(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GBoolVar>(info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external = info[0].As<Napi::External<BoolVar>>();
+        pBoolVar      = dynamic_cast<BoolVar *>(external.Data());
+        if (pBoolVar) return;
+    }
+
+    Napi::TypeError::New(env, "GBoolVar::GBoolVar : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+GBoolVar::~GBoolVar()
+{
+    if (pBoolVar) delete pBoolVar;
+}
+Napi::Object GBoolVar::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "BoolVar",
+        {}
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set("BoolVar", func);
+    return exports;
+}
+
+GConstraint::GConstraint(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GConstraint>(info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external = info[0].As<Napi::External<Constraint>>();
+        pConstraint   = dynamic_cast<Constraint *>(external.Data());
+        if (pConstraint) return;
+    }
+
+    Napi::TypeError::New(env, "GConstraint::GConstraint : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+GConstraint::~GConstraint()
+{
+    if (pConstraint) delete pConstraint;
+}
+Napi::Object GConstraint::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "Constraint",
+        {}
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set("Constraint", func);
+    return exports;
+}
+
+GLinearExpr::GLinearExpr(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GLinearExpr>(info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external = info[0].As<Napi::External<LinearExpr>>();
+        pLinearExpr   = dynamic_cast<LinearExpr *>(external.Data());
+        if (pLinearExpr) return;
+    }
+
+    Napi::TypeError::New(env, "GLinearExpr::GLinearExpr : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+GLinearExpr::~GLinearExpr()
+{
+    if (pLinearExpr) delete pLinearExpr;
+}
+
+Napi::Object GLinearExpr::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "LinearExpr",
+        {}
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set("LinearExpr", func);
+    return exports;
+}
+
+GCpSolverResponse::GCpSolverResponse(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GCpSolverResponse>(info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external     = info[0].As<Napi::External<CpSolverResponse>>();
+        pCpSolverResponse = dynamic_cast<CpSolverResponse *>(external.Data());
+        if (pCpSolverResponse) return;
+    }
+
+    Napi::TypeError::New(env, "GCpSolverResponse::GCpSolverResponse : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+GCpSolverResponse::~GCpSolverResponse()
+{
+    if (pCpSolverResponse) delete pCpSolverResponse;
+}
+
+Napi::Object GCpSolverResponse::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "CpSolverResponse",
+        {}
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set("CpSolverResponse", func);
+    return exports;
+}
+
+GCircuitConstraint::GCircuitConstraint(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GCircuitConstraint>(info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external      = info[0].As<Napi::External<CircuitConstraint>>();
+        pCircuitConstraint = dynamic_cast<CircuitConstraint *>(external.Data());
+        if (pCircuitConstraint) return;
+    }
+
+    Napi::TypeError::New(env, "GCircuitConstraint::GCircuitConstraint : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+GCircuitConstraint::~GCircuitConstraint()
+{
+    if (pCircuitConstraint) delete pCircuitConstraint;
+}
+
+Napi::Object GCircuitConstraint::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "CircuitConstraint",
+        {}
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set("CircuitConstraint", func);
+    return exports;
+}
+
+GMultipleCircuitConstraint::GMultipleCircuitConstraint(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GMultipleCircuitConstraint>(info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external              = info[0].As<Napi::External<MultipleCircuitConstraint>>();
+        pMultipleCircuitConstraint = dynamic_cast<MultipleCircuitConstraint *>(external.Data());
+        if (pMultipleCircuitConstraint) return;
+    }
+
+    Napi::TypeError::New(env, "GMultipleCircuitConstraint::GMultipleCircuitConstraint : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+GMultipleCircuitConstraint::~GMultipleCircuitConstraint()
+{
+    if (pMultipleCircuitConstraint) delete pMultipleCircuitConstraint;
+}
+
+Napi::Object GMultipleCircuitConstraint::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "MultipleCircuitConstraint",
+        {}
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set("MultipleCircuitConstraint", func);
+    return exports;
+}
+
+GTableConstraint::GTableConstraint(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GTableConstraint>(info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external    = info[0].As<Napi::External<TableConstraint>>();
+        pTableConstraint = dynamic_cast<TableConstraint *>(external.Data());
+        if (pTableConstraint) return;
+    }
+
+    Napi::TypeError::New(env, "GTableConstraint::GTableConstraint : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+GTableConstraint::~GTableConstraint()
+{
+    if (pTableConstraint) delete pTableConstraint;
+}
+
+Napi::Object GTableConstraint::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "TableConstraint",
+        {}
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set("TableConstraint", func);
+    return exports;
+}
+
+GAutomatonConstraint::GAutomatonConstraint(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GAutomatonConstraint>(info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external        = info[0].As<Napi::External<AutomatonConstraint>>();
+        pAutomatonConstraint = dynamic_cast<AutomatonConstraint *>(external.Data());
+        if (pAutomatonConstraint) return;
+    }
+
+    Napi::TypeError::New(env, "GAutomatonConstraint::GAutomatonConstraint : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+GAutomatonConstraint::~GAutomatonConstraint()
+{
+    if (pAutomatonConstraint) delete pAutomatonConstraint;
+}
+
+Napi::Object GAutomatonConstraint::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "AutomatonConstraint",
+        {}
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set("AutomatonConstraint", func);
+    return exports;
+}
+
+GNoOverlap2DConstraint::GNoOverlap2DConstraint(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GNoOverlap2DConstraint>(info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external          = info[0].As<Napi::External<NoOverlap2DConstraint>>();
+        pNoOverlap2DConstraint = dynamic_cast<NoOverlap2DConstraint *>(external.Data());
+        if (pNoOverlap2DConstraint) return;
+    }
+
+    Napi::TypeError::New(env, "GNoOverlap2DConstraint::GNoOverlap2DConstraint : Invalid arguments").ThrowAsJavaScriptException();
+}
+GNoOverlap2DConstraint::~GNoOverlap2DConstraint()
+{
+    if (pNoOverlap2DConstraint) delete pNoOverlap2DConstraint;
+}
+
+Napi::Object GNoOverlap2DConstraint::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "NoOverlap2DConstraint",
+        {}
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set("NoOverlap2DConstraint", func);
+    return exports;
+}
+
+GCumulativeConstraint::GCumulativeConstraint(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GCumulativeConstraint>(info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external         = info[0].As<Napi::External<CumulativeConstraint>>();
+        pCumulativeConstraint = dynamic_cast<CumulativeConstraint *>(external.Data());
+        if (pCumulativeConstraint) return;
+    }
+
+    Napi::TypeError::New(env, "GCumulativeConstraint::GCumulativeConstraint : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+GCumulativeConstraint::~GCumulativeConstraint()
+{
+    if (pCumulativeConstraint) delete pCumulativeConstraint;
+}
+
+Napi::Object GCumulativeConstraint::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "CumulativeConstraint",
+        {}
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set("CumulativeConstraint", func);
+    return exports;
+}
+
+GReservoirConstraint::GReservoirConstraint(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GReservoirConstraint>(info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external        = info[0].As<Napi::External<ReservoirConstraint>>();
+        pReservoirConstraint = dynamic_cast<ReservoirConstraint *>(external.Data());
+        if (pReservoirConstraint) return;
+    }
+
+    Napi::TypeError::New(env, "GReservoirConstraint::GReservoirConstraint : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+GReservoirConstraint::~GReservoirConstraint()
+{
+    if (pReservoirConstraint) delete pReservoirConstraint;
+}
+Napi::Object GReservoirConstraint::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "ReservoirConstraint",
+        {}
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set("ReservoirConstraint", func);
+    return exports;
 }
 
 } // namespace sat

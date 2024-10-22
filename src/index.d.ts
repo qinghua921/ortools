@@ -353,6 +353,25 @@
 
     export namespace sat
     {
+        export enum CpSolverStatus
+        {
+            UNKNOWN = 0,
+            MODEL_INVALID = 1,
+            FEASIBLE = 2,
+            INFEASIBLE = 3,
+            OPTIMAL = 4,
+        };
+
+        export function operator_nagate(expr: CanAsLinearExpr): LinearExpr;
+        export function operator_plus(exprs: CanAsLinearExpr[]): LinearExpr;
+        export function operator_minus(lhs: CanAsLinearExpr, rhs: CanAsLinearExpr): LinearExpr;
+        export function operator_times(expr: CanAsLinearExpr, factor: number): LinearExpr;
+        export function operator_times(factor: number, expr: CanAsLinearExpr): LinearExpr;
+        export function Solve(model_proto: CpModelProto): CpSolverResponse;
+        export function SolutionIntegerValue(response: CpSolverResponse, expr: CanAsLinearExpr): number;
+        export function CpSolverResponseStats(response: CpSolverResponse, has_objective: boolean = true): string;
+
+
         export class CpModelBuilder
         {
             SetName(name: string): void;
@@ -426,6 +445,20 @@
             GetBoolVarFromProtoIndex(index: number): BoolVar;
             GetIntVarFromProtoIndex(index: number): IntVar;
             GetIntervalVarFromProtoIndex(index: number): IntervalVar;
+        };
+
+        export class IntVar
+        {
+            constructor()
+            constructor(var_: BoolVar)
+            ToBoolVar(): BoolVar;
+            WithName(name: string): IntVar;
+            Name(): string;
+            operator_eq(other: IntVar): boolean;
+            operator_neq(other: IntVar): boolean;
+            Domain(): Domain;
+            DebugString(): string;
+            index(): number;
         };
 
         export type CanAsLinearExpr = LinearExpr | BoolVar | number | IntVar;
