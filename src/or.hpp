@@ -329,5 +329,9 @@ class GClosedInterval : public Napi::ObjectWrap<GClosedInterval>
     GClosedInterval(const Napi::CallbackInfo &info);
     ~GClosedInterval();
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
+
+    Napi::Value DebugString(const Napi::CallbackInfo &info);
+    Napi::Value operator_eq(const Napi::CallbackInfo &info);
+    Napi::Value operator_lt(const Napi::CallbackInfo &info);
 };
 } // namespace operations_research

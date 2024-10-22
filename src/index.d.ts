@@ -8,6 +8,9 @@
 
     export class Domain
     {
+        constructor()
+        constructor(value: number)
+        constructor(left: number, right: number)
         AllValues(): Domain;
         FromValues(values: number[]): Domain;
         FromIntervals(intervals: ClosedInterval[]): Domain;
@@ -337,6 +340,15 @@
         terms(): { [key: string]: number };
         SolutionValue(): number;
         ToString(): string;
+    };
+
+    export class ClosedInterval
+    {
+        DebugString(): string;
+        operator_eq(other: ClosedInterval): boolean;
+        operator_lt(other: ClosedInterval): boolean;
+        start: number = 0;
+        end: number = 0;
     };
 
     export namespace sat

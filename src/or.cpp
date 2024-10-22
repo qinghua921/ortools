@@ -4114,6 +4114,22 @@ GClosedInterval::GClosedInterval(const Napi::CallbackInfo &info)
         if (pClosedInterval) return;
     }
 
+    // ClosedInterval();
+    if (info.Length() == 0)
+    {
+        pClosedInterval = new ClosedInterval();
+        return;
+    }
+
+    // ClosedInterval(int64_t s, int64_t e);
+    if (info.Length() == 2 && info[0].IsNumber() && info[1].IsNumber())
+    {
+        int64_t s       = info[0].As<Napi::Number>().Int64Value();
+        int64_t e       = info[1].As<Napi::Number>().Int64Value();
+        pClosedInterval = new ClosedInterval(s, e);
+        return;
+    }
+
     Napi::TypeError::New(env, "GClosedInterval::GClosedInterval : Invalid arguments").ThrowAsJavaScriptException();
 }
 
@@ -4128,12 +4144,65 @@ Napi::Object GClosedInterval::Init(Napi::Env env, Napi::Object exports)
     Napi::Function func = DefineClass(
         env,
         "ClosedInterval",
-        {}
+        {
+            InstanceValue("start", Napi::Number::New(env, 0)),
+            InstanceValue("end", Napi::Number::New(env, 0)),
+
+            InstanceMethod("DebugString", &GClosedInterval::DebugString),
+            InstanceMethod("operator==", &GClosedInterval::operator_eq),
+            InstanceMethod("operator<", &GClosedInterval::operator_lt),
+        }
     );
     constructor = Napi::Persistent(func);
     constructor.SuppressDestruct();
     exports.Set(Napi::String::New(env, "ClosedInterval"), func);
     return exports;
+}
+
+// std::string DebugString() const;
+Napi::Value GClosedInterval::DebugString(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        std::string result = pClosedInterval->DebugString();
+        return Napi::String::New(env, result);
+    }
+
+    Napi::TypeError::New(env, "GClosedInterval::DebugString : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// bool operator==(const ClosedInterval &other) const;
+Napi::Value GClosedInterval::operator_eq(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GClosedInterval::constructor.Value()))
+    {
+        auto other = GClosedInterval::Unwrap(info[0].As<Napi::Object>());
+        return Napi::Boolean::New(env, (*pClosedInterval) == (*other->pClosedInterval));
+    }
+
+    Napi::TypeError::New(env, "GClosedInterval::operator== : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+// bool operator<(const ClosedInterval &other) const;
+Napi::Value GClosedInterval::operator_lt(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GClosedInterval::constructor.Value()))
+    {
+        auto other = GClosedInterval::Unwrap(info[0].As<Napi::Object>());
+        return Napi::Boolean::New(env, (*pClosedInterval) < (*other->pClosedInterval));
+    }
+
+    Napi::TypeError::New(env, "GClosedInterval::operator< : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
 }
 
 } // namespace operations_research
