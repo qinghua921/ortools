@@ -2,7 +2,7 @@
 
 #include <napi.h>
 #include <ortools/linear_solver/linear_solver.h>
-#include <ortools/sat/cp_model.h>
+#include <ortools/util/sorted_interval_list.h>
 
 namespace operations_research
 {
@@ -11,7 +11,7 @@ Napi::Value Goperator_ge(const Napi::CallbackInfo &info);
 Napi::Value Goperator_eq(const Napi::CallbackInfo &info);
 Napi::Value Goperator_le(const Napi::CallbackInfo &info);
 Napi::Value Goperator_times(const Napi::CallbackInfo &info);
-static Napi::Object FuncInit(Napi::Env env, Napi::Object exports);
+Napi::Object FuncInit(Napi::Env env, Napi::Object exports);
 
 class GMPSolver : public Napi::ObjectWrap<GMPSolver>
 {
@@ -268,15 +268,66 @@ class GLinearExpr : public Napi::ObjectWrap<GLinearExpr>
     Napi::Value ToString(const Napi::CallbackInfo &info);
 };
 
-namespace sat
-{
-class GCpModelBuilder : public Napi::ObjectWrap<GCpModelBuilder>
+class GDomain : public Napi::ObjectWrap<GDomain>
 {
   public:
     static inline Napi::FunctionReference constructor;
-    CpModelBuilder *pCpModelBuilder = nullptr;
-    GCpModelBuilder(const Napi::CallbackInfo &info);
-    ~GCpModelBuilder();
+    Domain *pDomain = nullptr;
+    GDomain(const Napi::CallbackInfo &info);
+    ~GDomain();
+    static Napi::Object Init(Napi::Env env, Napi::Object exports);
+
+    static Napi::Value AllValues(const Napi::CallbackInfo &info);
+    static Napi::Value FromValues(const Napi::CallbackInfo &info);
+    static Napi::Value FromIntervals(const Napi::CallbackInfo &info);
+    static Napi::Value FromFlatSpanOfIntervals(const Napi::CallbackInfo &info);
+    static Napi::Value FromVectorIntervals(const Napi::CallbackInfo &info);
+    static Napi::Value FromFlatIntervals(const Napi::CallbackInfo &info);
+    Napi::Value FlattenedIntervals(const Napi::CallbackInfo &info);
+    Napi::Value IsEmpty(const Napi::CallbackInfo &info);
+    Napi::Value Size(const Napi::CallbackInfo &info);
+    Napi::Value HasTwoValues(const Napi::CallbackInfo &info);
+    Napi::Value Min(const Napi::CallbackInfo &info);
+    Napi::Value Max(const Napi::CallbackInfo &info);
+    Napi::Value SmallestValue(const Napi::CallbackInfo &info);
+    Napi::Value ClosestValue(const Napi::CallbackInfo &info);
+    Napi::Value ValueAtOrBefore(const Napi::CallbackInfo &info);
+    Napi::Value ValueAtOrAfter(const Napi::CallbackInfo &info);
+    Napi::Value PartAroundZero(const Napi::CallbackInfo &info);
+    Napi::Value IsFixed(const Napi::CallbackInfo &info);
+    Napi::Value FixedValue(const Napi::CallbackInfo &info);
+    Napi::Value Contains(const Napi::CallbackInfo &info);
+    Napi::Value Distance(const Napi::CallbackInfo &info);
+    Napi::Value IsIncludedIn(const Napi::CallbackInfo &info);
+    Napi::Value Complement(const Napi::CallbackInfo &info);
+    Napi::Value Negation(const Napi::CallbackInfo &info);
+    Napi::Value IntersectionWith(const Napi::CallbackInfo &info);
+    Napi::Value UnionWith(const Napi::CallbackInfo &info);
+    Napi::Value AdditionWith(const Napi::CallbackInfo &info);
+    Napi::Value MultiplicationBy(const Napi::CallbackInfo &info);
+    Napi::Value RelaxIfTooComplex(const Napi::CallbackInfo &info);
+    Napi::Value ContinuousMultiplicationBy(const Napi::CallbackInfo &info);
+    Napi::Value DivisionBy(const Napi::CallbackInfo &info);
+    Napi::Value InverseMultiplicationBy(const Napi::CallbackInfo &info);
+    Napi::Value PositiveModuloBySuperset(const Napi::CallbackInfo &info);
+    Napi::Value PositiveDivisionBySuperset(const Napi::CallbackInfo &info);
+    Napi::Value SquareSuperset(const Napi::CallbackInfo &info);
+    Napi::Value SimplifyUsingImpliedDomain(const Napi::CallbackInfo &info);
+    Napi::Value ToString(const Napi::CallbackInfo &info);
+    Napi::Value operator_lt(const Napi::CallbackInfo &info);
+    Napi::Value operator_eq(const Napi::CallbackInfo &info);
+    Napi::Value operator_nq(const Napi::CallbackInfo &info);
+    Napi::Value NumIntervals(const Napi::CallbackInfo &info);
+    Napi::Value operator_brackets(const Napi::CallbackInfo &info);
+};
+
+class GClosedInterval : public Napi::ObjectWrap<GClosedInterval>
+{
+  public:
+    static inline Napi::FunctionReference constructor;
+    ClosedInterval *pClosedInterval = nullptr;
+    GClosedInterval(const Napi::CallbackInfo &info);
+    ~GClosedInterval();
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
 };
 } // namespace operations_research

@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 20)
 
 project(ortools_binding LANGUAGES CXX)
 
-add_library(${PROJECT_NAME} SHARED ./src/index.cpp ${CMAKE_JS_SRC})
+add_library(${PROJECT_NAME} SHARED ${CMAKE_JS_SRC} "src/index.cpp" "src/or.cpp" "src/or_sat.cpp")
 
 target_compile_definitions(
   ${PROJECT_NAME}
