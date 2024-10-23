@@ -2108,6 +2108,12 @@ GLinearExpr::GLinearExpr(const Napi::CallbackInfo &info)
         if (pLinearExpr) return;
     }
 
+    if (info.Length() ==0)
+    {
+        pLinearExpr = new LinearExpr();
+        return;
+    }
+
     Napi::TypeError::New(env, "GLinearExpr::GLinearExpr : Invalid arguments").ThrowAsJavaScriptException();
 }
 

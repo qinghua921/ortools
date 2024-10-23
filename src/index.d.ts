@@ -467,5 +467,8 @@
         };
 
         export type CanAsLinearExpr = LinearExpr | BoolVar | number | IntVar;
+        export class LinearExpr
+        {
+        }
     }
 };
