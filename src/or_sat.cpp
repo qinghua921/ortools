@@ -179,6 +179,7 @@ Napi::Object SatInit(Napi::Env env, Napi::Object exports)
     enumCpSolverStatus.Set("INFEASIBLE", static_cast<int>(CpSolverStatus::INFEASIBLE));
     enumCpSolverStatus.Set("OPTIMAL", static_cast<int>(CpSolverStatus::OPTIMAL));
     exports.Set("CpSolverStatus", enumCpSolverStatus);
+
     return exports;
 }
 
@@ -2156,12 +2157,47 @@ Napi::Object GCpSolverResponse::Init(Napi::Env env, Napi::Object exports)
     Napi::Function func = DefineClass(
         env,
         "CpSolverResponse",
-        {}
+        {
+            InstanceMethod("status", &GCpSolverResponse::status),
+            InstanceMethod("objective_value", &GCpSolverResponse::objective_value),
+        }
     );
     constructor = Napi::Persistent(func);
     constructor.SuppressDestruct();
     exports.Set("CpSolverResponse", func);
     return exports;
+}
+
+// double objective_value() const
+Napi::Value GCpSolverResponse::objective_value(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        double objective_value = pCpSolverResponse->objective_value();
+        return Napi::Number::New(env, objective_value);
+    }
+
+    Napi::TypeError::New(env, "GCpSolverResponse::objective_value : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
+// CpSolverStatus  status()
+Napi::Value GCpSolverResponse::status(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 0)
+    {
+        auto status = pCpSolverResponse->status();
+        return Napi::Number::New(env, status);
+    }
+
+    Napi::TypeError::New(env, "GCpSolverResponse::status : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
 }
 
 GCircuitConstraint::GCircuitConstraint(const Napi::CallbackInfo &info)

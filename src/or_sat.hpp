@@ -109,6 +109,9 @@ class GCpSolverResponse : public Napi::ObjectWrap<GCpSolverResponse>
     GCpSolverResponse(const Napi::CallbackInfo &info);
     ~GCpSolverResponse();
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
+
+    Napi::Value status(const Napi::CallbackInfo &info);
+    Napi::Value objective_value(const Napi::CallbackInfo &info);
 };
 
 class GIntVar : public Napi::ObjectWrap<GIntVar>

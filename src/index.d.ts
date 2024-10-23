@@ -371,6 +371,11 @@
         export function SolutionIntegerValue(response: CpSolverResponse, expr: CanAsLinearExpr): number;
         export function CpSolverResponseStats(response: CpSolverResponse, has_objective: boolean = true): string;
 
+        export class CpSolverResponse
+        {
+            status(): CpSolverStatus;
+            objective_value(): number;
+        }
 
         export class CpModelBuilder
         {
