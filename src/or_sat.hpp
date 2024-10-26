@@ -16,6 +16,7 @@ Napi::Value Goperator_times(const Napi::CallbackInfo &info);
 Napi::Value GSolve(const Napi::CallbackInfo &info);
 Napi::Value GSolutionIntegerValue(const Napi::CallbackInfo &info);
 Napi::Value GCpSolverResponseStats(const Napi::CallbackInfo &info);
+Napi::Value GSolutionBooleanValue(const Napi::CallbackInfo &info);
 Napi::Object SatInit(Napi::Env env, Napi::Object exports);
 
 class GCpModelBuilder : public Napi::ObjectWrap<GCpModelBuilder>
@@ -141,6 +142,8 @@ class GBoolVar : public Napi::ObjectWrap<GBoolVar>
     GBoolVar(const Napi::CallbackInfo &info);
     ~GBoolVar();
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
+
+    Napi::Value WithName(const Napi::CallbackInfo &info);
 };
 
 class GIntervalVar : public Napi::ObjectWrap<GIntervalVar>
@@ -162,6 +165,10 @@ class GLinearExpr : public Napi::ObjectWrap<GLinearExpr>
     ~GLinearExpr();
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
     static bool ToLinearExpr(const Napi::Value &value, LinearExpr &expr);
+
+    Napi::Value operator_plus(const Napi::CallbackInfo &info);
+    Napi::Value operator_minus(const Napi::CallbackInfo &info);
+    Napi::Value operator_times(const Napi::CallbackInfo &info);
 };
 
 class GConstraint : public Napi::ObjectWrap<GConstraint>
@@ -201,6 +208,8 @@ class GTableConstraint : public Napi::ObjectWrap<GTableConstraint>
     GTableConstraint(const Napi::CallbackInfo &info);
     ~GTableConstraint();
     static Napi::Object Init(Napi::Env env, Napi::Object exports);
+
+    Napi::Value AddTuple(const Napi::CallbackInfo &info);
 };
 
 class GReservoirConstraint : public Napi::ObjectWrap<GReservoirConstraint>

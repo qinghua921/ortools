@@ -370,6 +370,7 @@
         export function Solve(model_proto: CpModelProto): CpSolverResponse;
         export function SolutionIntegerValue(response: CpSolverResponse, expr: CanAsLinearExpr): number;
         export function CpSolverResponseStats(response: CpSolverResponse, has_objective: boolean = true): string;
+        export function SolutionBooleanValue(response: CpSolverResponse, var_: BoolVar): boolean;
 
         export class CpSolverResponse
         {
@@ -412,6 +413,7 @@
             AddCircuitConstraint(): CircuitConstraint;
             AddMultipleCircuitConstraint(): MultipleCircuitConstraint;
             AddAllowedAssignments(vars: Array<IntVar>): TableConstraint;
+            AddAllowedAssignments(vars: Array<BoolVar>): TableConstraint;
             AddForbiddenAssignments(vars: Array<IntVar>): TableConstraint;
             AddInverseConstraint(variables: Array<IntVar>, inverse_variables: Array<IntVar>): Constraint;
             AddReservoirConstraint(min_level: number, max_level: number): ReservoirConstraint;
@@ -469,6 +471,19 @@
         export type CanAsLinearExpr = LinearExpr | BoolVar | number | IntVar;
         export class LinearExpr
         {
+            operator_plus(other: CanAsLinearExpr): LinearExpr;
+            operator_minus(other: CanAsLinearExpr): LinearExpr;
+            operator_times(factor: number): LinearExpr;
+        }
+
+        export class BoolVar
+        {
+            WithName(name: string): BoolVar;
+        }
+
+        export class TableConstraint
+        {
+            AddTuple(tuple: Array<number>): void;
         }
     }
 };

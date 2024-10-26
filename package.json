@@ -15,7 +15,8 @@
   "types": "src/index.d.ts",
   "scripts": {
     "cppbuild": "cmake-js compile",
-    "test": "ts-node test/test.ts"
+    "test": "ts-node test/test.ts",
+    "all": "npm run cppbuild && npm run test"
   },
   "devDependencies": {
     "cmake-js": "7.3.0",
