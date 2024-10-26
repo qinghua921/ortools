@@ -351,6 +351,12 @@
         end: number = 0;
     };
 
+    export class SimpleLinearSumAssignment
+    {
+        constructor();
+        AddArcWithCost(left_node: number, right_node: number, cost: number): number;
+    }
+
     export namespace sat
     {
         export enum CpSolverStatus
@@ -485,5 +491,6 @@
         {
             AddTuple(tuple: Array<number>): void;
         }
+
     }
 };

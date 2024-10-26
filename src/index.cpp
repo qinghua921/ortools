@@ -52,6 +52,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     operations_research::GMPCallbackContext::Init(env, operations_research);
     operations_research::GLinearExpr::Init(env, operations_research);
     operations_research::GDomain::Init(env, operations_research);
+    operations_research::GSimpleLinearSumAssignment::Init(env, operations_research);
     operations_research::FuncInit(env, operations_research);
     exports.Set("operations_research", operations_research);
 

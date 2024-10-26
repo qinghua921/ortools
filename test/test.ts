@@ -54,7 +54,42 @@ function AssignmentLinearSumAssignment()
     //    LOG(INFO) << "Solving the linear assignment problem failed.";
     //}
 
+    const assignment = new operations_research.SimpleLinearSumAssignment();
+    const num_workers = 4;
+    const all_workers = Array.from({ length: num_workers }, (_, i) => i);
+    const num_tasks = 4;
+    const all_tasks = Array.from({ length: num_tasks }, (_, i) => i);
+    const costs = [
+        [90, 76, 75, 70],
+        [35, 85, 55, 65],
+        [125, 95, 90, 105],
+        [45, 110, 95, 115],
+    ];
 
+    for (const w of all_workers)
+    {
+        for (const t of all_tasks)
+        {
+            if (costs[w][t])
+            {
+                assignment.AddArcWithCost(w, t, costs[w][t]);
+            }
+        }
+    }
+
+    const status = assignment.Solve();
+
+    if (status === operations_research.SimpleLinearSumAssignment.Status.OPTIMAL)
+    {
+        console.log(`Total cost: ${assignment.OptimalCost()}`);
+        for (const worker of all_workers)
+        {
+            console.log(`Worker ${worker} assigned to task ${assignment.RightMate(worker)}. Cost: ${assignment.AssignmentCost(worker)}.`);
+        }
+    } else
+    {
+        console.log("Solving the linear assignment problem failed.");
+    }
 }
 
 AssignmentLinearSumAssignment();

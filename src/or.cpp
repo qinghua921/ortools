@@ -4205,4 +4205,67 @@ Napi::Value GClosedInterval::operator_lt(const Napi::CallbackInfo &info)
     return env.Null();
 }
 
+GSimpleLinearSumAssignment::GSimpleLinearSumAssignment(const Napi::CallbackInfo &info)
+    : Napi::ObjectWrap<GSimpleLinearSumAssignment>(info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsExternal())
+    {
+        auto external              = info[0].As<Napi::External<SimpleLinearSumAssignment>>();
+        pSimpleLinearSumAssignment = dynamic_cast<SimpleLinearSumAssignment *>(external.Data());
+        if (pSimpleLinearSumAssignment) return;
+    }
+
+    // SimpleLinearSumAssignment();
+    if (info.Length() == 0)
+    {
+        pSimpleLinearSumAssignment = new SimpleLinearSumAssignment();
+        return;
+    }
+
+    Napi::TypeError::New(env, "GSimpleLinearSumAssignment::GSimpleLinearSumAssignment : Invalid arguments").ThrowAsJavaScriptException();
+}
+
+GSimpleLinearSumAssignment::~GSimpleLinearSumAssignment()
+{
+    if (pSimpleLinearSumAssignment) delete pSimpleLinearSumAssignment;
+}
+
+Napi::Object GSimpleLinearSumAssignment::Init(Napi::Env env, Napi::Object exports)
+{
+    Napi::HandleScope scope(env);
+    Napi::Function func = DefineClass(
+        env,
+        "SimpleLinearSumAssignment",
+        {
+            InstanceMethod("AddArcWithCost", &GSimpleLinearSumAssignment::AddArcWithCost),
+        }
+    );
+    constructor = Napi::Persistent(func);
+    constructor.SuppressDestruct();
+    exports.Set(Napi::String::New(env, "SimpleLinearSumAssignment"), func);
+    return exports;
+}
+
+// ArcIndex AddArcWithCost(NodeIndex left_node, NodeIndex right_node, CostValue cost);
+Napi::Value GSimpleLinearSumAssignment::AddArcWithCost(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 3 && info[0].IsNumber() && info[1].IsNumber() && info[2].IsNumber())
+    {
+        NodeIndex left_node  = info[0].As<Napi::Number>().Int32Value();
+        NodeIndex right_node = info[1].As<Napi::Number>().Int32Value();
+        CostValue cost       = info[2].As<Napi::Number>().Int32Value();
+        ArcIndex result      = pSimpleLinearSumAssignment->AddArcWithCost(left_node, right_node, cost);
+        return Napi::Number::New(env, result);
+    }
+
+    Napi::TypeError::New(env, "GSimpleLinearSumAssignment::AddArcWithCost : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
 } // namespace operations_research

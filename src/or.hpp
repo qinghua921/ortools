@@ -1,6 +1,7 @@
 #pragma once
 
 #include <napi.h>
+#include <ortools/graph/assignment.h>
 #include <ortools/linear_solver/linear_solver.h>
 #include <ortools/util/sorted_interval_list.h>
 
@@ -334,4 +335,17 @@ class GClosedInterval : public Napi::ObjectWrap<GClosedInterval>
     Napi::Value operator_eq(const Napi::CallbackInfo &info);
     Napi::Value operator_lt(const Napi::CallbackInfo &info);
 };
+
+class GSimpleLinearSumAssignment : public Napi::ObjectWrap<GSimpleLinearSumAssignment>
+{
+  public:
+    static inline Napi::FunctionReference constructor;
+    SimpleLinearSumAssignment *pSimpleLinearSumAssignment = nullptr;
+    GSimpleLinearSumAssignment(const Napi::CallbackInfo &info);
+    ~GSimpleLinearSumAssignment();
+    static Napi::Object Init(Napi::Env env, Napi::Object exports);
+
+    Napi::Value AddArcWithCost(const Napi::CallbackInfo &info);
+};
+
 } // namespace operations_research
