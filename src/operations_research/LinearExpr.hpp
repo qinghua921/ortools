@@ -34,11 +34,10 @@ class GLinearExpr : public Napi::ObjectWrap<GLinearExpr>
         Napi::TypeError::New(env, "operations_research::GLinearExpr::GLinearExpr : Invalid arguments").ThrowAsJavaScriptException();
     };
 
-    // TODO delete pLinearExpr or not ?
-    // ~GLinearExpr()
-    // {
-    //     if ( pLinearExpr ) delete pLinearExpr;
-    // };
+    ~GLinearExpr()
+    {
+        if ( pLinearExpr ) delete pLinearExpr;
+    };
 
     static Napi::Object Init(Napi::Env env, Napi::Object exports)
     {

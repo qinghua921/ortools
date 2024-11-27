@@ -26,11 +26,10 @@ class GMPObjective : public Napi::ObjectWrap<GMPObjective>
         Napi::TypeError::New(env, "operations_research::GMPObjective::GMPObjective : Invalid arguments").ThrowAsJavaScriptException();
     };
 
-    // TODO delete pMPObjective or not ?
-    // ~GMPObjective()
-    // {
-    //     if ( pMPObjective ) delete pMPObjective;
-    // };
+    ~GMPObjective()
+    {
+        if ( pMPObjective ) delete pMPObjective;
+    };
 
     static Napi::Object Init(Napi::Env env, Napi::Object exports)
     {

@@ -26,12 +26,6 @@ class GMPVariable : public Napi::ObjectWrap<GMPVariable>
         Napi::TypeError::New(env, "operations_research::GMPVariable::GMPVariable : Invalid arguments").ThrowAsJavaScriptException();
     };
 
-    // TODO delete pMPVariable or not ?
-    // ~GMPVariable()
-    // {
-    //     if ( pMPVariable ) delete pMPVariable;
-    // };
-
     static Napi::Object Init(Napi::Env env, Napi::Object exports)
     {
         Napi::HandleScope scope(env);

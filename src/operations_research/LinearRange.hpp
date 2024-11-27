@@ -26,17 +26,18 @@ class GLinearRange : public Napi::ObjectWrap<GLinearRange>
         Napi::TypeError::New(env, "operations_research::GLinearRange::GLinearRange : Invalid arguments").ThrowAsJavaScriptException();
     };
 
-    // TODO delete pLinearRange or not ?
-    // ~GLinearRange()
-    // {
-    //     if ( pLinearRange ) delete pLinearRange;
-    // };
+    ~GLinearRange()
+    {
+        if (pLinearRange) delete pLinearRange;
+    };
 
     static Napi::Object Init(Napi::Env env, Napi::Object exports)
     {
         Napi::HandleScope scope(env);
         Napi::Function func = DefineClass(
-            env, "LinearRange", {}
+            env,
+            "LinearRange",
+            {}
         );
         constructor = Napi::Persistent(func);
         constructor.SuppressDestruct();
