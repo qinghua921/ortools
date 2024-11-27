@@ -1,5 +1,5 @@
-import { operations_research as op } from '../src'
-import { MPVariable } from '../src/operations_research/MPVariable';
+import { operations_research as op } from '../../src'
+import { MPVariable } from '../../src/operations_research/MPVariable';
 
 
 function test()

@@ -53,17 +53,8 @@ class GMPObjective : public Napi::ObjectWrap<GMPObjective>
     //     double Value() const;
     Napi::Value Value(const Napi::CallbackInfo &info)
     {
-
         Napi::Env env = info.Env();
-        Napi::HandleScope scope(env);
-
-        if (info.Length() == 0)
-        {
-            return Napi::Number::New(env, pMPObjective->Value());
-        }
-
-        Napi::TypeError::New(env, "operations_research::GMPObjective::Value : Invalid arguments").ThrowAsJavaScriptException();
-        return env.Undefined();
+        return Napi::Number::New(env, pMPObjective->Value());
     }
 
     //     void SetMinimization()
@@ -71,16 +62,8 @@ class GMPObjective : public Napi::ObjectWrap<GMPObjective>
     {
 
         Napi::Env env = info.Env();
-        Napi::HandleScope scope(env);
-
-        if (info.Length() == 0)
-        {
-            pMPObjective->SetMinimization();
-            return env.Null();
-        }
-
-        Napi::TypeError::New(env, "operations_research::GMPObjective::SetMinimization : Invalid arguments").ThrowAsJavaScriptException();
-        return env.Undefined();
+        pMPObjective->SetMinimization();
+        return env.Null();
     };
 
     //     void SetCoefficient(const MPVariable *var, double coeff);
