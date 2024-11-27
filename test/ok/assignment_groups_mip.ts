@@ -1,6 +1,4 @@
 import { operations_research as op } from '../../src'
-import { MPVariable } from '../../src/operations_research/MPVariable';
-
 
 function test()
 {
@@ -64,7 +62,7 @@ function test()
         return;
     }
 
-    let x: MPVariable[][] = [];
+    let x: op.MPVariable[][] = [];
     for (let worker of all_workers)
     {
         x[worker] = [];
@@ -96,7 +94,7 @@ function test()
         solver.MakeRowConstraint(op.operator_eq(task_sum, 1));
     }
 
-    let work: MPVariable[] = [];
+    let work: op.MPVariable[] = [];
     for (let worker of all_workers)
     {
         work[worker] = solver.MakeBoolVar(`work[${worker}]`);
@@ -183,10 +181,6 @@ function test()
             }
         }
     }
-
-
-
-
 }
 
 test();
