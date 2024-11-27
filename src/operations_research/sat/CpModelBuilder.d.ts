@@ -1,3 +1,6 @@
+import { BoolVar } from "./BoolVar";
+import { Constraint } from "./Constraint";
+
 export class CpModelBuilder
 {
     //   public:
@@ -7,8 +10,7 @@ export class CpModelBuilder
     //     /// Creates an integer variable with the given domain.
     //     IntVar NewIntVar(const Domain &domain);
 
-    //     /// Creates a Boolean variable.
-    //     BoolVar NewBoolVar();
+    NewBoolVar(): BoolVar;
 
     //     /// Creates a constant variable. This is a shortcut for
     //     /// NewVariable(Domain(value)).but it will return the same variable if used
@@ -56,11 +58,8 @@ export class CpModelBuilder
     //     /// Same as AddBoolOr(). Sum literals >= 1.
     //     Constraint AddAtLeastOne(absl::Span<const BoolVar> literals);
 
-    //     /// At most one literal is true. Sum literals <= 1.
-    //     Constraint AddAtMostOne(absl::Span<const BoolVar> literals);
-
-    //     /// Exactly one literal is true. Sum literals == 1.
-    //     Constraint AddExactlyOne(absl::Span<const BoolVar> literals);
+    AddAtMostOne(literals: BoolVar[]): Constraint;
+    AddExactlyOne(literals: BoolVar[]): Constraint;
 
     //     /// Adds the constraint that all literals must be true.
     //     Constraint AddBoolAnd(absl::Span<const BoolVar> literals);
@@ -80,8 +79,7 @@ export class CpModelBuilder
     //         return AddBoolAnd(rhs).OnlyEnforceIf(lhs);
     //     }
 
-    //     /// Adds left == right.
-    //     Constraint AddEquality(const LinearExpr &left, const LinearExpr &right);
+    AddEquality(left: LinearExpr, right: LinearExpr): Constraint;
 
     //     /// Adds left >= right.
     //     Constraint AddGreaterOrEqual(const LinearExpr &left, const LinearExpr &right);

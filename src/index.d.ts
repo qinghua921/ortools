@@ -16,6 +16,9 @@ import
 /**** operations_research / sat *******************************************************************************/
 
 import { CpModelBuilder as or_sat_CpModelBuilder } from './operations_research/sat/CpModelBuilder'
+import { BoolVar as or_sat_BoolVar } from './operations_research/sat/BoolVar'
+import { Constraint as or_sat_Constraint } from './operations_research/sat/Constraint'
+import { LinearExpr as or_sat_LinearExpr } from './operations_research/sat/LinearExpr'
 
 declare module operations_research
 {
@@ -36,6 +39,9 @@ declare module operations_research
         export
         {
             or_sat_CpModelBuilder as CpModelBuilder,
+            or_sat_BoolVar as BoolVar,
+            or_sat_Constraint as Constraint,
+            or_sat_LinearExpr as LinearExpr,
         }
     }
 };

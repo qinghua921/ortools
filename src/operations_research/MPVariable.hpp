@@ -32,7 +32,8 @@ class GMPVariable : public Napi::ObjectWrap<GMPVariable>
         Napi::Function func = DefineClass(
             env,
             "MPVariable",
-            {InstanceMethod("solution_value", &GMPVariable::solution_value)
+            {
+                InstanceMethod("solution_value", &GMPVariable::solution_value),
             }
         );
         constructor = Napi::Persistent(func);
@@ -45,7 +46,15 @@ class GMPVariable : public Napi::ObjectWrap<GMPVariable>
     Napi::Value solution_value(const Napi::CallbackInfo &info)
     {
         Napi::Env env = info.Env();
-        return Napi::Number::New(env, pMPVariable->solution_value());
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 0)
+        {
+            return Napi::Number::New(env, pMPVariable->solution_value());
+        }
+
+        Napi::TypeError::New(env, "operations_research::GMPVariable::solution_value : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
     };
 };
 

@@ -5,13 +5,22 @@
 #include <ortools/base/logging.h>
 #include <ortools/init/init.h>
 
+/**** operations_research ***************************************************************************************/
+
 #include "operations_research/FuncInit.hpp"
 #include "operations_research/LinearExpr.hpp"
 #include "operations_research/LinearRange.hpp"
 #include "operations_research/MPConstraint.hpp"
+#include "operations_research/MPObjective.hpp"
 #include "operations_research/MPSolver.hpp"
 #include "operations_research/MPVariable.hpp"
-#include "operations_research/MPObjective.hpp"
+
+/**** operations_research / sat ***************************************************************************************/
+
+#include "operations_research/sat/BoolVar.hpp"
+#include "operations_research/sat/Constraint.hpp"
+#include "operations_research/sat/CpModelBuilder.hpp"
+#include "operations_research/sat/LinearExpr.hpp"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports)
 {
@@ -30,19 +39,13 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     //     operations_research.Set( "packing", packing );
     // }
     {
-        // auto sat = Napi::Object::New(env);
+        auto sat = Napi::Object::New(env);
         // operations_research::sat::SatInit(env, sat);
-        // operations_research::sat::GCpModelBuilder::Init(env, sat);
-        // operations_research::sat::GBoolVar::Init(env, sat);
-        // operations_research::sat::GCpModelProto::Init(env, sat);
-        // operations_research::sat::GConstraint::Init(env, sat);
-        // operations_research::sat::GCpSolverResponse::Init(env, sat);
-        // operations_research::sat::GIntVar::Init(env, sat);
-        // operations_research::sat::GLinearExpr::Init(env, sat);
-        // operations_research::sat::GIntervalVar::Init(env, sat);
-        // operations_research::sat::GNoOverlap2DConstraint::Init(env, sat);
-        // operations_research::sat::GTableConstraint::Init(env, sat);
-        // operations_research.Set("sat", sat);
+        operations_research::sat::GCpModelBuilder::Init(env, sat);
+        operations_research::sat::GBoolVar::Init(env, sat);
+        operations_research::sat::GConstraint::Init(env, sat);
+        operations_research::sat::GLinearExpr::Init(env, sat);
+        operations_research.Set("sat", sat);
     }
     operations_research::GMPSolver::Init(env, operations_research);
     operations_research::GMPVariable::Init(env, operations_research);

@@ -190,6 +190,44 @@ function test()
     ]
 
     let cp_model = new op.sat.CpModelBuilder();
+    let x = Array.from(
+        { length: num_workers }, (_, i) => Array.from(
+            { length: num_tasks }, (_, j) => cp_model.NewBoolVar().WithName(
+                `x[${i},${j}]`
+            )
+        )
+    );
+
+    for (let worker of all_workers)
+    {
+        cp_model.AddAtMostOne(x[worker]);
+    }
+
+    for (let task of all_tasks)
+    {
+        let tasks = [];
+        for (let worker of all_workers)
+        {
+            tasks.push(x[worker][task]);
+        }
+        cp_model.AddExactlyOne(tasks);
+    }
+
+    let work = Array.from(
+        { length: num_workers }, (_, i) => cp_model.NewBoolVar().WithName(
+            `work[${i}]`
+        )
+    );
+
+    for (let worker of all_workers)
+    {
+        let task_sum = new op.sat.LinearExpr();
+        for (let task of all_tasks)
+        {
+            task_sum.operator_plus_eq(x[worker][task])
+        }
+        cp_model.AddEquality(work[worker], task_sum);
+    }
 
 }
 
