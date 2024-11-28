@@ -45,7 +45,7 @@ export class LinearExpr
     operator_plus_eq(other: BoolVar): LinearExpr;
     
     //  LinearExpr &operator-=(const LinearExpr &other);
-    //  LinearExpr &operator*=(int64_t factor);
+    operator_times_eq(other: LinearExpr): LinearExpr;
 
     //  /// Returns the vector of variable indices.
     //  const std::vector<int> &variables() const

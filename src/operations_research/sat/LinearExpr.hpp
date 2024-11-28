@@ -26,7 +26,7 @@ class GLinearExpr : public Napi::ObjectWrap<GLinearExpr>
             if (pLinearExpr) return;
         }
 
-        if(info.Length() == 0)
+        if (info.Length() == 0)
         {
             pLinearExpr = new LinearExpr();
             return;
@@ -48,6 +48,7 @@ class GLinearExpr : public Napi::ObjectWrap<GLinearExpr>
             "LinearExpr",
             {
                 InstanceMethod("operator_plus_eq", &GLinearExpr::operator_plus_eq),
+                InstanceMethod("operator_times_eq", &GLinearExpr::operator_times_eq),
             }
         );
         constructor = Napi::Persistent(func);
@@ -55,6 +56,23 @@ class GLinearExpr : public Napi::ObjectWrap<GLinearExpr>
         exports.Set(Napi::String::New(env, "LinearExpr"), func);
         return exports;
     };
+
+    //  LinearExpr &operator*=(int64_t factor);
+    Napi::Value operator_times_eq(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 1 && info[0].IsNumber())
+        {
+            int64_t factor = info[0].As<Napi::Number>().Int64Value();
+            *pLinearExpr *= factor;
+            return this->Value();
+        }
+
+        Napi::TypeError::New(env, "operations_research::GLinearExpr::operator*= : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
 
     //  LinearExpr &operator+=(const LinearExpr &other);
     Napi::Value operator_plus_eq(const Napi::CallbackInfo &info)

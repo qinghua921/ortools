@@ -1,9 +1,12 @@
 #pragma once
 
 #include "Constraint.hpp"
+#include "CpModelProto.hpp"
+#include "IntVar.hpp"
+#include "LinearExpr.hpp"
+#include "TableConstraint.hpp"
 #include "napi.h"
 #include "ortools/sat/cp_model.h"
-#include "LinearExpr.hpp"
 
 namespace operations_research
 {
@@ -52,6 +55,9 @@ class GCpModelBuilder : public Napi::ObjectWrap<GCpModelBuilder>
                 InstanceMethod("AddExactlyOne", &GCpModelBuilder::AddExactlyOne),
                 InstanceMethod("AddAtMostOne", &GCpModelBuilder::AddAtMostOne),
                 InstanceMethod("NewBoolVar", &GCpModelBuilder::NewBoolVar),
+                InstanceMethod("AddAllowedAssignments", &GCpModelBuilder::AddAllowedAssignments),
+                InstanceMethod("Minimize", &GCpModelBuilder::Minimize),
+                InstanceMethod("Build", &GCpModelBuilder::Build),
             }
         );
         constructor = Napi::Persistent(func);
@@ -59,6 +65,78 @@ class GCpModelBuilder : public Napi::ObjectWrap<GCpModelBuilder>
         exports.Set(Napi::String::New(env, "CpModelBuilder"), func);
         return exports;
     };
+
+    //     const CpModelProto &Build() const
+    Napi::Value Build(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 0)
+        {
+            auto external = Napi::External<CpModelProto>::New(env, new CpModelProto(pCpModelBuilder->Build()));
+            return GCpModelProto::constructor.New({external});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::Build : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    //     void Minimize(const LinearExpr &expr);
+    Napi::Value Minimize(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GLinearExpr::constructor.Value()))
+        {
+            auto expr = Napi::ObjectWrap<GLinearExpr>::Unwrap(info[0].As<Napi::Object>())->pLinearExpr;
+            pCpModelBuilder->Minimize(*expr);
+            return env.Undefined();
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::Minimize : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    //     TableConstraint AddAllowedAssignments(absl::Span<const IntVar> vars);
+    Napi::Value AddAllowedAssignments(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 1 && info[0].IsArray())
+        {
+            Napi::Array array = info[0].As<Napi::Array>();
+            int length        = array.Length();
+            std::vector<IntVar> vars;
+            vars.reserve(length);
+            for (int i = 0; i < length; i++)
+            {
+                auto pi = array.Get(i);
+                if (pi.IsObject() && pi.As<Napi::Object>().InstanceOf(GIntVar::constructor.Value()))
+                {
+                    vars.push_back(*Napi::ObjectWrap<GIntVar>::Unwrap(pi.As<Napi::Object>())->pIntVar);
+                    continue;
+                }
+
+                if (pi.IsObject() && pi.As<Napi::Object>().InstanceOf(GBoolVar::constructor.Value()))
+                {
+                    vars.push_back(IntVar(*Napi::ObjectWrap<GBoolVar>::Unwrap(pi.As<Napi::Object>())->pBoolVar));
+                    continue;
+                }
+
+                Napi::TypeError::New(env, "operations_research::GCpModelBuilder::AddAllowedAssignments : Invalid arguments").ThrowAsJavaScriptException();
+                return env.Undefined();
+            }
+
+            auto external = Napi::External<TableConstraint>::New(env, new TableConstraint(pCpModelBuilder->AddAllowedAssignments(vars)));
+            return GTableConstraint::constructor.New({external});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::AddAllowedAssignments : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
 
     //     Constraint AddEquality(const LinearExpr &left, const LinearExpr &right);
     Napi::Value AddEquality(const Napi::CallbackInfo &info)

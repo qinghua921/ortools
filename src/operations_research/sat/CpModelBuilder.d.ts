@@ -1,5 +1,8 @@
 import { BoolVar } from "./BoolVar";
 import { Constraint } from "./Constraint";
+import { CpModelProto } from "./CpModelProto";
+import { IntVar } from "./IntVar";
+import { TableConstraint } from "./TableConstraint";
 
 export class CpModelBuilder
 {
@@ -147,18 +150,7 @@ export class CpModelBuilder
     //      */
     //     MultipleCircuitConstraint AddMultipleCircuitConstraint();
 
-    //     /**
-    //      * Adds an allowed assignments constraint.
-    //      *
-    //      * An AllowedAssignments constraint is a constraint on an array of variables
-    //      * that forces, when all variables are fixed to a single value, that the
-    //      * corresponding list of values is equal to one of the tuples added to the
-    //      * constraint.
-    //      *
-    //      * It returns a table constraint that allows adding tuples incrementally after
-    //      * construction.
-    //      */
-    //     TableConstraint AddAllowedAssignments(absl::Span<const IntVar> vars);
+    AddAllowedAssignments(vars: IntVar[]): TableConstraint;
 
     //     /**
     //      * Adds an forbidden assignments constraint.
@@ -289,8 +281,7 @@ export class CpModelBuilder
     //      */
     //     CumulativeConstraint AddCumulative(LinearExpr capacity);
 
-    //     /// Adds a linear minimization objective.
-    //     void Minimize(const LinearExpr &expr);
+    Minimize(expr: LinearExpr): void;
 
     //     /// Adds a linear floating point minimization objective.
     //     /// Note that the coefficients will be internally scaled to integer.
@@ -355,10 +346,7 @@ export class CpModelBuilder
     //     /// Remove all assumptions from the model.
     //     void ClearAssumptions();
 
-    //     const CpModelProto &Build() const
-    //     {
-    //         return cp_model_;
-    //     }
+    Build(): CpModelProto;
     //     const CpModelProto &Proto() const
     //     {
     //         return cp_model_;
