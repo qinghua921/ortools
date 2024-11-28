@@ -1,8 +1,8 @@
 #pragma once
 
-#include "napi.h"
 #include "LinearExpr.hpp"
 #include "LinearRange.hpp"
+#include "napi.h"
 
 namespace operations_research
 {
