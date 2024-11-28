@@ -15,6 +15,7 @@
 #include "operations_research/MPSolver.hpp"
 #include "operations_research/MPVariable.hpp"
 #include "operations_research/SimpleLinearSumAssignment.hpp"
+#include "operations_research/SimpleMinCostFlow.hpp"
 
 /**** operations_research / sat ***************************************************************************************/
 
@@ -22,10 +23,10 @@
 #include "operations_research/sat/Constraint.hpp"
 #include "operations_research/sat/CpModelBuilder.hpp"
 #include "operations_research/sat/CpModelProto.hpp"
+#include "operations_research/sat/CpSolverResponse.hpp"
 #include "operations_research/sat/FuncInit.hpp"
 #include "operations_research/sat/IntVar.hpp"
 #include "operations_research/sat/LinearExpr.hpp"
-#include "operations_research/sat/CpSolverResponse.hpp"
 #include "operations_research/sat/TableConstraint.hpp"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports)
@@ -65,6 +66,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     operations_research::GLinearRange::Init(env, operations_research);
     operations_research::GMPObjective::Init(env, operations_research);
     operations_research::GSimpleLinearSumAssignment::Init(env, operations_research);
+    operations_research::GSimpleMinCostFlow::Init(env, operations_research);
     operations_research::FuncInit(env, operations_research);
     exports.Set("operations_research", operations_research);
 
