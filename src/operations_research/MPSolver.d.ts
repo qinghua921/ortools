@@ -183,8 +183,7 @@ export class MPSolver
     //     /// Creates a continuous variable.
     //     MPVariable *MakeNumVar(double lb, double ub, const std::string &name);
 
-    //     /// Creates an integer variable.
-    //     MPVariable *MakeIntVar(double lb, double ub, const std::string &name);
+    MakeIntVar(lb: number, ub: number, name: string): MPVariable;
 
     MakeBoolVar(name: string): MPVariable;
 

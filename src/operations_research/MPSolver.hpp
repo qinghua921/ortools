@@ -55,6 +55,7 @@ class GMPSolver : public Napi::ObjectWrap<GMPSolver>
                 InstanceMethod("MakeBoolVar", &GMPSolver::MakeBoolVar),
                 StaticMethod("CreateSolver", &GMPSolver::CreateSolver),
                 StaticValue("ResultStatus", enumResultStatus),
+                InstanceMethod("MakeIntVar", &GMPSolver::MakeIntVar),
 
             }
         );
@@ -62,6 +63,26 @@ class GMPSolver : public Napi::ObjectWrap<GMPSolver>
         constructor.SuppressDestruct();
         exports.Set(Napi::String::New(env, "MPSolver"), func);
         return exports;
+    };
+
+    //     MPVariable *MakeIntVar(double lb, double ub, const std::string &name);
+    Napi::Value MakeIntVar(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 3 && info[0].IsNumber() && info[1].IsNumber() && info[2].IsString())
+        {
+            double lb               = info[0].As<Napi::Number>().DoubleValue();
+            double ub               = info[1].As<Napi::Number>().DoubleValue();
+            std::string name        = info[2].As<Napi::String>().Utf8Value();
+            MPVariable *pMPVariable = pMPSolver->MakeIntVar(lb, ub, name);
+            auto external           = Napi::External<MPVariable>::New(env, pMPVariable);
+            return GMPVariable::constructor.New({external});
+        }
+
+        Napi::TypeError::New(env, "GMPVariable::MakeIntVar : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
     };
 
     //     ResultStatus Solve();
