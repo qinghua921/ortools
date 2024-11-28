@@ -14,6 +14,7 @@
 #include "operations_research/MPObjective.hpp"
 #include "operations_research/MPSolver.hpp"
 #include "operations_research/MPVariable.hpp"
+#include "operations_research/SimpleLinearSumAssignment.hpp"
 
 /**** operations_research / sat ***************************************************************************************/
 
@@ -63,6 +64,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     operations_research::GMPConstraint::Init(env, operations_research);
     operations_research::GLinearRange::Init(env, operations_research);
     operations_research::GMPObjective::Init(env, operations_research);
+    operations_research::GSimpleLinearSumAssignment::Init(env, operations_research);
     operations_research::FuncInit(env, operations_research);
     exports.Set("operations_research", operations_research);
 

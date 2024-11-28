@@ -6,6 +6,7 @@ import { LinearExpr as or_LinearExpr } from './operations_research/LinearExpr'
 import { MPConstraint as or_MPConstraint } from './operations_research/MPConstraint'
 import { LinearRange as or_LinearRange } from './operations_research/LinearRange'
 import { MPObjective as or_MPObjective } from './operations_research/MPObjective'
+import { SimpleLinearSumAssignment as or_SimpleLinearSumAssignment } from './operations_research/SimpleLinearSumAssignment'
 import
 {
     operator_eq as or_operator_eq,
@@ -22,7 +23,7 @@ import { LinearExpr as or_sat_LinearExpr } from './operations_research/sat/Linea
 import { IntVar as or_sat_IntVar } from './operations_research/sat/IntVar'
 import { CpModelProto as or_sat_CpModelProto } from './operations_research/sat/CpModelProto'
 import { CpSolverResponse as or_sat_CpSolverResponse } from './operations_research/sat/CpSolverResponse'
-import {TableConstraint as or_sat_TableConstraint } from './operations_research/sat/TableConstraint'
+import { TableConstraint as or_sat_TableConstraint } from './operations_research/sat/TableConstraint'
 import
 {
     operator_times as or_sat_operator_times,
@@ -41,6 +42,7 @@ declare module operations_research
         or_MPConstraint as MPConstraint,
         or_LinearRange as LinearRange,
         or_MPObjective as MPObjective,
+        or_SimpleLinearSumAssignment as SimpleLinearSumAssignment,
 
         or_operator_eq as operator_eq,
         or_operator_le as operator_le,
