@@ -1,58 +1,113 @@
 import { operations_research as op } from '../src'
-
 function test()
 {
-    // CpModelBuilder cp_model;
+    // SimpleMinCostFlow min_cost_flow;
+    // const std::vector<int64_t> team_A      = {1, 3, 5};
+    // const std::vector<int64_t> team_B      = {2, 4, 6};
+    // const std::vector<int64_t> start_nodes = {
+    //     0, 0, 11, 11, 11, 12, 12, 12, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 8, 9, 10
+    // };
 
-    let cp_model = new op.sat.CpModelBuilder();
+    let min_cost_flow = new op.SimpleMinCostFlow();
+    const team_A = [1, 3, 5];
+    const team_B = [2, 4, 6];
+    const start_nodes = [
+        0, 0, 11, 11, 11, 12, 12, 12, 1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 8, 9, 10
+    ];
+    // const std::vector<int64_t> end_nodes = {
+    //     11, 12, 1, 3, 5, 2, 4, 6, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 13, 13, 13, 13
+    // };
+    // const std::vector<int64_t> capacities = {2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1};
+    // const std::vector<int64_t> unit_costs = {
+    //     0, 0, 0, 0, 0, 0, 0, 0, 90, 76, 75, 70, 35, 85, 55, 65, 125, 95, 90, 105, 45, 110, 95, 115, 60, 105, 80, 75, 45, 65, 110, 95, 0, 0, 0, 0
+    // };
+    // const int64_t source                = 0;
+    // const int64_t sink                  = 13;
+    // const int64_t tasks                 = 4;
+    // const std::vector<int64_t> supplies = {tasks, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -tasks};
 
-    // const Domain domain(0, 10);
-    // const IntVar x  = cp_model.NewIntVar(domain).WithName("x");
-    // const IntVar y  = cp_model.NewIntVar(domain).WithName("y");
-    // const IntVar z  = cp_model.NewIntVar(domain).WithName("z");
-    // const BoolVar a = cp_model.NewBoolVar().WithName("a");
-    // const BoolVar b = cp_model.NewBoolVar().WithName("b");
-    // const BoolVar c = cp_model.NewBoolVar().WithName("c");
+    const end_nodes = [
+        11, 12, 1, 3, 5, 2, 4, 6, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 7, 8, 9, 10, 13, 13, 13, 13
+    ];
+    const capacities = [2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+    const unit_costs = [
+        0, 0, 0, 0, 0, 0, 0, 0, 90, 76, 75, 70, 35, 85, 55, 65, 125, 95, 90, 105, 45, 110, 95, 115, 60, 105, 80, 75, 45, 65, 110, 95, 0, 0, 0, 0
+    ];
+    let source = 0;
+    let sink = 13;
+    let tasks = 4;
+    const supplies = [tasks, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -tasks];
 
-    let domain = new op.Domain(0, 10);
-    let x = cp_model.NewIntVar(domain).WithName("x");
-    let y = cp_model.NewIntVar(domain).WithName("y");
-    let z = cp_model.NewIntVar(domain).WithName("z");
-    let a = cp_model.NewBoolVar().WithName("a");
-    let b = cp_model.NewBoolVar().WithName("b");
-    let c = cp_model.NewBoolVar().WithName("c");
-
-    // cp_model.AddGreaterThan(x, y).OnlyEnforceIf(a);
-    // cp_model.AddGreaterThan(y, z).OnlyEnforceIf(b);
-    // cp_model.AddGreaterThan(z, x).OnlyEnforceIf(c);
-    cp_model.AddGreaterThan(x, y).OnlyEnforceIf(a);
-    cp_model.AddGreaterThan(y, z).OnlyEnforceIf(b);
-    cp_model.AddGreaterThan(z, x).OnlyEnforceIf(c);
-
-    // cp_model.AddAssumptions({a, b, c});
-    cp_model.AddAssumptions([a, b, c]);
-
-    // const CpSolverResponse response = Solve(cp_model.Build());
-    let response = op.sat.Solve(cp_model.Build());
-
-    // LOG(INFO) << CpSolverResponseStats(response);
-    // if (response.status() == CpSolverStatus::INFEASIBLE)
+    // for (int i = 0; i < start_nodes.size(); ++i)
     // {
-    //     for (const int index :
-    //          response.sufficient_assumptions_for_infeasibility())
-    //     {
-    //         LOG(INFO) << index;
-    //     }
+    //     int arc = min_cost_flow.AddArcWithCapacityAndUnitCost(
+    //         start_nodes[i], end_nodes[i], capacities[i], unit_costs[i]
+    //     );
+    //     if (arc != i) LOG(FATAL) << "Internal error";
     // }
 
-    console.log(op.sat.CpSolverResponseStats(response));
-    if (response.status() === op.sat.CpSolverStatus.INFEASIBLE) 
+    for (let i = 0; i < start_nodes.length; i++)
     {
-        for (const index of response.sufficient_assumptions_for_infeasibility()) 
+        let arc = min_cost_flow.AddArcWithCapacityAndUnitCost(
+            start_nodes[i], end_nodes[i], capacities[i], unit_costs[i]
+        );
+        if (arc != i) console.log("Internal error");
+    }
+    // for (int i = 0; i < supplies.size(); ++i)
+    // {
+    //     min_cost_flow.SetNodeSupply(i, supplies[i]);
+    // }
+    for (let i = 0; i < supplies.length; i++)
+    {
+        min_cost_flow.SetNodeSupply(i, supplies[i]);
+    }
+    // int status = min_cost_flow.Solve();
+    // if (status == MinCostFlow::OPTIMAL)
+    // {
+    //     LOG(INFO) << "Total cost: " << min_cost_flow.OptimalCost();
+    //     LOG(INFO) << "";
+    //     for (std::size_t i = 0; i < min_cost_flow.NumArcs(); ++i)
+    //     {
+    //         if (min_cost_flow.Tail(i) != source && min_cost_flow.Tail(i) != 11 &&
+    //             min_cost_flow.Tail(i) != 12 && min_cost_flow.Head(i) != sink)
+    //         {
+    //             if (min_cost_flow.Flow(i) > 0)
+    //             {
+    //                 LOG(INFO) << "Worker " << min_cost_flow.Tail(i)
+    //                           << " assigned to task " << min_cost_flow.Head(i)
+    //                           << " Cost: " << min_cost_flow.UnitCost(i);
+    //             }
+    //         }
+    //     }
+    // }
+    // else
+    // {
+    //     LOG(INFO) << "Solving the min cost flow problem failed.";
+    //     LOG(INFO) << "Solver status: " << status;
+    // }
+    let status = min_cost_flow.Solve();
+    if (status == op.SimpleMinCostFlow.Status.OPTIMAL)
+    {
+        console.log("Total cost: " + min_cost_flow.OptimalCost());
+        console.log("");
+        for (let i = 0; i < min_cost_flow.NumArcs(); i++)
         {
-            console.log(index);
+            if (min_cost_flow.Tail(i) != source && min_cost_flow.Tail(i) != 11 &&
+                min_cost_flow.Tail(i) != 12 && min_cost_flow.Head(i) != sink)
+            {
+                if (min_cost_flow.Flow(i) > 0)
+                {
+                    console.log("Worker " + min_cost_flow.Tail(i)
+                        + " assigned to task " + min_cost_flow.Head(i)
+                        + " Cost: " + min_cost_flow.UnitCost(i));
+                }
+            }
         }
     }
+    else
+    {
+        console.log("Solving the min cost flow problem failed.");
+        console.log("Solver status: " + status);
+    }
 }
-
 test();
