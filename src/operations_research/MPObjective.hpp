@@ -28,7 +28,7 @@ class GMPObjective : public Napi::ObjectWrap<GMPObjective>
 
     ~GMPObjective()
     {
-        if ( pMPObjective ) delete pMPObjective;
+        if (pMPObjective) delete pMPObjective;
     };
 
     static Napi::Object Init(Napi::Env env, Napi::Object exports)
@@ -41,12 +41,28 @@ class GMPObjective : public Napi::ObjectWrap<GMPObjective>
                 InstanceMethod("Value", &GMPObjective::Value),
                 InstanceMethod("SetCoefficient", &GMPObjective::SetCoefficient),
                 InstanceMethod("SetMinimization", &GMPObjective::SetMinimization),
+                InstanceMethod("SetMaximization", &GMPObjective::SetMaximization),
             }
         );
         constructor = Napi::Persistent(func);
         constructor.SuppressDestruct();
         exports.Set(Napi::String::New(env, "MPObjective"), func);
         return exports;
+    };
+    //     void SetMaximization()
+    Napi::Value SetMaximization(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 0)
+        {
+            pMPObjective->SetMaximization();
+            return env.Null();
+        }
+
+        Napi::TypeError::New(env, "operations_research::GMPObjective::SetMaximization : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Undefined();
     };
 
     //     double Value() const;

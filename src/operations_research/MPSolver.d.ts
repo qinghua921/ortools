@@ -141,11 +141,7 @@ export class MPSolver
     //      */
     //     void Clear();
 
-    //     /// Returns the number of variables.
-    //     int NumVariables() const
-    //     {
-    //         return variables_.size();
-    //     }
+    NumVariables(): number;
 
     //     /**
     //      * Returns the array of variables handled by the MPSolver. (They are listed in
@@ -180,11 +176,8 @@ export class MPSolver
     //      */
     //     MPVariable *MakeVar(double lb, double ub, bool integer, const std::string &name);
 
-    //     /// Creates a continuous variable.
-    //     MPVariable *MakeNumVar(double lb, double ub, const std::string &name);
-
+    MakeNumVar(lb: number, ub: number, name: string): MPVariable;
     MakeIntVar(lb: number, ub: number, name: string): MPVariable;
-
     MakeBoolVar(name: string): MPVariable;
 
     //     /**
@@ -212,11 +205,7 @@ export class MPSolver
     //     /// Creates an array of boolean variables.
     //     void MakeBoolVarArray(int nb, const std::string &name, std::vector<MPVariable *> *vars);
 
-    //     /// Returns the number of constraints.
-    //     int NumConstraints() const
-    //     {
-    //         return constraints_.size();
-    //     }
+    NumConstraints(): number;
 
     //     /**
     //      * Returns the array of constraints handled by the MPSolver.
@@ -247,11 +236,9 @@ export class MPSolver
 
     MakeRowConstraint(lb: number, ub: number): MPConstraint;
 
-    //     /// Creates a constraint with -infinity and +infinity bounds.
     //     MPConstraint *MakeRowConstraint();
 
-    //     /// Creates a named constraint with given bounds.
-    //     MPConstraint *MakeRowConstraint(double lb, double ub, const std::string &name);
+    MakeRowConstraint(lb: number, ub: number, name: string): MPConstraint;
 
     //     /// Creates a named constraint with -infinity and +infinity bounds.
     //     MPConstraint *MakeRowConstraint(const std::string &name);
@@ -549,15 +536,7 @@ export class MPSolver
     //         const std::vector<MPSolver::BasisStatus> &constraint_statuses
     //     );
 
-    //     /**
-    //      * Infinity.
-    //      *
-    //      * You can use -MPSolver::infinity() for negative infinity.
-    //      */
-    //     static double infinity()
-    //     {
-    //         return std::numeric_limits<double>::infinity();
-    //     }
+    static infinity(): number;
     //     double solver_infinity();
 
     //     /**
@@ -591,9 +570,7 @@ export class MPSolver
     //         return absl::Now() - construction_time_;
     //     }
 
-    //     /// Returns the number of simplex iterations.
-    //     int64_t iterations() const;
-
+    iterations(): number;
     //     /**
     //      * Returns the number of branch-and-bound nodes evaluated during the solve.
     //      *
@@ -601,8 +578,7 @@ export class MPSolver
     //      */
     //     int64_t nodes() const;
 
-    //     /// Returns a string describing the underlying solver and its version.
-    //     std::string SolverVersion() const;
+    SolverVersion(): string;
 
     //     /**
     //      * Advanced usage: returns the underlying solver.
@@ -691,11 +667,7 @@ export class MPSolver
     //         return static_cast<double>(time_limit()) / 1000.0;
     //     }
 
-    //     // DEPRECATED: Use DurationSinceConstruction() instead.
-    //     int64_t wall_time() const
-    //     {
-    //         return absl::ToInt64Milliseconds(DurationSinceConstruction());
-    //     }
+    wall_time(): number;
 
 
     //     // Debugging: verify that the given MPVariable* belongs to this solver.

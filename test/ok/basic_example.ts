@@ -1,4 +1,4 @@
-import { operations_research as op } from '../src'
+import { operations_research as op } from '../../src'
 function test()
 {
     console.log("Google OR-Tools version : " + op.OrToolsVersion.VersionString());

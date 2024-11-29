@@ -40,7 +40,7 @@ The codebase is large, and the priority is to implement the code in the examples
 - assignment_teams_sat 🆗
 - assumptions_sample_sat 🆗
 - balance_min_flow 🆗
-- basic_example
+- basic_example 🆗
 - bfs_directed
 - bfs_one_to_all
 - bfs_undirected

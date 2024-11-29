@@ -17,6 +17,7 @@
 #include "operations_research/MPVariable.hpp"
 #include "operations_research/SimpleLinearSumAssignment.hpp"
 #include "operations_research/SimpleMinCostFlow.hpp"
+#include "operations_research/OrToolsVersion.hpp"
 
 /**** operations_research / sat ***************************************************************************************/
 
@@ -69,6 +70,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     operations_research::GSimpleLinearSumAssignment::Init(env, operations_research);
     operations_research::GSimpleMinCostFlow::Init(env, operations_research);
     operations_research::GDomain::Init(env, operations_research);
+    operations_research::GOrToolsVersion::Init(env, operations_research);
     operations_research::FuncInit(env, operations_research);
     exports.Set("operations_research", operations_research);
 

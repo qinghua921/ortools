@@ -8,7 +8,8 @@ import { LinearRange as or_LinearRange } from './operations_research/LinearRange
 import { MPObjective as or_MPObjective } from './operations_research/MPObjective'
 import { SimpleLinearSumAssignment as or_SimpleLinearSumAssignment } from './operations_research/SimpleLinearSumAssignment'
 import { SimpleMinCostFlow as or_SimpleMinCostFlow } from './operations_research/SimpleMinCostFlow'
-import {Domain as or_Domain} from './operations_research/Domain'
+import { Domain as or_Domain } from './operations_research/Domain'
+import { OrToolsVersion as or_OrToolsVersion } from './operations_research/OrToolsVersion'
 import
 {
     operator_eq as or_operator_eq,
@@ -50,6 +51,7 @@ declare module operations_research
         or_SimpleLinearSumAssignment as SimpleLinearSumAssignment,
         or_SimpleMinCostFlow as SimpleMinCostFlow,
         or_Domain as Domain,
+        or_OrToolsVersion as OrToolsVersion,
 
         or_operator_eq as operator_eq,
         or_operator_le as operator_le,

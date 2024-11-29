@@ -69,11 +69,7 @@ export class MPObjective
 
     SetMinimization(): void;
 
-    //     /// Sets the optimization direction to maximize.
-    //     void SetMaximization()
-    //     {
-    //         SetOptimizationDirection(true);
-    //     }
+    SetMaximization(): void;
 
     //     /// Is the optimization direction set to maximize?
     //     bool maximization() const;
