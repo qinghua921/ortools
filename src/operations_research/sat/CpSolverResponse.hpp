@@ -1,7 +1,7 @@
 #pragma once
 
-#include "napi.h"
 #include "LinearExpr.hpp"
+#include "napi.h"
 
 namespace operations_research
 {
@@ -49,7 +49,7 @@ class GCpSolverResponse : public Napi::ObjectWrap<GCpSolverResponse>
         exports.Set(Napi::String::New(env, "CpSolverResponse"), func);
         return exports;
     };
-   
+
     //  ::operations_research::sat::CpSolverStatus status() const;
     Napi::Value status(const Napi::CallbackInfo &info)
     {
@@ -62,6 +62,20 @@ class GCpSolverResponse : public Napi::ObjectWrap<GCpSolverResponse>
         }
 
         Napi::TypeError::New(env, "operations_research::GCpSolverResponse::status : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    };
+    //  const ::google::protobuf::RepeatedField<::int32_t>& sufficient_assumptions_for_infeasibility() const;
+    Napi::Value sufficient_assumptions_for_infeasibility(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 0)
+        {
+            return Napi::Array::New(env, pCpSolverResponse->sufficient_assumptions_for_infeasibility());
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpSolverResponse::sufficient_assumptions_for_infeasibility : Invalid arguments").ThrowAsJavaScriptException();
         return env.Null();
     };
 

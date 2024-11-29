@@ -8,12 +8,14 @@ import { LinearRange as or_LinearRange } from './operations_research/LinearRange
 import { MPObjective as or_MPObjective } from './operations_research/MPObjective'
 import { SimpleLinearSumAssignment as or_SimpleLinearSumAssignment } from './operations_research/SimpleLinearSumAssignment'
 import { SimpleMinCostFlow as or_SimpleMinCostFlow } from './operations_research/SimpleMinCostFlow'
+import {Domain as or_Domain} from './operations_research/Domain'
 import
 {
     operator_eq as or_operator_eq,
     operator_le as or_operator_le,
     operator_ge as or_operator_ge,
     operator_times as or_operator_times,
+
 } from './operations_research/FuncInit'
 
 /**** operations_research / sat *******************************************************************************/
@@ -32,6 +34,7 @@ import
     Solve as or_sat_Solve,
     SolutionBooleanValue as or_sat_SolutionBooleanValue,
     CpSolverStatus as or_sat_CpSolverStatus,
+    CpSolverResponseStats as or_sat_CpSolverResponseStats,
 } from './operations_research/sat/FuncInit'
 
 declare module operations_research
@@ -46,11 +49,13 @@ declare module operations_research
         or_MPObjective as MPObjective,
         or_SimpleLinearSumAssignment as SimpleLinearSumAssignment,
         or_SimpleMinCostFlow as SimpleMinCostFlow,
+        or_Domain as Domain,
 
         or_operator_eq as operator_eq,
         or_operator_le as operator_le,
         or_operator_ge as operator_ge,
         or_operator_times as operator_times,
+
     }
     export namespace sat
     {
@@ -68,6 +73,7 @@ declare module operations_research
             or_sat_operator_times as operator_times,
             or_sat_Solve as Solve,
             or_sat_SolutionBooleanValue as SolutionBooleanValue,
+            or_sat_CpSolverResponseStats as CpSolverResponseStats,
 
             or_sat_CpSolverStatus as CpSolverStatus,
         }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "napi.h"
+#include "ortools/sat/cp_model.pb.h"
 
 namespace operations_research
 {

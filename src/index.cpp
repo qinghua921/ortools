@@ -7,6 +7,7 @@
 
 /**** operations_research ***************************************************************************************/
 
+#include "operations_research/Domain.hpp"
 #include "operations_research/FuncInit.hpp"
 #include "operations_research/LinearExpr.hpp"
 #include "operations_research/LinearRange.hpp"
@@ -67,6 +68,7 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     operations_research::GMPObjective::Init(env, operations_research);
     operations_research::GSimpleLinearSumAssignment::Init(env, operations_research);
     operations_research::GSimpleMinCostFlow::Init(env, operations_research);
+    operations_research::GDomain::Init(env, operations_research);
     operations_research::FuncInit(env, operations_research);
     exports.Set("operations_research", operations_research);
 

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BoolVar.hpp"
 #include "napi.h"
 
 namespace operations_research
@@ -36,13 +37,33 @@ class GConstraint : public Napi::ObjectWrap<GConstraint>
     {
         Napi::HandleScope scope(env);
         Napi::Function func = DefineClass(
-            env, "Constraint", {}
+            env,
+            "Constraint",
+            {
+                InstanceMethod("OnlyEnforceIf", &GConstraint::OnlyEnforceIf),
+            }
         );
         constructor = Napi::Persistent(func);
         constructor.SuppressDestruct();
         exports.Set(Napi::String::New(env, "Constraint"), func);
         return exports;
     };
-};
+
+    //  Constraint OnlyEnforceIf(BoolVar literal);
+    Napi::Value OnlyEnforceIf(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GBoolVar::constructor.Value()))
+        {
+            auto gBoolVar = Napi::ObjectWrap<GBoolVar>::Unwrap(info[0].As<Napi::Object>());
+            pConstraint->OnlyEnforceIf(*gBoolVar->pBoolVar);
+            return this->Value();
+        }
+
+        Napi::TypeError::New(env, "operations_research::GConstraint::OnlyEnforceIf : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    };
 }; // namespace sat
 }; // namespace operations_research

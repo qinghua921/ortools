@@ -28,8 +28,7 @@ export class IntVar
     //     /// this BoolVar anywhere since it will not have a valid domain.
     //     BoolVar ToBoolVar() const;
 
-    //     /// Sets the name of the variable.
-    //     IntVar WithName(absl::string_view name);
+    WithName(name: string): IntVar ;
 
     //     /// Returns the name of the variable (or the empty string if not set).
     //     std::string Name() const;

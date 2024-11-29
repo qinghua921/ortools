@@ -1,10 +1,11 @@
 #pragma once
 
-#include "Constraint.hpp"
-#include "CpModelProto.hpp"
-#include "IntVar.hpp"
-#include "LinearExpr.hpp"
-#include "TableConstraint.hpp"
+#include "./BoolVar.hpp"
+#include "./Constraint.hpp"
+#include "./CpModelProto.hpp"
+#include "./IntVar.hpp"
+#include "./LinearExpr.hpp"
+#include "./TableConstraint.hpp"
 #include "napi.h"
 #include "ortools/sat/cp_model.h"
 
@@ -59,12 +60,80 @@ class GCpModelBuilder : public Napi::ObjectWrap<GCpModelBuilder>
                 InstanceMethod("Minimize", &GCpModelBuilder::Minimize),
                 InstanceMethod("Build", &GCpModelBuilder::Build),
                 InstanceMethod("AddLessOrEqual", &GCpModelBuilder::AddLessOrEqual),
+                InstanceMethod("AddGreaterThan", &GCpModelBuilder::AddGreaterThan),
+                InstanceMethod("NewIntVar", &GCpModelBuilder::NewIntVar),
+                InstanceMethod("AddAssumptions", &GCpModelBuilder::AddAssumptions),
             }
         );
         constructor = Napi::Persistent(func);
         constructor.SuppressDestruct();
         exports.Set(Napi::String::New(env, "CpModelBuilder"), func);
         return exports;
+    };
+    //     void AddAssumptions(absl::Span<const BoolVar> literals);
+    Napi::Value AddAssumptions(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 1 && info[0].IsArray())
+        {
+            Napi::Array array = info[0].As<Napi::Array>();
+            int length        = array.Length();
+            std::vector<BoolVar> literals;
+            literals.reserve(length);
+            for (int i = 0; i < length; i++)
+            {
+                auto pi = array.Get(i);
+                if (pi.IsObject() && pi.As<Napi::Object>().InstanceOf(GBoolVar::constructor.Value()))
+                {
+                    literals.push_back(*Napi::ObjectWrap<GBoolVar>::Unwrap(pi.As<Napi::Object>())->pBoolVar);
+                    continue;
+                }
+
+                Napi::TypeError::New(env, "operations_research::GCpModelBuilder::AddAssumptions : Invalid arguments").ThrowAsJavaScriptException();
+                return env.Undefined();
+            }
+
+            pCpModelBuilder->AddAssumptions(literals);
+            return env.Undefined();
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::AddAssumptions : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Undefined();
+    };
+    //     IntVar NewIntVar(const Domain &domain);
+    Napi::Value NewIntVar(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GDomain::constructor.Value()))
+        {
+            auto domain = Napi::ObjectWrap<GDomain>::Unwrap(info[0].As<Napi::Object>())->pDomain;
+            auto result = pCpModelBuilder->NewIntVar(*domain);
+            return GIntVar::constructor.New({Napi::External<IntVar>::New(env, new IntVar(result))});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::NewIntVar : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    //     Constraint AddGreaterThan(const LinearExpr &left, const LinearExpr &right);
+    Napi::Value AddGreaterThan(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        LinearExpr left, right;
+        if (info.Length() == 2 && GLinearExpr::ToLinearExpr(info[0], left) && GLinearExpr::ToLinearExpr(info[1], right))
+        {
+            auto result = pCpModelBuilder->AddGreaterThan(left, right);
+            return GConstraint::constructor.New({Napi::External<Constraint>::New(env, new Constraint(result))});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::AddGreaterThan : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
     };
 
     //     Constraint AddLessOrEqual(const LinearExpr &left, const LinearExpr &right);

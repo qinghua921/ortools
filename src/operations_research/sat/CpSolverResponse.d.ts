@@ -177,14 +177,10 @@ export class CpSolverResponse
     //  ::operations_research::sat::IntegerVariableProto* mutable_tightened_variables(int index);
     //  ::google::protobuf::RepeatedPtrField<::operations_research::sat::IntegerVariableProto>* mutable_tightened_variables();
 
-    //  private:
-    //  const ::google::protobuf::RepeatedPtrField<::operations_research::sat::IntegerVariableProto>& _internal_tightened_variables() const;
-    //  ::google::protobuf::RepeatedPtrField<::operations_research::sat::IntegerVariableProto>* _internal_mutable_tightened_variables();
     //  public:
     //  const ::operations_research::sat::IntegerVariableProto& tightened_variables(int index) const;
     //  ::operations_research::sat::IntegerVariableProto* add_tightened_variables();
     //  const ::google::protobuf::RepeatedPtrField<::operations_research::sat::IntegerVariableProto>& tightened_variables() const;
-    //  // repeated int32 sufficient_assumptions_for_infeasibility = 23;
     //  int sufficient_assumptions_for_infeasibility_size() const;
     //  private:
     //  int _internal_sufficient_assumptions_for_infeasibility_size() const;
@@ -194,7 +190,7 @@ export class CpSolverResponse
     //  ::int32_t sufficient_assumptions_for_infeasibility(int index) const;
     //  void set_sufficient_assumptions_for_infeasibility(int index, ::int32_t value);
     //  void add_sufficient_assumptions_for_infeasibility(::int32_t value);
-    //  const ::google::protobuf::RepeatedField<::int32_t>& sufficient_assumptions_for_infeasibility() const;
+    sufficient_assumptions_for_infeasibility(): number[];
     //  ::google::protobuf::RepeatedField<::int32_t>* mutable_sufficient_assumptions_for_infeasibility();
 
     //  private:

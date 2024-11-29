@@ -1,3 +1,4 @@
+import { Domain } from "../Domain";
 import { BoolVar } from "./BoolVar";
 import { Constraint } from "./Constraint";
 import { CpModelProto } from "./CpModelProto";
@@ -10,8 +11,7 @@ export class CpModelBuilder
     //     /// Sets the name of the model.
     //     void SetName(absl::string_view name);
 
-    //     /// Creates an integer variable with the given domain.
-    //     IntVar NewIntVar(const Domain &domain);
+    NewIntVar(domain: Domain): IntVar;
 
     NewBoolVar(): BoolVar;
 
@@ -87,8 +87,7 @@ export class CpModelBuilder
     //     /// Adds left >= right.
     //     Constraint AddGreaterOrEqual(const LinearExpr &left, const LinearExpr &right);
 
-    //     /// Adds left > right.
-    //     Constraint AddGreaterThan(const LinearExpr &left, const LinearExpr &right);
+    AddGreaterThan(left: LinearExpr, right: LinearExpr): Constraint;
 
     AddLessOrEqual(left: LinearExpr, right: LinearExpr): Constraint;
 
@@ -339,8 +338,7 @@ export class CpModelBuilder
     //     /// Adds a literal to the model as assumptions.
     //     void AddAssumption(BoolVar lit);
 
-    //     /// Adds multiple literals to the model as assumptions.
-    //     void AddAssumptions(absl::Span<const BoolVar> literals);
+    AddAssumptions(literals: BoolVar[]): void;
 
     //     /// Remove all assumptions from the model.
     //     void ClearAssumptions();

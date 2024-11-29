@@ -7,6 +7,7 @@ export function operator_times(expr: LinearExpr, factor: number): LinearExpr;
 export function operator_times(expr: BoolVar, factor: number): LinearExpr;
 export function Solve(model_proto: CpModelProto): CpSolverResponse;
 export function SolutionBooleanValue(r: CpSolverResponse, x: BoolVar): boolean;
+export function CpSolverResponseStats(response: CpSolverResponse, has_objective: boolean = true): string;
 
 export enum CpSolverStatus 
 {

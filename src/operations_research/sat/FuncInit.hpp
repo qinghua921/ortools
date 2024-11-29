@@ -59,6 +59,28 @@ Napi::Value GSolutionBooleanValue(const Napi::CallbackInfo &info)
     Napi::TypeError::New(env, "Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
+// std::string CpSolverResponseStats(const CpSolverResponse& response, bool has_objective = true);
+Napi::Value GCpSolverResponseStats(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GCpSolverResponse::constructor.Value()))
+    {
+        auto gCpSolverResponse = Napi::ObjectWrap<GCpSolverResponse>::Unwrap(info[0].As<Napi::Object>());
+        return Napi::String::New(env, CpSolverResponseStats(*gCpSolverResponse->pCpSolverResponse));
+    }
+
+    if (info.Length() == 2 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GCpSolverResponse::constructor.Value()) && info[1].IsBoolean())
+    {
+        auto gCpSolverResponse = Napi::ObjectWrap<GCpSolverResponse>::Unwrap(info[0].As<Napi::Object>());
+        bool has_objective     = info[1].As<Napi::Boolean>().Value();
+        return Napi::String::New(env, CpSolverResponseStats(*gCpSolverResponse->pCpSolverResponse, has_objective));
+    }
+
+    Napi::TypeError::New(env, "Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
 
 Napi::Object FuncInit(Napi::Env env, Napi::Object exports)
 {
@@ -67,6 +89,7 @@ Napi::Object FuncInit(Napi::Env env, Napi::Object exports)
     exports.Set("operator_times", Napi::Function::New(env, Goperator_times));
     exports.Set("Solve", Napi::Function::New(env, GSolve));
     exports.Set("SolutionBooleanValue", Napi::Function::New(env, GSolutionBooleanValue));
+    exports.Set("CpSolverResponseStats", Napi::Function::New(env, GCpSolverResponseStats));
 
     auto enumCpSolverStatus = Napi::Object::New(env);
     enumCpSolverStatus.Set("UNKNOWN", static_cast<int>(CpSolverStatus::UNKNOWN));
