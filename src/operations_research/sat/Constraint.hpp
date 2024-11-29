@@ -65,5 +65,6 @@ class GConstraint : public Napi::ObjectWrap<GConstraint>
         Napi::TypeError::New(env, "operations_research::GConstraint::OnlyEnforceIf : Invalid arguments").ThrowAsJavaScriptException();
         return env.Null();
     };
+};
 }; // namespace sat
 }; // namespace operations_research

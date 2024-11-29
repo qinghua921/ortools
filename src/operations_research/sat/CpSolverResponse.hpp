@@ -42,6 +42,7 @@ class GCpSolverResponse : public Napi::ObjectWrap<GCpSolverResponse>
             {
                 InstanceMethod("objective_value", &GCpSolverResponse::objective_value),
                 InstanceMethod("status", &GCpSolverResponse::status),
+                InstanceMethod("sufficient_assumptions_for_infeasibility", &GCpSolverResponse::sufficient_assumptions_for_infeasibility),
             }
         );
         constructor = Napi::Persistent(func);
@@ -72,7 +73,13 @@ class GCpSolverResponse : public Napi::ObjectWrap<GCpSolverResponse>
 
         if (info.Length() == 0)
         {
-            return Napi::Array::New(env, pCpSolverResponse->sufficient_assumptions_for_infeasibility());
+            auto vec = pCpSolverResponse->sufficient_assumptions_for_infeasibility();
+            auto arr = Napi::Array::New(env, vec.size());
+            for (int i = 0; i < vec.size(); i++)
+            {
+                arr[i] = Napi::Number::New(env, vec[i]);
+            }
+            return arr;
         }
 
         Napi::TypeError::New(env, "operations_research::GCpSolverResponse::sufficient_assumptions_for_infeasibility : Invalid arguments").ThrowAsJavaScriptException();

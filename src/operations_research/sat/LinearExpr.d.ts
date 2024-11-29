@@ -1,5 +1,7 @@
 import { BoolVar } from "./BoolVar";
 
+export type CanAsLinearExpr = IntVar | BoolVar | LinearExpr | number;
+
 export class LinearExpr
 {
     //public:
@@ -43,7 +45,7 @@ export class LinearExpr
 
     operator_plus_eq(other: LinearExpr): LinearExpr;
     operator_plus_eq(other: BoolVar): LinearExpr;
-    
+
     //  LinearExpr &operator-=(const LinearExpr &other);
     operator_times_eq(other: LinearExpr): LinearExpr;
 

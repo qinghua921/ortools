@@ -99,6 +99,8 @@ class GLinearExpr : public Napi::ObjectWrap<GLinearExpr>
             expr = value.As<Napi::Number>().DoubleValue();
         else if (value.IsObject() && value.As<Napi::Object>().InstanceOf(GBoolVar::constructor.Value()))
             expr = *GBoolVar::Unwrap(value.As<Napi::Object>())->pBoolVar;
+        else if (value.IsObject() && value.As<Napi::Object>().InstanceOf(GIntVar::constructor.Value()))
+            expr = *GIntVar::Unwrap(value.As<Napi::Object>())->pIntVar;
         else
             return false;
 

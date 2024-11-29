@@ -3,6 +3,7 @@ import { BoolVar } from "./BoolVar";
 import { Constraint } from "./Constraint";
 import { CpModelProto } from "./CpModelProto";
 import { IntVar } from "./IntVar";
+import { CanAsLinearExpr, LinearExpr } from "./LinearExpr";
 import { TableConstraint } from "./TableConstraint";
 
 export class CpModelBuilder
@@ -82,14 +83,14 @@ export class CpModelBuilder
     //         return AddBoolAnd(rhs).OnlyEnforceIf(lhs);
     //     }
 
-    AddEquality(left: LinearExpr, right: LinearExpr): Constraint;
+    AddEquality(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
     //     /// Adds left >= right.
     //     Constraint AddGreaterOrEqual(const LinearExpr &left, const LinearExpr &right);
 
-    AddGreaterThan(left: LinearExpr, right: LinearExpr): Constraint;
+    AddGreaterThan(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
-    AddLessOrEqual(left: LinearExpr, right: LinearExpr): Constraint;
+    AddLessOrEqual(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
     //     /// Adds left < right.
     //     Constraint AddLessThan(const LinearExpr &left, const LinearExpr &right);
