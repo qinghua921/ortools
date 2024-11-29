@@ -1,6 +1,7 @@
 #pragma once
 
 #include "napi.h"
+#include "LinearExpr.hpp"
 
 namespace operations_research
 {
@@ -48,7 +49,7 @@ class GCpSolverResponse : public Napi::ObjectWrap<GCpSolverResponse>
         exports.Set(Napi::String::New(env, "CpSolverResponse"), func);
         return exports;
     };
-
+   
     //  ::operations_research::sat::CpSolverStatus status() const;
     Napi::Value status(const Napi::CallbackInfo &info)
     {

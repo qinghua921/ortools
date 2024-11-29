@@ -90,8 +90,7 @@ export class CpModelBuilder
     //     /// Adds left > right.
     //     Constraint AddGreaterThan(const LinearExpr &left, const LinearExpr &right);
 
-    //     /// Adds left <= right.
-    //     Constraint AddLessOrEqual(const LinearExpr &left, const LinearExpr &right);
+    AddLessOrEqual(left: LinearExpr, right: LinearExpr): Constraint;
 
     //     /// Adds left < right.
     //     Constraint AddLessThan(const LinearExpr &left, const LinearExpr &right);

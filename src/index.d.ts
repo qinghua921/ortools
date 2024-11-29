@@ -13,6 +13,7 @@ import
     operator_eq as or_operator_eq,
     operator_le as or_operator_le,
     operator_ge as or_operator_ge,
+    operator_times as or_operator_times,
 } from './operations_research/FuncInit'
 
 /**** operations_research / sat *******************************************************************************/
@@ -49,6 +50,7 @@ declare module operations_research
         or_operator_eq as operator_eq,
         or_operator_le as operator_le,
         or_operator_ge as operator_ge,
+        or_operator_times as operator_times,
     }
     export namespace sat
     {

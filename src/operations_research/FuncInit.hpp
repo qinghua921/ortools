@@ -61,6 +61,25 @@ Napi::Value Goperator_le(const Napi::CallbackInfo &info)
     return env.Null();
 }
 
+// LinearExpr operator*(LinearExpr lhs, double rhs);
+Napi::Value Goperator_times(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    LinearExpr lhs;
+    double rhs;
+    if (info.Length() == 2 && GLinearExpr::ToLinearExpr(info[0], lhs) && info[1].IsNumber())
+    {
+        rhs         = info[1].As<Napi::Number>().DoubleValue();
+        auto result = lhs * rhs;
+        return GLinearExpr::constructor.New({Napi::External<LinearExpr>::New(env, new LinearExpr(result))});
+    }
+
+    Napi::TypeError::New(env, "operations_research::operator_times : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
 Napi::Object FuncInit(Napi::Env env, Napi::Object exports)
 {
     Napi::HandleScope scope(env);
@@ -68,7 +87,7 @@ Napi::Object FuncInit(Napi::Env env, Napi::Object exports)
     exports.Set("operator_ge", Napi::Function::New(env, Goperator_ge));
     exports.Set("operator_eq", Napi::Function::New(env, Goperator_eq));
     exports.Set("operator_le", Napi::Function::New(env, Goperator_le));
-    // exports.Set("operator_times", Napi::Function::New(env, Goperator_times));
+    exports.Set("operator_times", Napi::Function::New(env, Goperator_times));
 
     return exports;
 };

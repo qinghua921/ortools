@@ -1,18 +1,24 @@
 
+#include <stdlib.h>
+
 #include <cstdint>
-#include <memory>
 #include <numeric>
 #include <vector>
 
 #include "absl/strings/str_format.h"
 #include "ortools/base/logging.h"
-#include "ortools/linear_solver/linear_solver.h"
+#include "ortools/sat/cp_model.h"
+#include "ortools/sat/cp_model.pb.h"
+#include "ortools/sat/cp_model_solver.h"
 
 namespace operations_research
 {
-void AssignmentTeamsMip()
+namespace sat
 {
-    const std::vector<std::vector<int64_t>> costs = {{
+
+void AssignmentTaskSizes()
+{
+    const std::vector<std::vector<int>> costs = {{
         {{90, 76, 75, 70, 50, 74, 12, 68}},
         {{35, 85, 55, 65, 48, 101, 70, 83}},
         {{125, 95, 90, 105, 59, 120, 36, 73}},
@@ -24,78 +30,72 @@ void AssignmentTeamsMip()
         {{39, 63, 97, 49, 118, 56, 92, 61}},
         {{47, 101, 71, 60, 88, 109, 52, 90}},
     }};
-    const int num_workers                         = costs.size();
+    const int num_workers                     = static_cast<int>(costs.size());
     std::vector<int> all_workers(num_workers);
     std::iota(all_workers.begin(), all_workers.end(), 0);
 
-    const int num_tasks = costs[0].size();
+    const int num_tasks = static_cast<int>(costs[0].size());
     std::vector<int> all_tasks(num_tasks);
     std::iota(all_tasks.begin(), all_tasks.end(), 0);
 
     const std::vector<int64_t> task_sizes = {{10, 7, 3, 12, 15, 4, 11, 5}};
     const int total_size_max              = 15;
 
-    std::unique_ptr<MPSolver> solver(MPSolver::CreateSolver("SCIP"));
-    if (!solver)
-    {
-        LOG(WARNING) << "SCIP solver unavailable.";
-        return;
-    }
+    CpModelBuilder cp_model;
 
-    std::vector<std::vector<const MPVariable *>> x(
-        num_workers, std::vector<const MPVariable *>(num_tasks)
-    );
+    std::vector<std::vector<BoolVar>> x(num_workers, std::vector<BoolVar>(num_tasks));
     for (int worker : all_workers)
     {
         for (int task : all_tasks)
         {
-            x[worker][task] =
-                solver->MakeBoolVar(absl::StrFormat("x[%d,%d]", worker, task));
+            x[worker][task] = cp_model.NewBoolVar().WithName(
+                absl::StrFormat("x[%d,%d]", worker, task)
+            );
         }
     }
 
     for (int worker : all_workers)
     {
-        LinearExpr worker_sum;
+        LinearExpr task_sum;
         for (int task : all_tasks)
         {
-            worker_sum += LinearExpr(x[worker][task]) * task_sizes[task];
+            task_sum += x[worker][task] * task_sizes[task];
         }
-        solver->MakeRowConstraint(worker_sum <= total_size_max);
+        cp_model.AddLessOrEqual(task_sum, total_size_max);
     }
     for (int task : all_tasks)
     {
-        LinearExpr task_sum;
+        std::vector<BoolVar> tasks;
         for (int worker : all_workers)
         {
-            task_sum += x[worker][task];
+            tasks.push_back(x[worker][task]);
         }
-        solver->MakeRowConstraint(task_sum == 1.0);
+        cp_model.AddExactlyOne(tasks);
     }
 
-    MPObjective *const objective = solver->MutableObjective();
+    LinearExpr total_cost;
     for (int worker : all_workers)
     {
         for (int task : all_tasks)
         {
-            objective->SetCoefficient(x[worker][task], costs[worker][task]);
+            total_cost += x[worker][task] * costs[worker][task];
         }
     }
-    objective->SetMinimization();
+    cp_model.Minimize(total_cost);
 
-    const MPSolver::ResultStatus result_status = solver->Solve();
+    const CpSolverResponse response = Solve(cp_model.Build());
 
-    if (result_status != MPSolver::OPTIMAL &&
-        result_status != MPSolver::FEASIBLE)
+    if (response.status() == CpSolverStatus::INFEASIBLE)
     {
         LOG(FATAL) << "No solution found.";
     }
-    LOG(INFO) << "Total cost = " << objective->Value() << "\n\n";
+    LOG(INFO) << "Total cost: " << response.objective_value();
+    LOG(INFO);
     for (int worker : all_workers)
     {
         for (int task : all_tasks)
         {
-            if (x[worker][task]->solution_value() > 0.5)
+            if (SolutionBooleanValue(response, x[worker][task]))
             {
                 LOG(INFO) << "Worker " << worker << " assigned to task " << task
                           << ".  Cost: " << costs[worker][task];
@@ -103,9 +103,10 @@ void AssignmentTeamsMip()
         }
     }
 }
+} // namespace sat
 } // namespace operations_research
 int main(int argc, char **argv)
 {
-    operations_research::AssignmentTeamsMip();
+    operations_research::sat::AssignmentTaskSizes();
     return EXIT_SUCCESS;
 }
