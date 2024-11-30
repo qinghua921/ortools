@@ -112,6 +112,24 @@ Napi::Value GSolveWithParameters(const Napi::CallbackInfo &info)
     Napi::TypeError::New(env, "Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
+
+// inline LinearExpr operator+(LinearExpr&& lhs, LinearExpr&& rhs) 
+Napi::Value Goperator_plus(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    LinearExpr lhs, rhs;
+    if (info.Length() == 2 && GLinearExpr::ToLinearExpr(info[0], lhs) && GLinearExpr::ToLinearExpr(info[1], rhs))
+    {
+        auto external = Napi::External<LinearExpr>::New(env, new LinearExpr(lhs + rhs));
+        return GLinearExpr::constructor.New({external});
+    }
+
+    Napi::TypeError::New(env, "Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
 Napi::Object FuncInit(Napi::Env env, Napi::Object exports)
 {
     Napi::HandleScope scope(env);
@@ -121,6 +139,7 @@ Napi::Object FuncInit(Napi::Env env, Napi::Object exports)
     exports.Set("SolutionBooleanValue", Napi::Function::New(env, GSolutionBooleanValue));
     exports.Set("CpSolverResponseStats", Napi::Function::New(env, GCpSolverResponseStats));
     exports.Set("SolveWithParameters", Napi::Function::New(env, GSolveWithParameters));
+    exports.Set("operator_plus", Napi::Function::New(env, Goperator_plus));
 
     auto enumCpSolverStatus = Napi::Object::New(env);
     enumCpSolverStatus.Set("UNKNOWN", static_cast<int>(CpSolverStatus::UNKNOWN));

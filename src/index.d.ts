@@ -39,6 +39,8 @@ import { TableConstraint as or_sat_TableConstraint } from './operations_research
 import { IntervalVar as or_sat_IntervalVar } from './operations_research/sat/IntervalVar'
 import { NoOverlap2DConstraint as or_sat_NoOverlap2DConstraint } from './operations_research/sat/NoOverlap2DConstraint'
 import { SatParameters as or_sat_SatParameters } from './operations_research/sat/SatParameters'
+import { DecisionStrategyProto as or_sat_DecisionStrategyProto } from './operations_research/sat/DecisionStrategyProto'
+import { Model as or_sat_Model } from './operations_research/sat/Model'
 import
 {
     operator_times as or_sat_operator_times,
@@ -47,6 +49,7 @@ import
     CpSolverStatus as or_sat_CpSolverStatus,
     CpSolverResponseStats as or_sat_CpSolverResponseStats,
     SolveWithParameters as or_sat_SolveWithParameters,
+    operator_plus as or_sat_operator_plus,
 } from './operations_research/sat/FuncInit'
 
 declare module operations_research
@@ -95,12 +98,15 @@ declare module operations_research
             or_sat_IntervalVar as IntervalVar,
             or_sat_NoOverlap2DConstraint as NoOverlap2DConstraint,
             or_sat_SatParameters as SatParameters,
+            or_sat_DecisionStrategyProto as DecisionStrategyProto,
+            or_sat_Model as Model,
 
             or_sat_operator_times as operator_times,
             or_sat_Solve as Solve,
             or_sat_SolutionBooleanValue as SolutionBooleanValue,
             or_sat_CpSolverResponseStats as CpSolverResponseStats,
             or_sat_SolveWithParameters as SolveWithParameters,
+            or_sat_operator_plus as operator_plus,
 
             or_sat_CpSolverStatus as CpSolverStatus,
         }

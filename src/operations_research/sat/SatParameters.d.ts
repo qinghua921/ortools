@@ -1,3 +1,16 @@
+export namespace SatParameters
+{
+    export const AUTOMATIC_SEARCH
+    export const FIXED_SEARCH
+    export const PORTFOLIO_SEARCH
+    export const LP_SEARCH
+    export const PSEUDO_COST_SEARCH
+    export const PORTFOLIO_WITH_QUICK_RESTART_SEARCH
+    export const HINT_SEARCH
+    export const PARTIAL_FIXED_SEARCH
+    export const RANDOMIZED_SEARCH
+
+}
 export class SatParameters
 {
     //  public:
@@ -305,20 +318,9 @@ export class SatParameters
     //     return SatParameters_MaxSatStratificationAlgorithm_Parse(name, value);
     //   }
     //   using SearchBranching = SatParameters_SearchBranching;
-    //   static constexpr SearchBranching AUTOMATIC_SEARCH = SatParameters_SearchBranching_AUTOMATIC_SEARCH;
-    //   static constexpr SearchBranching FIXED_SEARCH = SatParameters_SearchBranching_FIXED_SEARCH;
-    //   static constexpr SearchBranching PORTFOLIO_SEARCH = SatParameters_SearchBranching_PORTFOLIO_SEARCH;
-    //   static constexpr SearchBranching LP_SEARCH = SatParameters_SearchBranching_LP_SEARCH;
-    //   static constexpr SearchBranching PSEUDO_COST_SEARCH = SatParameters_SearchBranching_PSEUDO_COST_SEARCH;
-    //   static constexpr SearchBranching PORTFOLIO_WITH_QUICK_RESTART_SEARCH = SatParameters_SearchBranching_PORTFOLIO_WITH_QUICK_RESTART_SEARCH;
-    //   static constexpr SearchBranching HINT_SEARCH = SatParameters_SearchBranching_HINT_SEARCH;
-    //   static constexpr SearchBranching PARTIAL_FIXED_SEARCH = SatParameters_SearchBranching_PARTIAL_FIXED_SEARCH;
-    //   static constexpr SearchBranching RANDOMIZED_SEARCH = SatParameters_SearchBranching_RANDOMIZED_SEARCH;
     //   static inline bool SearchBranching_IsValid(int value) {
     //     return SatParameters_SearchBranching_IsValid(value);
     //   }
-    //   static constexpr SearchBranching SearchBranching_MIN = SatParameters_SearchBranching_SearchBranching_MIN;
-    //   static constexpr SearchBranching SearchBranching_MAX = SatParameters_SearchBranching_SearchBranching_MAX;
     //   static constexpr int SearchBranching_ARRAYSIZE = SatParameters_SearchBranching_SearchBranching_ARRAYSIZE;
     //   static inline const ::google::protobuf::EnumDescriptor* SearchBranching_descriptor() {
     //     return SatParameters_SearchBranching_descriptor();
@@ -938,11 +940,7 @@ export class SatParameters
     //   bool has_search_branching() const;
     //   void clear_search_branching() ;
     //   ::operations_research::sat::SatParameters_SearchBranching search_branching() const;
-    //   void set_search_branching(::operations_research::sat::SatParameters_SearchBranching value);
-
-    //   private:
-    //   ::operations_research::sat::SatParameters_SearchBranching _internal_search_branching() const;
-    //   void _internal_set_search_branching(::operations_research::sat::SatParameters_SearchBranching value);
+    set_search_branching(value: SatParameters_SearchBranching): void;
 
     //   public:
     //   // optional bool use_erwa_heuristic = 75 [default = false];
@@ -1410,16 +1408,13 @@ export class SatParameters
     //   bool use_shared_tree_search() const;
     //   void set_use_shared_tree_search(bool value);
 
-    //   private:
-    //   bool _internal_use_shared_tree_search() const;
-    //   void _internal_set_use_shared_tree_search(bool value);
 
     //   public:
     //   // optional bool enumerate_all_solutions = 87 [default = false];
     //   bool has_enumerate_all_solutions() const;
     //   void clear_enumerate_all_solutions() ;
     //   bool enumerate_all_solutions() const;
-    //   void set_enumerate_all_solutions(bool value);
+    set_enumerate_all_solutions(value: boolean): void;
 
     //   private:
     //   bool _internal_enumerate_all_solutions() const;

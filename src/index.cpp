@@ -33,10 +33,12 @@
 #include "operations_research/sat/CpModelBuilder.hpp"
 #include "operations_research/sat/CpModelProto.hpp"
 #include "operations_research/sat/CpSolverResponse.hpp"
+#include "operations_research/sat/DecisionStrategyProto.hpp"
 #include "operations_research/sat/FuncInit.hpp"
 #include "operations_research/sat/IntVar.hpp"
 #include "operations_research/sat/IntervalVar.hpp"
 #include "operations_research/sat/LinearExpr.hpp"
+#include "operations_research/sat/Model.hpp"
 #include "operations_research/sat/NoOverlap2DConstraint.hpp"
 #include "operations_research/sat/SatParameters.hpp"
 #include "operations_research/sat/TableConstraint.hpp"
@@ -59,7 +61,6 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     }
     {
         auto sat = Napi::Object::New(env);
-        // operations_research::sat::SatInit(env, sat);
         operations_research::sat::GCpModelBuilder::Init(env, sat);
         operations_research::sat::GBoolVar::Init(env, sat);
         operations_research::sat::GConstraint::Init(env, sat);
@@ -71,6 +72,8 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
         operations_research::sat::GIntervalVar::Init(env, sat);
         operations_research::sat::GNoOverlap2DConstraint::Init(env, sat);
         operations_research::sat::GSatParameters::Init(env, sat);
+        operations_research::sat::GDecisionStrategyProto::Init(env, sat);
+        operations_research::sat::GModel::Init(env, sat);
         operations_research::sat::FuncInit(env, sat);
         operations_research.Set("sat", sat);
     }

@@ -76,16 +76,10 @@ export class CpModelBuilder
     //     }
 
     AddEquality(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
-
-    //     /// Adds left >= right.
-    //     Constraint AddGreaterOrEqual(const LinearExpr &left, const LinearExpr &right);
-
+    AddGreaterOrEqual(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
     AddGreaterThan(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
-
     AddLessOrEqual(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
-
-    //     /// Adds left < right.
-    //     Constraint AddLessThan(const LinearExpr &left, const LinearExpr &right);
+    AddLessThan(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
     //     /// Adds expr in domain.
     //     Constraint AddLinearConstraint(const LinearExpr &expr, const Domain &domain);
@@ -278,12 +272,8 @@ export class CpModelBuilder
     //     /// Checks whether the model contains an objective.
     //     bool HasObjective() const;
 
-    //     /// Adds a decision strategy on a list of integer variables.
-    //     void AddDecisionStrategy(
-    //         absl::Span<const IntVar> variables,
-    //         DecisionStrategyProto::VariableSelectionStrategy var_strategy,
-    //         DecisionStrategyProto::DomainReductionStrategy domain_strategy
-    //     );
+
+    AddDecisionStrategy(variables: IntVar[], var_strategy: any, domain_strategy: any): void;
 
     //     /// Adds a decision strategy on a list of integer variables.
     //     void AddDecisionStrategy(

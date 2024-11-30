@@ -72,6 +72,9 @@ class GCpModelBuilder : public Napi::ObjectWrap<GCpModelBuilder>
                 InstanceMethod("NewFixedSizeIntervalVar", &GCpModelBuilder::NewFixedSizeIntervalVar),
                 InstanceMethod("AddImplication", &GCpModelBuilder::AddImplication),
                 InstanceMethod("AddBoolOr", &GCpModelBuilder::AddBoolOr),
+                InstanceMethod("AddGreaterOrEqual", &GCpModelBuilder::AddGreaterOrEqual),
+                InstanceMethod("AddLessThan", &GCpModelBuilder::AddLessThan),
+                InstanceMethod("AddDecisionStrategy", &GCpModelBuilder::AddDecisionStrategy),
             }
         );
         constructor = Napi::Persistent(func);
@@ -79,6 +82,79 @@ class GCpModelBuilder : public Napi::ObjectWrap<GCpModelBuilder>
         exports.Set(Napi::String::New(env, "CpModelBuilder"), func);
         return exports;
     };
+    //     void AddDecisionStrategy(
+    //         absl::Span<const IntVar> variables,
+    //         DecisionStrategyProto::VariableSelectionStrategy var_strategy,
+    //         DecisionStrategyProto::DomainReductionStrategy domain_strategy
+    //     );
+    Napi::Value AddDecisionStrategy(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 3 && info[0].IsArray() && info[1].IsNumber() && info[2].IsNumber())
+        {
+            std::vector<IntVar> variables;
+            auto array = info[0].As<Napi::Array>();
+            for (int i = 0; i < array.Length(); i++)
+            {
+                if (array.Get(i).IsObject() && array.Get(i).As<Napi::Object>().InstanceOf(GIntVar::constructor.Value()))
+                {
+                    variables.push_back(*Napi::ObjectWrap<GIntVar>::Unwrap(array.Get(i).As<Napi::Object>())->pIntVar);
+                    continue;
+                }
+                Napi::TypeError::New(env, "operations_research::GCpModelBuilder::AddDecisionStrategy : Invalid arguments").ThrowAsJavaScriptException();
+                return env.Null();
+            }
+            auto var_strategy    = static_cast<DecisionStrategyProto::VariableSelectionStrategy>(info[1].As<Napi::Number>().Int32Value());
+            auto domain_strategy = static_cast<DecisionStrategyProto::DomainReductionStrategy>(info[2].As<Napi::Number>().Int32Value());
+            pCpModelBuilder->AddDecisionStrategy(variables, var_strategy, domain_strategy);
+            return env.Null();
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::AddDecisionStrategy : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    //     Constraint AddLessThan(const LinearExpr &left, const LinearExpr &right);
+    Napi::Value AddLessThan(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        LinearExpr left, right;
+        if (info.Length() == 2 &&
+            GLinearExpr::ToLinearExpr(info[0], left)     //
+            && GLinearExpr::ToLinearExpr(info[1], right) //
+        )
+        {
+            auto result = pCpModelBuilder->AddLessThan(left, right);
+            return GConstraint::constructor.New({Napi::External<Constraint>::New(env, new Constraint(result))});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::AddLessThan : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    //     Constraint AddGreaterOrEqual(const LinearExpr &left, const LinearExpr &right);
+    Napi::Value AddGreaterOrEqual(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        LinearExpr left, right;
+        if (info.Length() == 2 &&
+            GLinearExpr::ToLinearExpr(info[0], left)     //
+            && GLinearExpr::ToLinearExpr(info[1], right) //
+        )
+        {
+            auto result = pCpModelBuilder->AddGreaterOrEqual(left, right);
+            return GConstraint::constructor.New({Napi::External<Constraint>::New(env, new Constraint(result))});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::AddGreaterOrEqual : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
 
     //     Constraint AddBoolOr(absl::Span<const BoolVar> literals);
     Napi::Value AddBoolOr(const Napi::CallbackInfo &info)
