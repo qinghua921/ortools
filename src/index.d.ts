@@ -19,6 +19,13 @@ import
 
 } from './operations_research/FuncInit'
 
+/**** operations_research / packing *******************************************************************************/
+
+import { BinPacking2dParser as or_packing_BinPacking2dParser } from './operations_research/packing/BinPacking2dParser'
+import { MultipleDimensionsBinPackingProblem as or_packing_MultipleDimensionsBinPackingProblem } from './operations_research/packing/MultipleDimensionsBinPackingProblem'
+import { MultipleDimensionsBinPackingShape as or_packing_MultipleDimensionsBinPackingShape } from './operations_research/packing/MultipleDimensionsBinPackingShape'
+import { MultipleDimensionsBinPackingItem as or_packing_MultipleDimensionsBinPackingItem } from './operations_research/packing/MultipleDimensionsBinPackingItem'
+
 /**** operations_research / sat *******************************************************************************/
 
 import { CpModelBuilder as or_sat_CpModelBuilder } from './operations_research/sat/CpModelBuilder'
@@ -29,6 +36,9 @@ import { IntVar as or_sat_IntVar } from './operations_research/sat/IntVar'
 import { CpModelProto as or_sat_CpModelProto } from './operations_research/sat/CpModelProto'
 import { CpSolverResponse as or_sat_CpSolverResponse } from './operations_research/sat/CpSolverResponse'
 import { TableConstraint as or_sat_TableConstraint } from './operations_research/sat/TableConstraint'
+import { IntervalVar as or_sat_IntervalVar } from './operations_research/sat/IntervalVar'
+import { NoOverlap2DConstraint as or_sat_NoOverlap2DConstraint } from './operations_research/sat/NoOverlap2DConstraint'
+import { SatParameters as or_sat_SatParameters } from './operations_research/sat/SatParameters'
 import
 {
     operator_times as or_sat_operator_times,
@@ -36,6 +46,7 @@ import
     SolutionBooleanValue as or_sat_SolutionBooleanValue,
     CpSolverStatus as or_sat_CpSolverStatus,
     CpSolverResponseStats as or_sat_CpSolverResponseStats,
+    SolveWithParameters as or_sat_SolveWithParameters,
 } from './operations_research/sat/FuncInit'
 
 declare module operations_research
@@ -59,6 +70,16 @@ declare module operations_research
         or_operator_times as operator_times,
 
     }
+    export namespace packing
+    {
+        export
+        {
+            or_packing_BinPacking2dParser as BinPacking2dParser,
+            or_packing_MultipleDimensionsBinPackingProblem as MultipleDimensionsBinPackingProblem,
+            or_packing_MultipleDimensionsBinPackingShape as MultipleDimensionsBinPackingShape,
+            or_packing_MultipleDimensionsBinPackingItem as MultipleDimensionsBinPackingItem,
+        }
+    }
     export namespace sat
     {
         export
@@ -71,11 +92,15 @@ declare module operations_research
             or_sat_CpModelProto as CpModelProto,
             or_sat_CpSolverResponse as CpSolverResponse,
             or_sat_TableConstraint as TableConstraint,
+            or_sat_IntervalVar as IntervalVar,
+            or_sat_NoOverlap2DConstraint as NoOverlap2DConstraint,
+            or_sat_SatParameters as SatParameters,
 
             or_sat_operator_times as operator_times,
             or_sat_Solve as Solve,
             or_sat_SolutionBooleanValue as SolutionBooleanValue,
             or_sat_CpSolverResponseStats as CpSolverResponseStats,
+            or_sat_SolveWithParameters as SolveWithParameters,
 
             or_sat_CpSolverStatus as CpSolverStatus,
         }

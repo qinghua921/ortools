@@ -56,18 +56,4 @@ export class IntVar
     //         return index_;
     //     }
 
-    //   private:
-    //     friend class BoolVar;
-    //     friend class CpModelBuilder;
-    //     friend class CumulativeConstraint;
-    //     friend class DoubleLinearExpr;
-    //     friend class LinearExpr;
-    //     friend class IntervalVar;
-    //     friend class ReservoirConstraint;
-    //     friend int64_t SolutionIntegerValue(const CpSolverResponse &r, const LinearExpr &expr);
-
-    //     IntVar(int index, CpModelBuilder *builder);
-
-    //     CpModelBuilder *builder_ = nullptr;
-    //     int index_               = std::numeric_limits<int32_t>::min();
 };

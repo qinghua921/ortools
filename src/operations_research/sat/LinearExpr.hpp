@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BoolVar.hpp"
+#include "IntVar.hpp"
 #include "napi.h"
 #include "ortools/sat/cp_model.h"
 

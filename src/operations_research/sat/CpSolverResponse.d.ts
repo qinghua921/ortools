@@ -85,10 +85,6 @@ export class CpSolverResponse
     //  using ::google::protobuf::Message::MergeFrom;
     //  void MergeFrom(const CpSolverResponse& from) { CpSolverResponse::MergeImpl(*this, from); }
 
-    //  private:
-    //  static void MergeImpl(
-    //      ::google::protobuf::MessageLite& to_msg,
-    //      const ::google::protobuf::MessageLite& from_msg);
 
     //  public:
     //  ABSL_ATTRIBUTE_REINITIALIZES void Clear() final;
@@ -101,23 +97,7 @@ export class CpSolverResponse
     //      ::google::protobuf::io::EpsCopyOutputStream* stream) const final;
     //  int GetCachedSize() const { return _impl_._cached_size_.Get(); }
 
-    //  private:
-    //  void SharedCtor(::google::protobuf::Arena* arena);
-    //  void SharedDtor();
-    //  void InternalSwap(CpSolverResponse* other);
-    // private:
-    //  friend class ::google::protobuf::internal::AnyMetadata;
-    //  static ::absl::string_view FullMessageName() { return "operations_research.sat.CpSolverResponse"; }
 
-    // protected:
-    //  explicit CpSolverResponse(::google::protobuf::Arena* arena);
-    //  CpSolverResponse(::google::protobuf::Arena* arena, const CpSolverResponse& from);
-    //  CpSolverResponse(::google::protobuf::Arena* arena, CpSolverResponse&& from) noexcept
-    //      : CpSolverResponse(arena) {
-    //    *this = ::std::move(from);
-    //  }
-    //  const ::google::protobuf::MessageLite::ClassData* GetClassData()
-    //      const final;
 
     // public:
     //  ::google::protobuf::Metadata GetMetadata() const final;
@@ -162,15 +142,10 @@ export class CpSolverResponse
     //  const ::google::protobuf::RepeatedField<::int64_t>& solution() const;
     //  ::google::protobuf::RepeatedField<::int64_t>* mutable_solution();
 
-    //  private:
-    //  const ::google::protobuf::RepeatedField<::int64_t>& _internal_solution() const;
-    //  ::google::protobuf::RepeatedField<::int64_t>* _internal_mutable_solution();
 
     //  public:
     //  // repeated .operations_research.sat.IntegerVariableProto tightened_variables = 21;
     //  int tightened_variables_size() const;
-    //  private:
-    //  int _internal_tightened_variables_size() const;
 
     //  public:
     //  void clear_tightened_variables() ;
@@ -182,8 +157,6 @@ export class CpSolverResponse
     //  ::operations_research::sat::IntegerVariableProto* add_tightened_variables();
     //  const ::google::protobuf::RepeatedPtrField<::operations_research::sat::IntegerVariableProto>& tightened_variables() const;
     //  int sufficient_assumptions_for_infeasibility_size() const;
-    //  private:
-    //  int _internal_sufficient_assumptions_for_infeasibility_size() const;
 
     //  public:
     //  void clear_sufficient_assumptions_for_infeasibility() ;
@@ -193,24 +166,16 @@ export class CpSolverResponse
     sufficient_assumptions_for_infeasibility(): number[];
     //  ::google::protobuf::RepeatedField<::int32_t>* mutable_sufficient_assumptions_for_infeasibility();
 
-    //  private:
-    //  const ::google::protobuf::RepeatedField<::int32_t>& _internal_sufficient_assumptions_for_infeasibility() const;
-    //  ::google::protobuf::RepeatedField<::int32_t>* _internal_mutable_sufficient_assumptions_for_infeasibility();
 
     //  public:
     //  // repeated .operations_research.sat.CpSolverSolution additional_solutions = 27;
     //  int additional_solutions_size() const;
-    //  private:
-    //  int _internal_additional_solutions_size() const;
 
     //  public:
     //  void clear_additional_solutions() ;
     //  ::operations_research::sat::CpSolverSolution* mutable_additional_solutions(int index);
     //  ::google::protobuf::RepeatedPtrField<::operations_research::sat::CpSolverSolution>* mutable_additional_solutions();
 
-    //  private:
-    //  const ::google::protobuf::RepeatedPtrField<::operations_research::sat::CpSolverSolution>& _internal_additional_solutions() const;
-    //  ::google::protobuf::RepeatedPtrField<::operations_research::sat::CpSolverSolution>* _internal_mutable_additional_solutions();
     //  public:
     //  const ::operations_research::sat::CpSolverSolution& additional_solutions(int index) const;
     //  ::operations_research::sat::CpSolverSolution* add_additional_solutions();
@@ -224,12 +189,6 @@ export class CpSolverResponse
     //  PROTOBUF_NODISCARD std::string* release_solution_info();
     //  void set_allocated_solution_info(std::string* value);
 
-    //  private:
-    //  const std::string& _internal_solution_info() const;
-    //  inline PROTOBUF_ALWAYS_INLINE void _internal_set_solution_info(
-    //      const std::string& value);
-    //  std::string* _internal_mutable_solution_info();
-
     //  public:
     //  // string solve_log = 26;
     //  void clear_solve_log() ;
@@ -239,12 +198,6 @@ export class CpSolverResponse
     //  std::string* mutable_solve_log();
     //  PROTOBUF_NODISCARD std::string* release_solve_log();
     //  void set_allocated_solve_log(std::string* value);
-
-    //  private:
-    //  const std::string& _internal_solve_log() const;
-    //  inline PROTOBUF_ALWAYS_INLINE void _internal_set_solve_log(
-    //      const std::string& value);
-    //  std::string* _internal_mutable_solve_log();
 
     //  public:
     //  // .operations_research.sat.CpObjectiveProto integer_objective = 28;
@@ -257,9 +210,6 @@ export class CpSolverResponse
     //  void unsafe_arena_set_allocated_integer_objective(::operations_research::sat::CpObjectiveProto* value);
     //  ::operations_research::sat::CpObjectiveProto* unsafe_arena_release_integer_objective();
 
-    //  private:
-    //  const ::operations_research::sat::CpObjectiveProto& _internal_integer_objective() const;
-    //  ::operations_research::sat::CpObjectiveProto* _internal_mutable_integer_objective();
 
     //  public:
     //  void clear_objective_value() ;
@@ -273,9 +223,6 @@ export class CpSolverResponse
     //  double best_objective_bound() const;
     //  void set_best_objective_bound(double value);
 
-    //  private:
-    //  double _internal_best_objective_bound() const;
-    //  void _internal_set_best_objective_bound(double value);
 
     //  public:
     //  // int64 num_booleans = 10;
@@ -283,9 +230,6 @@ export class CpSolverResponse
     //  ::int64_t num_booleans() const;
     //  void set_num_booleans(::int64_t value);
 
-    //  private:
-    //  ::int64_t _internal_num_booleans() const;
-    //  void _internal_set_num_booleans(::int64_t value);
 
     //  public:
     //  // int64 num_conflicts = 11;

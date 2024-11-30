@@ -15,9 +15,16 @@
 #include "operations_research/MPObjective.hpp"
 #include "operations_research/MPSolver.hpp"
 #include "operations_research/MPVariable.hpp"
+#include "operations_research/OrToolsVersion.hpp"
 #include "operations_research/SimpleLinearSumAssignment.hpp"
 #include "operations_research/SimpleMinCostFlow.hpp"
-#include "operations_research/OrToolsVersion.hpp"
+
+/**** operations_research / packing ***************************************************************************************/
+
+#include "operations_research/packing/BinPacking2dParser.hpp"
+#include "operations_research/packing/MultipleDimensionsBinPackingItem.hpp"
+#include "operations_research/packing/MultipleDimensionsBinPackingProblem.hpp"
+#include "operations_research/packing/MultipleDimensionsBinPackingShape.hpp"
 
 /**** operations_research / sat ***************************************************************************************/
 
@@ -28,7 +35,10 @@
 #include "operations_research/sat/CpSolverResponse.hpp"
 #include "operations_research/sat/FuncInit.hpp"
 #include "operations_research/sat/IntVar.hpp"
+#include "operations_research/sat/IntervalVar.hpp"
 #include "operations_research/sat/LinearExpr.hpp"
+#include "operations_research/sat/NoOverlap2DConstraint.hpp"
+#include "operations_research/sat/SatParameters.hpp"
 #include "operations_research/sat/TableConstraint.hpp"
 
 Napi::Object Init(Napi::Env env, Napi::Object exports)
@@ -39,14 +49,14 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     Napi::HandleScope scope(env);
 
     auto operations_research = Napi::Object::New(env);
-    // {
-    //     auto packing = Napi::Object::New( env );
-    //     operations_research::packing::GBinPacking2dParser::Init( env, packing );
-    //     operations_research::packing::GMultipleDimensionsBinPackingItem::Init( env, packing );
-    //     operations_research::packing::GMultipleDimensionsBinPackingProblem::Init( env, packing );
-    //     operations_research::packing::GMultipleDimensionsBinPackingShape::Init( env, packing );
-    //     operations_research.Set( "packing", packing );
-    // }
+    {
+        auto packing = Napi::Object::New(env);
+        operations_research::packing::GBinPacking2dParser::Init(env, packing);
+        operations_research::packing::GMultipleDimensionsBinPackingProblem::Init(env, packing);
+        operations_research::packing::GMultipleDimensionsBinPackingShape::Init(env, packing);
+        operations_research::packing::GMultipleDimensionsBinPackingItem::Init(env, packing);
+        operations_research.Set("packing", packing);
+    }
     {
         auto sat = Napi::Object::New(env);
         // operations_research::sat::SatInit(env, sat);
@@ -58,6 +68,9 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
         operations_research::sat::GCpModelProto::Init(env, sat);
         operations_research::sat::GCpSolverResponse::Init(env, sat);
         operations_research::sat::GTableConstraint::Init(env, sat);
+        operations_research::sat::GIntervalVar::Init(env, sat);
+        operations_research::sat::GNoOverlap2DConstraint::Init(env, sat);
+        operations_research::sat::GSatParameters::Init(env, sat);
         operations_research::sat::FuncInit(env, sat);
         operations_research.Set("sat", sat);
     }

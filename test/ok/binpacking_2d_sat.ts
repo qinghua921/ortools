@@ -1,4 +1,4 @@
-import { operations_research as op } from '../src'
+import { operations_research as op } from '../../src'
 function MaxSubsetSumSize(sizes: number[], max_size: number): number
 {
     let builder = new op.sat.CpModelBuilder();

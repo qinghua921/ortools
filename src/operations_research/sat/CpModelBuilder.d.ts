@@ -2,18 +2,19 @@ import { Domain } from "../Domain";
 import { BoolVar } from "./BoolVar";
 import { Constraint } from "./Constraint";
 import { CpModelProto } from "./CpModelProto";
+import { CumulativeConstraint } from "./CumulativeConstraint";
+import { IntervalVar } from "./IntervalVar";
 import { IntVar } from "./IntVar";
 import { CanAsLinearExpr, LinearExpr } from "./LinearExpr";
+import { NoOverlap2DConstraint } from "./NoOverlap2DConstraint";
 import { TableConstraint } from "./TableConstraint";
 
 export class CpModelBuilder
 {
     //   public:
-    //     /// Sets the name of the model.
-    //     void SetName(absl::string_view name);
+    SetName(name: string): void;
 
     NewIntVar(domain: Domain): IntVar;
-
     NewBoolVar(): BoolVar;
 
     //     /// Creates a constant variable. This is a shortcut for
@@ -34,16 +35,12 @@ export class CpModelBuilder
     //     /// Creates an interval variable from 3 affine expressions.
     //     IntervalVar NewIntervalVar(const LinearExpr &start, const LinearExpr &size, const LinearExpr &end);
 
-    //     /// Creates an interval variable with a fixed size.
-    //     IntervalVar NewFixedSizeIntervalVar(const LinearExpr &start, int64_t size);
-
+    NewFixedSizeIntervalVar(start: CanAsLinearExpr, size: number): IntervalVar;
     //     /// Creates an optional interval variable from 3 affine expressions and a
     //     /// Boolean variable.
     //     IntervalVar NewOptionalIntervalVar(const LinearExpr &start, const LinearExpr &size, const LinearExpr &end, BoolVar presence);
 
-    //     /// Creates an optional interval variable with a fixed size.
-    //     IntervalVar NewOptionalFixedSizeIntervalVar(const LinearExpr &start, int64_t size, BoolVar presence);
-
+    NewOptionalFixedSizeIntervalVar(start: CanAsLinearExpr, size: number, presence: BoolVar): IntervalVar;
     //     /// It is sometime convenient when building a model to create a bunch of
     //     /// variables that will later be fixed. Instead of doing AddEquality(var,
     //     /// value) which add a constraint, these functions modify directly the
@@ -53,11 +50,10 @@ export class CpModelBuilder
     //     /// the given variable to the given value, even if it was outside the given
     //     /// variable domain. You can still use AddEquality() if this is not what you
     //     /// want.
-    //     void FixVariable(IntVar var, int64_t value);
-    //     void FixVariable(BoolVar var, bool value);
+    FixVariable(var_: IntVar, value: number): void;
+    FixVariable(var_: BoolVar, value: boolean): void;
 
-    //     /// Adds the constraint that at least one of the literals must be true.
-    //     Constraint AddBoolOr(absl::Span<const BoolVar> literals);
+    AddBoolOr(literals: BoolVar[]): Constraint;
 
     //     /// Same as AddBoolOr(). Sum literals >= 1.
     //     Constraint AddAtLeastOne(absl::Span<const BoolVar> literals);
@@ -71,11 +67,7 @@ export class CpModelBuilder
     //     /// Adds the constraint that an odd number of literals is true.
     //     Constraint AddBoolXor(absl::Span<const BoolVar> literals);
 
-    //     /// Adds a => b.
-    //     Constraint AddImplication(BoolVar a, BoolVar b)
-    //     {
-    //         return AddBoolOr({a.Not(), b});
-    //     }
+    AddImplication(a: BoolVar, b: BoolVar): Constraint;
 
     //     /// Adds implication: if all lhs vars are true then all rhs vars must be true.
     //     Constraint AddImplication(absl::Span<const BoolVar> lhs, absl::Span<const BoolVar> rhs)
@@ -267,28 +259,15 @@ export class CpModelBuilder
     //      */
     //     Constraint AddNoOverlap(absl::Span<const IntervalVar> vars);
 
-    //     /**
-    //      * The no_overlap_2d constraint prevents a set of boxes from overlapping.
-    //      */
-    //     NoOverlap2DConstraint AddNoOverlap2D();
-
-    //     /**
-    //      * The cumulative constraint
-    //      *
-    //      * It ensures that for any integer point, the sum of the demands of the
-    //      * intervals containing that point does not exceed the capacity.
-    //      */
-    //     CumulativeConstraint AddCumulative(LinearExpr capacity);
-
-    Minimize(expr: LinearExpr): void;
+    AddNoOverlap2D(): NoOverlap2DConstraint;
+    AddCumulative(capacity: LinearExpr): CumulativeConstraint;
+    Minimize(expr: CanAsLinearExpr): void;
 
     //     /// Adds a linear floating point minimization objective.
     //     /// Note that the coefficients will be internally scaled to integer.
     //     void Minimize(const DoubleLinearExpr &expr);
 
-    //     /// Adds a linear maximization objective.
-    //     void Maximize(const LinearExpr &expr);
-
+    Maximize(expr: LinearExpr): void;
     //     /// Adds a linear floating point maximization objective.
     //     /// Note that the coefficients will be internally scaled to integer.
     //     void Maximize(const DoubleLinearExpr &expr);

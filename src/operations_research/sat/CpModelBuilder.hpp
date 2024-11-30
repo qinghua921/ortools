@@ -3,8 +3,10 @@
 #include "./BoolVar.hpp"
 #include "./Constraint.hpp"
 #include "./CpModelProto.hpp"
+#include "./CumulativeConstraint.hpp"
 #include "./IntVar.hpp"
 #include "./LinearExpr.hpp"
+#include "./NoOverlap2DConstraint.hpp"
 #include "./TableConstraint.hpp"
 #include "napi.h"
 #include "ortools/sat/cp_model.h"
@@ -63,6 +65,13 @@ class GCpModelBuilder : public Napi::ObjectWrap<GCpModelBuilder>
                 InstanceMethod("AddGreaterThan", &GCpModelBuilder::AddGreaterThan),
                 InstanceMethod("NewIntVar", &GCpModelBuilder::NewIntVar),
                 InstanceMethod("AddAssumptions", &GCpModelBuilder::AddAssumptions),
+                InstanceMethod("Maximize", &GCpModelBuilder::Maximize),
+                InstanceMethod("SetName", &GCpModelBuilder::SetName),
+                InstanceMethod("FixVariable", &GCpModelBuilder::FixVariable),
+                InstanceMethod("NewOptionalFixedSizeIntervalVar", &GCpModelBuilder::NewOptionalFixedSizeIntervalVar),
+                InstanceMethod("NewFixedSizeIntervalVar", &GCpModelBuilder::NewFixedSizeIntervalVar),
+                InstanceMethod("AddImplication", &GCpModelBuilder::AddImplication),
+                InstanceMethod("AddBoolOr", &GCpModelBuilder::AddBoolOr),
             }
         );
         constructor = Napi::Persistent(func);
@@ -70,6 +79,187 @@ class GCpModelBuilder : public Napi::ObjectWrap<GCpModelBuilder>
         exports.Set(Napi::String::New(env, "CpModelBuilder"), func);
         return exports;
     };
+
+    //     Constraint AddBoolOr(absl::Span<const BoolVar> literals);
+    Napi::Value AddBoolOr(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 1 && info[0].IsArray())
+        {
+            std::vector<BoolVar> literals;
+            auto array = info[0].As<Napi::Array>();
+            for (int i = 0; i < array.As<Napi::Array>().Length(); i++)
+            {
+                if (array.Get(i).IsObject() && array.Get(i).As<Napi::Object>().InstanceOf(GBoolVar::constructor.Value()))
+                {
+                    literals.push_back(*Napi::ObjectWrap<GBoolVar>::Unwrap(array.Get(i).As<Napi::Object>())->pBoolVar);
+                    continue;
+                }
+                Napi::TypeError::New(env, "operations_research::GCpModelBuilder::AddBoolOr : Invalid arguments").ThrowAsJavaScriptException();
+                return env.Null();
+            }
+            auto result = pCpModelBuilder->AddBoolOr(literals);
+            return GConstraint::constructor.New({Napi::External<Constraint>::New(env, new Constraint(result))});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::AddBoolOr : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+    //     Constraint AddImplication(BoolVar a, BoolVar b)
+    Napi::Value AddImplication(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 2 &&
+            info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GBoolVar::constructor.Value()) //
+            && info[1].IsObject() && info[1].As<Napi::Object>().InstanceOf(GBoolVar::constructor.Value()))
+        {
+            auto a      = Napi::ObjectWrap<GBoolVar>::Unwrap(info[0].As<Napi::Object>())->pBoolVar;
+            auto b      = Napi::ObjectWrap<GBoolVar>::Unwrap(info[1].As<Napi::Object>())->pBoolVar;
+            auto result = pCpModelBuilder->AddImplication(*a, *b);
+            return GConstraint::constructor.New({Napi::External<Constraint>::New(env, new Constraint(result))});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::AddImplication : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+    //     IntervalVar NewFixedSizeIntervalVar(const LinearExpr &start, int64_t size);
+    Napi::Value NewFixedSizeIntervalVar(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 2 &&
+            info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GLinearExpr::constructor.Value()) //
+            && info[1].IsNumber())
+        {
+            auto start   = Napi::ObjectWrap<GLinearExpr>::Unwrap(info[0].As<Napi::Object>())->pLinearExpr;
+            int64_t size = info[1].As<Napi::Number>().Int64Value();
+            auto result  = pCpModelBuilder->NewFixedSizeIntervalVar(*start, size);
+            return GIntervalVar::constructor.New({Napi::External<IntervalVar>::New(env, new IntervalVar(result))});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::NewFixedSizeIntervalVar : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+    //     CumulativeConstraint AddCumulative(LinearExpr capacity);
+    Napi::Value AddCumulative(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GLinearExpr::constructor.Value()))
+        {
+            auto capacity = Napi::ObjectWrap<GLinearExpr>::Unwrap(info[0].As<Napi::Object>())->pLinearExpr;
+            auto result   = pCpModelBuilder->AddCumulative(*capacity);
+            return GCumulativeConstraint::constructor.New({Napi::External<CumulativeConstraint>::New(env, new CumulativeConstraint(result))});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::AddCumulative : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    //     NoOverlap2DConstraint AddNoOverlap2D();
+    Napi::Value AddNoOverlap2D(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 0)
+        {
+            auto result = pCpModelBuilder->AddNoOverlap2D();
+            return GNoOverlap2DConstraint::constructor.New({Napi::External<NoOverlap2DConstraint>::New(env, new NoOverlap2DConstraint(result))});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::AddNoOverlap2D : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    //     IntervalVar NewOptionalFixedSizeIntervalVar(const LinearExpr &start, int64_t size, BoolVar presence);
+    Napi::Value NewOptionalFixedSizeIntervalVar(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        LinearExpr start;
+        if (info.Length() == 3 &&
+            GLinearExpr::ToLinearExpr(info[0], start) //
+            && info[1].IsNumber()                     //
+            && info[2].IsObject() && info[2].As<Napi::Object>().InstanceOf(GBoolVar::constructor.Value()))
+        {
+            auto start    = Napi::ObjectWrap<GLinearExpr>::Unwrap(info[0].As<Napi::Object>())->pLinearExpr;
+            int64_t size  = info[1].As<Napi::Number>().Int64Value();
+            auto presence = Napi::ObjectWrap<GBoolVar>::Unwrap(info[2].As<Napi::Object>())->pBoolVar;
+            auto result   = pCpModelBuilder->NewOptionalFixedSizeIntervalVar(*start, size, *presence);
+            return GIntervalVar::constructor.New({Napi::External<IntervalVar>::New(env, new IntervalVar(result))});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::NewOptionalFixedSizeIntervalVar : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    Napi::Value FixVariable(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+        //     void FixVariable(IntVar var, int64_t value);
+        if (info.Length() == 2 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GIntVar::constructor.Value()) && info[1].IsNumber())
+        {
+            auto var      = Napi::ObjectWrap<GIntVar>::Unwrap(info[0].As<Napi::Object>())->pIntVar;
+            int64_t value = info[1].As<Napi::Number>().Int64Value();
+            pCpModelBuilder->FixVariable(*var, value);
+            return env.Undefined();
+        }
+        //     void FixVariable(BoolVar var, bool value);
+        if (info.Length() == 2 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GBoolVar::constructor.Value()) && info[1].IsBoolean())
+        {
+            auto var   = Napi::ObjectWrap<GBoolVar>::Unwrap(info[0].As<Napi::Object>())->pBoolVar;
+            bool value = info[1].As<Napi::Boolean>();
+            pCpModelBuilder->FixVariable(*var, value);
+            return env.Undefined();
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::FixVariable : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    //     void SetName(absl::string_view name);
+    Napi::Value SetName(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 1 && info[0].IsString())
+        {
+            std::string name = info[0].As<Napi::String>().Utf8Value();
+            pCpModelBuilder->SetName(name);
+            return env.Undefined();
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::SetName : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
+    //     void Maximize(const LinearExpr &expr);
+    Napi::Value Maximize(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        LinearExpr expr;
+        if (info.Length() == 1 && GLinearExpr::ToLinearExpr(info[0], expr))
+        {
+            pCpModelBuilder->Maximize(expr);
+            return env.Undefined();
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::Maximize : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Undefined();
+    }
+
     //     void AddAssumptions(absl::Span<const BoolVar> literals);
     Napi::Value AddAssumptions(const Napi::CallbackInfo &info)
     {

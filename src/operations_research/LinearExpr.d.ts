@@ -1,29 +1,7 @@
 import { MPVariable } from "./MPVariable";
 
-/**
- * LinearExpr models a quantity that is linear in the decision variables
- * (MPVariable) of an optimization problem, i.e.
- *
- * offset + sum_{i in S} a_i*x_i,
- *
- * where the a_i and offset are constants and the x_i are MPVariables. You can
- * use a LinearExpr "linear_expr" with an MPSolver "solver" to:
- *   * Set as the objective of your optimization problem, e.g.
- *
- *     solver.MutableObjective()->MaximizeLinearExpr(linear_expr);
- *
- *   * Create a constraint in your optimization, e.g.
- *
- *     solver.MakeRowConstraint(linear_expr1 <= linear_expr2);
- *
- *   * Get the value of the quantity after solving, e.g.
- *
- *     solver.Solve();
- *     linear_expr.SolutionValue();
- *
- * LinearExpr is allowed to delete variables with coefficient zero from the map,
- * but is not obligated to do so.
- */
+export type CanAsLinearExpr = LinearExpr | number | MPVariable;
+
 export class LinearExpr
 {
     //   public:

@@ -45,7 +45,7 @@ The codebase is large, and the priority is to implement the code in the examples
 - bfs_one_to_all Deferred
 - bfs_undirected Deferred
 - bin_packing_mip OK
-- binpacking_2d_sat
+- binpacking_2d_sat OK
 - binpacking_problem_sat
 - bool_or_sample_sat
 - channeling_sample_sat
