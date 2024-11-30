@@ -31,12 +31,28 @@ class GLinearExpr : public Napi::ObjectWrap<GLinearExpr>
             return;
         }
 
+        //     LinearExpr(double constant); // NOLINT
+        if (info.Length() == 1 && info[0].IsNumber())
+        {
+            double constant = info[0].As<Napi::Number>().DoubleValue();
+            pLinearExpr     = new LinearExpr(constant);
+            return;
+        }
+
+        //     LinearExpr(const MPVariable *var); // NOLINT
+        if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GMPVariable::constructor.Value()))
+        {
+            auto mpvar  = GMPVariable::Unwrap(info[0].As<Napi::Object>());
+            pLinearExpr = new LinearExpr(mpvar->pMPVariable);
+            return;
+        }
+
         Napi::TypeError::New(env, "operations_research::GLinearExpr::GLinearExpr : Invalid arguments").ThrowAsJavaScriptException();
     };
 
     ~GLinearExpr()
     {
-        if ( pLinearExpr ) delete pLinearExpr;
+        if (pLinearExpr) delete pLinearExpr;
     };
 
     static Napi::Object Init(Napi::Env env, Napi::Object exports)

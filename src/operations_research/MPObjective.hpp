@@ -1,5 +1,6 @@
 #pragma once
 
+#include "LinearExpr.hpp"
 #include "napi.h"
 #include "ortools/linear_solver/linear_solver.h"
 
@@ -42,6 +43,7 @@ class GMPObjective : public Napi::ObjectWrap<GMPObjective>
                 InstanceMethod("SetCoefficient", &GMPObjective::SetCoefficient),
                 InstanceMethod("SetMinimization", &GMPObjective::SetMinimization),
                 InstanceMethod("SetMaximization", &GMPObjective::SetMaximization),
+                InstanceMethod("MinimizeLinearExpr", &GMPObjective::MinimizeLinearExpr),
             }
         );
         constructor = Napi::Persistent(func);
@@ -49,6 +51,24 @@ class GMPObjective : public Napi::ObjectWrap<GMPObjective>
         exports.Set(Napi::String::New(env, "MPObjective"), func);
         return exports;
     };
+    //     void MinimizeLinearExpr(const LinearExpr &linear_expr)
+    Napi::Value MinimizeLinearExpr(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GLinearExpr::constructor.Value()))
+        {
+            auto linear_expr = info[0].As<Napi::Object>();
+            auto pLinearExpr = Napi::ObjectWrap<GLinearExpr>::Unwrap(linear_expr)->pLinearExpr;
+            pMPObjective->MinimizeLinearExpr(*pLinearExpr);
+            return env.Null();
+        }
+
+        Napi::TypeError::New(env, "operations_research::GMPObjective::MinimizeLinearExpr : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Undefined();
+    };
+
     //     void SetMaximization()
     Napi::Value SetMaximization(const Napi::CallbackInfo &info)
     {

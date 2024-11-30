@@ -76,6 +76,13 @@ Napi::Value Goperator_times(const Napi::CallbackInfo &info)
         return GLinearExpr::constructor.New({Napi::External<LinearExpr>::New(env, new LinearExpr(result))});
     }
 
+    if (info.Length() == 2 && info[0].IsNumber() && GLinearExpr::ToLinearExpr(info[1], lhs))
+    {
+        rhs         = info[0].As<Napi::Number>().DoubleValue();
+        auto result = rhs * lhs;
+        return GLinearExpr::constructor.New({Napi::External<LinearExpr>::New(env, new LinearExpr(result))});
+    }
+
     Napi::TypeError::New(env, "operations_research::operator_times : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }

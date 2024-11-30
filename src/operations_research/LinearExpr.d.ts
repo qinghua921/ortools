@@ -1,3 +1,4 @@
+import { MPVariable } from "./MPVariable";
 
 /**
  * LinearExpr models a quantity that is linear in the decision variables
@@ -27,15 +28,8 @@ export class LinearExpr
 {
     //   public:
     constructor();
-    //     /// Possible implicit conversions are intentional.
-    //     LinearExpr(double constant); // NOLINT
-
-    //     /***
-    //      * Possible implicit conversions are intentional.
-    //      *
-    //      * Warning: var is not owned.
-    //      */
-    //     LinearExpr(const MPVariable *var); // NOLINT
+    constructor(constant: number);
+    constructor(var_: MPVariable);
 
     //     /**
     //      * Returns 1-var.

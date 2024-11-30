@@ -28,23 +28,23 @@ Some C++ classes are not yet implemented, and some classes are not defined. The 
 
 The codebase is large, and the priority is to implement the code in the examples directory.
 
-- assignment_groups_mip 🆗
-- assignment_groups_sat 🆗
-- assignment_linear_sum_assignment 🆗
-- assignment_min_flow 🆗
-- assignment_mip 🆗
-- assignment_sat 🆗
-- assignment_task_sizes_mip 🆗
-- assignment_task_sizes_sat 🆗
-- assignment_teams_mip 🆗
-- assignment_teams_sat 🆗
-- assumptions_sample_sat 🆗
-- balance_min_flow 🆗
-- basic_example 🆗
-- bfs_directed
-- bfs_one_to_all
-- bfs_undirected
-- bin_packing_mip
+- assignment_groups_mip OK
+- assignment_groups_sat OK
+- assignment_linear_sum_assignment OK
+- assignment_min_flow OK
+- assignment_mip OK
+- assignment_sat OK
+- assignment_task_sizes_mip OK
+- assignment_task_sizes_sat OK
+- assignment_teams_mip OK
+- assignment_teams_sat OK
+- assumptions_sample_sat OK
+- balance_min_flow OK
+- basic_example OK
+- bfs_directed Deferred
+- bfs_one_to_all Deferred
+- bfs_undirected Deferred
+- bin_packing_mip OK
 - binpacking_2d_sat
 - binpacking_problem_sat
 - bool_or_sample_sat

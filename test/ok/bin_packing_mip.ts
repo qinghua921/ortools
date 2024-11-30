@@ -1,4 +1,4 @@
-import { operations_research as op } from '../src'
+import { operations_research as op } from '../../src'
 const DataModel = {
     weights: [48, 30, 19, 36, 36, 27, 42, 42, 36, 24, 30],
     num_items: 11,
