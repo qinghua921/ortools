@@ -50,6 +50,7 @@ class GLinearExpr : public Napi::ObjectWrap<GLinearExpr>
             {
                 InstanceMethod("operator_plus_eq", &GLinearExpr::operator_plus_eq),
                 InstanceMethod("operator_times_eq", &GLinearExpr::operator_times_eq),
+                StaticMethod("Sum", &GLinearExpr::Sum),
             }
         );
         constructor = Napi::Persistent(func);
@@ -57,6 +58,47 @@ class GLinearExpr : public Napi::ObjectWrap<GLinearExpr>
         exports.Set(Napi::String::New(env, "LinearExpr"), func);
         return exports;
     };
+    //  static LinearExpr Sum(absl::Span<const IntVar> vars);
+    static Napi::Value Sum(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        std::vector<IntVar> vars;
+        if (info.Length() == 1 && info[0].IsArray())
+        {
+            Napi::Array arr = info[0].As<Napi::Array>();
+
+            for (uint32_t i = 0; i < arr.Length(); i++)
+            {
+                if (arr.Get(i).IsObject() && arr.Get(i).As<Napi::Object>().InstanceOf(GIntVar::constructor.Value()))
+                {
+                    vars.push_back(*GIntVar::Unwrap(arr.Get(i).As<Napi::Object>())->pIntVar);
+                    continue;
+                }
+            }
+
+            if (vars.size() == 0)
+            {
+                for (uint32_t i = 0; i < arr.Length(); i++)
+                {
+                    if (arr.Get(i).IsObject() && arr.Get(i).As<Napi::Object>().InstanceOf(GBoolVar::constructor.Value()))
+                    {
+                        vars.push_back(*GIntVar::Unwrap(arr.Get(i).As<Napi::Object>())->pIntVar);
+                        continue;
+                    }
+                }
+            }
+            
+            if (vars.size() > 0)
+            {
+                return GLinearExpr::constructor.New({Napi::External<LinearExpr>::New(env, new LinearExpr(LinearExpr::Sum(vars)))});
+            }
+        }
+
+        Napi::TypeError::New(env, "operations_research::GLinearExpr::Sum : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
 
     //  LinearExpr &operator*=(int64_t factor);
     Napi::Value operator_times_eq(const Napi::CallbackInfo &info)

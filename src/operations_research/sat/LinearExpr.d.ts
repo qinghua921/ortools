@@ -1,4 +1,5 @@
 import { BoolVar } from "./BoolVar";
+import { IntVar } from "./IntVar";
 
 export type CanAsLinearExpr = IntVar | BoolVar | LinearExpr | number;
 
@@ -22,11 +23,7 @@ export class LinearExpr
 
     //  // NOLINTEND(google-explicit-constructor)
 
-    //  /// Constructs the sum of a list of variables.
-    //  static LinearExpr Sum(absl::Span<const IntVar> vars);
-
-    //  /// Constructs the sum of a list of Boolean variables.
-    //  static LinearExpr Sum(absl::Span<const BoolVar> vars);
+    static Sum(vars: IntVar[] | BoolVar[]): LinearExpr;
 
     //  /// Constructs the scalar product of variables and coefficients.
     //  static LinearExpr WeightedSum(absl::Span<const IntVar> vars, absl::Span<const int64_t> coeffs);
@@ -43,7 +40,7 @@ export class LinearExpr
     //  /// Constructs a linear expr from its proto representation.
     //  static LinearExpr FromProto(const LinearExpressionProto &proto);
 
-    operator_plus_eq(other: LinearExpr): LinearExpr;
+    operator_plus_eq(other: CanAsLinearExpr): LinearExpr;
     operator_plus_eq(other: BoolVar): LinearExpr;
 
     //  LinearExpr &operator-=(const LinearExpr &other);

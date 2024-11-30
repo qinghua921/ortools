@@ -41,12 +41,27 @@ class GBoolVar : public Napi::ObjectWrap<GBoolVar>
             "BoolVar",
             {
                 InstanceMethod("WithName", &GBoolVar::WithName),
+                InstanceMethod("Not", &GBoolVar::Not),
             }
         );
         constructor = Napi::Persistent(func);
         constructor.SuppressDestruct();
         exports.Set(Napi::String::New(env, "BoolVar"), func);
         return exports;
+    };
+    //  BoolVar Not() const
+    Napi::Value Not(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 0)
+        {
+            return GBoolVar::constructor.New({Napi::External<BoolVar>::New(env, new BoolVar(pBoolVar->Not()))});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GBoolVar::Not : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
     };
 
     //  BoolVar WithName(absl::string_view name);

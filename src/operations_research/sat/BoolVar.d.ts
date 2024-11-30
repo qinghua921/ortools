@@ -12,11 +12,7 @@ export class BoolVar
     //  /// Returns the name of the variable.
     //  std::string Name() const;
 
-    //  /// Returns the logical negation of the current Boolean variable.
-    //  BoolVar Not() const
-    //  {
-    //      return BoolVar(NegatedRef(index_), builder_);
-    //  }
+    Not(): BoolVar;
 
     //  bool operator==(const BoolVar &other) const
     //  {
@@ -28,10 +24,6 @@ export class BoolVar
     //      return other.builder_ != builder_ || other.index_ != index_;
     //  }
 
-    //  BoolVar operator~() const
-    //  {
-    //      return Not();
-    //  }
 
     //  std::string DebugString() const;
 

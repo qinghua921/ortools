@@ -1,12 +1,11 @@
-import { LinearExpr } from "./LinearExpr";
+import { CanAsLinearExpr, LinearExpr } from "./LinearExpr";
 import { BoolVar } from "./BoolVar";
 import { CpModelProto } from "./CpModelProto";
 import { CpSolverResponse } from "./CpSolverResponse";
 import { SatParameters } from "./SatParameters";
 
-export function operator_times(expr: LinearExpr, factor: number): LinearExpr;
-export function operator_times(expr: BoolVar, factor: number): LinearExpr;
-export function operator_times(factor: number, expr: BoolVar): LinearExpr;
+export function operator_times(expr: CanAsLinearExpr, factor: number): LinearExpr;
+export function operator_times(factor: number, expr: CanAsLinearExpr): LinearExpr;
 export function Solve(model_proto: CpModelProto): CpSolverResponse;
 export function SolutionBooleanValue(r: CpSolverResponse, x: BoolVar): boolean;
 export function CpSolverResponseStats(response: CpSolverResponse, has_objective: boolean = true): string;
