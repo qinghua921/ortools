@@ -3,13 +3,6 @@ export class Model
     //   public:
     constructor();
     constructor(name: string);
-
-
-
-    //     // This type is neither copyable nor movable.
-    //     Model(const Model &)            = delete;
-    //     Model &operator=(const Model &) = delete;
-
     Add<T>(f: (model: Model) => T): T;
 
     //     /// Similar to Add() but this is const.
@@ -117,50 +110,4 @@ export class Model
     //         return name_;
     //     }
 
-    //   private:
-    //     // We want to call the constructor T(model*) if it exists or just T() if
-    //     // it doesn't. For this we use some template "magic":
-    //     // - The first MyNew() will only be defined if the type in decltype() exist.
-    //     // - The second MyNew() will always be defined, but because of the ellipsis
-    //     //   it has lower priority that the first one.
-    //     template <typename T>
-    //     decltype(T(static_cast<Model *>(nullptr))) *MyNew(int)
-    //     {
-    //         return new T(this);
-    //     }
-    //     template <typename T>
-    //     T *MyNew(...)
-    //     {
-    //         return new T();
-    //     }
-
-    //     const std::string name_;
-
-    //     // Map of FastTypeId<T> to a "singleton" of type T.
-    //     absl::flat_hash_map</*typeid*/ size_t, void *> singletons_;
-
-    //     struct DeleteInterface
-    //     {
-    //         virtual ~DeleteInterface() = default;
-    //     };
-    //     template <typename T>
-    //     class Delete : public DeleteInterface
-    //     {
-    //       public:
-    //         explicit Delete(T *t)
-    //             : to_delete_(t)
-    //         {
-    //         }
-    //         ~Delete() override = default;
-
-    //       private:
-    //         std::unique_ptr<T> to_delete_;
-    //     };
-
-    //     // The list of items to delete.
-    //     //
-    //     // TODO(user): I don't think we need the two layers of unique_ptr, but we
-    //     // don't care too much about efficiency here and this was easier to get
-    //     // working.
-    //     std::vector<std::unique_ptr<DeleteInterface>> cleanup_list_;
 };

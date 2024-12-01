@@ -164,20 +164,28 @@ Napi::Value GNewSatParameters(const Napi::CallbackInfo &info)
     return env.Null();
 }
 
+Napi::FunctionReference callbackNewFeasibleSolutionObserver;
 // std::function<void(Model*)> NewFeasibleSolutionObserver( const std::function<void(const CpSolverResponse& response)>& callback);
 Napi::Value GNewFeasibleSolutionObserver(const Napi::CallbackInfo &info)
 {
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
+    if (!callbackNewFeasibleSolutionObserver.IsEmpty())
+    {
+        Napi::Error::New(env, "operations_research::sat::GNewFeasibleSolutionObserver : callback already set").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
     if (info.Length() == 1 && info[0].IsFunction())
     {
-        auto callback = info[0].As<Napi::Function>();
-        auto func     = NewFeasibleSolutionObserver(
-            [callback, env](const CpSolverResponse &response)
+        callbackNewFeasibleSolutionObserver = Napi::Persistent(info[0].As<Napi::Function>());
+        auto func                           = NewFeasibleSolutionObserver(
+            [env](const CpSolverResponse &response)
             {
+                Napi::HandleScope scope(env);
                 auto gCpSolverResponse = GCpSolverResponse::constructor.New({Napi::External<CpSolverResponse>::New(env, new CpSolverResponse(response))});
-                callback.Call({gCpSolverResponse});
+                callbackNewFeasibleSolutionObserver.Call({gCpSolverResponse});
             }
         );
         return Napi::Function::New(
@@ -217,8 +225,7 @@ Napi::Value GSolutionIntegerValue(const Napi::CallbackInfo &info)
     )
     {
         auto gCpSolverResponse = Napi::ObjectWrap<GCpSolverResponse>::Unwrap(info[0].As<Napi::Object>());
-        auto gLinearExpr       = Napi::ObjectWrap<GLinearExpr>::Unwrap(info[1].As<Napi::Object>());
-        return Napi::Number::New(env, SolutionIntegerValue(*gCpSolverResponse->pCpSolverResponse, *gLinearExpr->pLinearExpr));
+        return Napi::Number::New(env, SolutionIntegerValue(*gCpSolverResponse->pCpSolverResponse, expr));
     }
 
     Napi::TypeError::New(env, "operations_research::sat::GSolutionIntegerValue : Invalid arguments").ThrowAsJavaScriptException();
