@@ -2,7 +2,7 @@ export class Model
 {
     //   public:
     constructor();
-    constructor( name : string );
+    constructor(name: string);
 
 
 
@@ -10,11 +10,7 @@ export class Model
     //     Model(const Model &)            = delete;
     //     Model &operator=(const Model &) = delete;
 
-    //     template <typename T>
-    //     T Add(std::function<T(Model *)> f)
-    //     {
-    //         return f(this);
-    //     }
+    Add<T>(f: (model: Model) => T): T;
 
     //     /// Similar to Add() but this is const.
     //     template <typename T>

@@ -52,12 +52,39 @@ class GModel : public Napi::ObjectWrap<GModel>
     {
         Napi::HandleScope scope(env);
         Napi::Function func = DefineClass(
-            env, "Model", {}
+            env,
+            "Model",
+            {
+                InstanceMethod("Add", &GModel::Add),
+            }
         );
         constructor = Napi::Persistent(func);
         constructor.SuppressDestruct();
         exports.Set(Napi::String::New(env, "Model"), func);
         return exports;
+    };
+
+    //     template <typename T> T Add(std::function<T(Model *)> f)
+    Napi::Value Add(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 1 && info[0].IsFunction())
+        {
+            Napi::Function f = info[0].As<Napi::Function>();
+            auto ret         = pModel->Add(std::function<Napi::Value(Model *)>(
+                [f, env](Model *model)
+                {
+                    auto gModel = GModel::constructor.New({Napi::External<Model>::New(env, model)});
+                    return f.Call({gModel});
+                }
+            ));
+            return ret;
+        }
+
+        Napi::TypeError::New(env, "operations_research::GModel::Add : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
     };
 };
 }; // namespace sat

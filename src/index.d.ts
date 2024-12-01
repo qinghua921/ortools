@@ -50,6 +50,10 @@ import
     CpSolverResponseStats as or_sat_CpSolverResponseStats,
     SolveWithParameters as or_sat_SolveWithParameters,
     operator_plus as or_sat_operator_plus,
+    NewSatParameters as or_sat_NewSatParameters,
+    NewFeasibleSolutionObserver as or_sat_NewFeasibleSolutionObserver,
+    SolutionIntegerValue as or_sat_SolutionIntegerValue,
+    SolveCpModel as or_sat_SolveCpModel,
 } from './operations_research/sat/FuncInit'
 
 declare module operations_research
@@ -107,6 +111,10 @@ declare module operations_research
             or_sat_CpSolverResponseStats as CpSolverResponseStats,
             or_sat_SolveWithParameters as SolveWithParameters,
             or_sat_operator_plus as operator_plus,
+            or_sat_NewSatParameters as NewSatParameters,
+            or_sat_NewFeasibleSolutionObserver as NewFeasibleSolutionObserver,
+            or_sat_SolutionIntegerValue as SolutionIntegerValue,
+            or_sat_SolveCpModel as SolveCpModel,
 
             or_sat_CpSolverStatus as CpSolverStatus,
         }

@@ -3,6 +3,7 @@ import { BoolVar } from "./BoolVar";
 import { CpModelProto } from "./CpModelProto";
 import { CpSolverResponse } from "./CpSolverResponse";
 import { SatParameters } from "./SatParameters";
+import { Model } from "./Model";
 
 export function operator_times(expr: CanAsLinearExpr, factor: number): LinearExpr;
 export function operator_times(factor: number, expr: CanAsLinearExpr): LinearExpr;
@@ -11,6 +12,10 @@ export function Solve(model_proto: CpModelProto): CpSolverResponse;
 export function SolutionBooleanValue(r: CpSolverResponse, x: BoolVar): boolean;
 export function CpSolverResponseStats(response: CpSolverResponse, has_objective: boolean = true): string;
 export function SolveWithParameters(model_proto: CpModelProto, params: SatParameters): CpSolverResponse;
+export function NewSatParameters(parameters: SatParameters): (model: Model) => SatParameters;
+export function NewFeasibleSolutionObserver(callback: (response: CpSolverResponse) => void): (model: Model) => void;
+export function SolutionIntegerValue(r: CpSolverResponse, expr: CanAsLinearExpr): number;
+export function SolveCpModel(model_proto: CpModelProto, model: Model): CpSolverResponse;
 
 export enum CpSolverStatus 
 {

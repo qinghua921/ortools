@@ -2,6 +2,7 @@
 
 #include "CpSolverResponse.hpp"
 #include "LinearExpr.hpp"
+#include "Model.hpp"
 #include "SatParameters.hpp"
 #include "napi.h"
 #include "ortools/sat/cp_model.h"
@@ -48,7 +49,7 @@ Napi::Value GSolve(const Napi::CallbackInfo &info)
         return GCpSolverResponse::constructor.New({external});
     }
 
-    Napi::TypeError::New(env, "Invalid arguments").ThrowAsJavaScriptException();
+    Napi::TypeError::New(env, "operations_research::sat::GSolve : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
 
@@ -65,7 +66,7 @@ Napi::Value GSolutionBooleanValue(const Napi::CallbackInfo &info)
         return Napi::Boolean::New(env, SolutionBooleanValue(*gCpSolverResponse->pCpSolverResponse, *gBoolVar->pBoolVar));
     }
 
-    Napi::TypeError::New(env, "Invalid arguments").ThrowAsJavaScriptException();
+    Napi::TypeError::New(env, "operations_research::sat::GSolutionBooleanValue : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
 
@@ -88,7 +89,7 @@ Napi::Value GCpSolverResponseStats(const Napi::CallbackInfo &info)
         return Napi::String::New(env, CpSolverResponseStats(*gCpSolverResponse->pCpSolverResponse, has_objective));
     }
 
-    Napi::TypeError::New(env, "Invalid arguments").ThrowAsJavaScriptException();
+    Napi::TypeError::New(env, "operations_research::sat::GCpSolverResponseStats : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
 // CpSolverResponse SolveWithParameters(const CpModelProto& model_proto, const SatParameters& params);
@@ -109,11 +110,11 @@ Napi::Value GSolveWithParameters(const Napi::CallbackInfo &info)
         return GCpSolverResponse::constructor.New({external});
     }
 
-    Napi::TypeError::New(env, "Invalid arguments").ThrowAsJavaScriptException();
+    Napi::TypeError::New(env, "operations_research::sat::GSolveWithParameters : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
 
-// inline LinearExpr operator+(LinearExpr&& lhs, LinearExpr&& rhs) 
+// inline LinearExpr operator+(LinearExpr&& lhs, LinearExpr&& rhs)
 Napi::Value Goperator_plus(const Napi::CallbackInfo &info)
 {
     Napi::Env env = info.Env();
@@ -126,7 +127,123 @@ Napi::Value Goperator_plus(const Napi::CallbackInfo &info)
         return GLinearExpr::constructor.New({external});
     }
 
-    Napi::TypeError::New(env, "Invalid arguments").ThrowAsJavaScriptException();
+    Napi::TypeError::New(env, "operations_research::sat::Goperator_plus : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
+// std::function<SatParameters(Model*)> NewSatParameters(const SatParameters& parameters);
+Napi::Value GNewSatParameters(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GSatParameters::constructor.Value()))
+    {
+        auto gSatParameters = Napi::ObjectWrap<GSatParameters>::Unwrap(info[0].As<Napi::Object>());
+        auto func           = NewSatParameters(*gSatParameters->pSatParameters);
+        return Napi::Function::New(
+            env,
+            [func](const Napi::CallbackInfo &info) -> Napi::Value
+            {
+                Napi::Env env = info.Env();
+                Napi::HandleScope scope(env);
+
+                if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GModel::constructor.Value()))
+                {
+                    auto gModel = Napi::ObjectWrap<GModel>::Unwrap(info[0].As<Napi::Object>());
+                    return GSatParameters::constructor.New({Napi::External<SatParameters>::New(env, new SatParameters(func(gModel->pModel)))});
+                }
+
+                Napi::TypeError::New(env, "operations_research::sat::GNewSatParameters return function : Invalid arguments").ThrowAsJavaScriptException();
+                return env.Null();
+            }
+        );
+    }
+
+    Napi::TypeError::New(env, "operations_research::sat::GNewSatParameters : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
+// std::function<void(Model*)> NewFeasibleSolutionObserver( const std::function<void(const CpSolverResponse& response)>& callback);
+Napi::Value GNewFeasibleSolutionObserver(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 1 && info[0].IsFunction())
+    {
+        auto callback = info[0].As<Napi::Function>();
+        auto func     = NewFeasibleSolutionObserver(
+            [callback, env](const CpSolverResponse &response)
+            {
+                auto gCpSolverResponse = GCpSolverResponse::constructor.New({Napi::External<CpSolverResponse>::New(env, new CpSolverResponse(response))});
+                callback.Call({gCpSolverResponse});
+            }
+        );
+        return Napi::Function::New(
+            env,
+            [func](const Napi::CallbackInfo &info) -> Napi::Value
+            {
+                Napi::Env env = info.Env();
+                Napi::HandleScope scope(env);
+
+                if (info.Length() == 1 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GModel::constructor.Value()))
+                {
+                    auto gModel = Napi::ObjectWrap<GModel>::Unwrap(info[0].As<Napi::Object>());
+                    func(gModel->pModel);
+                    return env.Null();
+                }
+
+                Napi::TypeError::New(env, "operations_research::sat::GNewFeasibleSolutionObserver return function : Invalid arguments").ThrowAsJavaScriptException();
+                return env.Null();
+            }
+        );
+    }
+
+    Napi::TypeError::New(env, "operations_research::sat::GNewFeasibleSolutionObserver : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
+// int64_t SolutionIntegerValue(const CpSolverResponse& r, const LinearExpr& expr);
+Napi::Value GSolutionIntegerValue(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    LinearExpr expr;
+    if (info.Length() == 2                                                                                     //
+        && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GCpSolverResponse::constructor.Value()) //
+        && GLinearExpr::ToLinearExpr(info[1], expr)                                                            //
+    )
+    {
+        auto gCpSolverResponse = Napi::ObjectWrap<GCpSolverResponse>::Unwrap(info[0].As<Napi::Object>());
+        auto gLinearExpr       = Napi::ObjectWrap<GLinearExpr>::Unwrap(info[1].As<Napi::Object>());
+        return Napi::Number::New(env, SolutionIntegerValue(*gCpSolverResponse->pCpSolverResponse, *gLinearExpr->pLinearExpr));
+    }
+
+    Napi::TypeError::New(env, "operations_research::sat::GSolutionIntegerValue : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
+// CpSolverResponse SolveCpModel(const CpModelProto& model_proto, Model* model);
+Napi::Value GSolveCpModel(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    if (info.Length() == 2                                                                                 //
+        && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GCpModelProto::constructor.Value()) //
+        && info[1].IsObject() && info[1].As<Napi::Object>().InstanceOf(GModel::constructor.Value())        //
+    )
+    {
+        auto gCpModelProto    = Napi::ObjectWrap<GCpModelProto>::Unwrap(info[0].As<Napi::Object>());
+        auto gModel           = Napi::ObjectWrap<GModel>::Unwrap(info[1].As<Napi::Object>());
+        auto cpSolverResponse = SolveCpModel(*gCpModelProto->pCpModelProto, gModel->pModel);
+        auto external         = Napi::External<CpSolverResponse>::New(env, new CpSolverResponse(cpSolverResponse));
+        return GCpSolverResponse::constructor.New({external});
+    }
+
+    Napi::TypeError::New(env, "operations_research::sat::GSolveCpModel : Invalid arguments").ThrowAsJavaScriptException();
     return env.Null();
 }
 
@@ -140,6 +257,10 @@ Napi::Object FuncInit(Napi::Env env, Napi::Object exports)
     exports.Set("CpSolverResponseStats", Napi::Function::New(env, GCpSolverResponseStats));
     exports.Set("SolveWithParameters", Napi::Function::New(env, GSolveWithParameters));
     exports.Set("operator_plus", Napi::Function::New(env, Goperator_plus));
+    exports.Set("NewSatParameters", Napi::Function::New(env, GNewSatParameters));
+    exports.Set("NewFeasibleSolutionObserver", Napi::Function::New(env, GNewFeasibleSolutionObserver));
+    exports.Set("SolutionIntegerValue", Napi::Function::New(env, GSolutionIntegerValue));
+    exports.Set("SolveCpModel", Napi::Function::New(env, GSolveCpModel));
 
     auto enumCpSolverStatus = Napi::Object::New(env);
     enumCpSolverStatus.Set("UNKNOWN", static_cast<int>(CpSolverStatus::UNKNOWN));

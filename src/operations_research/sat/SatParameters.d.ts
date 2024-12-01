@@ -14,7 +14,7 @@ export namespace SatParameters
 export class SatParameters
 {
     //  public:
-    //   inline SatParameters() : SatParameters(nullptr) {}
+    constructor();
     //   ~SatParameters() override;
     //   template <typename = void>
     //   explicit PROTOBUF_CONSTEXPR SatParameters(

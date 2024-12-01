@@ -48,6 +48,13 @@ function test()
     let parameters = new op.sat.SatParameters();
     parameters.set_search_branching(op.sat.SatParameters.FIXED_SEARCH);
     parameters.set_enumerate_all_solutions(true);
-    model.Add(new op.sat.NewSatParameters(parameters));
+    model.Add(op.sat.NewSatParameters(parameters));
+    model.Add(op.sat.NewFeasibleSolutionObserver((response) =>
+    {
+        console.log("x=" + op.sat.SolutionIntegerValue(response, x) + " y=" + op.sat.SolutionIntegerValue(response, y) + " b=" + op.sat.SolutionBooleanValue(response, b));
+    }));
+
+    let ret = op.sat.SolveCpModel(cp_model.Build(), model);
+    console.log(ret);
 }
 test();

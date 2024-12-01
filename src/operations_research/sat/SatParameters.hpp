@@ -25,6 +25,13 @@ class GSatParameters : public Napi::ObjectWrap<GSatParameters>
             if (pSatParameters) return;
         }
 
+        //   inline SatParameters() : SatParameters(nullptr) {}
+        if (info.Length() == 0)
+        {
+            pSatParameters = new SatParameters();
+            return;
+        }
+
         Napi::TypeError::New(env, "operations_research::GSatParameters::GSatParameters : Invalid arguments").ThrowAsJavaScriptException();
     };
 
