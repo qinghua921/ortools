@@ -1,33 +1,7 @@
-import { operations_research as op } from '../src'
+import { operations_research as op } from '../../src'
 
 function test()
 {
-    // CpModelBuilder cp_model;
-
-    // const Domain domain(0, 2);
-    // const IntVar x = cp_model.NewIntVar(domain).WithName("x");
-    // const IntVar y = cp_model.NewIntVar(domain).WithName("y");
-    // const IntVar z = cp_model.NewIntVar(domain).WithName("z");
-
-    // cp_model.AddNotEqual(x, y);
-
-    // cp_model.Maximize(x + 2 * y + 3 * z);
-
-    // const CpSolverResponse initial_response = Solve(cp_model.Build());
-    // LOG(INFO) << "Optimal value of the original model: "
-    //           << initial_response.objective_value();
-
-    // CpModelBuilder copy = cp_model.Clone();
-
-    // IntVar copy_of_x    = copy.GetIntVarFromProtoIndex(x.index());
-    // IntVar copy_of_y    = copy.GetIntVarFromProtoIndex(y.index());
-
-    // copy.AddLessOrEqual(copy_of_x + copy_of_y, 1);
-
-    // const CpSolverResponse modified_response = Solve(copy.Build());
-    // LOG(INFO) << "Optimal value of the modified model: "
-    //           << modified_response.objective_value();
-
     let cp_model = new op.sat.CpModelBuilder();
     const domain = new op.Domain(0, 2);
     const x = cp_model.NewIntVar(domain).WithName("x");

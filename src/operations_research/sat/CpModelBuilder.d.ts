@@ -84,8 +84,7 @@ export class CpModelBuilder
     //     /// Adds expr in domain.
     //     Constraint AddLinearConstraint(const LinearExpr &expr, const Domain &domain);
 
-    //     /// Adds left != right.
-    //     Constraint AddNotEqual(const LinearExpr &left, const LinearExpr &right);
+    AddNotEqual(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
     //     /// This constraint forces all variables to have different values.
     //     Constraint AddAllDifferent(absl::Span<const IntVar> vars);
@@ -326,43 +325,14 @@ export class CpModelBuilder
     //     /// Export the model to file.
     //     bool ExportToFile(absl::string_view filename) const;
 
-    //     /// Returns a cloned version of the current model.
-    //     CpModelBuilder Clone() const;
+    Clone(): CpModelBuilder;
 
     //     /// Returns the Boolean variable from its index in the proto.
     //     BoolVar GetBoolVarFromProtoIndex(int index);
 
-    //     /// Returns the integer variable from its index in the proto.
-    //     IntVar GetIntVarFromProtoIndex(int index);
+    GetIntVarFromProtoIndex(index: number): IntVar;
 
     //     /// Returns the interval variable from its index in the proto.
     //     IntervalVar GetIntervalVarFromProtoIndex(int index);
 
-    //   private:
-    //     friend class CumulativeConstraint;
-    //     friend class ReservoirConstraint;
-    //     friend class IntervalVar;
-    //     friend class IntVar;
-
-    //     // Used for cloning a model.
-    //     void ResetAndImport(const CpModelProto &model_proto);
-
-    //     // Fills the 'expr_proto' with the linear expression represented by 'expr'.
-    //     LinearExpressionProto LinearExprToProto(const LinearExpr &expr, bool negate = false);
-
-    //     // Returns a (cached) integer variable index with a constant value.
-    //     int IndexFromConstant(int64_t value);
-
-    //     // Returns a valid integer index from a BoolVar index.
-    //     // If the input index is a positive, it returns this index.
-    //     // If the input index is negative, it creates a cached IntVar equal to
-    //     // 1 - BoolVar(PositiveRef(index)), and returns the index of this new
-    //     // variable.
-    //     int GetOrCreateIntegerIndex(int index);
-
-    //     void FillLinearTerms(const LinearExpr &left, const LinearExpr &right, LinearConstraintProto *proto);
-
-    //     CpModelProto cp_model_;
-    //     absl::flat_hash_map<int64_t, int> constant_to_index_map_;
-    //     absl::flat_hash_map<int, int> bool_to_integer_index_map_;
 };

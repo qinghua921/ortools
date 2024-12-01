@@ -28,7 +28,7 @@ export class IntVar
     //     /// this BoolVar anywhere since it will not have a valid domain.
     //     BoolVar ToBoolVar() const;
 
-    WithName(name: string): IntVar ;
+    WithName(name: string): IntVar;
 
     //     /// Returns the name of the variable (or the empty string if not set).
     //     std::string Name() const;
@@ -50,10 +50,6 @@ export class IntVar
 
     //     std::string DebugString() const;
 
-    //     /// Returns the index of the variable in the model. This will be non-negative.
-    //     int index() const
-    //     {
-    //         return index_;
-    //     }
+    index(): number;
 
 };

@@ -49,7 +49,7 @@ The codebase is large, and the priority is to implement the code in the examples
 - binpacking_problem_sat OK
 - bool_or_sample_sat OK
 - channeling_sample_sat OK
-- clone_model_sample_sat
+- clone_model_sample_sat OK
 - constraint_programming_cp
 - costas_array_sat
 - course_scheduling

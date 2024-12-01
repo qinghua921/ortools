@@ -75,6 +75,9 @@ class GCpModelBuilder : public Napi::ObjectWrap<GCpModelBuilder>
                 InstanceMethod("AddGreaterOrEqual", &GCpModelBuilder::AddGreaterOrEqual),
                 InstanceMethod("AddLessThan", &GCpModelBuilder::AddLessThan),
                 InstanceMethod("AddDecisionStrategy", &GCpModelBuilder::AddDecisionStrategy),
+                InstanceMethod("AddNotEqual", &GCpModelBuilder::AddNotEqual),
+                InstanceMethod("Clone", &GCpModelBuilder::Clone),
+                InstanceMethod("GetIntVarFromProtoIndex", &GCpModelBuilder::GetIntVarFromProtoIndex),
             }
         );
         constructor = Napi::Persistent(func);
@@ -82,6 +85,58 @@ class GCpModelBuilder : public Napi::ObjectWrap<GCpModelBuilder>
         exports.Set(Napi::String::New(env, "CpModelBuilder"), func);
         return exports;
     };
+    //     IntVar GetIntVarFromProtoIndex(int index);
+    Napi::Value GetIntVarFromProtoIndex(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 1 && info[0].IsNumber())
+        {
+            int index   = info[0].As<Napi::Number>().Int32Value();
+            auto result = pCpModelBuilder->GetIntVarFromProtoIndex(index);
+            return GIntVar::constructor.New({Napi::External<IntVar>::New(env, new IntVar(result))});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::GetIntVarFromProtoIndex : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+    //     CpModelBuilder Clone() const;
+    Napi::Value Clone(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 0)
+        {
+            auto result = pCpModelBuilder->Clone();
+            return GCpModelBuilder::constructor.New({Napi::External<CpModelBuilder>::New(env, new CpModelBuilder(result))});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::Clone : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
+    //     Constraint AddNotEqual(const LinearExpr &left, const LinearExpr &right);
+    Napi::Value AddNotEqual(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        LinearExpr left, right;
+        if (info.Length() == 2 &&
+            GLinearExpr::ToLinearExpr(info[0], left)     //
+            && GLinearExpr::ToLinearExpr(info[1], right) //
+        )
+        {
+            auto result = pCpModelBuilder->AddNotEqual(left, right);
+            return GConstraint::constructor.New({Napi::External<Constraint>::New(env, new Constraint(result))});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::AddNotEqual : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+
     //     void AddDecisionStrategy(
     //         absl::Span<const IntVar> variables,
     //         DecisionStrategyProto::VariableSelectionStrategy var_strategy,

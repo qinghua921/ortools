@@ -41,6 +41,7 @@ class GIntVar : public Napi::ObjectWrap<GIntVar>
             "IntVar",
             {
                 InstanceMethod("WithName", &GIntVar::WithName),
+                InstanceMethod("index", &GIntVar::index),
             }
         );
         constructor = Napi::Persistent(func);
@@ -48,6 +49,23 @@ class GIntVar : public Napi::ObjectWrap<GIntVar>
         exports.Set(Napi::String::New(env, "IntVar"), func);
         return exports;
     };
+
+    //     int index() const
+    Napi::Value index(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if(info.Length() == 0)
+        {
+            return Napi::Number::New(env, pIntVar->index());
+        }
+
+        Napi::TypeError::New(env, "operations_research::GIntVar::index : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+
 
     //     IntVar WithName(absl::string_view name);
     Napi::Value WithName(const Napi::CallbackInfo &info)
