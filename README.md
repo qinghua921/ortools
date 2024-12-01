@@ -50,7 +50,7 @@ The codebase is large, and the priority is to implement the code in the examples
 - bool_or_sample_sat OK
 - channeling_sample_sat OK
 - clone_model_sample_sat OK
-- constraint_programming_cp
+- constraint_programming_cp OK
 - costas_array_sat
 - course_scheduling
 - course_scheduling_run

@@ -2,58 +2,64 @@ import { operations_research as op } from '../src'
 
 function test()
 {
-    // CpModelBuilder cp_model;
+    // Solver solver("ConstraintProgrammingExample");
+    // const int64_t numVals        = 3;
 
-    // const Domain domain(0, 2);
-    // const IntVar x = cp_model.NewIntVar(domain).WithName("x");
-    // const IntVar y = cp_model.NewIntVar(domain).WithName("y");
-    // const IntVar z = cp_model.NewIntVar(domain).WithName("z");
+    // IntVar *const x              = solver.MakeIntVar(0, numVals - 1, "x");
+    // IntVar *const y              = solver.MakeIntVar(0, numVals - 1, "y");
+    // IntVar *const z              = solver.MakeIntVar(0, numVals - 1, "z");
 
-    // cp_model.AddNotEqual(x, y);
+    // std::vector<IntVar *> xyvars = {x, y};
+    // solver.AddConstraint(solver.MakeAllDifferent(xyvars));
 
-    // cp_model.Maximize(x + 2 * y + 3 * z);
+    // LOG(INFO) << "Number of constraints: " << solver.constraints();
 
-    // const CpSolverResponse initial_response = Solve(cp_model.Build());
-    // LOG(INFO) << "Optimal value of the original model: "
-    //           << initial_response.objective_value();
+    // std::vector<IntVar *> allvars = {x, y, z};
+    // DecisionBuilder *const db     = solver.MakePhase(
+    //     allvars, Solver::CHOOSE_FIRST_UNBOUND, Solver::ASSIGN_MIN_VALUE
+    // );
 
-    // CpModelBuilder copy = cp_model.Clone();
+    // solver.NewSearch(db);
+    // while (solver.NextSolution())
+    // {
+    //     LOG(INFO) << "Solution" << ": x = " << x->Value() << "; y = " << y->Value()
+    //               << "; z = " << z->Value();
+    // }
+    // solver.EndSearch();
+    // LOG(INFO) << "Number of solutions: " << solver.solutions();
+    // LOG(INFO) << "";
+    // LOG(INFO) << "Advanced usage:";
+    // LOG(INFO) << "Problem solved in " << solver.wall_time() << "ms";
+    // LOG(INFO) << "Memory usage: " << Solver::MemoryUsage() << " bytes";
 
-    // IntVar copy_of_x    = copy.GetIntVarFromProtoIndex(x.index());
-    // IntVar copy_of_y    = copy.GetIntVarFromProtoIndex(y.index());
+    let solver = new op.Solver("ConstraintProgrammingExample");
+    let numVals = 3;
 
-    // copy.AddLessOrEqual(copy_of_x + copy_of_y, 1);
+    let x = solver.MakeIntVar(0, numVals - 1, "x");
+    let y = solver.MakeIntVar(0, numVals - 1, "y");
+    let z = solver.MakeIntVar(0, numVals - 1, "z");
 
-    // const CpSolverResponse modified_response = Solve(copy.Build());
-    // LOG(INFO) << "Optimal value of the modified model: "
-    //           << modified_response.objective_value();
+    let xyvars = [x, y];
+    solver.AddConstraint(solver.MakeAllDifferent(xyvars));
+    console.log("Number of constraints: " + solver.constraints());
 
-    let cp_model = new op.sat.CpModelBuilder();
-    const domain = new op.Domain(0, 2);
-    const x = cp_model.NewIntVar(domain).WithName("x");
-    const y = cp_model.NewIntVar(domain).WithName("y");
-    const z = cp_model.NewIntVar(domain).WithName("z");
+    let allvars = [x, y, z];
+    let db = solver.MakePhase(
+        allvars,
+        op.Solver.IntVarStrategy.CHOOSE_FIRST_UNBOUND,
+        op.Solver.IntValueStrategy.ASSIGN_MIN_VALUE);
 
-    cp_model.AddNotEqual(x, y);
-
-    cp_model.Maximize(
-        op.sat.operator_plus(
-            op.sat.operator_plus(
-                x, op.sat.operator_times(2, y)
-            ),
-            op.sat.operator_times(3, z))
-    );
-
-    const initial_response = op.sat.Solve(cp_model.Build());
-    console.log("Optimal value of the original model: "
-        + initial_response.objective_value());
-    const copy = cp_model.Clone();
-    const copy_of_x = copy.GetIntVarFromProtoIndex(x.index());
-    const copy_of_y = copy.GetIntVarFromProtoIndex(y.index());
-    copy.AddLessOrEqual(op.sat.operator_plus(copy_of_x, copy_of_y), 1);
-    const modified_response = op.sat.Solve(copy.Build());
-    console.log("Optimal value of the modified model: "
-        + modified_response.objective_value());
+    solver.NewSearch(db);
+    while (solver.NextSolution())
+    {
+        console.log("Solution" + ": x = " + x.Value() + "; y = " + y.Value() + "; z = " + z.Value());
+    }
+    solver.EndSearch();
+    console.log("Number of solutions: " + solver.solutions());
+    console.log("");
+    console.log("Advanced usage:");
+    console.log("Problem solved in " + solver.wall_time() + "ms");
+    console.log("Memory usage: " + op.Solver.MemoryUsage() + " bytes");
 
 }
 test();

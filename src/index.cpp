@@ -18,6 +18,10 @@
 #include "operations_research/OrToolsVersion.hpp"
 #include "operations_research/SimpleLinearSumAssignment.hpp"
 #include "operations_research/SimpleMinCostFlow.hpp"
+#include "operations_research/Solver.hpp"
+#include "operations_research/IntVar.hpp"
+#include "operations_research/Constraint.hpp"
+#include "operations_research/DecisionBuilder.hpp"
 
 /**** operations_research / packing ***************************************************************************************/
 
@@ -87,6 +91,10 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     operations_research::GSimpleMinCostFlow::Init(env, operations_research);
     operations_research::GDomain::Init(env, operations_research);
     operations_research::GOrToolsVersion::Init(env, operations_research);
+    operations_research::GSolver::Init(env, operations_research);
+    operations_research::GIntVar::Init(env, operations_research);
+    operations_research::GConstraint::Init(env, operations_research);
+    operations_research::GDecisionBuilder::Init(env, operations_research);
     operations_research::FuncInit(env, operations_research);
     exports.Set("operations_research", operations_research);
 

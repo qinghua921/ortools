@@ -10,6 +10,10 @@ import { SimpleLinearSumAssignment as or_SimpleLinearSumAssignment } from './ope
 import { SimpleMinCostFlow as or_SimpleMinCostFlow } from './operations_research/SimpleMinCostFlow'
 import { Domain as or_Domain } from './operations_research/Domain'
 import { OrToolsVersion as or_OrToolsVersion } from './operations_research/OrToolsVersion'
+import { Solver as or_Solver } from './operations_research/Solver'
+import { IntVar as or_IntVar } from './operations_research/IntVar'
+import { Constraint as or_Constraint } from './operations_research/Constraint'
+import { DecisionBuilder as or_DecisionBuilder } from './operations_research/DecisionBuilder'
 import
 {
     operator_eq as or_operator_eq,
@@ -70,6 +74,10 @@ declare module operations_research
         or_SimpleMinCostFlow as SimpleMinCostFlow,
         or_Domain as Domain,
         or_OrToolsVersion as OrToolsVersion,
+        or_Solver as Solver,
+        or_IntVar as IntVar,
+        or_Constraint as Constraint,
+        or_DecisionBuilder as DecisionBuilder,
 
         or_operator_eq as operator_eq,
         or_operator_le as operator_le,
