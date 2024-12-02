@@ -14,6 +14,7 @@ import { Solver as or_Solver } from './operations_research/Solver'
 import { IntVar as or_IntVar } from './operations_research/IntVar'
 import { Constraint as or_Constraint } from './operations_research/Constraint'
 import { DecisionBuilder as or_DecisionBuilder } from './operations_research/DecisionBuilder'
+import { IntExpr as or_IntExpr } from './operations_research/IntExpr'
 import
 {
     operator_eq as or_operator_eq,
@@ -79,6 +80,7 @@ declare module operations_research
         or_IntVar as IntVar,
         or_Constraint as Constraint,
         or_DecisionBuilder as DecisionBuilder,
+        or_IntExpr as IntExpr,
 
         or_operator_eq as operator_eq,
         or_operator_le as operator_le,

@@ -1,14 +1,10 @@
-export class IntVar
+import { IntExpr } from "./IntExpr";
+
+export class IntVar extends IntExpr
 {
     //     public:
     //      explicit IntVar(Solver* s);
     //      IntVar(Solver* s, const std::string& name);
-
-    //    #ifndef SWIG
-    //      // This type is neither copyable nor movable.
-    //      IntVar(const IntVar&) = delete;
-    //      IntVar& operator=(const IntVar&) = delete;
-    //    #endif
 
     //      ~IntVar() override{};
 
@@ -39,13 +35,6 @@ export class IntVar
     //        WhenBound(solver()->MakeClosureDemon(std::move(closure)));
     //      }
 
-    //    #if !defined(SWIG)
-    //      /// This method attaches an action that will be awakened when the
-    //      /// variable is bound.
-    //      void WhenBound(Solver::Action action) {
-    //        WhenBound(solver()->MakeActionDemon(std::move(action)));
-    //      }
-    //    #endif  // SWIG
 
     //      /// This method attaches a demon that will watch any domain
     //      /// modification of the domain of the variable.
@@ -55,13 +44,6 @@ export class IntVar
     //      void WhenDomain(Solver::Closure closure) {
     //        WhenDomain(solver()->MakeClosureDemon(std::move(closure)));
     //      }
-    //    #if !defined(SWIG)
-    //      /// This method attaches an action that will watch any domain
-    //      /// modification of the domain of the variable.
-    //      void WhenDomain(Solver::Action action) {
-    //        WhenDomain(solver()->MakeActionDemon(std::move(action)));
-    //      }
-    //    #endif  // SWIG
 
     //      /// This method returns the number of values in the domain of the variable.
     //      virtual uint64_t Size() const = 0;

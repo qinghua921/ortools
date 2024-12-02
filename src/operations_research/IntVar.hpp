@@ -26,11 +26,6 @@ class GIntVar : public Napi::ObjectWrap<GIntVar>
         Napi::TypeError::New(env, "operations_research::GIntVar::GIntVar : Invalid arguments").ThrowAsJavaScriptException();
     };
 
-    ~GIntVar()
-    {
-        if (pIntVar) delete pIntVar;
-    };
-
     static Napi::Object Init(Napi::Env env, Napi::Object exports)
     {
         Napi::HandleScope scope(env);
@@ -51,14 +46,16 @@ class GIntVar : public Napi::ObjectWrap<GIntVar>
     Napi::Value Value(const Napi::CallbackInfo &info)
     {
         Napi::Env env = info.Env();
-        return Napi::Number::New(env, pIntVar->Value());
+        Napi::HandleScope scope(env);
 
         if (info.Length() == 0)
         {
             return Napi::Number::New(env, pIntVar->Value());
         }
+
         Napi::TypeError::New(env, "operations_research::GIntVar::Value : Invalid arguments").ThrowAsJavaScriptException();
         return env.Null();
     };
 };
+
 }; // namespace operations_research

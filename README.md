@@ -52,9 +52,9 @@ The codebase is large, and the priority is to implement the code in the examples
 - clone_model_sample_sat OK
 - constraint_programming_cp OK
 - costas_array_sat OK
-- course_scheduling
-- course_scheduling_run
-- cp_is_fun_cp
+- course_scheduling Deferred
+- course_scheduling_run Deferred
+- cp_is_fun_cp OK
 - cp_is_fun_sat
 - cp_sat_example
 - cryptarithm_sat

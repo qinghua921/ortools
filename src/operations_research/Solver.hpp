@@ -2,7 +2,8 @@
 
 #include "Constraint.hpp"
 #include "DecisionBuilder.hpp"
-#include "IntVar.hpp"
+#include "IntExpr.hpp"
+#include "Intvar.hpp"
 #include "napi.h"
 #include "ortools/constraint_solver/constraint_solver.h"
 
@@ -46,38 +47,34 @@ class GSolver : public Napi::ObjectWrap<GSolver>
     {
         Napi::HandleScope scope(env);
 
-        Napi::Object enumIntVarStrategy = Napi::Object::New(env);
-        enumIntVarStrategy.Set(Napi::String::New(env, "INT_VAR_DEFAULT"), Napi::Number::New(env, static_cast<int>(Solver::INT_VAR_DEFAULT)));
-        enumIntVarStrategy.Set(Napi::String::New(env, "INT_VAR_SIMPLE"), Napi::Number::New(env, static_cast<int>(Solver::INT_VAR_SIMPLE)));
-        enumIntVarStrategy.Set(Napi::String::New(env, "CHOOSE_FIRST_UNBOUND"), Napi::Number::New(env, static_cast<int>(Solver::CHOOSE_FIRST_UNBOUND)));
-        enumIntVarStrategy.Set(Napi::String::New(env, "CHOOSE_RANDOM"), Napi::Number::New(env, static_cast<int>(Solver::CHOOSE_RANDOM)));
-        enumIntVarStrategy.Set(Napi::String::New(env, "CHOOSE_MIN_SIZE_LOWEST_MIN"), Napi::Number::New(env, static_cast<int>(Solver::CHOOSE_MIN_SIZE_LOWEST_MIN)));
-        enumIntVarStrategy.Set(Napi::String::New(env, "CHOOSE_MIN_SIZE_HIGHEST_MIN"), Napi::Number::New(env, static_cast<int>(Solver::CHOOSE_MIN_SIZE_HIGHEST_MIN)));
-        enumIntVarStrategy.Set(Napi::String::New(env, "CHOOSE_MIN_SIZE_LOWEST_MAX"), Napi::Number::New(env, static_cast<int>(Solver::CHOOSE_MIN_SIZE_LOWEST_MAX)));
-        enumIntVarStrategy.Set(Napi::String::New(env, "CHOOSE_MIN_SIZE_HIGHEST_MAX"), Napi::Number::New(env, static_cast<int>(Solver::CHOOSE_MIN_SIZE_HIGHEST_MAX)));
-        enumIntVarStrategy.Set(Napi::String::New(env, "CHOOSE_LOWEST_MIN"), Napi::Number::New(env, static_cast<int>(Solver::CHOOSE_LOWEST_MIN)));
-        enumIntVarStrategy.Set(Napi::String::New(env, "CHOOSE_HIGHEST_MAX"), Napi::Number::New(env, static_cast<int>(Solver::CHOOSE_HIGHEST_MAX)));
-        enumIntVarStrategy.Set(Napi::String::New(env, "CHOOSE_MIN_SIZE"), Napi::Number::New(env, static_cast<int>(Solver::CHOOSE_MIN_SIZE)));
-        enumIntVarStrategy.Set(Napi::String::New(env, "CHOOSE_MAX_SIZE"), Napi::Number::New(env, static_cast<int>(Solver::CHOOSE_MAX_SIZE)));
-        enumIntVarStrategy.Set(Napi::String::New(env, "CHOOSE_MAX_REGRET_ON_MIN"), Napi::Number::New(env, static_cast<int>(Solver::CHOOSE_MAX_REGRET_ON_MIN)));
-        enumIntVarStrategy.Set(Napi::String::New(env, "CHOOSE_PATH"), Napi::Number::New(env, static_cast<int>(Solver::CHOOSE_PATH)));
-
-        Napi::Object enumIntValueStrategy = Napi::Object::New(env);
-        enumIntValueStrategy.Set(Napi::String::New(env, "INT_VALUE_DEFAULT"), Napi::Number::New(env, static_cast<int>(Solver::INT_VALUE_DEFAULT)));
-        enumIntValueStrategy.Set(Napi::String::New(env, "INT_VALUE_SIMPLE"), Napi::Number::New(env, static_cast<int>(Solver::INT_VALUE_SIMPLE)));
-        enumIntValueStrategy.Set(Napi::String::New(env, "ASSIGN_MIN_VALUE"), Napi::Number::New(env, static_cast<int>(Solver::ASSIGN_MIN_VALUE)));
-        enumIntValueStrategy.Set(Napi::String::New(env, "ASSIGN_MAX_VALUE"), Napi::Number::New(env, static_cast<int>(Solver::ASSIGN_MAX_VALUE)));
-        enumIntValueStrategy.Set(Napi::String::New(env, "ASSIGN_RANDOM_VALUE"), Napi::Number::New(env, static_cast<int>(Solver::ASSIGN_RANDOM_VALUE)));
-        enumIntValueStrategy.Set(Napi::String::New(env, "ASSIGN_CENTER_VALUE"), Napi::Number::New(env, static_cast<int>(Solver::ASSIGN_CENTER_VALUE)));
-        enumIntValueStrategy.Set(Napi::String::New(env, "SPLIT_LOWER_HALF"), Napi::Number::New(env, static_cast<int>(Solver::SPLIT_LOWER_HALF)));
-        enumIntValueStrategy.Set(Napi::String::New(env, "SPLIT_UPPER_HALF"), Napi::Number::New(env, static_cast<int>(Solver::SPLIT_UPPER_HALF)));
-
         Napi::Function func = DefineClass(
             env,
             "Solver",
             {
-                StaticValue("IntVarStrategy", enumIntVarStrategy),
-                StaticValue("IntValueStrategy", enumIntValueStrategy),
+                StaticValue("INT_VAR_DEFAULT", Napi::Number::New(env, Solver::INT_VAR_DEFAULT)),
+                StaticValue("INT_VAR_SIMPLE", Napi::Number::New(env, Solver::INT_VAR_SIMPLE)),
+                StaticValue("CHOOSE_FIRST_UNBOUND", Napi::Number::New(env, Solver::CHOOSE_FIRST_UNBOUND)),
+                StaticValue("CHOOSE_RANDOM", Napi::Number::New(env, Solver::CHOOSE_RANDOM)),
+                StaticValue("CHOOSE_MIN_SIZE_LOWEST_MIN", Napi::Number::New(env, Solver::CHOOSE_MIN_SIZE_LOWEST_MIN)),
+                StaticValue("CHOOSE_MIN_SIZE_HIGHEST_MIN", Napi::Number::New(env, Solver::CHOOSE_MIN_SIZE_HIGHEST_MIN)),
+                StaticValue("CHOOSE_MIN_SIZE_LOWEST_MAX", Napi::Number::New(env, Solver::CHOOSE_MIN_SIZE_LOWEST_MAX)),
+                StaticValue("CHOOSE_MIN_SIZE_HIGHEST_MAX", Napi::Number::New(env, Solver::CHOOSE_MIN_SIZE_HIGHEST_MAX)),
+                StaticValue("CHOOSE_LOWEST_MIN", Napi::Number::New(env, Solver::CHOOSE_LOWEST_MIN)),
+                StaticValue("CHOOSE_HIGHEST_MAX", Napi::Number::New(env, Solver::CHOOSE_HIGHEST_MAX)),
+                StaticValue("CHOOSE_MIN_SIZE", Napi::Number::New(env, Solver::CHOOSE_MIN_SIZE)),
+                StaticValue("CHOOSE_MAX_SIZE", Napi::Number::New(env, Solver::CHOOSE_MAX_SIZE)),
+                StaticValue("CHOOSE_MAX_REGRET_ON_MIN", Napi::Number::New(env, Solver::CHOOSE_MAX_REGRET_ON_MIN)),
+                StaticValue("CHOOSE_PATH", Napi::Number::New(env, Solver::CHOOSE_PATH)),
+
+                StaticValue("INT_VALUE_DEFAULT", Napi::Number::New(env, Solver::INT_VALUE_DEFAULT)),
+                StaticValue("INT_VALUE_SIMPLE", Napi::Number::New(env, Solver::INT_VALUE_SIMPLE)),
+                StaticValue("ASSIGN_MIN_VALUE", Napi::Number::New(env, Solver::ASSIGN_MIN_VALUE)),
+                StaticValue("ASSIGN_MAX_VALUE", Napi::Number::New(env, Solver::ASSIGN_MAX_VALUE)),
+                StaticValue("ASSIGN_RANDOM_VALUE", Napi::Number::New(env, Solver::ASSIGN_RANDOM_VALUE)),
+                StaticValue("ASSIGN_CENTER_VALUE", Napi::Number::New(env, Solver::ASSIGN_CENTER_VALUE)),
+                StaticValue("SPLIT_LOWER_HALF", Napi::Number::New(env, Solver::SPLIT_LOWER_HALF)),
+                StaticValue("SPLIT_UPPER_HALF", Napi::Number::New(env, Solver::SPLIT_UPPER_HALF)),
+
                 InstanceMethod("MakeIntVar", &GSolver::MakeIntVar),
                 InstanceMethod("MakeAllDifferent", &GSolver::MakeAllDifferent),
                 InstanceMethod("AddConstraint", &GSolver::AddConstraint),
@@ -89,13 +86,145 @@ class GSolver : public Napi::ObjectWrap<GSolver>
                 InstanceMethod("solutions", &GSolver::solutions),
                 InstanceMethod("wall_time", &GSolver::wall_time),
                 StaticMethod("MemoryUsage", &GSolver::MemoryUsage),
-
+                InstanceMethod("MakeSum", &GSolver::MakeSum),
+                InstanceMethod("MakeProd", &GSolver::MakeProd),
+                InstanceMethod("MakeScalProd", &GSolver::MakeScalProd),
+                InstanceMethod("MakeEquality", &GSolver::MakeEquality),
             }
         );
         constructor = Napi::Persistent(func);
         constructor.SuppressDestruct();
         exports.Set(Napi::String::New(env, "Solver"), func);
         return exports;
+    };
+
+    Napi::Value MakeEquality(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        //      Constraint* MakeEquality(IntExpr* left, IntExpr* right);
+        IntExpr *pExprLeft  = GIntExpr::ToIntExpr(info[0]);
+        IntExpr *pExprRight = GIntExpr::ToIntExpr(info[1]);
+        if (info.Length() == 2 && pExprLeft && pExprRight)
+        {
+            Constraint *pCons = pSolver->MakeEquality(pExprLeft, pExprRight);
+            auto external     = Napi::External<Constraint>::New(env, pCons);
+            return GConstraint::constructor.New({external});
+        }
+        //      Constraint* MakeEquality(IntExpr* expr, int64_t value);
+        //      Constraint* MakeEquality(IntExpr* expr, int value);
+        if (info.Length() == 2 && pExprLeft && info[1].IsNumber())
+        {
+            int64_t value = info[1].As<Napi::Number>().Int64Value();
+            Constraint *pCons = pSolver->MakeEquality(pExprLeft, value);
+            auto external     = Napi::External<Constraint>::New(env, pCons);
+            return GConstraint::constructor.New({external});
+        }
+        
+        Napi::TypeError::New(env, "operations_research::GSolver::MakeEquality : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    };
+    //      IntExpr* MakeScalProd(const std::vector<IntVar*>& vars, const std::vector<int>& coefs);
+    Napi::Value MakeScalProd(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 2 && info[0].IsArray() && info[1].IsArray())
+        {
+            std::vector<IntVar *> vars;
+            Napi::Array array = info[0].As<Napi::Array>();
+            for (uint32_t i = 0; i < array.Length(); i++)
+            {
+                if (array.Get(i).IsObject() && array.Get(i).As<Napi::Object>().InstanceOf(GIntVar::constructor.Value()))
+                {
+                    auto gIntVar = Napi::ObjectWrap<GIntVar>::Unwrap(array.Get(i).As<Napi::Object>());
+                    vars.push_back(gIntVar->pIntVar);
+                    continue;
+                }
+
+                Napi::TypeError::New(env, "operations_research::GSolver::MakeScalProd : Invalid arguments").ThrowAsJavaScriptException();
+                return env.Null();
+            }
+
+            std::vector<int64_t> coefs;
+            Napi::Array array2 = info[1].As<Napi::Array>();
+            for (uint32_t i = 0; i < array2.Length(); i++)
+            {
+                if (array2.Get(i).IsNumber())
+                {
+                    coefs.push_back(array2.Get(i).As<Napi::Number>().Int64Value());
+                    continue;
+                }
+
+                Napi::TypeError::New(env, "operations_research::GSolver::MakeScalProd : Invalid arguments").ThrowAsJavaScriptException();
+                return env.Null();
+            }
+
+            IntExpr *pExpr = pSolver->MakeScalProd(vars, coefs);
+            auto external  = Napi::External<IntExpr>::New(env, pExpr);
+            return GIntExpr::constructor.New({external});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GSolver::MakeScalProd : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    //      IntExpr* MakeProd(IntExpr* expr, int64_t value);
+    Napi::Value MakeProd(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 2 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GIntExpr::constructor.Value()) && info[1].IsNumber())
+        {
+            auto gIntExpr  = Napi::ObjectWrap<GIntExpr>::Unwrap(info[0].As<Napi::Object>());
+            int64_t value  = info[1].As<Napi::Number>().Int64Value();
+            IntExpr *pExpr = pSolver->MakeProd(gIntExpr->pIntExpr, value);
+            auto external  = Napi::External<IntExpr>::New(env, pExpr);
+            return GIntExpr::constructor.New({external});
+        }
+        if (info.Length() == 2 && info[0].IsObject() && info[0].As<Napi::Object>().InstanceOf(GIntVar::constructor.Value()) && info[1].IsNumber())
+        {
+            auto gIntExpr  = Napi::ObjectWrap<GIntVar>::Unwrap(info[0].As<Napi::Object>());
+            int64_t value  = info[1].As<Napi::Number>().Int64Value();
+            IntExpr *pExpr = pSolver->MakeProd(gIntExpr->pIntVar, value);
+            auto external  = Napi::External<IntExpr>::New(env, pExpr);
+            return GIntVar::constructor.New({external});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GSolver::MakeProd : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    };
+
+    Napi::Value MakeSum(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        //      IntExpr* MakeSum(IntExpr* expr, int64_t value);
+        IntExpr *pExpr = GIntExpr::ToIntExpr(info[0]);
+        if (info.Length() == 2 && pExpr && info[1].IsNumber())
+        {
+            int64_t value  = info[1].As<Napi::Number>().Int64Value();
+            IntExpr *pExpr = pSolver->MakeSum(pExpr, value);
+            auto external  = Napi::External<IntExpr>::New(env, pExpr);
+            return GIntExpr::constructor.New({external});
+        }
+
+        //      IntExpr* MakeSum(IntExpr* left, IntExpr* right);
+        IntExpr *pExprLeft  = GIntExpr::ToIntExpr(info[0]);
+        IntExpr *pExprRight = GIntExpr::ToIntExpr(info[1]);
+        if (info.Length() == 2 && pExprLeft && pExprRight)
+        {
+            IntExpr *pExpr = pSolver->MakeSum(pExprLeft, pExprRight);
+            auto external  = Napi::External<IntExpr>::New(env, pExpr);
+            return GIntExpr::constructor.New({external});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GSolver::MakeSum : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
     };
     //      static int64_t MemoryUsage();
     static Napi::Value MemoryUsage(const Napi::CallbackInfo &info)

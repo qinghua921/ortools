@@ -16,8 +16,8 @@ function test()
     let allvars = [x, y, z];
     let db = solver.MakePhase(
         allvars,
-        op.Solver.IntVarStrategy.CHOOSE_FIRST_UNBOUND,
-        op.Solver.IntValueStrategy.ASSIGN_MIN_VALUE);
+        op.Solver.CHOOSE_FIRST_UNBOUND,
+        op.Solver.ASSIGN_MIN_VALUE);
 
     solver.NewSearch(db);
     while (solver.NextSolution())

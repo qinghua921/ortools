@@ -1,38 +1,33 @@
 import { Constraint } from "./Constraint";
 import { DecisionBuilder } from "./DecisionBuilder";
+import { IntExpr } from "./IntExpr";
 import { IntVar } from "./IntVar";
 
 export namespace Solver
 {
-    export enum IntVarStrategy
-    {
-        INT_VAR_DEFAULT,
-        INT_VAR_SIMPLE,
-        CHOOSE_FIRST_UNBOUND,
-        CHOOSE_RANDOM,
-        CHOOSE_MIN_SIZE_LOWEST_MIN,
-        CHOOSE_MIN_SIZE_HIGHEST_MIN,
-        CHOOSE_MIN_SIZE_LOWEST_MAX,
-        CHOOSE_MIN_SIZE_HIGHEST_MAX,
-        CHOOSE_LOWEST_MIN,
-        CHOOSE_HIGHEST_MAX,
-        CHOOSE_MIN_SIZE,
-        CHOOSE_MAX_SIZE,
-        CHOOSE_MAX_REGRET_ON_MIN,
-        CHOOSE_PATH,
-    };
+    export const INT_VAR_DEFAULT
+    export const INT_VAR_SIMPLE
+    export const CHOOSE_FIRST_UNBOUND
+    export const CHOOSE_RANDOM
+    export const CHOOSE_MIN_SIZE_LOWEST_MIN
+    export const CHOOSE_MIN_SIZE_HIGHEST_MIN
+    export const CHOOSE_MIN_SIZE_LOWEST_MAX
+    export const CHOOSE_MIN_SIZE_HIGHEST_MAX
+    export const CHOOSE_LOWEST_MIN
+    export const CHOOSE_HIGHEST_MAX
+    export const CHOOSE_MIN_SIZE
+    export const CHOOSE_MAX_SIZE
+    export const CHOOSE_MAX_REGRET_ON_MIN
+    export const CHOOSE_PATH
 
-    export enum IntValueStrategy
-    {
-        INT_VALUE_DEFAULT,
-        INT_VALUE_SIMPLE,
-        ASSIGN_MIN_VALUE,
-        ASSIGN_MAX_VALUE,
-        ASSIGN_RANDOM_VALUE,
-        ASSIGN_CENTER_VALUE,
-        SPLIT_LOWER_HALF,
-        SPLIT_UPPER_HALF,
-    };
+    export const INT_VALUE_DEFAULT
+    export const INT_VALUE_SIMPLE
+    export const ASSIGN_MIN_VALUE
+    export const ASSIGN_MAX_VALUE
+    export const ASSIGN_RANDOM_VALUE
+    export const ASSIGN_CENTER_VALUE
+    export const SPLIT_LOWER_HALF
+    export const SPLIT_UPPER_HALF
 }
 export class Solver
 {
@@ -586,21 +581,18 @@ export class Solver
 
     //      // ----- Integer Expressions -----
 
-    //      IntExpr* MakeSum(IntExpr* left, IntExpr* right);
-    //      IntExpr* MakeSum(IntExpr* expr, int64_t value);
+    MakeSum(left: IntExpr, right: IntExpr): IntExpr;
+    MakeSum(expr: IntExpr, value: number): IntExpr;
     //      IntExpr* MakeSum(const std::vector<IntVar*>& vars);
 
-    //      IntExpr* MakeScalProd(const std::vector<IntVar*>& vars,
-    //                            const std::vector<int64_t>& coefs);
-    //      IntExpr* MakeScalProd(const std::vector<IntVar*>& vars,
-    //                            const std::vector<int>& coefs);
+    MakeScalProd(vars: IntVar[], coefs: number[]): IntExpr;
 
     //      IntExpr* MakeDifference(IntExpr* left, IntExpr* right);
     //      IntExpr* MakeDifference(int64_t value, IntExpr* expr);
     //      IntExpr* MakeOpposite(IntExpr* expr);
 
     //      IntExpr* MakeProd(IntExpr* left, IntExpr* right);
-    //      IntExpr* MakeProd(IntExpr* expr, int64_t value);
+    MakeProd(expr: IntExpr, value: number): IntExpr;
 
     //      IntExpr* MakeDiv(IntExpr* expr, int64_t value);
     //      IntExpr* MakeDiv(IntExpr* numerator, IntExpr* denominator);
@@ -684,9 +676,9 @@ export class Solver
     //      IntVar* MakeIsEqualCstVar(IntExpr* var, int64_t value);
     //      Constraint* MakeIsEqualCt(IntExpr* v1, IntExpr* v2, IntVar* b);
     //      IntVar* MakeIsEqualVar(IntExpr* v1, IntExpr* v2);
-    //      Constraint* MakeEquality(IntExpr* left, IntExpr* right);
-    //      Constraint* MakeEquality(IntExpr* expr, int64_t value);
-    //      Constraint* MakeEquality(IntExpr* expr, int value);
+
+    MakeEquality(left: IntExpr, right: IntExpr): Constraint;
+    MakeEquality(expr: IntExpr, value: number): Constraint;
 
     //      Constraint* MakeIsDifferentCstCt(IntExpr* var, int64_t value,
     //                                       IntVar* boolvar);
