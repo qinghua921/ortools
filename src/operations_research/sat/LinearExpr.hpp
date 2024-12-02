@@ -64,34 +64,42 @@ class GLinearExpr : public Napi::ObjectWrap<GLinearExpr>
         Napi::Env env = info.Env();
         Napi::HandleScope scope(env);
 
-        std::vector<IntVar> vars;
         if (info.Length() == 1 && info[0].IsArray())
         {
             Napi::Array arr = info[0].As<Napi::Array>();
 
-            for (uint32_t i = 0; i < arr.Length(); i++)
+            if (arr.Length() == 0)
             {
-                if (arr.Get(i).IsObject() && arr.Get(i).As<Napi::Object>().InstanceOf(GIntVar::constructor.Value()))
-                {
-                    vars.push_back(*GIntVar::Unwrap(arr.Get(i).As<Napi::Object>())->pIntVar);
-                    continue;
-                }
+                return GLinearExpr::constructor.New({Napi::External<LinearExpr>::New(env, new LinearExpr(0))});
             }
 
-            if (vars.size() == 0)
+            auto arr0 = arr.Get(static_cast<uint32_t>(0));
+
+            if (arr0.IsObject() && arr0.As<Napi::Object>().InstanceOf(GIntVar::constructor.Value()))
             {
+                std::vector<IntVar> vars;
                 for (uint32_t i = 0; i < arr.Length(); i++)
                 {
-                    if (arr.Get(i).IsObject() && arr.Get(i).As<Napi::Object>().InstanceOf(GBoolVar::constructor.Value()))
+                    if (arr.Get(i).IsObject() && arr.Get(i).As<Napi::Object>().InstanceOf(GIntVar::constructor.Value()))
                     {
                         vars.push_back(*GIntVar::Unwrap(arr.Get(i).As<Napi::Object>())->pIntVar);
                         continue;
                     }
                 }
+                return GLinearExpr::constructor.New({Napi::External<LinearExpr>::New(env, new LinearExpr(LinearExpr::Sum(vars)))});
             }
-            
-            if (vars.size() > 0)
+
+            if (arr0.IsObject() && arr0.As<Napi::Object>().InstanceOf(GBoolVar::constructor.Value()))
             {
+                std::vector<BoolVar> vars;
+                for (uint32_t i = 0; i < arr.Length(); i++)
+                {
+                    if (arr.Get(i).IsObject() && arr.Get(i).As<Napi::Object>().InstanceOf(GBoolVar::constructor.Value()))
+                    {
+                        vars.push_back(*GBoolVar::Unwrap(arr.Get(i).As<Napi::Object>())->pBoolVar);
+                        continue;
+                    }
+                }
                 return GLinearExpr::constructor.New({Napi::External<LinearExpr>::New(env, new LinearExpr(LinearExpr::Sum(vars)))});
             }
         }

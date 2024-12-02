@@ -48,6 +48,7 @@ import { Model as or_sat_Model } from './operations_research/sat/Model'
 import
 {
     operator_times as or_sat_operator_times,
+    operator_minus as or_sat_operator_minus,
     Solve as or_sat_Solve,
     SolutionBooleanValue as or_sat_SolutionBooleanValue,
     CpSolverStatus as or_sat_CpSolverStatus,
@@ -83,6 +84,7 @@ declare module operations_research
         or_operator_le as operator_le,
         or_operator_ge as operator_ge,
         or_operator_times as operator_times,
+
 
     }
     export namespace packing
@@ -123,6 +125,7 @@ declare module operations_research
             or_sat_NewFeasibleSolutionObserver as NewFeasibleSolutionObserver,
             or_sat_SolutionIntegerValue as SolutionIntegerValue,
             or_sat_SolveCpModel as SolveCpModel,
+            or_sat_operator_minus as operator_minus,
 
             or_sat_CpSolverStatus as CpSolverStatus,
         }

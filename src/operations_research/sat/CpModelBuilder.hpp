@@ -78,6 +78,7 @@ class GCpModelBuilder : public Napi::ObjectWrap<GCpModelBuilder>
                 InstanceMethod("AddNotEqual", &GCpModelBuilder::AddNotEqual),
                 InstanceMethod("Clone", &GCpModelBuilder::Clone),
                 InstanceMethod("GetIntVarFromProtoIndex", &GCpModelBuilder::GetIntVarFromProtoIndex),
+                InstanceMethod("AddAllDifferent", &GCpModelBuilder::AddAllDifferent),
             }
         );
         constructor = Napi::Persistent(func);
@@ -85,6 +86,34 @@ class GCpModelBuilder : public Napi::ObjectWrap<GCpModelBuilder>
         exports.Set(Napi::String::New(env, "CpModelBuilder"), func);
         return exports;
     };
+    //     Constraint AddAllDifferent(absl::Span<const IntVar> vars);
+    Napi::Value AddAllDifferent(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
+        if (info.Length() == 1 && info[0].IsArray())
+        {
+            std::vector<IntVar> vars;
+            auto array = info[0].As<Napi::Array>();
+            for (int i = 0; i < array.Length(); i++)
+            {
+                if (array.Get(i).IsObject() && array.Get(i).As<Napi::Object>().InstanceOf(GIntVar::constructor.Value()))
+                {
+                    vars.push_back(*Napi::ObjectWrap<GIntVar>::Unwrap(array.Get(i).As<Napi::Object>())->pIntVar);
+                    continue;
+                }
+                Napi::TypeError::New(env, "operations_research::GCpModelBuilder::AddAllDifferent : Invalid arguments").ThrowAsJavaScriptException();
+                return env.Null();
+            }
+            auto result = pCpModelBuilder->AddAllDifferent(vars);
+            return GConstraint::constructor.New({Napi::External<Constraint>::New(env, new Constraint(result))});
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpModelBuilder::AddAllDifferent : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    }
+    
     //     IntVar GetIntVarFromProtoIndex(int index);
     Napi::Value GetIntVarFromProtoIndex(const Napi::CallbackInfo &info)
     {

@@ -86,8 +86,7 @@ export class CpModelBuilder
 
     AddNotEqual(left: CanAsLinearExpr, right: CanAsLinearExpr): Constraint;
 
-    //     /// This constraint forces all variables to have different values.
-    //     Constraint AddAllDifferent(absl::Span<const IntVar> vars);
+    AddAllDifferent(vars: IntVar[]): Constraint;
 
     //     /// This constraint forces all expressions to have different values.
     //     Constraint AddAllDifferent(absl::Span<const LinearExpr> exprs);

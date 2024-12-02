@@ -51,7 +51,7 @@ The codebase is large, and the priority is to implement the code in the examples
 - channeling_sample_sat OK
 - clone_model_sample_sat OK
 - constraint_programming_cp OK
-- costas_array_sat
+- costas_array_sat OK
 - course_scheduling
 - course_scheduling_run
 - cp_is_fun_cp

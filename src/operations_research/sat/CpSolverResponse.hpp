@@ -43,6 +43,7 @@ class GCpSolverResponse : public Napi::ObjectWrap<GCpSolverResponse>
                 InstanceMethod("objective_value", &GCpSolverResponse::objective_value),
                 InstanceMethod("status", &GCpSolverResponse::status),
                 InstanceMethod("sufficient_assumptions_for_infeasibility", &GCpSolverResponse::sufficient_assumptions_for_infeasibility),
+                InstanceMethod("wall_time", &GCpSolverResponse::wall_time),
             }
         );
         constructor = Napi::Persistent(func);
@@ -50,7 +51,20 @@ class GCpSolverResponse : public Napi::ObjectWrap<GCpSolverResponse>
         exports.Set(Napi::String::New(env, "CpSolverResponse"), func);
         return exports;
     };
+    //  double wall_time() const;
+    Napi::Value wall_time(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
 
+        if (info.Length() == 0)
+        {
+            return Napi::Number::New(env, pCpSolverResponse->wall_time());
+        }
+
+        Napi::TypeError::New(env, "operations_research::GCpSolverResponse::wall_time : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    };
     //  ::operations_research::sat::CpSolverStatus status() const;
     Napi::Value status(const Napi::CallbackInfo &info)
     {

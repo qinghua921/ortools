@@ -8,6 +8,7 @@ import { Model } from "./Model";
 export function operator_times(expr: CanAsLinearExpr, factor: number): LinearExpr;
 export function operator_times(factor: number, expr: CanAsLinearExpr): LinearExpr;
 export function operator_plus(lhs: CanAsLinearExpr, rhs: CanAsLinearExpr): LinearExpr;
+export function operator_minus(lhs: CanAsLinearExpr, rhs: CanAsLinearExpr): LinearExpr;
 export function Solve(model_proto: CpModelProto): CpSolverResponse;
 export function SolutionBooleanValue(r: CpSolverResponse, x: BoolVar): boolean;
 export function CpSolverResponseStats(response: CpSolverResponse, has_objective: boolean = true): string;

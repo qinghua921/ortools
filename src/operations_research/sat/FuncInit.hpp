@@ -169,7 +169,7 @@ Napi::Value GNewSatParameters(const Napi::CallbackInfo &info)
 Napi::Value GNewFeasibleSolutionObserver(const Napi::CallbackInfo &info)
 {
     static std::map<Napi::Env, Napi::FunctionReference> callbackNewFeasibleSolutionObserver;
-    
+
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
@@ -262,6 +262,23 @@ Napi::Value GSolveCpModel(const Napi::CallbackInfo &info)
     return env.Null();
 }
 
+// inline LinearExpr operator-(const LinearExpr &lhs, LinearExpr &&rhs)
+Napi::Value Goperator_minus(const Napi::CallbackInfo &info)
+{
+    Napi::Env env = info.Env();
+    Napi::HandleScope scope(env);
+
+    LinearExpr lhs, rhs;
+    if (info.Length() == 2 && GLinearExpr::ToLinearExpr(info[0], lhs) && GLinearExpr::ToLinearExpr(info[1], rhs))
+    {
+        auto external = Napi::External<LinearExpr>::New(env, new LinearExpr(lhs - rhs));
+        return GLinearExpr::constructor.New({external});
+    }
+
+    Napi::TypeError::New(env, "operations_research::sat::Goperator_minus : Invalid arguments").ThrowAsJavaScriptException();
+    return env.Null();
+}
+
 Napi::Object FuncInit(Napi::Env env, Napi::Object exports)
 {
     Napi::HandleScope scope(env);
@@ -276,6 +293,7 @@ Napi::Object FuncInit(Napi::Env env, Napi::Object exports)
     exports.Set("NewFeasibleSolutionObserver", Napi::Function::New(env, GNewFeasibleSolutionObserver));
     exports.Set("SolutionIntegerValue", Napi::Function::New(env, GSolutionIntegerValue));
     exports.Set("SolveCpModel", Napi::Function::New(env, GSolveCpModel));
+    exports.Set("operator_minus", Napi::Function::New(env, Goperator_minus));
 
     auto enumCpSolverStatus = Napi::Object::New(env);
     enumCpSolverStatus.Set("UNKNOWN", static_cast<int>(CpSolverStatus::UNKNOWN));
