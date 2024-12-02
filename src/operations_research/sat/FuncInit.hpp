@@ -6,6 +6,7 @@
 #include "SatParameters.hpp"
 #include "napi.h"
 #include "ortools/sat/cp_model.h"
+#include <map>
 
 namespace operations_research
 {
@@ -164,28 +165,35 @@ Napi::Value GNewSatParameters(const Napi::CallbackInfo &info)
     return env.Null();
 }
 
-Napi::FunctionReference callbackNewFeasibleSolutionObserver;
 // std::function<void(Model*)> NewFeasibleSolutionObserver( const std::function<void(const CpSolverResponse& response)>& callback);
 Napi::Value GNewFeasibleSolutionObserver(const Napi::CallbackInfo &info)
 {
+    static std::map<Napi::Env, Napi::FunctionReference> callbackNewFeasibleSolutionObserver;
+    
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
-    if (!callbackNewFeasibleSolutionObserver.IsEmpty())
-    {
-        Napi::Error::New(env, "operations_research::sat::GNewFeasibleSolutionObserver : callback already set").ThrowAsJavaScriptException();
-        return env.Null();
-    }
-
     if (info.Length() == 1 && info[0].IsFunction())
     {
-        callbackNewFeasibleSolutionObserver = Napi::Persistent(info[0].As<Napi::Function>());
-        auto func                           = NewFeasibleSolutionObserver(
+        auto cleanup = [env]()
+        {
+            if (callbackNewFeasibleSolutionObserver.find(env) != callbackNewFeasibleSolutionObserver.end())
+            {
+                callbackNewFeasibleSolutionObserver.find(env)->second.Unref();
+                callbackNewFeasibleSolutionObserver.find(env)->second.Reset();
+                callbackNewFeasibleSolutionObserver.erase(env);
+            }
+        };
+
+        cleanup();
+        callbackNewFeasibleSolutionObserver.insert(std::make_pair(env, Napi::Persistent(info[0].As<Napi::Function>())));
+        env.AddCleanupHook(cleanup);
+        auto func = NewFeasibleSolutionObserver(
             [env](const CpSolverResponse &response)
             {
                 Napi::HandleScope scope(env);
                 auto gCpSolverResponse = GCpSolverResponse::constructor.New({Napi::External<CpSolverResponse>::New(env, new CpSolverResponse(response))});
-                callbackNewFeasibleSolutionObserver.Call({gCpSolverResponse});
+                callbackNewFeasibleSolutionObserver.find(env)->second.Call({gCpSolverResponse});
             }
         );
         return Napi::Function::New(
