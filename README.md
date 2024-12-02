@@ -55,7 +55,7 @@ The codebase is large, and the priority is to implement the code in the examples
 - course_scheduling Deferred
 - course_scheduling_run Deferred
 - cp_is_fun_cp OK
-- cp_is_fun_sat
+- cp_is_fun_sat OK
 - cp_sat_example
 - cryptarithm_sat
 - cvrp_disjoint_tw
