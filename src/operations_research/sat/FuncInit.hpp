@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../CallBackManager.hpp"
+#include "CpModelProto.hpp"
 #include "CpSolverResponse.hpp"
 #include "LinearExpr.hpp"
 #include "Model.hpp"
@@ -168,32 +170,20 @@ Napi::Value GNewSatParameters(const Napi::CallbackInfo &info)
 // std::function<void(Model*)> NewFeasibleSolutionObserver( const std::function<void(const CpSolverResponse& response)>& callback);
 Napi::Value GNewFeasibleSolutionObserver(const Napi::CallbackInfo &info)
 {
-    static std::map<Napi::Env, Napi::FunctionReference> callbackNewFeasibleSolutionObserver;
+    static CallBackManager callbackManager;
 
     Napi::Env env = info.Env();
     Napi::HandleScope scope(env);
 
     if (info.Length() == 1 && info[0].IsFunction())
     {
-        auto cleanup = [env]()
-        {
-            if (callbackNewFeasibleSolutionObserver.find(env) != callbackNewFeasibleSolutionObserver.end())
-            {
-                callbackNewFeasibleSolutionObserver.find(env)->second.Unref();
-                callbackNewFeasibleSolutionObserver.find(env)->second.Reset();
-                callbackNewFeasibleSolutionObserver.erase(env);
-            }
-        };
-
-        cleanup();
-        callbackNewFeasibleSolutionObserver.insert(std::make_pair(env, Napi::Persistent(info[0].As<Napi::Function>())));
-        env.AddCleanupHook(cleanup);
+        callbackManager.insert(env, info[0].As<Napi::Function>());
         auto func = NewFeasibleSolutionObserver(
             [env](const CpSolverResponse &response)
             {
                 Napi::HandleScope scope(env);
                 auto gCpSolverResponse = GCpSolverResponse::constructor.New({Napi::External<CpSolverResponse>::New(env, new CpSolverResponse(response))});
-                callbackNewFeasibleSolutionObserver.find(env)->second.Call({gCpSolverResponse});
+                callbackManager.call(env, {gCpSolverResponse});
             }
         );
         return Napi::Function::New(

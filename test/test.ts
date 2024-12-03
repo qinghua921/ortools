@@ -1,59 +1,90 @@
 import { operations_research as op } from '../src'
 
 
-function test()
+
+function main()
 {
-    let cp_model = new op.sat.CpModelBuilder();
-    let all_digits = new op.Domain(0, 9);
-    let non_zero_digits = new op.Domain(1, 9);
 
-    let s = cp_model.NewIntVar(non_zero_digits);
-    let e = cp_model.NewIntVar(all_digits);
-    let n = cp_model.NewIntVar(all_digits);
-    let d = cp_model.NewIntVar(all_digits);
+    //const int n        = 5;
+    //const int source   = n;
+    //const int dest     = n + 1;
+    //const int num_arcs = 3 * n - 1;
+    //util::StaticGraph<> graph;
+    //std::vector<double> weights(num_arcs);
+    //std::vector<std::vector<double>> resources(1, std::vector<double>(num_arcs));
 
-    let m = cp_model.NewIntVar(non_zero_digits);
-    let o = cp_model.NewIntVar(all_digits);
-    let r = cp_model.NewIntVar(all_digits);
-    let y = cp_model.NewIntVar(all_digits);
+    let n = 5;
+    let source = n;
+    let dest = n + 1;
+    let num_arcs = 3 * n - 1;
+    let graph = new op.StaticGraph();
 
-    let c0 = cp_model.NewBoolVar();
-    let c1 = cp_model.NewBoolVar();
-    let c2 = cp_model.NewBoolVar();
-    let c3 = cp_model.NewBoolVar();
+    //for (int i = 0; i < n; ++i)
+    //{
+    //    graph.AddArc(source, i);
+    //    weights[i]      = 100.0;
+    //    resources[0][i] = 0.0;
+    //}
+    //for (int i = 0; i < n; ++i)
+    //{
+    //    graph.AddArc(i, dest);
+    //    weights[n + i]      = 100.0;
+    //    resources[0][n + i] = 0.0;
+    //}
+    //for (int i = 0; i + 1 < n; ++i)
+    //{
+    //    graph.AddArc(i, i + 1);
+    //    weights[2 * n + i]      = 1.0;
+    //    resources[0][2 * n + i] = 1.0;
+    //}
 
-    cp_model.AddAllDifferent([s, e, n, d, m, o, r, y]);
+    //std::vector<int32_t> permutation;
+    //graph.Build(&permutation);
+    //util::Permute(permutation, &weights);
+    //util::Permute(permutation, &resources[0]);
 
-    cp_model.AddEquality(c0, m);
+    //std::vector<int32_t> topological_order = {source};
+    //for (int32_t i = 0; i < n; ++i)
+    //{
+    //    topological_order.push_back(i);
+    //}
+    //topological_order.push_back(dest);
 
-    let lexpr = op.sat.operator_plus(c1, s);
-    lexpr = op.sat.operator_plus(lexpr, m);
-    let rexpr = op.sat.operator_plus(o, op.sat.operator_times(10, c0))
-    cp_model.AddEquality(lexpr, rexpr);
+    //const std::vector<int> sources          = {source};
+    //const std::vector<int> destinations     = {dest};
+    //const std::vector<double> max_resources = {1.0};
 
-    lexpr = op.sat.operator_plus(c2, e);
-    lexpr = op.sat.operator_plus(lexpr, o);
-    rexpr = op.sat.operator_plus(n, op.sat.operator_times(10, c1))
-    cp_model.AddEquality(lexpr, rexpr);
+    //operations_research::ConstrainedShortestPathsOnDagWrapper<util::StaticGraph<>>
+    //    constrained_shortest_path_on_dag(&graph, &weights, &resources, topological_order, sources, destinations, &max_resources);
+    //operations_research::PathWithLength initial_constrained_shortest_path =
+    //    constrained_shortest_path_on_dag.RunConstrainedShortestPathOnDag();
 
-    lexpr = op.sat.operator_plus(c3, n);
-    lexpr = op.sat.operator_plus(lexpr, r);
-    rexpr = op.sat.operator_plus(e, op.sat.operator_times(10, c2))
-    cp_model.AddEquality(lexpr, rexpr);
+    //std::cout << "Initial distance: " << initial_constrained_shortest_path.length
+    //          << std::endl;
+    //std::cout << "Initial path: "
+    //          << absl::StrJoin(initial_constrained_shortest_path.node_path, ", ")
+    //          << std::endl;
 
-    lexpr = op.sat.operator_plus(d, e);
-    rexpr = op.sat.operator_plus(y, op.sat.operator_times(10, c3))
-    cp_model.AddEquality(lexpr, rexpr);
+    //std::vector<std::pair<int, int>> fast_paths = {{2, 3}, {8, 1}, {3, 7}};
+    //for (const auto [free_from_source, free_to_dest] : fast_paths)
+    //{
+    //    weights[permutation[free_from_source]] = 0;
+    //    weights[permutation[n + free_to_dest]] = 0;
 
-    let response = op.sat.Solve(cp_model.Build());
-    console.log(op.sat.CpSolverResponseStats(response));
-    console.log("s: " + op.sat.SolutionIntegerValue(response, s));
-    console.log("e: " + op.sat.SolutionIntegerValue(response, e));
-    console.log("n: " + op.sat.SolutionIntegerValue(response, n));
-    console.log("d: " + op.sat.SolutionIntegerValue(response, d));
-    console.log("m: " + op.sat.SolutionIntegerValue(response, m));
-    console.log("o: " + op.sat.SolutionIntegerValue(response, o));
-    console.log("r: " + op.sat.SolutionIntegerValue(response, r));
-    console.log("y: " + op.sat.SolutionIntegerValue(response, y));
+    //    operations_research::PathWithLength constrained_shortest_path =
+    //        constrained_shortest_path_on_dag.RunConstrainedShortestPathOnDag();
+    //    std::cout << "source -> " << free_from_source << " and " << free_to_dest
+    //              << " -> dest are now free" << std::endl;
+    //    std::string label = absl::StrCat("_", free_from_source, "_", free_to_dest);
+    //    std::cout << "Distance" << label << ": " << constrained_shortest_path.length
+    //              << std::endl;
+    //    std::cout << "Path" << label << ": "
+    //              << absl::StrJoin(constrained_shortest_path.node_path, ", ")
+    //              << std::endl;
+
+    //    weights[permutation[free_from_source]] = 100;
+    //    weights[permutation[n + free_to_dest]] = 100;
+    //}
+    //return 0;
 }
-test();
+main();

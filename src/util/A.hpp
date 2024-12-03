@@ -2,9 +2,7 @@
 
 #include "napi.h"
 
-namespace operations_research
-{
-namespace packing
+namespace util
 {
 class GDemo : public Napi::ObjectWrap<GDemo>
 {
@@ -45,6 +43,5 @@ class GDemo : public Napi::ObjectWrap<GDemo>
         return exports;
     };
 };
-} // namespace packing
 
-}; // namespace operations_research
+}; // namespace util

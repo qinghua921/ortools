@@ -58,15 +58,15 @@ The codebase is large, and the priority is to implement the code in the examples
 - cp_is_fun_sat OK
 - cp_sat_example OK
 - cryptarithm_sat OK
-- cvrp_disjoint_tw
-- cvrptw
-- cvrptw_soft_capacity
-- cvrptw_with_breaks
-- cvrptw_with_precedences
-- cvrptw_with_refueling
-- cvrptw_with_resources
-- cvrptw_with_stop_times_and_resources
-- cvrptw_with_time_dependent_costs
+- cvrp_disjoint_tw Deferred
+- cvrptw Deferred
+- cvrptw_soft_capacity Deferred
+- cvrptw_with_breaks Deferred
+- cvrptw_with_precedences Deferred
+- cvrptw_with_refueling Deferred
+- cvrptw_with_resources Deferred
+- cvrptw_with_stop_times_and_resources Deferred
+- cvrptw_with_time_dependent_costs Deferred
 - dag_constrained_shortest_path_sequential
 - dag_multiple_shortest_paths_one_to_all
 - dag_multiple_shortest_paths_sequential
