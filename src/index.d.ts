@@ -31,6 +31,10 @@ import { MultipleDimensionsBinPackingProblem as or_packing_MultipleDimensionsBin
 import { MultipleDimensionsBinPackingShape as or_packing_MultipleDimensionsBinPackingShape } from './operations_research/packing/MultipleDimensionsBinPackingShape'
 import { MultipleDimensionsBinPackingItem as or_packing_MultipleDimensionsBinPackingItem } from './operations_research/packing/MultipleDimensionsBinPackingItem'
 
+/**** util *******************************************************************************/
+
+import { StaticGraph as util_StaticGraph } from './util/StaticGraph'
+
 /**** operations_research / sat *******************************************************************************/
 
 import { CpModelBuilder as or_sat_CpModelBuilder } from './operations_research/sat/CpModelBuilder'
@@ -61,6 +65,14 @@ import
     SolutionIntegerValue as or_sat_SolutionIntegerValue,
     SolveCpModel as or_sat_SolveCpModel,
 } from './operations_research/sat/FuncInit'
+
+declare module util
+{
+    export
+    {
+        util_StaticGraph as StaticGraph,
+    }
+}
 
 declare module operations_research
 {

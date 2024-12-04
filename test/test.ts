@@ -1,4 +1,4 @@
-import { operations_research as op } from '../src'
+import { util } from '../src'
 
 
 
@@ -17,7 +17,11 @@ function main()
     let source = n;
     let dest = n + 1;
     let num_arcs = 3 * n - 1;
-    let graph = new op.StaticGraph();
+    let graph = new util.StaticGraph();
+
+    let weights = new Array(num_arcs);
+    let resources = new Array(1);
+    resources[0] = new Array(num_arcs);
 
     //for (int i = 0; i < n; ++i)
     //{
@@ -25,18 +29,39 @@ function main()
     //    weights[i]      = 100.0;
     //    resources[0][i] = 0.0;
     //}
+
+    for (let i = 0; i < n; ++i)
+    {
+        graph.AddArc(source, i);
+        weights[i] = 100.0;
+        resources[0][i] = 0.0;
+    }
+
     //for (int i = 0; i < n; ++i)
     //{
     //    graph.AddArc(i, dest);
     //    weights[n + i]      = 100.0;
     //    resources[0][n + i] = 0.0;
     //}
+
+    for (let i = 0; i < n; ++i)
+    {
+        graph.AddArc(i, dest);
+        weights[n + i] = 100.0;
+        resources[0][n + i] = 0.0;
+    }
     //for (int i = 0; i + 1 < n; ++i)
     //{
     //    graph.AddArc(i, i + 1);
     //    weights[2 * n + i]      = 1.0;
     //    resources[0][2 * n + i] = 1.0;
     //}
+    for (let i = 0; i + 1 < n; ++i)
+    {
+        graph.AddArc(i, i + 1);
+        weights[2 * n + i] = 1.0;
+        resources[0][2 * n + i] = 1.0;
+    }
 
     //std::vector<int32_t> permutation;
     //graph.Build(&permutation);

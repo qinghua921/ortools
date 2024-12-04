@@ -11,6 +11,8 @@
 #include "operations_research/DecisionBuilder.hpp"
 #include "operations_research/Domain.hpp"
 #include "operations_research/FuncInit.hpp"
+#include "operations_research/IntExpr.hpp"
+#include "operations_research/IntVar.hpp"
 #include "operations_research/LinearExpr.hpp"
 #include "operations_research/LinearRange.hpp"
 #include "operations_research/MPConstraint.hpp"
@@ -21,8 +23,6 @@
 #include "operations_research/SimpleLinearSumAssignment.hpp"
 #include "operations_research/SimpleMinCostFlow.hpp"
 #include "operations_research/Solver.hpp"
-#include "operations_research/IntVar.hpp"
-#include "operations_research/IntExpr.hpp"
 
 /**** operations_research / packing ***************************************************************************************/
 
@@ -30,6 +30,10 @@
 #include "operations_research/packing/MultipleDimensionsBinPackingItem.hpp"
 #include "operations_research/packing/MultipleDimensionsBinPackingProblem.hpp"
 #include "operations_research/packing/MultipleDimensionsBinPackingShape.hpp"
+
+/**** util ***************************************************************************************/
+
+#include "util/StaticGraph.hpp"
 
 /**** operations_research / sat ***************************************************************************************/
 
@@ -100,6 +104,9 @@ Napi::Object Init(Napi::Env env, Napi::Object exports)
     operations_research::FuncInit(env, operations_research);
     exports.Set("operations_research", operations_research);
 
+    auto util = Napi::Object::New(env);
+    util::GStaticGraph::Init(env, util);
+    exports.Set("util", util);
     return exports;
 }
 
