@@ -44,7 +44,7 @@ export class StaticGraph
     AddArc(tail: NodeIndexType, head: NodeIndexType): ArcIndexType;
 
     // void Build() { Build(nullptr); }
-    // void Build(std::vector<ArcIndexType>* permutation);
+    Build(permutation: number[]): void;
 
     //private:
     // ArcIndexType DirectArcLimit(NodeIndexType node) const {

@@ -45,6 +45,7 @@ class GStaticGraph : public Napi::ObjectWrap<GStaticGraph>
             "StaticGraph",
             {
                 InstanceMethod("AddArc", &GStaticGraph::AddArc),
+                InstanceMethod("Build", &GStaticGraph::Build),
             }
         );
         constructor = Napi::Persistent(func);
@@ -52,11 +53,37 @@ class GStaticGraph : public Napi::ObjectWrap<GStaticGraph>
         exports.Set(Napi::String::New(env, "StaticGraph"), func);
         return exports;
     };
+    // void Build(std::vector<ArcIndexType>* permutation);
+    Napi::Value Build(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
 
+        if (info.Length() == 1 && info[0].IsArray())
+        {
+            auto permutation = info[0].As<Napi::Array>();
+            std::vector<int32_t> perm;
+            for (uint32_t i = 0; i < permutation.Length(); i++)
+            {
+                perm.push_back(permutation.Get(i).As<Napi::Number>().Int64Value());
+            }
+            pStaticGraph->Build(&perm);
+            for (uint32_t i = 0; i < permutation.Length(); i++)
+            {
+                permutation.Set(i, Napi::Number::New(env, perm[i]));
+            }
+            return env.Undefined();
+        }
+
+        Napi::TypeError::New(env, "operations_research::GStaticGraph::Build : Invalid arguments").ThrowAsJavaScriptException();
+        return env.Null();
+    };
     // ArcIndexType AddArc(NodeIndexType tail, NodeIndexType head);
     Napi::Value AddArc(const Napi::CallbackInfo &info)
     {
         Napi::Env env = info.Env();
+        Napi::HandleScope scope(env);
+
         if (info.Length() == 2 && info[0].IsNumber() && info[1].IsNumber())
         {
             auto tail = info[0].As<Napi::Number>().Int64Value();
@@ -64,6 +91,7 @@ class GStaticGraph : public Napi::ObjectWrap<GStaticGraph>
             auto arc  = pStaticGraph->AddArc(tail, head);
             return Napi::Number::New(env, arc);
         }
+
         Napi::TypeError::New(env, "operations_research::GStaticGraph::AddArc : Invalid arguments").ThrowAsJavaScriptException();
         return env.Null();
     };

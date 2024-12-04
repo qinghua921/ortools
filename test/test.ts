@@ -4,7 +4,6 @@ import { util } from '../src'
 
 function main()
 {
-
     //const int n        = 5;
     //const int source   = n;
     //const int dest     = n + 1;
@@ -18,7 +17,6 @@ function main()
     let dest = n + 1;
     let num_arcs = 3 * n - 1;
     let graph = new util.StaticGraph();
-
     let weights = new Array(num_arcs);
     let resources = new Array(1);
     resources[0] = new Array(num_arcs);
@@ -67,6 +65,11 @@ function main()
     //graph.Build(&permutation);
     //util::Permute(permutation, &weights);
     //util::Permute(permutation, &resources[0]);
+
+    let permutation: number[] = [];
+    graph.Build(permutation);
+    util.Permute(permutation, weights);
+    util.Permute(permutation, resources[0]);
 
     //std::vector<int32_t> topological_order = {source};
     //for (int32_t i = 0; i < n; ++i)
